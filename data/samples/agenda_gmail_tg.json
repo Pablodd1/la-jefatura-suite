@@ -1,0 +1,23 @@
+{
+  "generated": "2026-10-21T14:30:00-04:00",
+  "agenda_hoy": [
+    { "hora": "09:30", "fin": "10:00", "titulo": "Kickoff Brickell Ortho Institute",        "quien": "Juan Perez + cliente",       "lugar": "Google Meet",  "tipo": "cliente" },
+    { "hora": "11:00", "fin": "11:45", "titulo": "Revision pipeline Nexus — semana 43",      "quien": "Juan + Maria + Carlos",      "lugar": "Oficina MBMB", "tipo": "interna" },
+    { "hora": "14:00", "fin": "14:30", "titulo": "Demo CEDEXX — Doral Urgent Care",          "quien": "Dr. Molina + Jasmel",        "lugar": "Google Meet",  "tipo": "cliente" },
+    { "hora": "16:30", "fin": "17:00", "titulo": "1:1 Jasmel / Juan — pendientes CEO",       "quien": "Jasmel + Juan",              "lugar": "Llamada",      "tipo": "interna" }
+  ],
+  "gmail_sin_leer": [
+    { "de": "dr.molina@doralurgent.com",  "asunto": "RE: Propuesta CEDEXX — cambios menores", "edad_h": 2,  "prioridad": "alta" },
+    { "de": "justmail@michaelbuildingmb.com", "asunto": "Sept claims report — 41 denegaciones", "edad_h": 5,  "prioridad": "alta" },
+    { "de": "carlos@saleinnovation.co",   "asunto": "Pipeline actualizado — 3 cotizaciones listas", "edad_h": 7, "prioridad": "media" },
+    { "de": "facturas@clinicadelmar.co",  "asunto": "Orden de compra #PO-2214",               "edad_h": 11, "prioridad": "alta" },
+    { "de": "maria@saleinnovation.co",    "asunto": "Feedback demo LabMed Santiago",          "edad_h": 19, "prioridad": "baja" },
+    { "de": "hosting@rackspace.com",      "asunto": "Renovacion SSL cedexx.net — 27 dias",    "edad_h": 26, "prioridad": "media" }
+  ],
+  "alertas_telegram_recientes": [
+    { "hora": "08:14", "nivel": "info",     "fuente": "informe",   "texto": "Informe del Jefe enviado (texto + voz)." },
+    { "hora": "07:52", "nivel": "critical", "fuente": "escalate",  "texto": "TAREA VENCIDA 62h: 'Enviar propuesta CEDEXX a Doral Urgent' — se requiere accion del CEO." },
+    { "hora": "02:11", "nivel": "info",     "fuente": "lead",      "texto": "Nuevo lead 305biz: 'Verificacion de comprador' — Smoke Test [test]." },
+    { "hora": "ayer 18:40", "nivel": "warning", "fuente": "sistema", "texto": "Tunnel cloudflared reiniciado (latencia > 8s)." }
+  ]
+}

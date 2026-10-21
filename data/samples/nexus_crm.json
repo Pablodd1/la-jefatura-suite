@@ -1,0 +1,53 @@
+{
+  "note": "Realistic sample pipeline mirroring the Nexus CRM schema (Saleinnovation). Stages match nexus-crm-global.ai.studio: No Contactado / Contactado / Cotizacion / Cerrado.",
+  "generated": "2026-10-21T14:30:00-04:00",
+  "kpis": {
+    "leads_activos": 23,
+    "tiempo_prom_conversion_dias": 11,
+    "ingreso_mensual_proyectado_usd": 48200,
+    "pipeline_total_estimado_usd": 214500,
+    "ventas_cerradas_total_usd": 96400,
+    "tasa_conversion_global_pct": 31
+  },
+  "pipeline_por_etapa": [
+    { "etapa": "no_contactado", "label_en": "Not Contacted", "label_es": "No Contactado", "count": 8,  "valor_usd": 61200 },
+    { "etapa": "contactado",    "label_en": "Contacted",     "label_es": "Contactado",    "count": 6,  "valor_usd": 78500 },
+    { "etapa": "cotizacion",    "label_en": "Quote Sent",    "label_es": "Cotización",    "count": 5,  "valor_usd": 46800 },
+    { "etapa": "cerrado",       "label_en": "Closed Won",    "label_es": "Cerrado",       "count": 4,  "valor_usd": 28000 }
+  ],
+  "pipeline_por_pais": [
+    { "pais": "USA",        "valor_usd": 142000, "leads": 12 },
+    { "pais": "Colombia",   "valor_usd": 38500,  "leads": 5 },
+    { "pais": "Mexico",     "valor_usd": 22000,  "leads": 4 },
+    { "pais": "Chile",      "valor_usd": 12000,  "leads": 2 }
+  ],
+  "top_vendedores": [
+    { "nombre": "Juan Perez",   "cerrados": 3, "pipeline_usd": 88400, "conversion_pct": 38 },
+    { "nombre": "Maria Gomez",  "cerrados": 1, "pipeline_usd": 52100, "conversion_pct": 24 },
+    { "nombre": "Carlos Ruiz",  "cerrados": 0, "pipeline_usd": 34000, "conversion_pct": 12 }
+  ],
+  "leads": [
+    { "id": "L-1042", "empresa": "Doral Urgent Care Group",      "contacto": "Dr. Andrés Molina",   "pais": "USA",      "etapa": "cotizacion",  "valor_usd": 12400,  "probabilidad_pct": 70, "dias": 9,  "vendedor": "Juan Perez",  "ultima_nota": "Pidio demo del dashboard de Revenue Cycle. Enviar propuesta antes del viernes." },
+    { "id": "L-1043", "empresa": "Clinica Del Mar Cartagena",    "contacto": "Luisa Fernandez",     "pais": "Colombia", "etapa": "contactado",  "valor_usd": 9800,   "probabilidad_pct": 45, "dias": 5,  "vendedor": "Maria Gomez", "ultima_nota": "Interesada en facturacion electronica para 3 sedes. Pide referencia de cliente en LatAm." },
+    { "id": "L-1044", "empresa": "Miami Lakes Family Practice",  "contacto": "Dr. Rebecca Stone",   "pais": "USA",      "etapa": "no_contactado", "valor_usd": 7800, "probabilidad_pct": 15, "dias": 1, "vendedor": "Juan Perez", "ultima_nota": "Inbound desde landing de CEDEXX. Descargo el whitepaper de HIPAA." },
+    { "id": "L-1045", "empresa": "Farmacia La Esperanza CDMX",   "contacto": "Jorge Ramirez",       "pais": "Mexico",   "etapa": "cotizacion",  "valor_usd": 6400,   "probabilidad_pct": 60, "dias": 12, "vendedor": "Carlos Ruiz", "ultima_nota": "Comparando con 2 competidores. Nuestra ventaja: portal bilingue." },
+    { "id": "L-1046", "empresa": "Brickell Ortho Institute",     "contacto": "Sofia Castellanos",   "pais": "USA",      "etapa": "cerrado",     "valor_usd": 15200,  "probabilidad_pct": 100, "dias": 21, "vendedor": "Juan Perez", "ultima_nota": "CERRADO. Firma el lunes. Kickoff con onboarding semana del 27." },
+    { "id": "L-1047", "empresa": "LabMed Santiago",              "contacto": "Pedro Soto",          "pais": "Chile",    "etapa": "contactado",  "valor_usd": 5300,   "probabilidad_pct": 35, "dias": 4,  "vendedor": "Maria Gomez", "ultima_nota": "Quiere pricing por volumen de 200 ordenes/mes." },
+    { "id": "L-1048", "empresa": "Hialeah Pediatric Group",      "contacto": "Dr. Miguel Vargas",   "pais": "USA",      "etapa": "no_contactado", "valor_usd": 8900, "probabilidad_pct": 10, "dias": 0,  "vendedor": "Carlos Ruiz", "ultima_nota": "Llamar despues de las 3pm (horario de siesta del consultorio)." },
+    { "id": "L-1049", "empresa": "Wellness Spa Coral Gables",    "contacto": "Ana Beltran",         "pais": "USA",      "etapa": "no_contactado", "valor_usd": 4200, "probabilidad_pct": 10, "dias": 2,  "vendedor": "Maria Gomez", "ultima_nota": "Muy activa en Instagram — angulo de marketing medico." },
+    { "id": "L-1050", "empresa": "Grupo Medico del Norte BOG",   "contacto": "Camila Restrepo",     "pais": "Colombia", "etapa": "cotizacion",  "valor_usd": 11200,  "probabilidad_pct": 55, "dias": 14, "vendedor": "Juan Perez",  "ultima_nota": "Necesita cumplimiento de datos de salud Colombia (Habeas Data)." },
+    { "id": "L-1051", "empresa": "Sunshine Dental Tampa",        "contacto": "Dr. Omar Khalil",     "pais": "USA",      "etapa": "contactado",  "valor_usd": 6700,   "probabilidad_pct": 40, "dias": 6,  "vendedor": "Carlos Ruiz", "ultima_nota": "Referido por cliente MBMB. Ofrecer assessment gratis de billing." },
+    { "id": "L-1052", "empresa": "Optica Vision Plus MDE",       "contacto": "Diana Cardenas",      "pais": "Colombia", "etapa": "no_contactado", "valor_usd": 3900, "probabilidad_pct": 8,  "dias": 1,  "vendedor": "Maria Gomez", "ultima_nota": "Descargo precios pero no respondio. Segundo intento Jueves." },
+    { "id": "L-1053", "empresa": "MedCore Guadalajara",          "contacto": "Ing. Roberto Nunez",  "pais": "Mexico",   "etapa": "cerrado",     "valor_usd": 12800,  "probabilidad_pct": 100, "dias": 18, "vendedor": "Juan Perez",  "ultima_nota": "CERRADO. Pago inicial recibido. Configurar tenant en prod." }
+  ],
+  "visitas": [
+    { "id": "V-301", "cliente": "Doral Urgent Care Group",     "pais": "USA",      "vendedor": "Juan Perez",  "fecha": "2026-10-20", "objetivo": "Demo presencial del dashboard", "resultado": "positiva", "nota": "CFO presente. Quedo en revisar propuesta con socio." },
+    { "id": "V-302", "cliente": "Clinica Del Mar Cartagena",   "pais": "Colombia", "vendedor": "Maria Gomez", "fecha": "2026-10-17", "objetivo": "Levantamiento de requerimientos", "resultado": "positiva", "nota": "3 sedes, procesos manuales. Gran oportunidad de automatizacion." },
+    { "id": "V-303", "cliente": "Hialeah Pediatric Group",     "pais": "USA",      "vendedor": "Carlos Ruiz", "fecha": "2026-10-15", "objetivo": "Primer contacto", "resultado": "neutral",  "nota": "Recepcionista pidio enviar info por correo." },
+    { "id": "V-304", "cliente": "Grupo Medico del Norte BOG",  "pais": "Colombia", "vendedor": "Juan Perez",  "fecha": "2026-10-13", "objetivo": "Seguimiento cotizacion", "resultado": "positiva", "nota": "Legal revisando clausulas de datos. Cerrar esta semana." },
+    { "id": "V-305", "cliente": "Sunshine Dental Tampa",       "pais": "USA",      "vendedor": "Carlos Ruiz", "fecha": "2026-10-10", "objetivo": "Assessment de billing actual", "resultado": "positiva", "nota": "Perden ~$18k/mes en denegaciones. Gran caso de negocio para MBMB." },
+    { "id": "V-306", "cliente": "Farmacia La Esperanza CDMX",  "pais": "Mexico",   "vendedor": "Carlos Ruiz", "fecha": "2026-10-08", "objetivo": "Demo remota", "resultado": "neutral",  "nota": "Tecnico interrumpio por outage. Reagendar demo." },
+    { "id": "V-307", "cliente": "Brickell Ortho Institute",    "pais": "USA",      "vendedor": "Juan Perez",  "fecha": "2026-10-06", "objetivo": "Cierre de contrato", "resultado": "positiva", "nota": "FIRMA. Contrato $15.2k ARR." },
+    { "id": "V-308", "cliente": "LabMed Santiago",             "pais": "Chile",    "vendedor": "Maria Gomez", "fecha": "2026-10-02", "objetivo": "Descubrimiento", "resultado": "positiva", "nota": "Dolor principal: tiempos de cobro 90+ dias." }
+  ]
+}

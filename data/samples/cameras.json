@@ -1,0 +1,16 @@
+{
+  "note": "Camera inventory placeholder — Jasmel has not provided camera models/brands yet. URLs are the STANDARD patterns per brand for the next developer; replace with real hosts/credentials. See docs/JASMEL_REQUESTS.md and docs/RESEARCH.md (ONVIF/RTSP section).",
+  "generated": "2026-10-21T14:30:00-04:00",
+  "camaras": [
+    { "id": "CAM-01", "nombre": "Recepcion MBMB",         "ubicacion": "Miami Beach Office", "tipo": "entradas",  "protocolo": "rtsp+onvif", "url_rtsp": "rtsp://USER:PASS@IP_CAM_1:554/stream1", "marca": "POR-DEFINIR", "activa": false, "ai_zonas": ["recepcion", "puerta principal"] },
+    { "id": "CAM-02", "nombre": "Sala de juntas",         "ubicacion": "Miami Beach Office", "tipo": "interna",   "protocolo": "rtsp+onvif", "url_rtsp": "rtsp://USER:PASS@IP_CAM_2:554/stream1", "marca": "POR-DEFINIR", "activa": false, "ai_zonas": ["sala juntas"] },
+    { "id": "CAM-03", "nombre": "Bodega / Archivo",       "ubicacion": "Miami Beach Office", "tipo": "seguridad", "protocolo": "rtsp+onvif", "url_rtsp": "rtsp://USER:PASS@IP_CAM_3:554/stream1", "marca": "POR-DEFINIR", "activa": false, "ai_zonas": ["archivo", "pasillo"] },
+    { "id": "CAM-04", "nombre": "Estacionamiento",        "ubicacion": "Edificio",           "tipo": "externa",   "protocolo": "rtsp+onvif", "url_rtsp": "rtsp://USER:PASS@IP_CAM_4:554/stream1", "marca": "POR-DEFINIR", "activa": false, "ai_zonas": ["entrada vehicular", "walkway"] }
+  ],
+  "resumen_ia_ultimas_12h": {
+    "eventos_personas_detectadas": 14,
+    "eventos_fuera_de_horario": 1,
+    "evento_destacado": "Movimiento detectado en Bodega/Archivo 21:47 (fuera de horario laboral). Snapshot guardado, alerta enviada a Telegram. Persona no identificada permanecio 45 segundos.",
+    "confianza_promedio": 0.87
+  }
+}

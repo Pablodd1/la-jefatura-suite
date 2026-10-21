@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La Jefatura — CEO Console (Demo)</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<style>
+  :root{
+    --bg:#070b14; --panel:#0d1322; --panel2:#111a30; --hair:rgba(255,255,255,.07);
+    --txt:#e8edf7; --dim:#8b96b0; --acc:#23d9b0; --acc2:#00D4FF; --vio:#7c6cff;
+    --warn:#ff9f43; --crit:#ff5c5c; --ok:#3ddc84;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--txt);font-family:-apple-system,'SF Pro Display',Inter,Segoe UI,sans-serif;min-height:100vh}
+  header{display:flex;align-items:center;gap:14px;padding:14px 22px;border-bottom:1px solid var(--hair);
+         background:rgba(13,19,34,.85);backdrop-filter:blur(14px);position:sticky;top:0;z-index:50}
+  .logo{font-weight:800;font-size:17px;letter-spacing:.4px}
+  .logo b{color:var(--acc)}
+  .seg{display:flex;background:var(--panel2);border:1px solid var(--hair);border-radius:9px;padding:3px;gap:2px;overflow-x:auto;max-width:52vw}
+  .seg button{background:none;border:0;color:var(--dim);padding:6px 12px;border-radius:7px;font-size:12.5px;
+              cursor:pointer;white-space:nowrap;font-weight:600;transition:.15s}
+  .seg button.on{color:#04241c}
+  .sp{flex:1}
+  .pill{font-size:11px;color:var(--dim);border:1px solid var(--hair);padding:5px 10px;border-radius:20px;white-space:nowrap}
+  .btn{background:var(--acc);color:#04241c;border:0;padding:8px 14px;border-radius:8px;font-weight:700;font-size:12.5px;cursor:pointer}
+  .btn.ghost{background:var(--panel2);color:var(--txt);border:1px solid var(--hair)}
+  .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px;padding:18px 22px;max-width:1500px;margin:0 auto}
+  .card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--hair);
+        border-radius:14px;padding:16px 18px;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+  .card h3{font-size:11px;text-transform:uppercase;letter-spacing:1.2px;color:var(--dim);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  .dot{width:7px;height:7px;border-radius:50%;display:inline-block}
+  .kpi{font-size:26px;font-weight:800;letter-spacing:-.5px}
+  .kpi small{font-size:12px;color:var(--dim);font-weight:500;display:block;margin-top:2px}
+  .up{color:var(--ok)} .down{color:var(--crit)}
+  .row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--hair);font-size:13px}
+  .row:last-child{border-bottom:0}
+  .row .t{color:var(--dim);font-size:11px}
+  .bar{height:6px;border-radius:4px;background:var(--panel2);overflow:hidden;margin-top:5px}
+  .bar i{display:block;height:100%;border-radius:4px}
+  .stage{display:flex;align-items:center;gap:10px;margin-bottom:10px;font-size:12.5px}
+  .stage .n{width:34px;text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+  .task{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--hair);font-size:13px;align-items:flex-start}
+  .task:last-child{border:0}
+  .tag{font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;white-space:nowrap;text-transform:uppercase;letter-spacing:.5px}
+  .tag.critical{background:rgba(255,92,92,.15);color:var(--crit)}
+  .tag.high{background:rgba(255,159,67,.15);color:var(--warn)}
+  .tag.medium{background:rgba(0,212,255,.12);color:var(--acc2)}
+  .tag.low{background:rgba(139,150,176,.15);color:var(--dim)}
+  .tag.overdue{background:var(--crit);color:#fff}
+  .cam{position:relative;border-radius:10px;overflow:hidden;background:#02040a;border:1px solid var(--hair);aspect-ratio:16/9}
+  .cam canvas{width:100%;height:100%;display:block}
+  .cam .lbl{position:absolute;left:8px;top:8px;font-size:10px;background:rgba(0,0,0,.55);padding:3px 8px;border-radius:6px;letter-spacing:.5px}
+  .cam .rec{position:absolute;right:8px;top:8px;font-size:9px;color:var(--crit);display:flex;align-items:center;gap:4px;font-weight:700}
+  .cam .rec::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--crit);animation:bl 1.4s infinite}
+  @keyframes bl{50%{opacity:.15}}
+  .cam .stamp{position:absolute;right:8px;bottom:6px;font-size:9px;color:rgba(255,255,255,.55);font-variant-numeric:tabular-nums}
+  .alert{display:flex;gap:9px;padding:7px 0;border-bottom:1px solid var(--hair);font-size:12.5px}
+  .alert:last-child{border:0}
+  .alert .h{color:var(--dim);font-size:10.5px;white-space:nowrap;padding-top:2px}
+  .lvl{font-size:9px;font-weight:800;padding:2px 6px;border-radius:5px;text-transform:uppercase}
+  .lvl.info{background:rgba(0,212,255,.15);color:var(--acc2)}
+  .lvl.warning{background:rgba(255,159,67,.15);color:var(--warn)}
+  .lvl.critical{background:rgba(255,92,92,.2);color:var(--crit)}
+  .muted{color:var(--dim);font-size:12px}
+  .narr{border-left:3px solid var(--acc);padding:4px 0 4px 14px;font-size:13px;line-height:1.65;color:#cfd8ea;font-style:italic}
+  .foot{padding:8px 22px 26px;text-align:center;color:var(--dim);font-size:11px}
+  @media(max-width:1000px){.grid{grid-template-columns:repeat(6,1fr)}.seg{max-width:100%}}
+  @media(max-width:640px){.grid{grid-template-columns:1fr}.seg{order:3}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">LA <b>JEFATURA</b> <span style="font-size:10px;color:var(--dim);font-weight:600">v3 · CONSOLA CEO</span></div>
+  <div class="seg" id="companySeg"></div>
+  <div class="sp"></div>
+  <div class="pill" id="clock"></div>
+  <button class="btn ghost" id="langBtn">EN</button>
+  <button class="btn" id="pdfBtn">⬇ Informe PDF</button>
+</header>
+
+<div class="grid">
+  <div class="card" style="grid-column:span 3"><h3><span class="dot" style="background:var(--acc)"></span><span data-i18n="k1">Ingreso mensual proyectado</span></h3>
+    <div class="kpi">$48,200<small class="up">▲ 12% <span data-i18n="vs">vs semana previa</span></small></div></div>
+  <div class="card" style="grid-column:span 3"><h3><span class="dot" style="background:var(--acc2)"></span><span data-i18n="k2">Pipeline total (Nexus)</span></h3>
+    <div class="kpi">$214,500<small>23 <span data-i18n="leads">leads activos</span></small></div></div>
+  <div class="card" style="grid-column:span 3"><h3><span class="dot" style="background:var(--vio)"></span><span data-i18n="k3">Ventas cerradas</span></h3>
+    <div class="kpi">$96,400<small class="up">31% <span data-i18n="conv">conversión</span></small></div></div>
+  <div class="card" style="grid-column:span 3"><h3><span class="dot" style="background:var(--crit)"></span><span data-i18n="k4">Tareas críticas</span></h3>
+    <div class="kpi">1<small class="down">62h <span data-i18n="over">vencida — requiere CEO</span></small></div></div>
+
+  <div class="card" style="grid-column:span 4"><h3><span class="dot" style="background:var(--acc)"></span><span data-i18n="agenda">Agenda de hoy</span></h3><div id="agenda"></div></div>
+  <div class="card" style="grid-column:span 4"><h3><span class="dot" style="background:var(--acc2)"></span><span data-i18n="pipe">Pipeline Nexus por etapa</span></h3><div id="pipeline"></div>
+    <h3 style="margin-top:16px"><span class="dot" style="background:var(--vio)"></span><span data-i18n="country">Pipeline por país</span></h3><div id="countries"></div></div>
+  <div class="card" style="grid-column:span 4"><h3><span class="dot" style="background:var(--warn)"></span><span data-i18n="tasks">Pendientes del equipo</span></h3><div id="tasks"></div></div>
+
+  <div class="card" style="grid-column:span 8"><h3><span class="dot" style="background:var(--crit)"></span><span data-i18n="cams">Cámaras — IA</span> <span class="muted" data-i18n="demo">(feed simulado · await hardware)</span></h3>
+    <div id="cams" style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px"></div>
+    <div class="narr" style="margin-top:14px" id="camNarr"></div></div>
+
+  <div class="card" style="grid-column:span 4"><h3><span class="dot" style="background:var(--acc2)"></span><span data-i18n="alerts">Alertas Telegram</span></h3><div id="alerts"></div>
+    <h3 style="margin-top:16px"><span class="dot" style="background:var(--warn)"></span><span data-i18n="inbox">Gmail sin leer</span></h3><div id="inbox"></div></div>
+</div>
+<div class="foot">La Jefatura Suite · demo con datos realistas de muestra · <span data-i18n="foot">la capa real (mc.db / Nexus / cámaras) usa este mismo contrato de datos</span></div>
+
+<script>
+/* Sample data — identical contract to server/nexus_ingest.summary() + data/samples/*.json */
+const COMPANIES=[
+ {id:'all',name:'Todas / All',color:'#23d9b0'},
+ {id:'mbmb',name:'MBMB',color:'#23d9b0'},{id:'cedexx',name:'CEDEXX',color:'#7c6cff'},
+ {id:'305biz',name:'305BIZ',color:'#00D4FF'},{id:'aidyn',name:'AIDYN',color:'#ff9f43'},
+ {id:'saleinn',name:'NEXUS',color:'#ff6b81'}];
+const AGENDA=[["09:30","Kickoff Brickell Ortho Institute","Juan Perez + cliente · Meet"],
+ ["11:00","Revisión pipeline Nexus — semana 43","Equipo ventas · Oficina"],
+ ["14:00","Demo CEDEXX — Doral Urgent Care","Dr. Molina + Jasmel · Meet"],
+ ["16:30","1:1 Jasmel / Juan — pendientes CEO","Llamada"]];
+const PIPE=[["No Contactado",8,61200,"#ff6b81"],["Contactado",6,78500,"#00D4FF"],
+ ["Cotización",5,46800,"#7c6cff"],["Cerrado",4,28000,"#23d9b0"]];
+const COUNTRIES=[["USA",142000,12],["Colombia",38500,5],["México",22000,4],["Chile",12000,2]];
+const TASKS=[
+ ["Enviar propuesta CEDEXX a Doral Urgent","critical","overdue","Jasmel · $12.4k bloqueado"],
+ ["Firmar contrato Brickell Ortho","high","due 10/23","Jasmel"],
+ ["Responder PO Clinica Del Mar","high","due hoy","Maria · $9.8k"],
+ ["Renew SSL cedexx.net","medium","scheduled","Kimi Claw · 27 días"],
+ ["Post semanal LinkedIn MBMB","low","due hoy","Kimi Claw"]];
+const CAMS=[["CAM-01 · Recepción MBMB"],["CAM-02 · Sala de juntas"],
+ ["CAM-03 · Bodega / Archivo"],["CAM-04 · Estacionamiento"]];
+const CAMNARR_ES="Movimiento detectado en Bodega/Archivo ayer 21:47 (fuera de horario). Persona no identificada permaneció 45 segundos. Snapshot guardado y alerta enviada. Sin otros eventos fuera de horario en 12h.";
+const CAMNARR_EN="Motion detected in Warehouse/Records yesterday 21:47 (after hours). Unidentified person stayed 45 seconds. Snapshot saved and alert sent. No other after-hours events in 12h.";
+const ALERTS=[["08:14","info","Informe del Jefe enviado (texto + voz)."],
+ ["07:52","critical","TAREA VENCIDA 62h: propuesta CEDEXX a Doral Urgent — requiere CEO."],
+ ["02:11","info","Nuevo lead 305biz: 'Verificación de comprador' [test]."],
+ ["ayer","warning","Tunnel cloudflared reiniciado (latencia > 8s)."]];
+const INBOX=[["dr.molina@doralurgent.com","RE: Propuesta CEDEXX — cambios","2h","alta"],
+ ["justmail@michaelbuildingmb.com","Sept claims — 41 denegaciones","5h","alta"],
+ ["facturas@clinicadelmar.co","Orden de compra #PO-2214","11h","alta"],
+ ["carlos@saleinnovation.co","3 cotizaciones listas","7h","media"]];
+const I18N={
+ es:{k1:"Ingreso mensual proyectado",k2:"Pipeline total (Nexus)",k3:"Ventas cerradas",k4:"Tareas críticas",
+  vs:"vs semana previa",leads:"leads activos",conv:"conversión",over:"vencida — requiere CEO",
+  agenda:"Agenda de hoy",pipe:"Pipeline Nexus por etapa",country:"Pipeline por país",
+  tasks:"Pendientes del equipo",cams:"Cámaras — IA",demo:"(feed simulado · await hardware)",
+  alerts:"Alertas Telegram",inbox:"Gmail sin leer",
+  foot:"la capa real (mc.db / Nexus / cámaras) usa este mismo contrato de datos"},
+ en:{k1:"Projected monthly revenue",k2:"Total pipeline (Nexus)",k3:"Closed sales",k4:"Critical tasks",
+  vs:"vs prior week",leads:"active leads",conv:"conversion",over:"overdue — CEO action needed",
+  agenda:"Today's agenda",pipe:"Nexus pipeline by stage",country:"Pipeline by country",
+  tasks:"Team pending items",cams:"Cameras — AI",demo:"(simulated feed · await hardware)",
+  alerts:"Telegram alerts",inbox:"Unread Gmail",
+  foot:"the real layer (mc.db / Nexus / cameras) uses this same data contract"}};
+let lang='es',cur='all';
+const $=s=>document.querySelector(s);
+const money=v=>'$'+v.toLocaleString('en-US');
+
+function renderSeg(){$('#companySeg').innerHTML=COMPANIES.map(c=>
+ `<button class="${c.id===cur?'on':''}" style="${c.id===cur?`background:${c.color};`:''}" onclick="cur='${c.id}';renderSeg()">${c.name}</button>`).join('');}
+
+function renderAll(){
+ const T=I18N[lang];
+ document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.dataset.i18n;if(T[k])el.textContent=T[k];});
+ $('#langBtn').textContent=lang==='es'?'EN':'ES';
+ $('#camNarr').textContent=lang==='es'?CAMNARR_ES:CAMNARR_EN;
+ $('#agenda').innerHTML=AGENDA.map(a=>`<div class="row"><div><b>${a[0]}</b> — ${a[1]}<div class="t">${a[2]}</div></div></div>`).join('');
+ const maxP=Math.max(...PIPE.map(p=>p[2]));
+ $('#pipeline').innerHTML=PIPE.map(p=>`<div class="stage"><span class="n">${p[1]}</span>
+  <div style="flex:1"><div style="display:flex;justify-content:space-between"><span>${p[0]}</span><b>${money(p[2])}</b></div>
+  <div class="bar"><i style="width:${p[2]/maxP*100}%;background:${p[3]}"></i></div></div></div>`).join('');
+ const maxC=Math.max(...COUNTRIES.map(c=>c[1]));
+ $('#countries').innerHTML=COUNTRIES.map(c=>`<div class="stage"><span class="n">${c[2]}</span>
+  <div style="flex:1"><div style="display:flex;justify-content:space-between"><span>${c[0]}</span><b>${money(c[1])}</b></div>
+  <div class="bar"><i style="width:${c[1]/maxC*100}%;background:var(--acc2)"></i></div></div></div>`).join('');
+ $('#tasks').innerHTML=TASKS.map(t=>`<div class="task"><span class="tag ${t[1]}">${t[1]}</span>
+  <div style="flex:1">${t[0]}<div class="t">${t[3]}</div></div>
+  <span class="tag ${t[2]==='overdue'?'overdue':''}">${t[2]}</span></div>`).join('');
+ $('#cams').innerHTML=CAMS.map((c,i)=>`<div class="cam"><canvas id="cv${i}" width="320" height="180"></canvas>
+  <span class="lbl">${c[0]}</span><span class="rec">LIVE</span><span class="stamp" id="st${i}"></span></div>`).join('');
+ $('#alerts').innerHTML=ALERTS.map(a=>`<div class="alert"><span class="h">${a[0]}</span><span class="lvl ${a[1]}">${a[1]}</span><span>${a[2]}</span></div>`).join('');
+ $('#inbox').innerHTML=INBOX.map(m=>`<div class="row"><div>${m[1]}<div class="t">${m[0]} · ${m[2]}</div></div>
+  ${m[3]==='alta'?'<span class="tag critical">alta</span>':'<span class="tag low">media</span>'}</div>`).join('');
+ startFeeds();
+}
+
+/* Simulated feeds: noise + occasional person blob. Clearly labeled demo — replaced by
+   real snapshots (GET /api/cameras/snap/:id) once camera hosts are configured. */
+const feeds=[];
+function startFeeds(){
+ feeds.forEach(f=>cancelAnimationFrame(f));feeds.length=0;
+ CAMS.forEach((c,i)=>{
+  const cv=document.getElementById('cv'+i);if(!cv)return;const ctx=cv.getContext('2d');
+  const px=ctx.createImageData(320,180);let t=0;
+  (function frame(){
+   t++;const d=px.data;
+   for(let j=0;j<d.length;j+=4){const v=18+Math.random()*22;d[j]=v*.8;d[j+1]=v;d[j+2]=v*1.25;d[j+3]=255;}
+   ctx.putImageData(px,0,0);
+   if(t%140<40){
+    const x=((t%140)/40)*340-10,y=95+Math.sin(t*.1)*4;
+    ctx.fillStyle='rgba(200,210,230,.5)';ctx.fillRect(x,y,14,42);ctx.beginPath();
+    ctx.arc(x+7,y-7,7,0,7);ctx.fill();
+    ctx.fillStyle='#2ee06f';ctx.font='9px monospace';ctx.fillText('persona 0.87',Math.max(2,x-8),y-16);}
+   ctx.strokeStyle='rgba(35,217,176,.25)';for(let y=0;y<180;y+=30){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(320,y);ctx.stroke();}
+   feeds.push(requestAnimationFrame(frame));
+  })();
+  setInterval(()=>{const e=document.getElementById('st'+i);if(e)e.textContent=new Date().toLocaleTimeString('es-US',{hour12:false});},1000);
+ });
+}
+
+/* Client-side PDF (jsPDF) — same section contract as server/reports_pdf.py; the
+   server version is canonical (Gemini narrative + reportlab + charts). */
+$('#pdfBtn').onclick=()=>{
+ const {jsPDF}=window.jspdf;const doc=new jsPDF();let y=16;
+ const line=(txt,size=10,bold=false)=>{doc.setFontSize(size);doc.setFont('helvetica',bold?'bold':'normal');doc.text(txt,14,y);y+=size*.55;};
+ doc.setFillColor(11,16,32);doc.rect(0,0,210,30,'F');doc.setTextColor(35,217,176);doc.setFontSize(16);
+ doc.text('LA JEFATURA — INFORME EJECUTIVO',14,13);doc.setFontSize(9);doc.setTextColor(230,237,247);
+ doc.text(new Date().toLocaleString()+' · demo (misma estructura que el PDF del servidor)',14,21);
+ y=40;doc.setTextColor(20,25,40);
+ line('Resumen ejecutivo / Executive summary',12,true);
+ doc.setFontSize(9.5);doc.setFont('helvetica','normal');
+ const narr=lang==='es'
+  ?'Ingreso mensual proyectado US$48,200 con pipeline total de US$214,500 y conversion del 31%. 1 tarea vencida (62h) requiere accion inmediata del CEO; 3 vencen hoy. Enfoque recomendado: desbloquear la propuesta CEDEXX a Doral Urgent (US$12.4k) y sostener el ritmo de cotizaciones en etapa final.'
+  :'Projected monthly revenue $48,200 with $214,500 total pipeline at 31% conversion. 1 task is 62h overdue and needs immediate CEO action; 3 more due today. Recommended focus: unblock the CEDEXX proposal to Doral Urgent ($12.4k) and keep late-stage quotes moving.';
+ doc.text(doc.splitTextToSize(narr,182),14,y);y+=24;
+ line('Pipeline por etapa (USD)',12,true);
+ doc.autoTable({startY:y,head:[['Etapa','Leads','Valor']],body:PIPE.map(p=>[p[0],p[1],money(p[2])]),
+  theme:'grid',headStyles:{fillColor:[11,16,32]},styles:{fontSize:9}});y=doc.lastAutoTable.finalY+10;
+ line('Tareas / Tasks',12,true);
+ doc.autoTable({startY:y,head:[['Tarea','Severidad','Estado']],body:TASKS.map(t=>[t[0],t[1],t[2]]),
+  theme:'grid',headStyles:{fillColor:[11,16,32]},styles:{fontSize:9}});y=doc.lastAutoTable.finalY+10;
+ line('Agenda',12,true);AGENDA.forEach(a=>line(`${a[0]} — ${a[1]}  (${a[2]})`,9));
+ doc.save(`informe-${new Date().toISOString().slice(0,10)}.pdf`);
+};
+
+$('#langBtn').onclick=()=>{lang=lang==='es'?'en':'es';renderAll();};
+setInterval(()=>{$('#clock').textContent=new Date().toLocaleString(lang==='es'?'es-US':'en-US',{weekday:'short',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});},1000);
+renderSeg();renderAll();
+</script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+{
+  "generated": "2026-10-21T14:30:00-04:00",
+  "companies": [
+    { "id": "mbmb",    "name": "Medical Billing Miami Beach", "short": "MBMB",     "color": "#23d9b0", "segment": "Healthcare RCM",    "active": true },
+    { "id": "cedexx",  "name": "CEDEXX",                      "short": "CEDEXX",   "color": "#7c6cff", "segment": "Health Tech SaaS",  "active": true },
+    { "id": "305biz",  "name": "305 Business Group",          "short": "305BIZ",   "color": "#00D4FF", "segment": "Business Brokerage","active": true },
+    { "id": "aidyn",   "name": "AI Dynamics Pro",             "short": "AIDYN",    "color": "#FF9F43", "segment": "AI Agency",         "active": true },
+    { "id": "saleinn", "name": "Saleinnovation / Nexus CRM",  "short": "NEXUS",    "color": "#FF6B81", "segment": "Sales CRM",         "active": true }
+  ]
+}
