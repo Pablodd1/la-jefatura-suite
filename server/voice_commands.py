@@ -56,6 +56,12 @@ def parse(command: str, lang: str = "es") -> dict:
         return {"action": "status_digest"}
     if re.search(r"actualizar|refresh|reload|recargar", low):
         return {"action": "refresh"}
+    if re.search(r"redactar|draft|responder a|reply to", low):
+        return {"action": "draft_reply"}
+    if re.search(r"aprender|learn", low) and re.search(r"voz|voice|estilo", low):
+        return {"action": "learn_voice"}
+    if re.search(r"aprob", low) and re.search(r"borrador|draft|respuesta", low):
+        return {"action": "approve_draft"}
     if re.search(r"ayuda|help|comandos|commands", low):
         return {"action": "help"}
     return {"action": "unknown"}
@@ -115,15 +121,47 @@ def execute(command: str, lang: str = "es", samples_dir: str | None = None) -> d
     elif action == "status_digest":
         c = sqlite3.connect(DB)
         t = c.execute("SELECT COUNT(*) FROM tasks WHERE status != 'done'").fetchone()[0]
+        try:
+            import comms_brain
+            q = comms_brain.needs_reply_queue()
+            pending = f" {len(q)} mensajes esperando tu respuesta." if q else " Bandeja de respuesta limpia."
+        except Exception:
+            pending = ""
         c.close()
         try:
             sys.path.insert(0, HERE)
             s = __import__("nexus_ingest").summary()
             dig = (f"Resumen: pipeline US${s['kpis']['pipeline_total_estimado_usd']:,.0f} "
-                   f"con {s['kpis']['leads_activos']} leads; {t} tareas abiertas.")
+                   f"con {s['kpis']['leads_activos']} leads; {t} tareas abiertas.{pending}")
         except Exception:
-            dig = f"{t} tareas abiertas."
+            dig = f"{t} tareas abiertas.{pending}"
         reply = dig
+    elif action == "draft_reply":
+        import comms_brain
+        q = comms_brain.needs_reply_queue()
+        if not q:
+            reply = "No hay mensajes pendientes de respuesta."
+        else:
+            top = q[0]
+            d = comms_brain.draft(top["thread_id"], top["channel"])
+            reply = (f"Borrador {d['draft_id']} para {top['contact']}: {d['body'][:120]}... "
+                     f"Revísalo y aprueba para enviar.")
+    elif action == "learn_voice":
+        import comms_brain
+        p = comms_brain.learn()
+        reply = (f"Voz actualizada: despedida '{p.get('signoff','—')}', formalidad "
+                 f"{p.get('formality')}, largo medio {p.get('avg_len')} palabras.")
+    elif action == "approve_draft":
+        import comms_brain
+        c = sqlite3.connect(DB)
+        row = c.execute("SELECT id FROM drafts WHERE status IN ('pending_approval','edited') "
+                        "ORDER BY id DESC LIMIT 1").fetchone()
+        c.close()
+        if not row:
+            reply = "No hay borradores esperando aprobación."
+        else:
+            r = comms_brain.approve_and_send(row[0])
+            reply = ("Enviado." if r.get("ok") else f"No se pudo enviar: {r.get('error')}")
     else:
         ok = action != "unknown"
         reply = _reply_es(action)
