@@ -1,0 +1,30 @@
+{
+ "gmail.read": {
+  "status": "FAIL",
+  "error": "HTTP Error 400: Bad Request"
+ },
+ "gcal": {
+  "status": "FAIL",
+  "error": "HTTP Error 401: Unauthorized"
+ },
+ "gmail.send": {
+  "status": "FAIL",
+  "error": "HTTP Error 401: Unauthorized"
+ },
+ "telegram": {
+  "status": "LIVE",
+  "detail": "bot @Miamijassbot"
+ },
+ "whatsapp.cloud": {
+  "status": "DOCUMENTED",
+  "detail": "Meta Cloud API code-ready; needs WABA id + permanent token + webhook verify. NOT provisioned."
+ },
+ "whatsapp.personal": {
+  "status": "ASSESSED",
+  "detail": "OpenClaw WhatsApp adapter not configured on this host \u2014 method: unofficial WhatsApp Web protocol (Baileys-class). Risks: account restriction, QR re-pairing. Policy: read-and-draft only, never auto-send, immediate disconnect. Product stays functional without it (spec section 4)."
+ },
+ "gemini": {
+  "status": "DEAD",
+  "error": "HTTP 401: b'{\\n  \"error\": {\\n    \"code\": 401,\\n    \"message\": \"The bound service account is deleted or di'"
+ }
+}

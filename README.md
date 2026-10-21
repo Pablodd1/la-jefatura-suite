@@ -21,7 +21,10 @@ pipeline sync, camera AI digest, full per-company PDF reports, bilingual
 | `server/cameras.py` | Vendor-neutral camera layer (ONVIF + ffmpeg), event log, AI digest |
 | `server/reports_pdf.py` | Real PDF generator (reportlab + matplotlib + Gemini narrative w/ fallback) |
 | `server/voice_commands.py` | Headless executor of the same voice grammar (server-side, channel-agnostic) |
-| `server/comms_brain.py` | **Monitor → draft → owner-edit → learn → send** loop; voice profile learned from owner's texts AND their edits to drafts |
+| `server/comms_brain.py` | **Spec-compliant comms core**: §7 draft lifecycle (immutable versions, approval invalidation), §8 learning from owner edits, §11 operating modes A–D (default B), §12 audit trail, memory layers (verified/stated/observed/ai) |
+| `scripts/feasibility_audit.py` | Live-probes every provider; writes `docs/feasibility_results.json` |
+| `docs/FEASIBILITY.md` | **What works / what's blocked / what's unsupported** — live-audited 2026-10-22 |
+| `docs/ACCEPTANCE.md` | Spec §18 traceability matrix: PASS/PARTIAL/PENDING with proof for each |
 | `docs/COMMS_BRAIN.md` | The comms loop: learning signals, model routing (owner's JMM rules), channel matrix, safety rails |
 | `widgets/lajefatura-widget.js` | Embeddable white-label voice assistant — one `<script>` on any tenant site |
 | `server/ai_insights.py` | Single Gemini integration point (temp 0, math-in-code rule) |
@@ -51,6 +54,8 @@ Optional (when cameras exist): `pip install onvif-zeep wsdiscovery`, `apt instal
 - ✅ Demo console EN/ES + client PDF + **voice command layer** (Playwright-verified: company switch, task completion, digest, brief — `assets/demo-console-voice.png`)
 - ✅ Voice grammar executable server-side (`voice_commands.py`, tested against live mc.db)
 - ✅ **Comms brain** (owner request): monitors in/out texts, drafts replies in owner's voice, learns from owner-authored messages AND owner edits; approval-gated sending (Gmail/TG live, WhatsApp documented)
+- ✅ **Master-spec compliance layer**: lifecycle states, approval-binds-to-version + invalidation on edit, modes A/B/C/D, provenance-tiered preferences, full audit trail — e2e-tested with a REAL Telegram send
+- ✅ **Feasibility audit + acceptance traceability** (`docs/FEASIBILITY.md`, `docs/ACCEPTANCE.md`) — live-probed, nothing faked
 - ✅ Escalation engine + daily Spanish voice brief (live in production Mission Control)
 - ✅ **Full production automation inventory exported** (`docs/CLA_LOGIC.md`) — crons, endpoints, auth, landmines
 - ⏳ Waiting on Jasmel: camera brands, fresh Gemini key, Nexus repo/bridge rollout, pilot tenants
