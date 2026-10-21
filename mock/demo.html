@@ -104,6 +104,7 @@
 </div>
 <div class="foot">La Jefatura Suite · demo con datos realistas de muestra · <span data-i18n="foot">la capa real (mc.db / Nexus / cámaras) usa este mismo contrato de datos</span></div>
 
+<script src="/widgets/lajefatura-widget.js"></script>
 <script>
 /* Sample data — identical contract to server/nexus_ingest.summary() + data/samples/*.json */
 const COMPANIES=[
@@ -231,6 +232,37 @@ $('#pdfBtn').onclick=()=>{
 };
 
 $('#langBtn').onclick=()=>{lang=lang==='es'?'en':'es';renderAll();};
+
+/* ── Voice widget: register console actions (headless-testable via window.LJ.execute) ── */
+window.LJ_WIDGET={lang:'es'};
+window.LJ.register('switch_company',(name)=>{
+ const c=COMPANIES.find(x=>x.name.toLowerCase().includes(name.toLowerCase().replace(/\.$/,''))||x.id===name.toLowerCase());
+ if(!c)return 'Empresa no encontrada. Opciones: '+COMPANIES.map(x=>x.name).join(', ');
+ cur=c.id;renderSeg();
+ return (lang==='es'?'Cambiando a ':'Switching to ')+c.name+'.';
+});
+window.LJ.register('download_report',()=>{document.getElementById('pdfBtn').click();
+ return lang==='es'?'Generando y descargando el informe PDF.':'Generating and downloading the PDF report.';});
+window.LJ.register('complete_task',(arg)=>{
+ const n=parseInt(arg)-1;
+ if(isNaN(n)||n<0||n>=TASKS.length)return lang==='es'?'Dime el número de tarea.':'Give me the task number.';
+ const t=TASKS[n];t[2]='done';
+ renderAll();
+ return (lang==='es'?'Tarea completada: ':'Task completed: ')+t[0];});
+window.LJ.register('read_brief',()=>{
+ const b=lang==='es'
+  ?'Resumen del día. Ingreso mensual proyectado: 48 mil 200 dólares, con pipeline de 214 mil 500. Tienes una tarea crítica vencida: la propuesta CEDEXX a Doral Urgent. A las 14 horas, demo con el doctor Molina.'
+  :'Daily brief. Projected monthly revenue: 48 thousand 200 dollars, pipeline of 214 thousand 500. You have one critical overdue task: the CEDEXX proposal for Doral Urgent. At 2 PM, demo with Doctor Molina.';
+ return b;});
+window.LJ.register('status_digest',()=>{
+ const open=TASKS.filter(t=>t[2]!=='done').length;
+ return lang==='es'
+  ?`Resumen: pipeline de 214 mil 500 dólares con 23 leads. ${open} tareas abiertas, 1 crítica vencida. Próxima reunión: demo CEDEXX a las 14 horas con el doctor Molina.`
+  :`Summary: $214,500 pipeline with 23 leads. ${open} open tasks, 1 critical overdue. Next meeting: CEDEXX demo at 2 PM with Doctor Molina.`;});
+window.LJ.register('refresh',()=>{renderAll();return lang==='es'?'Datos actualizados.':'Data refreshed.';});
+window.LJ.register('help',()=>lang==='es'
+ ?'Comandos de voz: cambiar a, más el nombre de la empresa. Descargar informe. Completar tarea, más el número. Leer resumen. Qué hay de nuevo. Actualizar.'
+ :'Voice commands: switch to, plus company name. Download report. Complete task, plus number. Read brief. What\'s new. Refresh.');
 setInterval(()=>{$('#clock').textContent=new Date().toLocaleString(lang==='es'?'es-US':'en-US',{weekday:'short',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});},1000);
 renderSeg();renderAll();
 </script>

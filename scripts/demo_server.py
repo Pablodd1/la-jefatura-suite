@@ -49,6 +49,10 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
             html = open(os.path.join(ROOT, "mock", "demo.html"),
                         "rb").read()
             self._send(200, html, "text/html; charset=utf-8")
+        elif self.path.rstrip("/") == "/widgets/lajefatura-widget.js":
+            js = open(os.path.join(ROOT, "widgets", "lajefatura-widget.js"),
+                      "rb").read()
+            self._send(200, js, "application/javascript; charset=utf-8")
         elif self.path == "/api/nexus/summary":
             self._send(200, nexus_ingest.summary())
         elif self.path == "/api/report.pdf":

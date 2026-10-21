@@ -44,6 +44,27 @@
                           └─────────────────────────────────────────────┘
 ```
 
+## Voice & widget layer (added per owner request Oct 22)
+
+```
+Tenant site / console          window.LJ.register(action, fn)
+       │                       (demo.html registers 6 actions)
+       ▼                                  │
+ widgets/lajefatura-widget.js ──parse──┐  │ local action? run it + TTS reply
+ (Web Speech STT/TTS, bilingual,     │  │
+  text fallback, zero deps)           ▼  ▼
+                              no local → POST /api/voice/command
+                                          (server/voice_commands.py —
+                                           same grammar, mutates real state:
+                                           tasks→mc.db, PDF→reportlab,
+                                           digests→ai_insights)
+```
+
+Control-plane rule: **voice commands are deterministic** (regex grammar,
+no LLM in the loop). AI only narrates digests/briefs — never decides what
+a command means. Telegram/WhatsApp voice notes plug into the same executor
+later via the Whisper hook documented in `voice_commands.py`.
+
 ## Data contract (the piece that must never drift)
 
 `nexus_ingest.summary()` returns exactly what the Nexus dashboard displays:

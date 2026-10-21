@@ -15,10 +15,13 @@ pipeline sync, camera AI digest, full per-company PDF reports, bilingual
 | `docs/RESEARCH.md` | Real-world precedents every design decision was copied from (Frigate, n8n, Dexie patterns, etc.) |
 | `docs/ARCHITECTURE.md` | System diagram + data contract + AI usage map + multi-tenancy plan |
 | `docs/HANDOFF.md` | What's tested, what to wire next, open questions for Jasmel, landmines |
-| `mock/demo.html` | The visual: CEO console with realistic sample data, EN/ES toggle, working client-side PDF |
+| `docs/CLA_LOGIC.md` | **Every automation the AI assistant runs in production** — crons, endpoints, auth, landmines log |
+| `mock/demo.html` | The visual: CEO console + **voice widget layer** (bilingual voice commands control the whole site: switch company, complete tasks, download report, hear the brief) |
 | `server/nexus_ingest.py` | Nexus CRM → SQLite sync (upsert + dashboard-shape aggregates) |
 | `server/cameras.py` | Vendor-neutral camera layer (ONVIF + ffmpeg), event log, AI digest |
 | `server/reports_pdf.py` | Real PDF generator (reportlab + matplotlib + Gemini narrative w/ fallback) |
+| `server/voice_commands.py` | Headless executor of the same voice grammar (server-side, channel-agnostic) |
+| `widgets/lajefatura-widget.js` | Embeddable white-label voice assistant — one `<script>` on any tenant site |
 | `server/ai_insights.py` | Single Gemini integration point (temp 0, math-in-code rule) |
 | `scripts/demo_server.py` | 4-endpoint demo server |
 | `scripts/nexus_bridge_snippet.js` | Browser bridge: syncs Nexus IndexedDB → MC without repo access |
@@ -43,7 +46,10 @@ Optional (when cameras exist): `pip install onvif-zeep wsdiscovery`, `apt instal
 - ✅ Camera scaffold per Frigate/ONVIF research (loads w/o hardware)
 - ✅ Full PDF report (tested, sample in `assets/`)
 - ✅ Demo console EN/ES + client PDF (Playwright-verified)
+- ✅ Demo console EN/ES + client PDF + **voice command layer** (Playwright-verified: company switch, task completion, digest, brief — `assets/demo-console-voice.png`)
+- ✅ Voice grammar executable server-side (`voice_commands.py`, tested against live mc.db)
 - ✅ Escalation engine + daily Spanish voice brief (live in production Mission Control)
+- ✅ **Full production automation inventory exported** (`docs/CLA_LOGIC.md`) — crons, endpoints, auth, landmines
 - ⏳ Waiting on Jasmel: camera brands, fresh Gemini key, Nexus repo/bridge rollout, pilot tenants
 
 ## License / ownership
