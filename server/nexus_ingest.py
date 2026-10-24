@@ -28,7 +28,7 @@ import json
 import sqlite3
 import time
 
-DB = "/root/.openclaw/workspace/mission-control/mc.db"
+import os; _PROD_DIR = "/root/.openclaw/workspace/mission-control"; DB = os.environ.get("MC_DB_PATH") or (os.path.join(_PROD_DIR, "mc.db") if os.path.isdir(_PROD_DIR) else os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "mc.db"))
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS nexus_leads (

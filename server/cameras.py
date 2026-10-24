@@ -28,8 +28,8 @@ import sqlite3
 import subprocess
 import time
 
-DB = "/root/.openclaw/workspace/mission-control/mc.db"
-SNAP_DIR = "/root/.openclaw/workspace/mission-control/snapshots"
+_PROD_DIR = "/root/.openclaw/workspace/mission-control"; DB = os.environ.get("MC_DB_PATH") or (os.path.join(_PROD_DIR, "mc.db") if os.path.isdir(_PROD_DIR) else os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "mc.db"))
+SNAP_DIR = os.path.join(os.path.dirname(DB), "snapshots")
 os.makedirs(SNAP_DIR, exist_ok=True)
 
 SCHEMA = """

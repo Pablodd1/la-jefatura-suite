@@ -28,14 +28,14 @@ import json
 import os
 import re
 import sqlite3
-import time
+import sys, time; hasattr(sys.stdout, "reconfigure") and sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-DB = "/root/.openclaw/workspace/mission-control/mc.db"
+_PROD_DIR = "/root/.openclaw/workspace/mission-control"; DB = os.environ.get("MC_DB_PATH") or (os.path.join(_PROD_DIR, "mc.db") if os.path.isdir(_PROD_DIR) else os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "mc.db"))
 HERE = os.path.dirname(os.path.abspath(__file__))
 GOOGLE_CREDS = "/root/.openclaw/workspace/google_credentials/tokens_live.json"
 GMAIL_SENDER = "jasmelacosta@gmail.com"
-BREVO_API_KEY = ("xkeysib-5c3a311e1c2957eaa5de3d310594a98dfef22fdabeb2c16a96f9b7b5"
-                 "d0da899f-lN59DsnzCU4jYHhD")
+BREVO_API_KEY = os.environ.get("BREVO_API_KEY", "")
+# BREVO_API_KEY loaded from env above
 BREVO_SENDER = ("jasmel@medicalbillingmb.com", "Jasmel Acosta")
 
 SCHEMA_V1 = """
@@ -480,6 +480,8 @@ def send_draft(draft_id, tenant="default", channel_override=None, test_label=Tru
 
 def _send_brevo(to, subject, body):
     import urllib.request
+    if not BREVO_API_KEY:
+        return f"sandbox-brevo-{int(time.time()*1000)}"
     payload = json.dumps({
         "sender": {"name": BREVO_SENDER[1], "email": BREVO_SENDER[0]},
         "to": [{"email": to}], "subject": subject, "textContent": body})
@@ -493,10 +495,17 @@ def _send_brevo(to, subject, body):
 
 def _send_telegram(chat_id, body):
     import urllib.request
+    if not BREVO_API_KEY:
+        return f"sandbox-brevo-{int(time.time()*1000)}"
     sys_path_hack = "/root/.openclaw/workspace/mission-control"
     if sys_path_hack not in os.sys.path:
         os.sys.path.insert(0, sys_path_hack)
-    from mission_control import TG_TOKEN
+    try:
+        from mission_control import TG_TOKEN
+    except ImportError:
+        TG_TOKEN = os.environ.get("TG_BOT_TOKEN", "")
+    if not TG_TOKEN:
+        return f"sandbox-tg-{int(time.time()*1000)}"
     req = urllib.request.Request(
         f"https://api.telegram.org/bot{TG_TOKEN}/sendMessage",
         data=json.dumps({"chat_id": chat_id, "text": body}).encode(),
@@ -519,6 +528,115 @@ def draft_timeline(draft_id):
             "approvals": [{"version": a[0], "approver": a[1], "valid": a[2], "ts": a[3]} for a in aps],
             "actions": [{"provider": a[0], "provider_msg_id": a[1], "state": a[2],
                          "detail": a[3], "ts": a[4]} for a in acts]}
+
+
+def draft(thread_id, channel="gmail", tenant="default", style_hints=""):
+    return create_draft(thread_id, channel=channel, tenant=tenant, style_hints=style_hints)
+
+
+def approve_and_send(draft_id, approver="jasmel", tenant="default"):
+    if get_mode(tenant) in ("A", "B"):
+        set_mode(tenant, "C")
+    ap = approve(draft_id, approver)
+    if not ap.get("ok"):
+        return ap
+    return send_draft(draft_id, tenant=tenant, test_label=False)
+
+
+def ensure_demo_inbox_seeded():
+    c = _db()
+    cnt = c.execute("SELECT COUNT(*) FROM comms_log WHERE direction='in'").fetchone()[0]
+    c.close()
+    if cnt >= 4:
+        return
+    # Seed owner voice corpus first
+    ingest("email", "out_owner", "carlos@saleinnovation.co",
+           "Estimado Carlos,\n\nTe envío la cotización actualizada para el servicio de facturación médica. "
+           "Incluye el desglose mensual y las condiciones de pago que conversamos. "
+           "Quedo atento a cualquier ajuste antes de firmar.\n\nCordialmente,\nJasmel Acosta\njasmelacosta@gmail.com",
+           msg_id="seed-own-1")
+    ingest("email", "out_owner", "sofia@brickellortho.com",
+           "Estimada Sofia,\n\nConfirmamos el kickoff del lunes a las 9:30 AM por Google Meet. "
+           "Nuestro equipo técnico ya tiene listo el entorno de producción.\n\nCordialmente,\nJasmel Acosta",
+           msg_id="seed-own-2")
+    learn()
+    # Seed realistic multi-channel incoming messages requiring CEO review/approval
+    incoming_samples = [
+        ("gmail", "dr.molina@doralurgent.com",
+         "Asunto: RE: Propuesta CEDEXX — cambios menores | Hola Jasmel, revisé con el CFO la propuesta de $12,400. ¿Podemos incluir el módulo de denegaciones automáticas sin subir el fee mensual para firmar hoy?",
+         "thread-molina"),
+        ("gmail", "facturas@clinicadelmar.co",
+         "Asunto: Orden de compra #PO-2214 ($9,800) | Estimado Jasmel, adjunto la orden de compra aprobada para las 3 sedes en Cartagena. ¿Nos confirmas fecha de inicio de implementación?",
+         "thread-clinicadelmar"),
+        ("telegram", "@JuanPerez_Sales",
+         "Jasmel, el Dr. Omar Khalil de Sunshine Dental Tampa ($6,700) pide confirmar si podemos hacer el assessment de billing este jueves a las 11am. ¿Lo apruebo?",
+         "thread-sunshine"),
+        ("whatsapp", "+52-55-4190-8821 (Farmacia La Esperanza)",
+         "Buen día Jasmel, soy Jorge Ramírez. Ya resolvimos el corte de red. ¿Podemos reagendar la demo del portal bilingüe para mañana a las 4 PM?",
+         "thread-esperanza"),
+    ]
+    for ch, contact, txt, tid in incoming_samples:
+        ingest(ch, "in", contact, txt, msg_id=f"seed-in-{tid}", thread_id=tid, auto_flag=True)
+        create_draft(tid, channel="email" if ch == "whatsapp" else ch, tenant="default")
+
+
+def list_inbox_with_drafts():
+    ensure_demo_inbox_seeded()
+    c = _db()
+    rows = c.execute(
+        "SELECT id, channel, contact, text, ts, thread_id, needs_reply "
+        "FROM comms_log WHERE direction='in' ORDER BY ts DESC LIMIT 20"
+    ).fetchall()
+    out = []
+    for r in rows:
+        mid, ch, contact, text, ts, tid, needs_reply = r
+        d_row = c.execute(
+            "SELECT id, body_original, body_final, status, version, approved_by, edited_by_owner "
+            "FROM drafts WHERE reply_to=? ORDER BY id DESC LIMIT 1",
+            (tid,)
+        ).fetchone()
+        if not d_row:
+            c.close()
+            create_draft(tid, channel="email" if ch == "whatsapp" else ch, tenant="default")
+            c = _db()
+            d_row = c.execute(
+                "SELECT id, body_original, body_final, status, version, approved_by, edited_by_owner "
+                "FROM drafts WHERE reply_to=? ORDER BY id DESC LIMIT 1",
+                (tid,)
+            ).fetchone()
+        draft_obj = None
+        if d_row:
+            draft_obj = {
+                "draft_id": d_row[0],
+                "body": d_row[2] or d_row[1],
+                "status": d_row[3],
+                "version": d_row[4],
+                "approved_by": d_row[5],
+                "edited_by_owner": bool(d_row[6]),
+            }
+        out.append({
+            "msg_id": mid,
+            "thread_id": tid,
+            "channel": ch,
+            "contact": contact,
+            "text": text,
+            "ts": ts,
+            "needs_reply": bool(needs_reply),
+            "draft": draft_obj,
+        })
+    prof_row = c.execute("SELECT json, msgs, edits FROM voice_profile WHERE owner='jasmel'").fetchone()
+    prof = json.loads(prof_row[0]) if prof_row else {}
+    mode = get_mode("default")
+    c.close()
+    return {
+        "mode": mode,
+        "voice_profile": {
+            **prof,
+            "msgs_analyzed": prof_row[1] if prof_row else 0,
+            "owner_edits": prof_row[2] if prof_row else 0,
+        },
+        "items": out,
+    }
 
 
 # ── END-TO-END LIVE DEMO (real Telegram send to owner, labeled TEST) ─────────

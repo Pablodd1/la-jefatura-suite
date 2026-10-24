@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+data/*.secret.json
+data/*.secret
+data/mc.db
+data/cloudflared-mc.yml
+data/onboarding_state.json
+.env
+.env.*

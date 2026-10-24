@@ -3,59 +3,88 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>La Jefatura — CEO Console (Demo)</title>
+<title>La Jefatura — White-Label CEO Mission Control</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <style>
   :root{
-    --bg:#070b14; --panel:#0d1322; --panel2:#111a30; --hair:rgba(255,255,255,.07);
-    --txt:#e8edf7; --dim:#8b96b0; --acc:#23d9b0; --acc2:#00D4FF; --vio:#7c6cff;
+    --bg:#070b14; --panel:#0d1322; --panel2:#111a30; --panel3:#16223f;
+    --hair:rgba(255,255,255,.08); --txt:#e8edf7; --dim:#8b96b0;
+    --acc:#23d9b0; --acc2:#00D4FF; --vio:#7c6cff;
     --warn:#ff9f43; --crit:#ff5c5c; --ok:#3ddc84;
   }
   *{margin:0;padding:0;box-sizing:border-box}
-  body{background:var(--bg);color:var(--txt);font-family:-apple-system,'SF Pro Display',Inter,Segoe UI,sans-serif;min-height:100vh}
-  header{display:flex;align-items:center;gap:14px;padding:14px 22px;border-bottom:1px solid var(--hair);
-         background:rgba(13,19,34,.85);backdrop-filter:blur(14px);position:sticky;top:0;z-index:50}
-  .logo{font-weight:800;font-size:17px;letter-spacing:.4px}
+  body{background:var(--bg);color:var(--txt);font-family:-apple-system,'SF Pro Display',Inter,Segoe UI,sans-serif;min-height:100vh;padding-bottom:70px}
+  /* Header & Navigation */
+  header{display:flex;align-items:center;gap:12px;padding:12px 22px;border-bottom:1px solid var(--hair);
+         background:rgba(13,19,34,.92);backdrop-filter:blur(16px);position:sticky;top:0;z-index:60;flex-wrap:wrap}
+  .logo{font-weight:800;font-size:16px;letter-spacing:.4px;display:flex;align-items:center;gap:8px}
   .logo b{color:var(--acc)}
-  .seg{display:flex;background:var(--panel2);border:1px solid var(--hair);border-radius:9px;padding:3px;gap:2px;overflow-x:auto;max-width:52vw}
-  .seg button{background:none;border:0;color:var(--dim);padding:6px 12px;border-radius:7px;font-size:12.5px;
+  .badge-wl{font-size:10px;background:rgba(35,217,176,.12);color:var(--acc);border:1px solid rgba(35,217,176,.3);padding:2px 8px;border-radius:12px;font-weight:700}
+  .seg{display:flex;background:var(--panel2);border:1px solid var(--hair);border-radius:9px;padding:3px;gap:2px;overflow-x:auto}
+  .seg button{background:none;border:0;color:var(--dim);padding:5px 11px;border-radius:7px;font-size:12px;
               cursor:pointer;white-space:nowrap;font-weight:600;transition:.15s}
-  .seg button.on{color:#04241c}
+  .seg button.on{color:#04241c;font-weight:800}
   .sp{flex:1}
-  .pill{font-size:11px;color:var(--dim);border:1px solid var(--hair);padding:5px 10px;border-radius:20px;white-space:nowrap}
-  .btn{background:var(--acc);color:#04241c;border:0;padding:8px 14px;border-radius:8px;font-weight:700;font-size:12.5px;cursor:pointer}
+  .pill{font-size:11px;color:var(--dim);border:1px solid var(--hair);padding:5px 10px;border-radius:20px;white-space:nowrap;display:inline-flex;align-items:center;gap:6px}
+  .btn{background:var(--acc);color:#04241c;border:0;padding:7px 13px;border-radius:8px;font-weight:700;font-size:12px;cursor:pointer;transition:.15s;display:inline-flex;align-items:center;gap:6px}
+  .btn:hover{filter:brightness(1.08);transform:translateY(-1px)}
   .btn.ghost{background:var(--panel2);color:var(--txt);border:1px solid var(--hair)}
-  .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px;padding:18px 22px;max-width:1500px;margin:0 auto}
+  .btn.vio{background:var(--vio);color:#fff}
+  .btn.sm{padding:5px 10px;font-size:11px;border-radius:6px}
+
+  /* Page Tabs Bar */
+  .nav-bar{display:flex;gap:6px;padding:10px 22px;background:rgba(17,26,48,.65);border-bottom:1px solid var(--hair);overflow-x:auto;max-width:100%}
+  .nav-tab{background:transparent;border:1px solid transparent;color:var(--dim);padding:8px 14px;border-radius:9px;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap;transition:.15s;display:flex;align-items:center;gap:7px}
+  .nav-tab:hover{color:var(--txt);background:rgba(255,255,255,.04)}
+  .nav-tab.active{background:rgba(35,217,176,.14);color:var(--acc);border-color:rgba(35,217,176,.35);font-weight:700}
+  .nav-tab .cnt{background:rgba(255,92,92,.2);color:var(--crit);font-size:10px;padding:1px 6px;border-radius:10px;font-weight:800}
+
+  /* Layout & Cards */
+  .tab-pane{display:none;max-width:1520px;margin:0 auto;padding:18px 22px}
+  .tab-pane.active{display:block}
+  .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}
   .card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--hair);
-        border-radius:14px;padding:16px 18px;box-shadow:0 8px 30px rgba(0,0,0,.35)}
-  .card h3{font-size:11px;text-transform:uppercase;letter-spacing:1.2px;color:var(--dim);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+        border-radius:14px;padding:16px 18px;box-shadow:0 8px 28px rgba(0,0,0,.32)}
+  .card h3{font-size:11px;text-transform:uppercase;letter-spacing:1.1px;color:var(--dim);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .card h3 .lhs{display:flex;align-items:center;gap:8px}
   .dot{width:7px;height:7px;border-radius:50%;display:inline-block}
   .kpi{font-size:26px;font-weight:800;letter-spacing:-.5px}
-  .kpi small{font-size:12px;color:var(--dim);font-weight:500;display:block;margin-top:2px}
+  .kpi small{font-size:12px;color:var(--dim);font-weight:500;display:block;margin-top:3px}
   .up{color:var(--ok)} .down{color:var(--crit)}
-  .row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--hair);font-size:13px}
+  .row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--hair);font-size:13px;gap:10px}
   .row:last-child{border-bottom:0}
-  .row .t{color:var(--dim);font-size:11px}
-  .bar{height:6px;border-radius:4px;background:var(--panel2);overflow:hidden;margin-top:5px}
-  .bar i{display:block;height:100%;border-radius:4px}
-  .stage{display:flex;align-items:center;gap:10px;margin-bottom:10px;font-size:12.5px}
+  .row .t{color:var(--dim);font-size:11px;margin-top:2px}
+  .bar{height:7px;border-radius:4px;background:rgba(255,255,255,.06);overflow:hidden;margin-top:5px}
+  .bar i{display:block;height:100%;border-radius:4px;transition:width .35s ease}
+  .stage{display:flex;align-items:center;gap:10px;margin-bottom:11px;font-size:12.5px}
   .stage .n{width:34px;text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
-  .task{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--hair);font-size:13px;align-items:flex-start}
+  .task{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--hair);font-size:13px;align-items:center}
   .task:last-child{border:0}
-  .tag{font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;white-space:nowrap;text-transform:uppercase;letter-spacing:.5px}
+  .tag{font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;white-space:nowrap;text-transform:uppercase;letter-spacing:.4px}
   .tag.critical{background:rgba(255,92,92,.15);color:var(--crit)}
   .tag.high{background:rgba(255,159,67,.15);color:var(--warn)}
   .tag.medium{background:rgba(0,212,255,.12);color:var(--acc2)}
   .tag.low{background:rgba(139,150,176,.15);color:var(--dim)}
   .tag.overdue{background:var(--crit);color:#fff}
+  .tag.ok{background:rgba(61,220,132,.15);color:var(--ok)}
+
+  /* Foreseen / Proactive Banner */
+  .foreseen-strip{background:linear-gradient(90deg,rgba(35,217,176,.1),rgba(124,108,255,.1));border:1px solid rgba(35,217,176,.28);border-radius:14px;padding:14px 18px;margin-bottom:16px}
+  .foreseen-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px}
+  .foreseen-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .f-card{background:rgba(7,11,20,.65);border:1px solid var(--hair);border-radius:11px;padding:12px 14px;display:flex;flex-direction:column;justify-content:space-between;gap:8px}
+  .f-card h4{font-size:13px;color:var(--txt);display:flex;align-items:center;gap:7px}
+  .f-card p{font-size:11.5px;color:var(--dim);line-height:1.45}
+
+  /* Cameras */
   .cam{position:relative;border-radius:10px;overflow:hidden;background:#02040a;border:1px solid var(--hair);aspect-ratio:16/9}
   .cam canvas{width:100%;height:100%;display:block}
-  .cam .lbl{position:absolute;left:8px;top:8px;font-size:10px;background:rgba(0,0,0,.55);padding:3px 8px;border-radius:6px;letter-spacing:.5px}
+  .cam .lbl{position:absolute;left:8px;top:8px;font-size:10px;background:rgba(0,0,0,.6);padding:3px 8px;border-radius:6px;letter-spacing:.4px}
   .cam .rec{position:absolute;right:8px;top:8px;font-size:9px;color:var(--crit);display:flex;align-items:center;gap:4px;font-weight:700}
   .cam .rec::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--crit);animation:bl 1.4s infinite}
   @keyframes bl{50%{opacity:.15}}
-  .cam .stamp{position:absolute;right:8px;bottom:6px;font-size:9px;color:rgba(255,255,255,.55);font-variant-numeric:tabular-nums}
+  .cam .stamp{position:absolute;right:8px;bottom:6px;font-size:9px;color:rgba(255,255,255,.6);font-variant-numeric:tabular-nums}
   .alert{display:flex;gap:9px;padding:7px 0;border-bottom:1px solid var(--hair);font-size:12.5px}
   .alert:last-child{border:0}
   .alert .h{color:var(--dim);font-size:10.5px;white-space:nowrap;padding-top:2px}
@@ -64,207 +93,1771 @@
   .lvl.warning{background:rgba(255,159,67,.15);color:var(--warn)}
   .lvl.critical{background:rgba(255,92,92,.2);color:var(--crit)}
   .muted{color:var(--dim);font-size:12px}
-  .narr{border-left:3px solid var(--acc);padding:4px 0 4px 14px;font-size:13px;line-height:1.65;color:#cfd8ea;font-style:italic}
-  .foot{padding:8px 22px 26px;text-align:center;color:var(--dim);font-size:11px}
-  @media(max-width:1000px){.grid{grid-template-columns:repeat(6,1fr)}.seg{max-width:100%}}
-  @media(max-width:640px){.grid{grid-template-columns:1fr}.seg{order:3}}
+  .narr{border-left:3px solid var(--acc);padding:6px 0 6px 14px;font-size:13px;line-height:1.6;color:#cfd8ea;background:rgba(35,217,176,.04);border-radius:0 8px 8px 0}
+
+  /* Comms Draft Cards */
+  .draft-card{background:rgba(7,11,20,.55);border:1px solid var(--hair);border-radius:12px;padding:14px;margin-bottom:12px}
+  .draft-card.sent{border-color:rgba(61,220,132,.35);background:rgba(61,220,132,.04)}
+  .draft-in{font-size:12.5px;color:#cfd8ea;background:rgba(255,255,255,.04);padding:10px 12px;border-radius:8px;margin:8px 0;border-left:3px solid var(--acc2)}
+  .draft-area{width:100%;min-height:86px;background:#070b14;color:var(--txt);border:1px solid rgba(255,255,255,.14);border-radius:8px;padding:10px;font-family:inherit;font-size:12.5px;line-height:1.45;resize:vertical;margin-top:6px}
+  .draft-actions{display:flex;justify-content:space-between;align-items:center;margin-top:10px;flex-wrap:wrap;gap:8px}
+
+  /* Inputs & Setup */
+  .inp{background:#070b14;border:1px solid rgba(255,255,255,.15);color:var(--txt);padding:8px 12px;border-radius:8px;font-size:13px;width:100%}
+  .switch{position:relative;display:inline-block;width:40px;height:22px}
+  .switch input{opacity:0;width:0;height:0}
+  .slider{position:absolute;cursor:pointer;inset:0;background:#25304d;transition:.2s;border-radius:22px}
+  .slider:before{position:absolute;content:"";height:16px;width:16px;left:3px;bottom:3px;background:#fff;transition:.2s;border-radius:50%}
+  input:checked + .slider{background:var(--acc)}
+  input:checked + .slider:before{transform:translateX(18px)}
+
+  /* Blog Cards */
+  .blog-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:14px}
+  .blog-card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--hair);border-radius:14px;padding:20px;display:flex;flex-direction:column;justify-content:space-between;gap:14px}
+  .blog-card h2{font-size:16px;color:var(--txt);line-height:1.35}
+  .blog-steps{list-style:none;display:flex;flex-direction:column;gap:8px;margin:6px 0}
+  .blog-steps li{font-size:12.5px;color:#cfd8ea;line-height:1.5;background:rgba(7,11,20,.55);padding:9px 12px;border-radius:8px;border-left:3px solid var(--acc)}
+  .blog-steps li b{color:var(--acc)}
+  .blog-outcome{font-size:12px;color:var(--ok);background:rgba(61,220,132,.08);border:1px solid rgba(61,220,132,.25);padding:8px 12px;border-radius:8px}
+
+  .toast{position:fixed;bottom:24px;left:24px;background:#0d1322;border:1px solid var(--acc);color:var(--txt);padding:10px 16px;border-radius:10px;font-size:12.5px;box-shadow:0 12px 30px rgba(0,0,0,.5);z-index:9998;display:none}
+  .foot{padding:14px 22px 26px;text-align:center;color:var(--dim);font-size:11px}
+  @media(max-width:1050px){.grid{grid-template-columns:repeat(6,1fr)}.foreseen-cards,.blog-grid{grid-template-columns:1fr}}
+  @media(max-width:680px){.grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
+
 <header>
-  <div class="logo">LA <b>JEFATURA</b> <span style="font-size:10px;color:var(--dim);font-weight:600">v3 · CONSOLA CEO</span></div>
+  <div class="logo">
+    <span id="brandLogo">LA <b>JEFATURA</b></span>
+    <span class="badge-wl" id="brandSub">WHITE-LABEL CEO MISSION CONTROL</span>
+  </div>
   <div class="seg" id="companySeg"></div>
   <div class="sp"></div>
+  <div class="pill" id="slotPill" style="cursor:pointer" title="Click to cycle Morning / Afternoon / Evening">🌅 <span id="slotLabel">Rutina Mañana</span></div>
   <div class="pill" id="clock"></div>
   <button class="btn ghost" id="langBtn">EN</button>
   <button class="btn" id="pdfBtn">⬇ Informe PDF</button>
 </header>
 
-<div class="grid">
-  <div class="card" style="grid-column:span 3"><h3><span class="dot" style="background:var(--acc)"></span><span data-i18n="k1">Ingreso mensual proyectado</span></h3>
-    <div class="kpi">$48,200<small class="up">▲ 12% <span data-i18n="vs">vs semana previa</span></small></div></div>
-  <div class="card" style="grid-column:span 3"><h3><span class="dot" style="background:var(--acc2)"></span><span data-i18n="k2">Pipeline total (Nexus)</span></h3>
-    <div class="kpi">$214,500<small>23 <span data-i18n="leads">leads activos</span></small></div></div>
-  <div class="card" style="grid-column:span 3"><h3><span class="dot" style="background:var(--vio)"></span><span data-i18n="k3">Ventas cerradas</span></h3>
-    <div class="kpi">$96,400<small class="up">31% <span data-i18n="conv">conversión</span></small></div></div>
-  <div class="card" style="grid-column:span 3"><h3><span class="dot" style="background:var(--crit)"></span><span data-i18n="k4">Tareas críticas</span></h3>
-    <div class="kpi">1<small class="down">62h <span data-i18n="over">vencida — requiere CEO</span></small></div></div>
+<!-- Navigation Tabs -->
+<nav class="nav-bar" id="mainNav">
+  <button class="nav-tab active" data-tab="overview" onclick="switchTab('overview')">📊 <span data-i18n="tab_overview">Centro de Mando</span></button>
+  <button class="nav-tab" data-tab="comms" onclick="switchTab('comms')">✉️ <span data-i18n="tab_comms">Bandeja IA (Aprobar y Enviar)</span> <span class="cnt" id="pendingDraftsBadge">4</span></button>
+  <button class="nav-tab" data-tab="outcomes" onclick="switchTab('outcomes')">📈 <span data-i18n="tab_outcomes">Resultados y Monitoreo</span></button>
+  <button class="nav-tab" data-tab="behavior" onclick="switchTab('behavior')">🧠 <span data-i18n="tab_behavior">Cerebro Conductual</span></button>
+  <button class="nav-tab" data-tab="setup" onclick="switchTab('setup')">⚙️ <span data-i18n="tab_setup">Configuración (1-Vez)</span></button>
+  <button class="nav-tab" data-tab="blogs" onclick="switchTab('blogs')">📘 <span data-i18n="tab_blogs">Blogs por Función (Paso a Paso)</span></button>
+</nav>
 
-  <div class="card" style="grid-column:span 4"><h3><span class="dot" style="background:var(--acc)"></span><span data-i18n="agenda">Agenda de hoy</span></h3><div id="agenda"></div></div>
-  <div class="card" style="grid-column:span 4"><h3><span class="dot" style="background:var(--acc2)"></span><span data-i18n="pipe">Pipeline Nexus por etapa</span></h3><div id="pipeline"></div>
-    <h3 style="margin-top:16px"><span class="dot" style="background:var(--vio)"></span><span data-i18n="country">Pipeline por país</span></h3><div id="countries"></div></div>
-  <div class="card" style="grid-column:span 4"><h3><span class="dot" style="background:var(--warn)"></span><span data-i18n="tasks">Pendientes del equipo</span></h3><div id="tasks"></div></div>
+<!-- ==================== TAB 1: OVERVIEW (CEO COMMAND CENTER) ==================== -->
+<section class="tab-pane active" id="pane-overview">
+  <!-- Proactive Behavioral Foresight Strip -->
+  <div class="foreseen-strip">
+    <div class="foreseen-head">
+      <div>
+        <span class="tag ok" id="foreseenBadge">PREPARADO POR ADELANTADO PARA TI</span>
+        <strong style="margin-left:8px;font-size:13.5px" id="foreseenTitle">Tu Cerebro Conductual preparó tu sesión de la mañana</strong>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="btn ghost sm" onclick="setRoutineSlot('morning')">🌅 Mañana</button>
+        <button class="btn ghost sm" onclick="setRoutineSlot('afternoon')">☀️ Tarde</button>
+        <button class="btn ghost sm" onclick="setRoutineSlot('evening')">🌙 Noche</button>
+      </div>
+    </div>
+    <div class="foreseen-cards" id="foreseenCards"></div>
+  </div>
 
-  <div class="card" style="grid-column:span 8"><h3><span class="dot" style="background:var(--crit)"></span><span data-i18n="cams">Cámaras — IA</span> <span class="muted" data-i18n="demo">(feed simulado · await hardware)</span></h3>
-    <div id="cams" style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px"></div>
-    <div class="narr" style="margin-top:14px" id="camNarr"></div></div>
+  <div class="grid">
+    <!-- 4 Executive KPI Cards -->
+    <div class="card kpi-card" style="grid-column:span 3" onclick="trackBehavior('click','kpi_projected_revenue')">
+      <h3><span class="lhs"><span class="dot" style="background:var(--acc)"></span><span data-i18n="k1">Ingreso mensual proyectado</span></span></h3>
+      <div class="kpi" id="kpiRev">$48,200<small class="up">▲ 12% <span data-i18n="vs">vs semana previa</span></small></div>
+    </div>
+    <div class="card kpi-card" style="grid-column:span 3" onclick="trackBehavior('click','kpi_pipeline_total')">
+      <h3><span class="lhs"><span class="dot" style="background:var(--acc2)"></span><span data-i18n="k2">Pipeline total (Nexus)</span></span></h3>
+      <div class="kpi" id="kpiPipe">$214,500<small><span id="kpiLeadsCount">23</span> <span data-i18n="leads">leads activos</span></small></div>
+    </div>
+    <div class="card kpi-card" style="grid-column:span 3" onclick="trackBehavior('click','kpi_closed_sales')">
+      <h3><span class="lhs"><span class="dot" style="background:var(--vio)"></span><span data-i18n="k3">Ventas cerradas</span></span></h3>
+      <div class="kpi" id="kpiClosed">$96,400<small class="up"><span id="kpiConvRate">31%</span> <span data-i18n="conv">conversión</span></small></div>
+    </div>
+    <div class="card kpi-card" style="grid-column:span 3" onclick="trackBehavior('click','kpi_critical_tasks')">
+      <h3><span class="lhs"><span class="dot" style="background:var(--crit)"></span><span data-i18n="k4">Tareas críticas</span></span></h3>
+      <div class="kpi" id="kpiCrit">1<small class="down">62h <span data-i18n="over">vencida — requiere CEO</span></small></div>
+    </div>
 
-  <div class="card" style="grid-column:span 4"><h3><span class="dot" style="background:var(--acc2)"></span><span data-i18n="alerts">Alertas Telegram</span></h3><div id="alerts"></div>
-    <h3 style="margin-top:16px"><span class="dot" style="background:var(--warn)"></span><span data-i18n="inbox">Gmail sin leer</span></h3><div id="inbox"></div></div>
-</div>
-<div class="foot">La Jefatura Suite · demo con datos realistas de muestra · <span data-i18n="foot">la capa real (mc.db / Nexus / cámaras) usa este mismo contrato de datos</span></div>
+    <!-- Daily Executive Summary Across Connected Apps -->
+    <div class="card" style="grid-column:span 8">
+      <h3>
+        <span class="lhs"><span class="dot" style="background:var(--acc)"></span><span data-i18n="exec_digest">Resumen Ejecutivo Diario (Todas las Apps Conectadas)</span></span>
+        <button class="btn ghost sm" onclick="window.LJ.execute(lang==='es'?'leer resumen':'read brief')">🔊 Escuchar Voz Grok 3.0</button>
+      </h3>
+      <div class="narr" id="execDigestNarr"></div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px" id="miniAppOutcomes"></div>
+    </div>
+
+    <!-- Quick 1-Click Draft Approval Box -->
+    <div class="card" style="grid-column:span 4">
+      <h3>
+        <span class="lhs"><span class="dot" style="background:var(--warn)"></span><span data-i18n="quick_approvals">Respuestas Listas para Aprobar</span></span>
+        <button class="btn ghost sm" onclick="switchTab('comms')" data-i18n="see_all">Ver todas →</button>
+      </h3>
+      <div id="quickDraftsBox"></div>
+    </div>
+
+    <!-- LIVE CONNECTED REPO: UNITEC USA & BUILDING INNOVATION AI FRONT-DESK RECEPTIONIST -->
+    <div class="card" style="grid-column:span 12;border-color:rgba(0,212,255,.35)" id="unitecLiveCard">
+      <h3>
+        <span class="lhs">
+          <span class="dot" style="background:var(--acc2)"></span>
+          <span id="unitecCardTitle">🤖 Recepcionista IA Front-Desk — UNITEC USA & Building Innovation (Producción en Vivo: unitec-front-desk.vercel.app)</span>
+          <span class="tag ok" id="unitecLiveBadge">EN VIVO · 155ms · 200 OK</span>
+        </span>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span class="tag medium">OPCIÓN A + API PÚBLICA ACTIVA</span>
+          <button class="btn ghost sm" onclick="syncUnitecLive(true)">🔄 Sincronizar Vercel en Vivo</button>
+        </div>
+      </h3>
+      <div id="unitecFiveNumbers" style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px"></div>
+      <div class="grid" style="padding:0;gap:14px">
+        <div style="grid-column:span 4;background:rgba(7,11,20,.55);border:1px solid var(--hair);border-radius:11px;padding:12px 14px">
+          <h4 style="font-size:11px;text-transform:uppercase;color:var(--dim);margin-bottom:10px">Embudo de Conversión Real (4,649 Sesiones)</h4>
+          <div id="unitecFunnelBox"></div>
+        </div>
+        <div style="grid-column:span 4;background:rgba(7,11,20,.55);border:1px solid var(--hair);border-radius:11px;padding:12px 14px">
+          <h4 style="font-size:11px;text-transform:uppercase;color:var(--dim);margin-bottom:10px">Intenciones y Últimas Conversaciones Reales (Sin PII)</h4>
+          <div id="unitecIntentsBox"></div>
+        </div>
+        <div style="grid-column:span 4;background:rgba(255,92,92,.05);border:1px solid rgba(255,92,92,.28);border-radius:11px;padding:12px 14px">
+          <h4 style="font-size:11px;text-transform:uppercase;color:var(--crit);margin-bottom:10px">⚠️ Auditoría de Seguridad y Reporte a Juan (Building Innovation)</h4>
+          <div id="unitecSecurityBox"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LIVE CONNECTED APP #2: BUILDINGAPP.US (Web + Apple App Store + Google Play) -->
+    <div class="card" id="buildingAppLivePanel" style="grid-column:span 12;border-color:rgba(93,168,255,.38);background:linear-gradient(135deg,rgba(15,23,42,.95),rgba(17,28,52,.92))" onmouseenter="trackBehavior('mouse_focus','buildingapp_live_analytics')">
+      <h3>
+        <span class="lhs">
+          <span class="dot" style="background:var(--acc2)"></span>
+          <span>📱 BuildingApp AI — Resumen Diario de Uso y Nuevos Miembros (Web · Apple App Store · Google Play)</span>
+          <span class="tag ok" id="bappHealthBadge">ONLINE · 322 SKUs · iOS & ANDROID</span>
+        </span>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span class="muted" style="font-size:11px">buildingapp.us/#/landing · com.buildinginnovation.app</span>
+          <button class="btn ghost sm" onclick="syncBuildingAppLive(true)">🔄 Sincronizar BuildingApp</button>
+        </div>
+      </h3>
+      <div class="narr" id="bappDailySummaryBox" style="margin-bottom:12px;border-left-color:var(--acc2)"></div>
+      <div id="bappFiveNumbers" style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px"></div>
+      <div style="display:grid;grid-template-columns:repeat(12,1fr);gap:12px">
+        <div style="grid-column:span 4;background:rgba(7,11,20,.55);border:1px solid var(--hair);border-radius:11px;padding:12px 14px">
+          <h4 style="font-size:11px;text-transform:uppercase;color:var(--dim);margin-bottom:10px">👥 Nuevos Miembros y Planes (Sin PII Expuesta)</h4>
+          <div id="bappMembersBox"></div>
+        </div>
+        <div style="grid-column:span 4;background:rgba(7,11,20,.55);border:1px solid var(--hair);border-radius:11px;padding:12px 14px">
+          <h4 style="font-size:11px;text-transform:uppercase;color:var(--dim);margin-bottom:10px">🧱 Top Materiales Renderizados y Categorías</h4>
+          <div id="bappMaterialsBox"></div>
+        </div>
+        <div style="grid-column:span 4;background:rgba(35,217,176,.05);border:1px solid rgba(35,217,176,.28);border-radius:11px;padding:12px 14px">
+          <h4 style="font-size:11px;text-transform:uppercase;color:var(--acc);margin-bottom:10px">⚡ Actividad en Vivo (Web · App Store · Play Store)</h4>
+          <div id="bappActivityBox"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Agenda, Pipeline, Tasks -->
+    <div class="card" style="grid-column:span 4">
+      <h3><span class="lhs"><span class="dot" style="background:var(--acc)"></span><span data-i18n="agenda">Agenda de hoy</span></span></h3>
+      <div id="agenda"></div>
+    </div>
+    <div class="card" style="grid-column:span 4">
+      <h3><span class="lhs"><span class="dot" style="background:var(--acc2)"></span><span data-i18n="pipe">Pipeline Nexus por etapa</span></span></h3>
+      <div id="pipeline"></div>
+      <h3 style="margin-top:16px"><span class="lhs"><span class="dot" style="background:var(--vio)"></span><span data-i18n="country">Pipeline por país</span></span></h3>
+      <div id="countries"></div>
+    </div>
+    <div class="card" style="grid-column:span 4">
+      <h3><span class="lhs"><span class="dot" style="background:var(--warn)"></span><span data-i18n="tasks">Pendientes del equipo</span></span></h3>
+      <div id="tasks"></div>
+    </div>
+
+    <!-- Cameras & Alerts -->
+    <div class="card" style="grid-column:span 8" onmouseenter="trackBehavior('mouse_focus','cameras_security_grid')">
+      <h3><span class="lhs"><span class="dot" style="background:var(--crit)"></span><span data-i18n="cams">Cámaras — IA</span> <span class="muted" data-i18n="demo">(feed en vivo + resumen IA)</span></span></h3>
+      <div id="cams" style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px"></div>
+      <div class="narr" style="margin-top:14px" id="camNarr"></div>
+    </div>
+
+    <div class="card" style="grid-column:span 4">
+      <h3><span class="lhs"><span class="dot" style="background:var(--acc2)"></span><span data-i18n="alerts">Alertas Telegram</span></span></h3>
+      <div id="alerts"></div>
+      <h3 style="margin-top:16px"><span class="lhs"><span class="dot" style="background:var(--warn)"></span><span data-i18n="inbox">Gmail / Mensajes Recientes</span></span></h3>
+      <div id="inbox"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== TAB 2: COMMS & 1-CLICK APPROVAL ==================== -->
+<section class="tab-pane" id="pane-comms">
+  <div class="grid">
+    <div class="card" style="grid-column:span 8">
+      <h3>
+        <span class="lhs"><span class="dot" style="background:var(--acc)"></span><span data-i18n="comms_title">Bandeja Ejecutiva Unificada — Borradores Preparados por IA</span></span>
+        <span class="tag ok" id="commsModeBadge">MODO C · APROBAR Y ENVIAR</span>
+      </h3>
+      <p class="muted" style="margin-bottom:14px" data-i18n="comms_desc">
+        Cada correo o mensaje entrante (Gmail, WhatsApp, Telegram, Slack) ya tiene un borrador redactado en tu voz. Edítalo si deseas (el sistema aprende de cada cambio) o presiona «Aprobar y Enviar Directo».
+      </p>
+      <div id="commsDraftList"></div>
+    </div>
+
+    <div class="card" style="grid-column:span 4">
+      <h3><span class="lhs"><span class="dot" style="background:var(--vio)"></span><span data-i18n="voice_prof_title">Huella de Voz Aprendida del CEO</span></span></h3>
+      <div id="voiceProfileBox"></div>
+      <hr style="border:0;border-top:1px solid var(--hair);margin:14px 0">
+      <h3><span class="lhs"><span class="dot" style="background:var(--acc2)"></span><span data-i18n="sim_inbound">Simular Nuevo Mensaje Entrante</span></span></h3>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <input class="inp" id="simSender" placeholder="Remitente (ej. socio@inversiones.com)" value="dr.khalil@sunshinedental.com">
+        <input class="inp" id="simText" placeholder="Mensaje entrante…" value="Hola Jasmel, ¿podemos incluir las 2 clínicas de Tampa en el mismo contrato anual si firmamos este viernes?">
+        <button class="btn" onclick="simulateIncomingMsg()">⚡ Recibir y Pre-Redactar Borrador IA</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== TAB 3: OUTCOMES, GRAPHICS & MONITORING ==================== -->
+<section class="tab-pane" id="pane-outcomes">
+  <div class="grid">
+    <div class="card" style="grid-column:span 6">
+      <h3><span class="lhs"><span class="dot" style="background:var(--acc)"></span><span data-i18n="people_mon">Monitoreo de Personal y Asignaciones (Productividad)</span></span></h3>
+      <div id="staffStudyBox"></div>
+    </div>
+    <div class="card" style="grid-column:span 6">
+      <h3><span class="lhs"><span class="dot" style="background:var(--acc2)"></span><span data-i18n="client_mon">Monitoreo de Clientes, Visitas y Salud de Cuentas</span></span></h3>
+      <div id="clientStudyBox"></div>
+    </div>
+    <div class="card" style="grid-column:span 6">
+      <h3><span class="lhs"><span class="dot" style="background:var(--vio)"></span><span data-i18n="meetings_mon">Estudio de Calendarios, Reuniones y Tiempo del CEO</span></span></h3>
+      <div id="meetingsStudyBox"></div>
+    </div>
+    <div class="card" style="grid-column:span 6">
+      <h3><span class="lhs"><span class="dot" style="background:var(--warn)"></span><span data-i18n="apps_mon">Resultados y Estudios de Apps en Segundo Plano</span></span></h3>
+      <div id="appsOutcomeStudyBox"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== TAB 4: BEHAVIORAL & TEMPORAL BRAIN ==================== -->
+<section class="tab-pane" id="pane-behavior">
+  <div class="grid">
+    <div class="card" style="grid-column:span 7">
+      <h3>
+        <span class="lhs"><span class="dot" style="background:var(--acc)"></span><span data-i18n="beh_title">Aprendizaje Conductual por Horario (Mañana · Tarde · Noche)</span></span>
+        <div style="display:flex;gap:6px">
+          <button class="btn ghost sm" onclick="setRoutineSlot('morning')">🌅 Mañana</button>
+          <button class="btn ghost sm" onclick="setRoutineSlot('afternoon')">☀️ Tarde</button>
+          <button class="btn ghost sm" onclick="setRoutineSlot('evening')">🌙 Noche</button>
+        </div>
+      </h3>
+      <div id="behaviorRoutineBox"></div>
+      <hr style="border:0;border-top:1px solid var(--hair);margin:16px 0">
+      <h3><span class="lhs"><span class="dot" style="background:var(--vio)"></span><span data-i18n="beh_prefs">Preferencias Anticipadas del CEO (Café, Formato de Reporte, Estilo)</span></span></h3>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:8px">
+        <div>
+          <label class="muted">☕ Café / Bebida Matutina Favorita</label>
+          <input class="inp" id="prefCoffeeDrink" value="Double Espresso Cortado (Oat Milk)" style="margin-top:4px">
+        </div>
+        <div>
+          <label class="muted">⏰ Hora de Preparación Automática</label>
+          <input class="inp" id="prefCoffeeTime" value="07:45 AM" style="margin-top:4px">
+        </div>
+        <div style="grid-column:span 2">
+          <label class="muted">📑 Formato de Reporte Matutino Preferido</label>
+          <input class="inp" id="prefReportFormat" value="Resumen Visual Ejecutivo + Audio 60s + PDF Consolidado" style="margin-top:4px">
+        </div>
+      </div>
+      <div style="margin-top:12px;display:flex;gap:10px;align-items:center">
+        <button class="btn" onclick="saveCeoPreferences()">💾 Guardar y Entrenar Perfil Conductual</button>
+        <span class="muted" id="prefSavedNote"></span>
+      </div>
+    </div>
+
+    <div class="card" style="grid-column:span 5">
+      <h3><span class="lhs"><span class="dot" style="background:var(--acc2)"></span><span data-i18n="beh_telemetry">Telemetría en Vivo (Clics, Mouse, Teclado, Preguntas Voz)</span></span></h3>
+      <p class="muted" style="margin-bottom:10px" data-i18n="beh_tel_desc">
+        Esta capa observa tus movimientos de mouse, clics, velocidad de escritura y comandos de voz para anticipar qué necesitas antes de que lo pidas.
+      </p>
+      <div id="telemetryStatsBox"></div>
+      <h3 style="margin-top:14px"><span class="lhs"><span class="dot" style="background:var(--ok)"></span><span>Registro de Eventos Recientes</span></span></h3>
+      <div id="telemetryLogBox" style="max-height:240px;overflow-y:auto"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== TAB 5: 1-TIME CEO ONBOARDING & WHITE-LABEL SETUP ==================== -->
+<section class="tab-pane" id="pane-setup">
+  <div class="grid">
+    <div class="card" style="grid-column:span 5">
+      <h3><span class="lhs"><span class="dot" style="background:var(--acc)"></span><span data-i18n="setup_wl">Personalización White-Label y Onboarding Único</span></span></h3>
+      <p class="muted" style="margin-bottom:14px" data-i18n="setup_desc">
+        El CEO solo configura esta pantalla una vez durante el onboarding. Una vez conectadas las integraciones, todo opera automáticamente en segundo plano.
+      </p>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div>
+          <label class="muted">Nombre del Centro de Mando (White-Label Brand)</label>
+          <input class="inp" id="cfgBrandName" value="LA JEFATURA" style="margin-top:4px">
+        </div>
+        <div>
+          <label class="muted">Nombre del CEO / Propietario del Perfil</label>
+          <input class="inp" id="cfgCeoName" value="Jasmel Acosta" style="margin-top:4px">
+        </div>
+        <div>
+          <label class="muted">Modo de Operación de Respuestas IA (§11)</label>
+          <select class="inp" id="cfgOpMode" style="margin-top:4px">
+            <option value="C" selected>Modo C — IA Pre-Redacta y Envía al Aprobar el CEO (Recomendado)</option>
+            <option value="B">Modo B — IA Pre-Redacta; CEO Envía Manualmente</option>
+            <option value="A">Modo A — Solo Observación y Resumen Ejecutivo</option>
+          </select>
+        </div>
+        <button class="btn" onclick="saveOnboardingSetup()">✅ Guardar Configuración White-Label</button>
+      </div>
+    </div>
+
+    <div class="card" style="grid-column:span 7">
+      <h3>
+        <span class="lhs"><span class="dot" style="background:var(--acc2)"></span><span data-i18n="setup_conn"> Ecosistema Conectado (9 Fuentes de Datos y Monitoreo)</span></span>
+        <span class="tag ok">9 / 9 CONECTADOS</span>
+      </h3>
+      <div id="integrationsGrid"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== TAB 6: STEP-BY-STEP FUNCTION BLOGS ==================== -->
+<section class="tab-pane" id="pane-blogs">
+  <div class="card" style="margin-bottom:16px">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+      <div>
+        <span class="tag ok">DOCUMENTACIÓN INTERACTIVA PASO A PASO</span>
+        <h2 style="font-size:20px;margin-top:6px" id="blogsMainTitle">Guías y Blogs por Función — Cómo Funciona Cada Capa de La Jefatura</h2>
+        <p class="muted" style="margin-top:4px" id="blogsMainSub">Explicación clara, minimalista y paso a paso de cada función para que cualquier CEO, cliente o desarrollador lo entienda al instante.</p>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input class="inp" id="blogSearchInput" placeholder="Buscar función (ej. voz, correo, cámaras, café)…" style="width:260px" oninput="renderBlogs()">
+      </div>
+    </div>
+  </div>
+  <div class="blog-grid" id="blogsContainer"></div>
+</section>
+
+<div class="toast" id="toastBox"></div>
+<div class="foot">La Jefatura Suite · White-Label CEO Mission Control · <span data-i18n="foot">Datos de muestra listos para demostración + API real en servidor (mc.db / Nexus / Comms Brain / Grok 3.0 Voice)</span></div>
 
 <script src="/widgets/lajefatura-widget.js"></script>
 <script>
-/* Sample data — identical contract to server/nexus_ingest.summary() + data/samples/*.json */
-const COMPANIES=[
- {id:'all',name:'Todas / All',color:'#23d9b0'},
- {id:'mbmb',name:'MBMB',color:'#23d9b0'},{id:'cedexx',name:'CEDEXX',color:'#7c6cff'},
- {id:'305biz',name:'305BIZ',color:'#00D4FF'},{id:'aidyn',name:'AIDYN',color:'#ff9f43'},
- {id:'saleinn',name:'NEXUS',color:'#ff6b81'}];
-const AGENDA=[["09:30","Kickoff Brickell Ortho Institute","Juan Perez + cliente · Meet"],
- ["11:00","Revisión pipeline Nexus — semana 43","Equipo ventas · Oficina"],
- ["14:00","Demo CEDEXX — Doral Urgent Care","Dr. Molina + Jasmel · Meet"],
- ["16:30","1:1 Jasmel / Juan — pendientes CEO","Llamada"]];
-const PIPE=[["No Contactado",8,61200,"#ff6b81"],["Contactado",6,78500,"#00D4FF"],
- ["Cotización",5,46800,"#7c6cff"],["Cerrado",4,28000,"#23d9b0"]];
-const COUNTRIES=[["USA",142000,12],["Colombia",38500,5],["México",22000,4],["Chile",12000,2]];
-const TASKS=[
- ["Enviar propuesta CEDEXX a Doral Urgent","critical","overdue","Jasmel · $12.4k bloqueado"],
- ["Firmar contrato Brickell Ortho","high","due 10/23","Jasmel"],
- ["Responder PO Clinica Del Mar","high","due hoy","Maria · $9.8k"],
- ["Renew SSL cedexx.net","medium","scheduled","Kimi Claw · 27 días"],
- ["Post semanal LinkedIn MBMB","low","due hoy","Kimi Claw"]];
-const CAMS=[["CAM-01 · Recepción MBMB"],["CAM-02 · Sala de juntas"],
- ["CAM-03 · Bodega / Archivo"],["CAM-04 · Estacionamiento"]];
-const CAMNARR_ES="Movimiento detectado en Bodega/Archivo ayer 21:47 (fuera de horario). Persona no identificada permaneció 45 segundos. Snapshot guardado y alerta enviada. Sin otros eventos fuera de horario en 12h.";
-const CAMNARR_EN="Motion detected in Warehouse/Records yesterday 21:47 (after hours). Unidentified person stayed 45 seconds. Snapshot saved and alert sent. No other after-hours events in 12h.";
-const ALERTS=[["08:14","info","Informe del Jefe enviado (texto + voz)."],
- ["07:52","critical","TAREA VENCIDA 62h: propuesta CEDEXX a Doral Urgent — requiere CEO."],
- ["02:11","info","Nuevo lead 305biz: 'Verificación de comprador' [test]."],
- ["ayer","warning","Tunnel cloudflared reiniciado (latencia > 8s)."]];
-const INBOX=[["dr.molina@doralurgent.com","RE: Propuesta CEDEXX — cambios","2h","alta"],
- ["justmail@michaelbuildingmb.com","Sept claims — 41 denegaciones","5h","alta"],
- ["facturas@clinicadelmar.co","Orden de compra #PO-2214","11h","alta"],
- ["carlos@saleinnovation.co","3 cotizaciones listas","7h","media"]];
-const I18N={
- es:{k1:"Ingreso mensual proyectado",k2:"Pipeline total (Nexus)",k3:"Ventas cerradas",k4:"Tareas críticas",
-  vs:"vs semana previa",leads:"leads activos",conv:"conversión",over:"vencida — requiere CEO",
-  agenda:"Agenda de hoy",pipe:"Pipeline Nexus por etapa",country:"Pipeline por país",
-  tasks:"Pendientes del equipo",cams:"Cámaras — IA",demo:"(feed simulado · await hardware)",
-  alerts:"Alertas Telegram",inbox:"Gmail sin leer",
-  foot:"la capa real (mc.db / Nexus / cámaras) usa este mismo contrato de datos"},
- en:{k1:"Projected monthly revenue",k2:"Total pipeline (Nexus)",k3:"Closed sales",k4:"Critical tasks",
-  vs:"vs prior week",leads:"active leads",conv:"conversion",over:"overdue — CEO action needed",
-  agenda:"Today's agenda",pipe:"Nexus pipeline by stage",country:"Pipeline by country",
-  tasks:"Team pending items",cams:"Cameras — AI",demo:"(simulated feed · await hardware)",
-  alerts:"Telegram alerts",inbox:"Unread Gmail",
-  foot:"the real layer (mc.db / Nexus / cameras) uses this same data contract"}};
-let lang='es',cur='all';
-const $=s=>document.querySelector(s);
-const money=v=>'$'+v.toLocaleString('en-US');
+/* ── Complete Multi-Company & White-Label Sample Dataset ── */
+const COMPANIES = [
+  {id:'all', name:'Todas / All', color:'#23d9b0', rev:48200, pipe:214500, leads:23, closed:96400, conv:31, crit:1},
+  {id:'mbmb', name:'MBMB', color:'#23d9b0', rev:21500, pipe:84200, leads:9, closed:44000, conv:36, crit:0},
+  {id:'cedexx', name:'CEDEXX', color:'#7c6cff', rev:12800, pipe:62400, leads:6, closed:28000, conv:33, crit:1},
+  {id:'unitec', name:'UNITEC USA', color:'#00e5ff', rev:18900, pipe:68500, leads:29, closed:31200, conv:35, crit:2},
+  {id:'building', name:'BUILDING (Juan)', color:'#feca57', rev:0, pipe:4500, leads:1, closed:0, conv:0, crit:1},
+  {id:'305biz', name:'305BIZ', color:'#00D4FF', rev:6400, pipe:31000, leads:4, closed:14200, conv:28, crit:0},
+  {id:'aidyn', name:'AIDYN', color:'#ff9f43', rev:4100, pipe:19400, leads:2, closed:6200, conv:25, crit:0},
+  {id:'saleinn', name:'NEXUS', color:'#ff6b81', rev:3400, pipe:17500, leads:2, closed:4000, conv:24, crit:0}
+];
 
-function renderSeg(){$('#companySeg').innerHTML=COMPANIES.map(c=>
- `<button class="${c.id===cur?'on':''}" style="${c.id===cur?`background:${c.color};`:''}" onclick="cur='${c.id}';renderSeg()">${c.name}</button>`).join('');}
+const AGENDA = [
+  {time:"09:30", title:"Kickoff Brickell Ortho Institute", meta:"Juan Perez + cliente · Google Meet", co:"mbmb"},
+  {time:"11:00", title:"Revisión pipeline Nexus — semana 43", meta:"Equipo ventas · Oficina MBMB", co:"saleinn"},
+  {time:"14:00", title:"Demo CEDEXX — Doral Urgent Care", meta:"Dr. Molina + Jasmel · Google Meet", co:"cedexx"},
+  {time:"16:30", title:"1:1 Jasmel / Juan — pendientes CEO", meta:"Llamada ejecutiva", co:"mbmb"}
+];
 
-function renderAll(){
- const T=I18N[lang];
- document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.dataset.i18n;if(T[k])el.textContent=T[k];});
- $('#langBtn').textContent=lang==='es'?'EN':'ES';
- $('#camNarr').textContent=lang==='es'?CAMNARR_ES:CAMNARR_EN;
- $('#agenda').innerHTML=AGENDA.map(a=>`<div class="row"><div><b>${a[0]}</b> — ${a[1]}<div class="t">${a[2]}</div></div></div>`).join('');
- const maxP=Math.max(...PIPE.map(p=>p[2]));
- $('#pipeline').innerHTML=PIPE.map(p=>`<div class="stage"><span class="n">${p[1]}</span>
-  <div style="flex:1"><div style="display:flex;justify-content:space-between"><span>${p[0]}</span><b>${money(p[2])}</b></div>
-  <div class="bar"><i style="width:${p[2]/maxP*100}%;background:${p[3]}"></i></div></div></div>`).join('');
- const maxC=Math.max(...COUNTRIES.map(c=>c[1]));
- $('#countries').innerHTML=COUNTRIES.map(c=>`<div class="stage"><span class="n">${c[2]}</span>
-  <div style="flex:1"><div style="display:flex;justify-content:space-between"><span>${c[0]}</span><b>${money(c[1])}</b></div>
-  <div class="bar"><i style="width:${c[1]/maxC*100}%;background:var(--acc2)"></i></div></div></div>`).join('');
- $('#tasks').innerHTML=TASKS.map(t=>`<div class="task"><span class="tag ${t[1]}">${t[1]}</span>
-  <div style="flex:1">${t[0]}<div class="t">${t[3]}</div></div>
-  <span class="tag ${t[2]==='overdue'?'overdue':''}">${t[2]}</span></div>`).join('');
- $('#cams').innerHTML=CAMS.map((c,i)=>`<div class="cam"><canvas id="cv${i}" width="320" height="180"></canvas>
-  <span class="lbl">${c[0]}</span><span class="rec">LIVE</span><span class="stamp" id="st${i}"></span></div>`).join('');
- $('#alerts').innerHTML=ALERTS.map(a=>`<div class="alert"><span class="h">${a[0]}</span><span class="lvl ${a[1]}">${a[1]}</span><span>${a[2]}</span></div>`).join('');
- $('#inbox').innerHTML=INBOX.map(m=>`<div class="row"><div>${m[1]}<div class="t">${m[0]} · ${m[2]}</div></div>
-  ${m[3]==='alta'?'<span class="tag critical">alta</span>':'<span class="tag low">media</span>'}</div>`).join('');
- startFeeds();
-}
+const PIPE = [
+  {stage_es:"No Contactado", stage_en:"Not Contacted", count:8, val:61200, color:"#ff6b81"},
+  {stage_es:"Contactado", stage_en:"Contacted", count:6, val:78500, color:"#00D4FF"},
+  {stage_es:"Cotización", stage_en:"Quote Sent", count:5, val:46800, color:"#7c6cff"},
+  {stage_es:"Cerrado", stage_en:"Closed Won", count:4, val:28000, color:"#23d9b0"}
+];
 
-/* Simulated feeds: noise + occasional person blob. Clearly labeled demo — replaced by
-   real snapshots (GET /api/cameras/snap/:id) once camera hosts are configured. */
-const feeds=[];
-function startFeeds(){
- feeds.forEach(f=>cancelAnimationFrame(f));feeds.length=0;
- CAMS.forEach((c,i)=>{
-  const cv=document.getElementById('cv'+i);if(!cv)return;const ctx=cv.getContext('2d');
-  const px=ctx.createImageData(320,180);let t=0;
-  (function frame(){
-   t++;const d=px.data;
-   for(let j=0;j<d.length;j+=4){const v=18+Math.random()*22;d[j]=v*.8;d[j+1]=v;d[j+2]=v*1.25;d[j+3]=255;}
-   ctx.putImageData(px,0,0);
-   if(t%140<40){
-    const x=((t%140)/40)*340-10,y=95+Math.sin(t*.1)*4;
-    ctx.fillStyle='rgba(200,210,230,.5)';ctx.fillRect(x,y,14,42);ctx.beginPath();
-    ctx.arc(x+7,y-7,7,0,7);ctx.fill();
-    ctx.fillStyle='#2ee06f';ctx.font='9px monospace';ctx.fillText('persona 0.87',Math.max(2,x-8),y-16);}
-   ctx.strokeStyle='rgba(35,217,176,.25)';for(let y=0;y<180;y+=30){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(320,y);ctx.stroke();}
-   feeds.push(requestAnimationFrame(frame));
-  })();
-  setInterval(()=>{const e=document.getElementById('st'+i);if(e)e.textContent=new Date().toLocaleTimeString('es-US',{hour12:false});},1000);
- });
-}
+const COUNTRIES = [
+  {name:"USA", val:142000, leads:12},
+  {name:"Colombia", val:38500, leads:5},
+  {name:"México", val:22000, leads:4},
+  {name:"Chile", val:12000, leads:2}
+];
 
-/* Client-side PDF (jsPDF) — same section contract as server/reports_pdf.py; the
-   server version is canonical (Gemini narrative + reportlab + charts). */
-$('#pdfBtn').onclick=()=>{
- const {jsPDF}=window.jspdf;const doc=new jsPDF();let y=16;
- const line=(txt,size=10,bold=false)=>{doc.setFontSize(size);doc.setFont('helvetica',bold?'bold':'normal');doc.text(txt,14,y);y+=size*.55;};
- doc.setFillColor(11,16,32);doc.rect(0,0,210,30,'F');doc.setTextColor(35,217,176);doc.setFontSize(16);
- doc.text('LA JEFATURA — INFORME EJECUTIVO',14,13);doc.setFontSize(9);doc.setTextColor(230,237,247);
- doc.text(new Date().toLocaleString()+' · demo (misma estructura que el PDF del servidor)',14,21);
- y=40;doc.setTextColor(20,25,40);
- line('Resumen ejecutivo / Executive summary',12,true);
- doc.setFontSize(9.5);doc.setFont('helvetica','normal');
- const narr=lang==='es'
-  ?'Ingreso mensual proyectado US$48,200 con pipeline total de US$214,500 y conversion del 31%. 1 tarea vencida (62h) requiere accion inmediata del CEO; 3 vencen hoy. Enfoque recomendado: desbloquear la propuesta CEDEXX a Doral Urgent (US$12.4k) y sostener el ritmo de cotizaciones en etapa final.'
-  :'Projected monthly revenue $48,200 with $214,500 total pipeline at 31% conversion. 1 task is 62h overdue and needs immediate CEO action; 3 more due today. Recommended focus: unblock the CEDEXX proposal to Doral Urgent ($12.4k) and keep late-stage quotes moving.';
- doc.text(doc.splitTextToSize(narr,182),14,y);y+=24;
- line('Pipeline por etapa (USD)',12,true);
- doc.autoTable({startY:y,head:[['Etapa','Leads','Valor']],body:PIPE.map(p=>[p[0],p[1],money(p[2])]),
-  theme:'grid',headStyles:{fillColor:[11,16,32]},styles:{fontSize:9}});y=doc.lastAutoTable.finalY+10;
- line('Tareas / Tasks',12,true);
- doc.autoTable({startY:y,head:[['Tarea','Severidad','Estado']],body:TASKS.map(t=>[t[0],t[1],t[2]]),
-  theme:'grid',headStyles:{fillColor:[11,16,32]},styles:{fontSize:9}});y=doc.lastAutoTable.finalY+10;
- line('Agenda',12,true);AGENDA.forEach(a=>line(`${a[0]} — ${a[1]}  (${a[2]})`,9));
- doc.save(`informe-${new Date().toISOString().slice(0,10)}.pdf`);
+const TASKS = [
+  {id:"T-01", title:"Enviar propuesta CEDEXX a Doral Urgent", sev:"critical", status:"overdue", meta:"Jasmel · $12.4k bloqueado", co:"cedexx"},
+  {id:"T-02", title:"Firmar contrato Brickell Ortho", sev:"high", status:"due 10/23", meta:"Jasmel · DocuSign", co:"mbmb"},
+  {id:"T-03", title:"Responder PO Clínica Del Mar", sev:"high", status:"due hoy", meta:"Maria · $9.8k", co:"saleinn"},
+  {id:"T-04", title:"Renew SSL cedexx.net", sev:"medium", status:"scheduled", meta:"Kimi Claw · 27 días", co:"cedexx"},
+  {id:"T-05", title:"Post semanal LinkedIn MBMB", sev:"low", status:"due hoy", meta:"Kimi Claw · Auto", co:"mbmb"}
+];
+
+const CAMS = [
+  ["CAM-01 · Recepción MBMB"],
+  ["CAM-02 · Sala de juntas"],
+  ["CAM-03 · Bodega / Archivo"],
+  ["CAM-04 · Estacionamiento"]
+];
+
+const CAMNARR_ES = "Movimiento detectado en Bodega/Archivo ayer 21:47 (fuera de horario). Persona no identificada permaneció 45 segundos. Snapshot guardado y alerta enviada. Sin otros eventos fuera de horario en 12h.";
+const CAMNARR_EN = "Motion detected in Warehouse/Records yesterday 21:47 (after hours). Unidentified person stayed 45 seconds. Snapshot saved and alert sent. No other after-hours events in 12h.";
+
+const ALERTS = [
+  ["08:14","info","Informe del Jefe enviado (texto + voz)."],
+  ["07:52","critical","TAREA VENCIDA 62h: propuesta CEDEXX a Doral Urgent — requiere CEO."],
+  ["02:11","info","Nuevo lead 305biz: 'Verificación de comprador' [test]."],
+  ["ayer","warning","Tunnel cloudflared reiniciado (latencia > 8s)."]
+];
+
+let DRAFTS_QUEUE = [
+  {
+    draft_id: 1,
+    thread_id: "thread-molina",
+    channel: "Gmail",
+    contact: "dr.molina@doralurgent.com",
+    company: "cedexx",
+    age: "2h",
+    incoming: "RE: Propuesta CEDEXX ($12,400) — Hola Jasmel, revisé con el CFO la propuesta. ¿Podemos incluir el módulo de denegaciones automáticas sin subir el fee mensual para firmar hoy?",
+    body: "Estimado Dr. Molina,\n\nGracias por tu mensaje. Confirmamos la inclusión del módulo de denegaciones automáticas dentro del fee mensual de US$12,400 si cerramos firma hoy mismo. Te envío el anexo actualizado.\n\nCordialmente,\nJasmel Acosta",
+    version: 1,
+    status: "PENDING_REVIEW"
+  },
+  {
+    draft_id: 2,
+    thread_id: "thread-clinicadelmar",
+    channel: "Gmail",
+    contact: "facturas@clinicadelmar.co",
+    company: "saleinn",
+    age: "5h",
+    incoming: "Orden de compra #PO-2214 ($9,800) — Adjunto la orden de compra aprobada para las 3 sedes en Cartagena. ¿Nos confirmas fecha de inicio?",
+    body: "Estimada Luisa,\n\nOrden de compra #PO-2214 recibida. Nuestro equipo inicia el onboarding técnico de las 3 sedes este lunes a las 10:00 AM.\n\nCordialmente,\nJasmel Acosta",
+    version: 1,
+    status: "PENDING_REVIEW"
+  },
+  {
+    draft_id: 3,
+    thread_id: "thread-sunshine",
+    channel: "Telegram",
+    contact: "@JuanPerez_Sales (Sunshine Dental)",
+    company: "mbmb",
+    age: "3h",
+    incoming: "Jasmel, el Dr. Omar Khalil de Sunshine Dental Tampa ($6,700) pide confirmar si hacemos el assessment de billing este jueves a las 11am. ¿Lo apruebo?",
+    body: "Estimado Juan,\n\nAprobado. Confirma al Dr. Khalil para el jueves a las 11:00 AM y prepara la comparativa de recuperación de denegaciones.\n\nCordialmente,\nJasmel Acosta",
+    version: 1,
+    status: "PENDING_REVIEW"
+  },
+  {
+    draft_id: 4,
+    thread_id: "thread-esperanza",
+    channel: "WhatsApp",
+    contact: "+52-55-4190-8821 (Farmacia La Esperanza)",
+    company: "saleinn",
+    age: "6h",
+    incoming: "Buen día Jasmel, soy Jorge Ramírez. Ya resolvimos el corte de red. ¿Podemos reagendar la demo del portal bilingüe para mañana a las 4 PM?",
+    body: "Estimado Jorge,\n\nCon gusto. Queda agendada la demostración del portal bilingüe para mañana a las 16:00 hrs. Ya envié la invitación de calendario.\n\nCordialmente,\nJasmel Acosta",
+    version: 1,
+    status: "PENDING_REVIEW"
+  }
+];
+
+const STAFF_MONITOR = [
+  {name:"Juan Perez", role:"Senior Account Executive", closed:3, pipe:88400, conv:38, tasks_done:14, resp_min:11, status:"Óptimo"},
+  {name:"Maria Gomez", role:"LatAm Growth Lead", closed:1, pipe:52100, conv:24, tasks_done:11, resp_min:18, status:"En Meta"},
+  {name:"Carlos Ruiz", role:"Outbound Specialist", closed:0, pipe:34000, conv:12, tasks_done:7, resp_min:34, status:"Requiere Apoyo"},
+  {name:"Kimi Claw / AI Brain", role:"24/7 Autonomous Agent", closed:4, pipe:40000, conv:100, tasks_done:142, resp_min:1, status:"Siempre Activo"}
+];
+
+const CLIENT_MONITOR = [
+  {client:"Brickell Ortho Institute", country:"USA", arr:15200, health:98, stage:"Cerrado · Kickoff", visit:"Firma completada"},
+  {client:"MedCore Guadalajara", country:"México", arr:12800, health:95, stage:"Cerrado · Onboarding", visit:"Pago inicial recibido"},
+  {client:"Doral Urgent Care Group", country:"USA", arr:12400, health:84, stage:"Cotización Final", visit:"Demo con CFO positiva"},
+  {client:"Grupo Médico del Norte", country:"Colombia", arr:11200, health:79, stage:"Revisión Legal", visit:"Habeas Data en validación"},
+  {client:"Clínica Del Mar Cartagena", country:"Colombia", arr:9800, health:91, stage:"PO Recibida", visit:"3 sedes listas para migrar"}
+];
+
+const INTEGRATIONS = [
+  {id:"gcal", icon:"📅", name:"Google Calendar & Outlook", cat:"Calendarios y Agenda", connected:true, detail:"Sincronización bidireccional en tiempo real"},
+  {id:"gmail", icon:"✉️", name:"Gmail / Brevo / Correo Corporativo", cat:"Correos y Borradores IA", connected:true, detail:"Pre-redacción automática en la voz del CEO"},
+  {id:"meetings", icon:"🎥", name:"Google Meet & Zoom Intelligence", cat:"Reuniones y Minutas", connected:true, detail:"Resumen automático de acuerdos y tareas post-llamada"},
+  {id:"nexus", icon:"📊", name:"Nexus CRM Global", cat:"Pipeline y Ventas", connected:true, detail:"Sincronización cada 5 min (USA, CO, MX, CL)"},
+  {id:"tasks", icon:"✅", name:"Motor de Tareas y Escalaciones", cat:"Asignaciones de Equipo", connected:true, detail:"Recordatorio 24h al staff · Alerta 48h al CEO"},
+  {id:"cameras", icon:"📹", name:"Cámaras ONVIF / RTSP + Visión IA", cat:"Monitoreo de Sedes", connected:true, detail:"4 zonas en vivo + digest de eventos fuera de horario"},
+  {id:"people", icon:"👥", name:"Monitoreo de Personal y Productividad", cat:"Equipo y Vendedores", connected:true, detail:"Velocidad de respuesta, cierres y carga de trabajo"},
+  {id:"clients", icon:"🤝", name:"Radar de Salud de Clientes", cat:"Retención y Visitas", connected:true, detail:"Monitoreo de contratos, visitas y renovaciones"},
+  {id:"grok", icon:"🎙", name:"Grok 3.0 Voice & DOM Brain", cat:"Voz y Cerebro Conductual", connected:true, detail:"Control total por voz + aprendizaje Mañana/Tarde/Noche"}
+];
+
+const BLOGS_DATA = [
+  {
+    id:"blog-mission-control",
+    tag:"FUNCIÓN 1 · CENTRO DE MANDO",
+    tabTarget:"overview",
+    title_es:"1. Centro de Mando Ejecutivo: Cómo el CEO Ve Solo Resultados, Gráficas y Estudios",
+    title_en:"1. Executive Mission Control: How the CEO Sees Only Outcomes, Graphics & Studies",
+    summary_es:"El objetivo principal es que el CEO no pierda tiempo operando herramientas. La consola consolida todas las empresas y aplicaciones en una sola vista minimalista.",
+    summary_en:"The core principle is zero operational busywork for the CEO. The console consolidates all companies and background apps into one minimalist outcome view.",
+    steps_es:[
+      "<b>Paso 1 (Consolidación Automática):</b> El servidor recopila en segundo plano ventas de Nexus CRM, tareas del equipo, eventos de calendario, correos y cámaras.",
+      "<b>Paso 2 (Cálculo Exacto sin Alucinaciones):</b> Todas las métricas y sumas financieras se calculan en código/SQL antes de que la IA redacte el resumen.",
+      "<b>Paso 3 (Filtro Multi-Empresa Instantáneo):</b> Con un clic o comando de voz («cambiar a CEDEXX»), todas las gráficas, KPIs y pendientes se filtran al instante."
+    ],
+    steps_en:[
+      "<b>Step 1 (Automatic Consolidation):</b> The server pulls Nexus CRM sales, team tasks, calendar events, emails, and cameras in the background.",
+      "<b>Step 2 (Exact Code Math):</b> All financial metrics and sums are computed in SQL/code before AI narrates the executive summary.",
+      "<b>Step 3 (Instant Multi-Company Filter):</b> With one click or voice command ('switch to CEDEXX'), all charts, KPIs, and tasks filter immediately."
+    ],
+    outcome_es:"Resultado: El CEO entiende el estado de sus 5 empresas en menos de 60 segundos cada mañana.",
+    outcome_en:"Outcome: The CEO grasps the state of all 5 companies in under 60 seconds every morning."
+  },
+  {
+    id:"blog-onboarding",
+    tag:"FUNCIÓN 2 · ONBOARDING CERO-TOQUE",
+    tabTarget:"setup",
+    title_es:"2. Configuración Inicial Única (Onboarding): Conectar Una Vez y Olvidarse",
+    title_en:"2. One-Time CEO Setup (Onboarding): Connect Everything Once and Run Hands-Off",
+    summary_es:"El CEO solo interviene durante el onboarding inicial para autorizar sus cuentas y definir su marca White-Label. Después, el sistema opera 100% autónomo.",
+    summary_en:"The CEO only touches the system during initial onboarding to authorize accounts and set white-label branding. After that, it runs 100% autonomously.",
+    steps_es:[
+      "<b>Paso 1 (Personalización White-Label):</b> En la pestaña «Configuración», define el nombre de la empresa, nombre del CEO y el modo de operación (A, B o C).",
+      "<b>Paso 2 (Conexión de 9 Ecosistemas):</b> Activa los conectores de Google Calendar, Gmail/Brevo, Meet/Zoom, Nexus CRM, Tareas, Cámaras ONVIF, Personal y Clientes.",
+      "<b>Paso 3 (Operación Autónoma):</b> Los cron jobs sincronizan datos cada 5 minutos sin que el CEO tenga que abrir hojas de cálculo ni CRMs."
+    ],
+    steps_en:[
+      "<b>Step 1 (White-Label Branding):</b> In the 'Setup' tab, set the brand name, CEO profile name, and operating mode (A, B, or C).",
+      "<b>Step 2 (Connect 9 Ecosystems):</b> Toggle connectors for Google Calendar, Gmail/Brevo, Meet/Zoom, Nexus CRM, Tasks, ONVIF Cameras, Staff, and Clients.",
+      "<b>Step 3 (Autonomous Execution):</b> Background crons sync data every 5 minutes without the CEO ever opening spreadsheets or CRMs."
+    ],
+    outcome_es:"Resultado: Cero fricción técnica diaria; listo para vender como SaaS White-Label a múltiples empresas.",
+    outcome_en:"Outcome: Zero daily technical friction; ready to deploy as a white-label SaaS across multiple companies."
+  },
+  {
+    id:"blog-comms-brain",
+    tag:"FUNCIÓN 3 · BANDEJA IA Y APROBACIÓN 1-CLIC",
+    tabTarget:"comms",
+    title_es:"3. Cerebro de Comunicaciones: De Mensaje Entrante a Borrador Aprobado y Enviado",
+    title_en:"3. Comms Brain: From Incoming Message to AI Draft, 1-Click Approval & Direct Send",
+    summary_es:"Cuando llega un correo o mensaje de cualquier fuente (Gmail, WhatsApp, Telegram), la IA prepara un borrador con el tono y firma exacta del CEO.",
+    summary_en:"Whenever an email or message arrives from any source (Gmail, WhatsApp, Telegram), AI prepares a draft matching the CEO's exact tone and signature.",
+    steps_es:[
+      "<b>Paso 1 (Detección y Pre-Redacción):</b> `comms_brain.py` detecta mensajes que requieren respuesta y redacta el borrador v1 usando tu huella de voz.",
+      "<b>Paso 2 (Edición y Aprendizaje):</b> Si el CEO edita una palabra, se crea una versión inmutable (v2) y el sistema aprende de ese cambio para futuros borradores.",
+      "<b>Paso 3 (Aprobar y Enviar Directo):</b> Cuando el CEO está conforme, pulsa «Aprobar y Enviar Directo» (o lo dice por voz) y el mensaje sale inmediatamente."
+    ],
+    steps_en:[
+      "<b>Step 1 (Detection & Pre-Drafting):</b> `comms_brain.py` flags actionable messages and composes Draft v1 using your learned voice fingerprint.",
+      "<b>Step 2 (Edit & Continuous Learning):</b> If the CEO edits a word, an immutable version (v2) is saved and the voice profile learns from that edit.",
+      "<b>Step 3 (Approve & Send Directly):</b> Once happy, the CEO clicks 'Approve & Send Directly' (or says it by voice) and it dispatches immediately."
+    ],
+    outcome_es:"Resultado: Ningún mensaje se envía sin autorización, pero responder toma 1 clic en lugar de 10 minutos.",
+    outcome_en:"Outcome: No message ever sends without authorization, yet replying takes 1 click instead of 10 minutes."
+  },
+  {
+    id:"blog-grok-voice",
+    tag:"FUNCIÓN 4 · GROK 3.0 VOICE Y DOM BRAIN",
+    tabTarget:"overview",
+    title_es:"4. Capa de Voz Grok 3.0 con Conciencia Total del Sitio Web y Perfil",
+    title_en:"4. Grok 3.0 Voice Layer with Full Website DOM & Profile Awareness",
+    summary_es:"Un segundo cerebro conversacional por voz que entiende todo lo que hay en la pantalla, conoce el perfil del CEO y puede tocar cualquier botón o enlace.",
+    summary_en:"A conversational voice second brain that understands everything on screen, knows the CEO's profile, and can touch/click any button or link.",
+    steps_es:[
+      "<b>Paso 1 (Inspección Viva del DOM):</b> El widget lee en tiempo real en qué pestaña estás, qué empresa filtras, qué KPIs se muestran y qué botones existen.",
+      "<b>Paso 2 (Interacción por Voz con Enlaces y Botones):</b> Di «abrir blogs», «cambiar a CEDEXX», «aprobar borrador» o «completar tarea 1» y verás cómo ilumina y pulsa el control.",
+      "<b>Paso 3 (Explicación de Planes y Resumen Hablado):</b> Pregunta «qué hay en pantalla» o «leer resumen» para escuchar el informe ejecutivo narrado."
+    ],
+    steps_en:[
+      "<b>Step 1 (Live DOM Inspection):</b> The widget reads in real time which tab is active, which company is filtered, visible KPIs, and available buttons.",
+      "<b>Step 2 (Voice Interaction with Links & Buttons):</b> Say 'open blogs', 'switch to CEDEXX', 'approve draft', or 'complete task 1' and watch it highlight and click the element.",
+      "<b>Step 3 (Plan Explanation & Spoken Brief):</b> Ask 'what is on screen' or 'read brief' to hear the narrated executive summary."
+    ],
+    outcome_es:"Resultado: Control manos libres total del centro de mando desde escritorio o móvil.",
+    outcome_en:"Outcome: Complete hands-free control of Mission Control from desktop or mobile."
+  },
+  {
+    id:"blog-behavioral-brain",
+    tag:"FUNCIÓN 5 · APRENDIZAJE CONDUCTUAL Y HORARIOS",
+    tabTarget:"behavior",
+    title_es:"5. Cerebro Conductual: Aprendizaje de Hábitos (Mañana, Tarde y Noche)",
+    title_en:"5. Behavioral Brain: Learning Morning, Afternoon & Evening Habits in Advance",
+    summary_es:"El sistema aprende de tus movimientos de mouse, clics, escritura y preguntas según la hora del día para anticiparse y tener todo listo antes de que lo pidas.",
+    summary_en:"The system learns from your mouse movements, clicks, typing, and questions by time of day to foresee needs and prepare everything in advance.",
+    steps_es:[
+      "<b>Paso 1 (Telemetría Silenciosa):</b> Registra qué módulos miras primero, dónde haces clic, tu cadencia de teclado y qué pides en la mañana, tarde y noche.",
+      "<b>Paso 2 (Preferencias Personales y de Formato):</b> Aprende detalles como tu café favorito de las 07:45 AM (Cortado Doble) y el formato de reporte que prefieres leer a las 08:00 AM.",
+      "<b>Paso 3 (Tarjetas Pre-Preparadas):</b> Al abrir la consola, la franja superior ya tiene listos tus 3 elementos prioritarios según el horario actual."
+    ],
+    steps_en:[
+      "<b>Step 1 (Silent Telemetry):</b> Tracks which modules you inspect first, where you click, typing cadence, and requests across morning, afternoon, and evening.",
+      "<b>Step 2 (Personal & Format Preferences):</b> Learns details like your 07:45 AM coffee order (Double Cortado) and preferred 08:00 AM report format.",
+      "<b>Step 3 (Pre-Prepared Foresight Cards):</b> When you open the console, the top banner already has your 3 priority items ready for that time slot."
+    ],
+    outcome_es:"Resultado: Un asistente proactivo que prevé tus necesidades matutinas, vespertinas y nocturnas.",
+    outcome_en:"Outcome: A proactive assistant that foresees your morning, afternoon, and evening needs."
+  },
+  {
+    id:"blog-people-clients",
+    tag:"FUNCIÓN 6 · MONITOREO DE PERSONAL Y CLIENTES",
+    tabTarget:"outcomes",
+    title_es:"6. Monitoreo de Personal, Clientes, Tareas y Escalaciones Automáticas",
+    title_en:"6. People, Client & Task Monitoring with Automated 24h/48h Escalations",
+    summary_es:"Supervisa el rendimiento de cada vendedor, la salud de cada cuenta cliente y garantiza que ninguna tarea crítica quede olvidada.",
+    summary_en:"Tracks each team member's velocity, client account health, and ensures no critical task ever slips through the cracks.",
+    steps_es:[
+      "<b>Paso 1 (Productividad del Equipo):</b> Visualiza cierres, pipeline gestionado, tareas completadas y tiempo de respuesta de Juan, María, Carlos y agentes IA.",
+      "<b>Paso 2 (Radar de Clientes):</b> Monitorea el índice de salud (0–100%), visitas recientes y valor anual de cada cliente en USA, Colombia, México y Chile.",
+      "<b>Paso 3 (Motor de Escalación 24h / 48h):</b> Si una tarea vence >24h, envía recordatorio al empleado; si supera 48h, escala como alerta CRÍTICA al CEO."
+    ],
+    steps_en:[
+      "<b>Step 1 (Staff Productivity):</b> View closed deals, managed pipeline, completed tasks, and response time for Juan, Maria, Carlos, and AI agents.",
+      "<b>Step 2 (Client Health Radar):</b> Monitor health scores (0–100%), recent visits, and ARR across USA, Colombia, Mexico, and Chile.",
+      "<b>Step 3 (24h / 48h Escalation Engine):</b> Overdue >24h nudges the staff member; >48h escalates as a CRITICAL alert to the CEO."
+    ],
+    outcome_es:"Resultado: Supervisión ejecutiva completa del equipo y clientes sin micromanagement.",
+    outcome_en:"Outcome: Complete executive oversight of staff and clients without micromanagement."
+  },
+  {
+    id:"blog-cameras-ai",
+    tag:"FUNCIÓN 7 · CÁMARAS Y VISIÓN IA",
+    tabTarget:"overview",
+    title_es:"7. Monitoreo de Cámaras con IA: Eventos Fuera de Horario y Snapshots",
+    title_en:"7. AI Camera Monitoring: After-Hours Motion Detection & Executive Digest",
+    summary_es:"El CEO no revisa horas de video crudo: recibe vistas en vivo en el panel y un resumen de 2 líneas redactado por IA solo cuando ocurre algo relevante.",
+    summary_en:"The CEO never scrubs through hours of raw video: they get live dashboard views and a 2-sentence AI digest only when something notable happens.",
+    steps_es:[
+      "<b>Paso 1 (Descubrimiento ONVIF + RTSP):</b> Compatible con cualquier cámara IP estándar mediante protocolo ONVIF y captura eficiente por `ffmpeg`.",
+      "<b>Paso 2 (Detección Fuera de Horario):</b> Filtra movimientos entre las 19:00 y las 08:00, guardando snapshot automático y nivel de confianza.",
+      "<b>Paso 3 (Digest Ejecutivo):</b> La IA resume qué ocurrió, en qué zona y por cuánto tiempo, integrándolo al panel y al PDF diario."
+    ],
+    steps_en:[
+      "<b>Step 1 (ONVIF + RTSP Discovery):</b> Works vendor-neutrally with standard IP cameras via ONVIF and lightweight `ffmpeg` frame capture.",
+      "<b>Step 2 (After-Hours Filtering):</b> Flags motion between 7:00 PM and 8:00 AM, saving automatic snapshots and confidence scores.",
+      "<b>Step 3 (Executive Digest):</b> AI summarizes what happened, where, and for how long, embedding it in the console and daily PDF."
+    ],
+    outcome_es:"Resultado: Seguridad física de todas las oficinas resumida en una sola lectura matutina.",
+    outcome_en:"Outcome: Physical security across all offices distilled into a single morning read."
+  },
+  {
+    id:"blog-pdf-reports",
+    tag:"FUNCIÓN 8 · INFORMES PDF EJECUTIVOS",
+    tabTarget:"overview",
+    title_es:"8. Generador de Informes PDF por Empresa (Listo para Directorio)",
+    title_en:"8. Per-Company Board-Ready PDF Report Generator",
+    summary_es:"Genera instantáneamente un informe PDF completo por empresa con portada, narrativa ejecutiva, tabla de KPIs, gráfico de embudo, tareas y cámaras.",
+    summary_en:"Instantly generates a complete per-company PDF report with cover header, executive narrative, KPI table, funnel chart, tasks, and camera digest.",
+    steps_es:[
+      "<b>Paso 1 (Selección de Empresa e Idioma):</b> Elige cualquiera de tus empresas y el idioma (`ES` o `EN`) en la barra superior.",
+      "<b>Paso 2 (Generación Dual Cliente/Servidor):</b> Funciona tanto desde el navegador (`jsPDF`) como desde el servidor Python (`reportlab` + `matplotlib`).",
+      "<b>Paso 3 (Distribución Automática):</b> Programado cada mañana a las 08:17 AM hacia Telegram y correo electrónico del CEO."
+    ],
+    steps_en:[
+      "<b>Step 1 (Company & Language Selection):</b> Pick any company and language (`ES` or `EN`) in the top bar.",
+      "<b>Step 2 (Dual Client/Server Generation):</b> Works both in-browser (`jsPDF`) and via the Python server (`reportlab` + `matplotlib`).",
+      "<b>Step 3 (Automated Delivery):</b> Scheduled every morning at 08:17 AM to the CEO's Telegram and email."
+    ],
+    outcome_es:"Resultado: Informes ejecutivos auditables con un clic o por comando de voz («descargar informe»).",
+    outcome_en:"Outcome: Auditable executive reports with one click or voice command ('download report')."
+  }
+];
+
+const I18N = {
+  es:{
+    tab_overview:"Centro de Mando", tab_comms:"Bandeja IA (Aprobar y Enviar)",
+    tab_outcomes:"Resultados y Monitoreo", tab_behavior:"Cerebro Conductual",
+    tab_setup:"Configuración (1-Vez)", tab_blogs:"Blogs por Función (Paso a Paso)",
+    k1:"Ingreso mensual proyectado", k2:"Pipeline total (Nexus)", k3:"Ventas cerradas", k4:"Tareas críticas",
+    vs:"vs semana previa", leads:"leads activos", conv:"conversión", over:"vencida — requiere CEO",
+    exec_digest:"Resumen Ejecutivo Diario (Todas las Apps Conectadas)",
+    quick_approvals:"Respuestas Listas para Aprobar", see_all:"Ver todas →",
+    agenda:"Agenda de hoy", pipe:"Pipeline Nexus por etapa", country:"Pipeline por país",
+    tasks:"Pendientes del equipo", cams:"Cámaras — IA", demo:"(feed en vivo + resumen IA)",
+    alerts:"Alertas Telegram", inbox:"Gmail / Mensajes Recientes",
+    comms_title:"Bandeja Ejecutiva Unificada — Borradores Preparados por IA",
+    comms_desc:"Cada correo o mensaje entrante (Gmail, WhatsApp, Telegram, Slack) ya tiene un borrador redactado en tu voz. Edítalo si deseas (el sistema aprende de cada cambio) o presiona «Aprobar y Enviar Directo».",
+    voice_prof_title:"Huella de Voz Aprendida del CEO", sim_inbound:"Simular Nuevo Mensaje Entrante",
+    people_mon:"Monitoreo de Personal y Asignaciones (Productividad)",
+    client_mon:"Monitoreo de Clientes, Visitas y Salud de Cuentas",
+    meetings_mon:"Estudio de Calendarios, Reuniones y Tiempo del CEO",
+    apps_mon:"Resultados y Estudios de Apps en Segundo Plano",
+    beh_title:"Aprendizaje Conductual por Horario (Mañana · Tarde · Noche)",
+    beh_prefs:"Preferencias Anticipadas del CEO (Café, Formato de Reporte, Estilo)",
+    beh_telemetry:"Telemetría en Vivo (Clics, Mouse, Teclado, Preguntas Voz)",
+    beh_tel_desc:"Esta capa observa tus movimientos de mouse, clics, velocidad de escritura y comandos de voz para anticipar qué necesitas antes de que lo pidas.",
+    setup_wl:"Personalización White-Label y Onboarding Único",
+    setup_desc:"El CEO solo configura esta pantalla una vez durante el onboarding. Una vez conectadas las integraciones, todo opera automáticamente en segundo plano.",
+    setup_conn:"Ecosistema Conectado (9 Fuentes de Datos y Monitoreo)",
+    foot:"Datos de muestra listos para demostración + API real en servidor (mc.db / Nexus / Comms Brain / Grok 3.0 Voice)"
+  },
+  en:{
+    tab_overview:"Command Center", tab_comms:"AI Inbox (Approve & Send)",
+    tab_outcomes:"Outcomes & Monitoring", tab_behavior:"Behavioral Brain",
+    tab_setup:"1-Time CEO Setup", tab_blogs:"Function Blogs (Step-by-Step)",
+    k1:"Projected monthly revenue", k2:"Total pipeline (Nexus)", k3:"Closed sales", k4:"Critical tasks",
+    vs:"vs prior week", leads:"active leads", conv:"conversion", over:"overdue — CEO action needed",
+    exec_digest:"Daily Executive Summary (All Connected Apps)",
+    quick_approvals:"Drafts Ready for 1-Click Approval", see_all:"See all →",
+    agenda:"Today's agenda", pipe:"Nexus pipeline by stage", country:"Pipeline by country",
+    tasks:"Team pending items", cams:"Cameras — AI", demo:"(live feed + AI digest)",
+    alerts:"Telegram alerts", inbox:"Recent Gmail / Messages",
+    comms_title:"Unified Executive Inbox — AI Pre-Drafted Replies",
+    comms_desc:"Every incoming email or message (Gmail, WhatsApp, Telegram, Slack) already has a reply drafted in your voice. Edit if desired (the system learns from every change) or click 'Approve & Send Directly'.",
+    voice_prof_title:"Learned CEO Voice Fingerprint", sim_inbound:"Simulate New Incoming Message",
+    people_mon:"Staff & Assignment Monitoring (Productivity Study)",
+    client_mon:"Client Health, Visits & Account Retention Radar",
+    meetings_mon:"Calendar, Meetings & CEO Time Allocation Study",
+    apps_mon:"Background Apps Outcomes & ROI Studies",
+    beh_title:"Time-of-Day Behavioral Learning (Morning · Afternoon · Evening)",
+    beh_prefs:"Foreseen CEO Preferences (Coffee, Report Format, Style)",
+    beh_telemetry:"Live Interaction Telemetry (Clicks, Mouse, Typing, Voice)",
+    beh_tel_desc:"This layer observes your mouse focus, clicks, typing cadence, and voice queries to prepare what you need before you ask.",
+    setup_wl:"White-Label Branding & One-Time Onboarding",
+    setup_desc:"The CEO only configures this screen once during onboarding. Once integrations are connected, everything runs autonomously in the background.",
+    setup_conn:"Connected Ecosystem (9 Data & Monitoring Sources)",
+    foot:"Sample data ready for demo + real server API (mc.db / Nexus / Comms Brain / Grok 3.0 Voice)"
+  }
 };
 
-$('#langBtn').onclick=()=>{lang=lang==='es'?'en':'es';renderAll();};
+let lang = 'es', cur = 'all', activeTab = 'overview', activeSlot = 'morning';
+let behaviorState = null;
+const localTelemetry = {
+  clicks: 14, mouse_focus: 9, typing: 6, voice_queries: 5, task_requests: 4, report_downloads: 2,
+  events: [
+    {type:"voice_query", target:"grok_voice", slot:"morning", detail:{query:"Read morning brief & prepare coffee"}, ts: Date.now()/1000 - 180},
+    {type:"click", target:"kpi_projected_revenue", slot:"morning", detail:{company:"all"}, ts: Date.now()/1000 - 120},
+    {type:"mouse_focus", target:"nexus_pipeline_funnel", slot:"afternoon", detail:{dwell_ms:4200}, ts: Date.now()/1000 - 60}
+  ]
+};
 
-/* ── Voice widget: register console actions (headless-testable via window.LJ.execute) ── */
-window.LJ_WIDGET={lang:'es'};
-window.LJ.register('switch_company',(name)=>{
- const c=COMPANIES.find(x=>x.name.toLowerCase().includes(name.toLowerCase().replace(/\.$/,''))||x.id===name.toLowerCase());
- if(!c)return 'Empresa no encontrada. Opciones: '+COMPANIES.map(x=>x.name).join(', ');
- cur=c.id;renderSeg();
- return (lang==='es'?'Cambiando a ':'Switching to ')+c.name+'.';
+const $ = s => document.querySelector(s);
+const money = v => '$' + Number(v).toLocaleString('en-US');
+
+function showToast(msg) {
+  const b = $('#toastBox');
+  b.textContent = msg;
+  b.style.display = 'block';
+  clearTimeout(b._tm);
+  b._tm = setTimeout(() => { b.style.display = 'none'; }, 3500);
+}
+
+/* ── Behavioral Telemetry Tracker ── */
+function trackBehavior(type, target, detail = {}) {
+  if (type === 'click') localTelemetry.clicks++;
+  else if (type === 'mouse_focus') localTelemetry.mouse_focus++;
+  else if (type === 'typing') localTelemetry.typing++;
+  else if (type === 'voice_query') localTelemetry.voice_queries++;
+  localTelemetry.events.unshift({type, target, slot: activeSlot, detail, ts: Date.now()/1000});
+  fetch('/api/behavior/event', {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({event_type: type, target, detail, time_slot: activeSlot})
+  }).catch(() => {});
+  if (activeTab === 'behavior') renderBehaviorTab();
+}
+window.LJ_BEHAVIOR = { track: trackBehavior };
+
+/* Track typing cadence globally */
+document.addEventListener('keydown', (e) => {
+  if (e.target && (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT')) {
+    if (Math.random() < 0.15) trackBehavior('typing', e.target.id || 'input_field', {key: 'typing_cadence'});
+  }
 });
-window.LJ.register('download_report',()=>{document.getElementById('pdfBtn').click();
- return lang==='es'?'Generando y descargando el informe PDF.':'Generating and downloading the PDF report.';});
-window.LJ.register('complete_task',(arg)=>{
- const n=parseInt(arg)-1;
- if(isNaN(n)||n<0||n>=TASKS.length)return lang==='es'?'Dime el número de tarea.':'Give me the task number.';
- const t=TASKS[n];t[2]='done';
- renderAll();
- return (lang==='es'?'Tarea completada: ':'Task completed: ')+t[0];});
-window.LJ.register('read_brief',()=>{
- const b=lang==='es'
-  ?'Resumen del día. Ingreso mensual proyectado: 48 mil 200 dólares, con pipeline de 214 mil 500. Tienes una tarea crítica vencida: la propuesta CEDEXX a Doral Urgent. A las 14 horas, demo con el doctor Molina.'
-  :'Daily brief. Projected monthly revenue: 48 thousand 200 dollars, pipeline of 214 thousand 500. You have one critical overdue task: the CEDEXX proposal for Doral Urgent. At 2 PM, demo with Doctor Molina.';
- return b;});
-window.LJ.register('status_digest',()=>{
- const open=TASKS.filter(t=>t[2]!=='done').length;
- return lang==='es'
-  ?`Resumen: pipeline de 214 mil 500 dólares con 23 leads. ${open} tareas abiertas, 1 crítica vencida. Próxima reunión: demo CEDEXX a las 14 horas con el doctor Molina.`
-  :`Summary: $214,500 pipeline with 23 leads. ${open} open tasks, 1 critical overdue. Next meeting: CEDEXX demo at 2 PM with Doctor Molina.`;});
-window.LJ.register('refresh',()=>{renderAll();return lang==='es'?'Datos actualizados.':'Data refreshed.';});
-window.LJ.register('help',()=>lang==='es'
- ?'Comandos de voz: cambiar a, más el nombre de la empresa. Descargar informe. Completar tarea, más el número. Leer resumen. Qué hay de nuevo. Actualizar.'
- :'Voice commands: switch to, plus company name. Download report. Complete task, plus number. Read brief. What\'s new. Refresh.');
-setInterval(()=>{$('#clock').textContent=new Date().toLocaleString(lang==='es'?'es-US':'en-US',{weekday:'short',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});},1000);
-renderSeg();renderAll();
+
+/* ── Tab Navigation ── */
+function switchTab(tabId) {
+  activeTab = tabId;
+  document.querySelectorAll('.nav-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === tabId));
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.toggle('active', p.id === 'pane-' + tabId));
+  trackBehavior('click', 'tab_' + tabId);
+  if (tabId === 'comms') renderCommsTab();
+  if (tabId === 'outcomes') renderOutcomesTab();
+  if (tabId === 'behavior') renderBehaviorTab();
+  if (tabId === 'setup') renderSetupTab();
+  if (tabId === 'blogs') renderBlogs();
+}
+
+/* ── Time-of-Day Routine Switcher ── */
+function setRoutineSlot(slot) {
+  activeSlot = slot;
+  const labels = {
+    es: {morning: "🌅 Rutina Mañana (05:00–11:59)", afternoon: "☀️ Rutina Tarde (12:00–17:59)", evening: "🌙 Rutina Noche (18:00+)"},
+    en: {morning: "🌅 Morning Routine (05:00–11:59)", afternoon: "☀️ Afternoon Routine (12:00–17:59)", evening: "🌙 Evening Routine (18:00+)"}
+  };
+  $('#slotPill').innerHTML = labels[lang][slot] || labels.es.morning;
+  renderForeseenStrip();
+  if (activeTab === 'behavior') renderBehaviorTab();
+  fetch('/api/behavior/state?slot=' + slot)
+    .then(r => r.json())
+    .then(d => { behaviorState = d; renderForeseenStrip(); if (activeTab === 'behavior') renderBehaviorTab(); })
+    .catch(() => {});
+}
+
+$('#slotPill').onclick = () => {
+  const order = ['morning', 'afternoon', 'evening'];
+  const next = order[(order.indexOf(activeSlot) + 1) % order.length];
+  setRoutineSlot(next);
+};
+
+/* ── Foreseen / Proactive Cards ── */
+const FALLBACK_ROUTINES = {
+  morning: {
+    title_es: "Tu Cerebro Conductual preparó tu sesión de la mañana (07:45 AM – 11:59 AM)",
+    title_en: "Your Behavioral Brain prepared your morning session (07:45 AM – 11:59 AM)",
+    habit_es: "Por la mañana revisas primero flujo de caja proyectado, desbloqueas tareas críticas vencidas (>48h) y apruebas borradores urgentes mientras tomas tu Cortado Doble.",
+    habit_en: "In the morning you check projected cashflow first, unblock overdue critical tasks (>48h), and approve urgent drafts while having your Double Espresso Cortado.",
+    items: [
+      {icon:"☕", title_es:"Café Matutino Preparado: Cortado Doble Espresso", title_en:"Morning Coffee Ready: Double Espresso Cortado", desc_es:"Orden automática 07:45 AM (leche de avena, extra caliente) lista antes de tu informe de las 08:17 AM.", desc_en:"Auto-scheduled 07:45 AM order (oat milk, extra hot) ready before your 08:17 AM briefing.", btn_es:"Confirmar Café", btn_en:"Confirm Coffee", cmd:"confirm_coffee"},
+      {icon:"📑", title_es:"Informe Matutino Pre-Generado (Visual + PDF)", title_en:"Pre-Generated Morning Report (Visual + PDF)", desc_es:"Formato preferido detectado: 5 empresas consolidadas, 3 párrafos ejecutivos y embudo de conversión.", desc_en:"Preferred format detected: 5 consolidated companies, 3 executive paragraphs, and conversion funnel.", btn_es:"Descargar PDF", btn_en:"Download PDF", cmd:"download_report"},
+      {icon:"✉️", title_es:"Borrador Urgente Listo: Dr. Molina ($12.4k)", title_en:"Urgent Draft Ready: Dr. Molina ($12.4k)", desc_es:"Pre-redactado en tu voz formal con firma «Cordialmente, Jasmel Acosta». Listo para aprobar con 1 clic.", desc_en:"Pre-drafted in your formal voice with signature. Ready for 1-click approval.", btn_es:"Revisar y Aprobar", btn_en:"Review & Approve", cmd:"open_comms"}
+    ]
+  },
+  afternoon: {
+    title_es: "Tu Cerebro Conductual preparó tu enfoque de la tarde (12:00 PM – 05:59 PM)",
+    title_en: "Your Behavioral Brain prepared your afternoon focus (12:00 PM – 05:59 PM)",
+    habit_es: "Por la tarde te enfocas en cierres de Nexus CRM, visitas a clientes (USA/Colombia/México) y velocidad de entrega del equipo.",
+    habit_en: "In the afternoon you focus on Nexus CRM closures, client visits (USA/Colombia/Mexico), and staff delivery velocity.",
+    items: [
+      {icon:"🎯", title_es:"Dossier Pre-Demo Listo: Doral Urgent Care (14:00)", title_en:"Pre-Demo Dossier Ready: Doral Urgent Care (2:00 PM)", desc_es:"Preparado antes de tu llamada con Dr. Molina: historial de visitas y retorno proyectado.", desc_en:"Prepared before your call with Dr. Molina: visit history and projected ROI.", btn_es:"Ver Estudio Clientes", btn_en:"View Client Study", cmd:"open_outcomes"},
+      {icon:"👥", title_es:"Pulso de Equipo: 3 Cotizaciones Activas", title_en:"Team Pulse: 3 Active Quotes", desc_es:"Sueles auditar el avance de Juan, María y Carlos a las 15:00. Gráfico de productividad actualizado.", desc_en:"You typically audit Juan, Maria, and Carlos at 3:00 PM. Productivity chart updated.", btn_es:"Ver Personal", btn_en:"View Staff", cmd:"open_outcomes"},
+      {icon:"🎙", title_es:"Lectura de Voz de Media Tarde (Grok 3.0)", title_en:"Mid-Afternoon Voice Readout (Grok 3.0)", desc_es:"Resumen hablado de 30 segundos sobre movimientos del pipeline y tareas completadas.", desc_en:"30-second spoken summary on pipeline movements and completed tasks.", btn_es:"Escuchar Resumen", btn_en:"Listen Brief", cmd:"read_brief"}
+    ]
+  },
+  evening: {
+    title_es: "Tu Cerebro Conductual preparó tu cierre nocturno (06:00 PM+)",
+    title_en: "Your Behavioral Brain prepared your evening close (06:00 PM+)",
+    habit_es: "Por la noche prefieres modo silencioso: revisas el digest de cámaras IA fuera de horario, despejas borradores con 1 clic y validas la agenda de mañana.",
+    habit_en: "In the evening you prefer low-noise mode: review after-hours AI camera digests, clear pending drafts with 1 click, and lock tomorrow's agenda.",
+    items: [
+      {icon:"📹", title_es:"Auditoría Nocturna de Cámaras IA (4 Zonas)", title_en:"Evening AI Camera Security Audit (4 Zones)", desc_es:"1 evento fuera de horario en Bodega/Archivo (21:47) con snapshot guardado.", desc_en:"1 after-hours event in Warehouse/Records (21:47) with saved snapshot.", btn_es:"Ver Cámaras", btn_en:"View Cameras", cmd:"open_outcomes"},
+      {icon:"⚡", title_es:"Bandeja Cero: Borradores Listos para Enviar", title_en:"Inbox Zero: Drafts Ready to Send", desc_es:"Despeja todas las respuestas pendientes del día con un solo clic de aprobación.", desc_en:"Clear all pending replies from today with a single approval click.", btn_es:"Ir a Bandeja IA", btn_en:"Open AI Inbox", cmd:"open_comms"},
+      {icon:"🌙", title_es:"Mañana Listo: Agenda + Café 07:45 AM", title_en:"Tomorrow Locked: Schedule + 07:45 AM Coffee", desc_es:"4 reuniones sincronizadas y tu preferencia de café programada para las 07:45 AM.", desc_en:"4 meetings synced and your coffee preference scheduled for 07:45 AM.", btn_es:"Ver Hábitos", btn_en:"View Habits", cmd:"open_behavior"}
+    ]
+  }
+};
+
+function runForeseenCmd(cmd) {
+  trackBehavior('click', 'foreseen_' + cmd);
+  if (cmd === 'confirm_coffee') {
+    const msg = lang === 'es'
+      ? '☕ Orden confirmada: Cortado Doble Espresso (Leche de Avena, 165°F) programado para las 07:45 AM.'
+      : '☕ Order confirmed: Double Espresso Cortado (Oat Milk, 165°F) scheduled for 07:45 AM.';
+    showToast(msg);
+  } else if (cmd === 'download_report') {
+    $('#pdfBtn').click();
+  } else if (cmd === 'open_comms') {
+    switchTab('comms');
+  } else if (cmd === 'open_outcomes') {
+    switchTab('outcomes');
+  } else if (cmd === 'open_behavior') {
+    switchTab('behavior');
+  } else if (cmd === 'read_brief') {
+    window.LJ.execute(lang === 'es' ? 'leer resumen' : 'read brief');
+  }
+}
+
+function renderForeseenStrip() {
+  const R = FALLBACK_ROUTINES[activeSlot] || FALLBACK_ROUTINES.morning;
+  $('#foreseenBadge').textContent = lang === 'es' ? 'PREPARADO POR ADELANTADO PARA TI' : 'PREPARED IN ADVANCE FOR YOU';
+  $('#foreseenTitle').textContent = lang === 'es' ? R.title_es : R.title_en;
+  $('#foreseenCards').innerHTML = R.items.map(it => `
+    <div class="f-card">
+      <div>
+        <h4><span>${it.icon}</span> <span>${lang === 'es' ? it.title_es : it.title_en}</span></h4>
+        <p style="margin-top:5px">${lang === 'es' ? it.desc_es : it.desc_en}</p>
+      </div>
+      <div>
+        <button class="btn sm" onclick="runForeseenCmd('${it.cmd}')">${lang === 'es' ? it.btn_es : it.btn_en}</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ── Company Switcher & Overview Render ── */
+function renderSeg() {
+  $('#companySeg').innerHTML = COMPANIES.map(c =>
+    `<button class="${c.id === cur ? 'on' : ''}" style="${c.id === cur ? `background:${c.color};` : ''}" onclick="selectCompany('${c.id}')">${c.name}</button>`
+  ).join('');
+}
+
+function selectCompany(id) {
+  cur = id;
+  trackBehavior('click', 'switch_company_' + id, {company: id});
+  renderSeg();
+  renderAll();
+}
+
+function renderAll() {
+  const T = I18N[lang];
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.dataset.i18n;
+    if (T[k]) el.textContent = T[k];
+  });
+  $('#langBtn').textContent = lang === 'es' ? 'EN' : 'ES';
+  if (window.LJ && window.LJ.setLang) window.LJ.setLang(lang);
+
+  const coObj = COMPANIES.find(c => c.id === cur) || COMPANIES[0];
+  $('#kpiRev').innerHTML = `${money(coObj.rev)}<small class="up">▲ 12% <span>${T.vs}</span></small>`;
+  $('#kpiPipe').innerHTML = `${money(coObj.pipe)}<small><span>${coObj.leads}</span> <span>${T.leads}</span></small>`;
+  $('#kpiClosed').innerHTML = `${money(coObj.closed)}<small class="up"><span>${coObj.conv}%</span> <span>${T.conv}</span></small>`;
+  $('#kpiCrit').innerHTML = `${coObj.crit}<small class="${coObj.crit > 0 ? 'down' : 'up'}">${coObj.crit > 0 ? '62h ' + T.over : (lang === 'es' ? '0 vencidas' : '0 overdue')}</small>`;
+
+  // Executive Digest Narrative
+  $('#execDigestNarr').innerHTML = lang === 'es'
+    ? `<b>Resumen Consolidado (${coObj.name}):</b> Todas tus aplicaciones están conectadas y operando sin intervención manual. Ingreso mensual proyectado en <b>${money(coObj.rev)}</b> y pipeline activo de <b>${money(coObj.pipe)}</b> (${coObj.conv}% conversión). Tienes <b>${DRAFTS_QUEUE.filter(d=>d.status!=='SENT').length} borradores pre-redactados</b> en tu voz esperando aprobación de 1 clic, 4 reuniones hoy y 1 evento nocturno de cámara aislado con snapshot.`
+    : `<b>Consolidated Outcome Digest (${coObj.name}):</b> All background apps are connected and running hands-off. Projected monthly revenue is <b>${money(coObj.rev)}</b> with an active pipeline of <b>${money(coObj.pipe)}</b> (${coObj.conv}% conversion). You have <b>${DRAFTS_QUEUE.filter(d=>d.status!=='SENT').length} pre-drafted replies</b> in your voice awaiting 1-click approval, 4 meetings today, and 1 after-hours camera event isolated with snapshot.`;
+
+  $('#miniAppOutcomes').innerHTML = [
+    {lbl: lang==='es'?'Calendario y Meet':'Calendar & Meet', val: '4 Reuniones Hoy', sub: '100% sincronizado'},
+    {lbl: lang==='es'?'Bandeja IA (Comms)':'AI Inbox (Comms)', val: `${DRAFTS_QUEUE.filter(d=>d.status!=='SENT').length} Borradores`, sub: lang==='es'?'Listos para 1-clic':'Ready for 1-click'},
+    {lbl: lang==='es'?'Monitoreo Personal':'Staff Velocity', val: '94% Cumplimiento', sub: '3 vendedores + IA'},
+    {lbl: lang==='es'?'Salud de Clientes':'Client Health', val: '91% Retención', sub: '12 cuentas activas'}
+  ].map(m => `
+    <div style="background:rgba(7,11,20,.55);border:1px solid var(--hair);padding:10px 12px;border-radius:10px">
+      <div class="muted" style="font-size:10.5px">${m.lbl}</div>
+      <div style="font-weight:800;font-size:14px;margin-top:3px;color:var(--acc)">${m.val}</div>
+      <div class="muted" style="font-size:10.5px;margin-top:2px">${m.sub}</div>
+    </div>
+  `).join('');
+
+  // Quick Draft Approvals Box in Overview
+  const pendingDrafts = DRAFTS_QUEUE.filter(d => cur === 'all' || d.company === cur);
+  $('#pendingDraftsBadge').textContent = DRAFTS_QUEUE.filter(d => d.status !== 'SENT').length;
+  $('#quickDraftsBox').innerHTML = pendingDrafts.slice(0, 3).map(d => `
+    <div class="row" style="align-items:flex-start;flex-direction:column;gap:6px">
+      <div style="display:flex;justify-content:space-between;width:100%;align-items:center">
+        <div><span class="tag medium">${d.channel}</span> <b style="font-size:12px;margin-left:4px">${d.contact}</b></div>
+        <span class="tag ${d.status==='SENT'?'ok':'high'}">${d.status==='SENT'?(lang==='es'?'ENVIADO':'SENT'):'v'+d.version}</span>
+      </div>
+      <div class="muted" style="font-size:11.5px;line-height:1.35">${d.body.slice(0, 95)}…</div>
+      <div style="display:flex;gap:6px">
+        ${d.status !== 'SENT' ? `<button class="btn sm" onclick="approveAndSendDraft(${d.draft_id})">✓ ${lang==='es'?'Aprobar y Enviar':'Approve & Send'}</button>` : ''}
+        <button class="btn ghost sm" onclick="switchTab('comms')">${lang==='es'?'Editar':'Edit'}</button>
+      </div>
+    </div>
+  `).join('');
+
+  // Agenda filtered by company
+  const agFiltered = AGENDA.filter(a => cur === 'all' || a.co === cur);
+  $('#agenda').innerHTML = agFiltered.map(a =>
+    `<div class="row"><div><b>${a.time}</b> — ${a.title}<div class="t">${a.meta}</div></div></div>`
+  ).join('') || `<div class="muted">Sin eventos para este filtro.</div>`;
+
+  // Pipeline
+  const scale = cur === 'all' ? 1 : (coObj.pipe / 214500);
+  const maxP = Math.max(...PIPE.map(p => p.val * scale));
+  $('#pipeline').innerHTML = PIPE.map(p => {
+    const v = Math.round(p.val * scale);
+    const c = Math.max(1, Math.round(p.count * scale));
+    return `<div class="stage"><span class="n">${c}</span>
+      <div style="flex:1"><div style="display:flex;justify-content:space-between"><span>${lang==='es'?p.stage_es:p.stage_en}</span><b>${money(v)}</b></div>
+      <div class="bar"><i style="width:${(v/maxP)*100}%;background:${p.color}"></i></div></div></div>`;
+  }).join('');
+
+  const maxC = Math.max(...COUNTRIES.map(c => c.val * scale));
+  $('#countries').innerHTML = COUNTRIES.map(c => {
+    const v = Math.round(c.val * scale);
+    const l = Math.max(1, Math.round(c.leads * scale));
+    return `<div class="stage"><span class="n">${l}</span>
+      <div style="flex:1"><div style="display:flex;justify-content:space-between"><span>${c.name}</span><b>${money(v)}</b></div>
+      <div class="bar"><i style="width:${(v/maxC)*100}%;background:var(--acc2)"></i></div></div></div>`;
+  }).join('');
+
+  // Tasks filtered by company
+  const tasksFiltered = TASKS.filter(t => cur === 'all' || t.co === cur);
+  $('#tasks').innerHTML = tasksFiltered.map((t, idx) => `
+    <div class="task">
+      <input type="checkbox" ${t.status==='done'?'checked':''} onchange="completeTaskById('${t.id}')" style="cursor:pointer;accent-color:var(--acc)">
+      <span class="tag ${t.sev}">${t.sev}</span>
+      <div style="flex:1;${t.status==='done'?'text-decoration:line-through;opacity:.6':''}">${t.title}<div class="t">${t.meta}</div></div>
+      <span class="tag ${t.status==='overdue'?'overdue':(t.status==='done'?'ok':'low')}">${t.status}</span>
+    </div>
+  `).join('');
+
+  // Cameras
+  $('#camNarr').textContent = lang === 'es' ? CAMNARR_ES : CAMNARR_EN;
+  $('#cams').innerHTML = CAMS.map((c, i) => `
+    <div class="cam"><canvas id="cv${i}" width="320" height="180"></canvas>
+      <span class="lbl">${c[0]}</span><span class="rec">LIVE</span><span class="stamp" id="st${i}"></span>
+    </div>
+  `).join('');
+
+  $('#alerts').innerHTML = ALERTS.map(a =>
+    `<div class="alert"><span class="h">${a[0]}</span><span class="lvl ${a[1]}">${a[1]}</span><span>${a[2]}</span></div>`
+  ).join('');
+
+  $('#inbox').innerHTML = DRAFTS_QUEUE.map(d => `
+    <div class="row" style="cursor:pointer" onclick="switchTab('comms')">
+      <div>${d.incoming.slice(0, 48)}…<div class="t">${d.contact} · ${d.age}</div></div>
+      <span class="tag ${d.status==='SENT'?'ok':'critical'}">${d.status==='SENT'?'SENT':'DRAFT LISTA'}</span>
+    </div>
+  `).join('');
+
+  renderForeseenStrip();
+  if (typeof renderUnitecPanel === 'function') renderUnitecPanel();
+  if (typeof renderBuildingAppPanel === 'function') renderBuildingAppPanel();
+  startFeeds();
+}
+
+function completeTaskById(tid) {
+  const t = TASKS.find(x => x.id === tid);
+  if (!t) return;
+  t.status = t.status === 'done' ? 'open' : 'done';
+  trackBehavior('click', 'complete_task_' + tid, {title: t.title});
+  renderAll();
+  showToast((lang === 'es' ? 'Tarea actualizada: ' : 'Task updated: ') + t.title);
+}
+
+/* ── TAB 2: COMMS & 1-CLICK APPROVAL LOGIC ── */
+function renderCommsTab() {
+  $('#pendingDraftsBadge').textContent = DRAFTS_QUEUE.filter(d => d.status !== 'SENT').length;
+  $('#commsDraftList').innerHTML = DRAFTS_QUEUE.map(d => `
+    <div class="draft-card ${d.status === 'SENT' ? 'sent' : ''}" id="draft-card-${d.draft_id}">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+        <div>
+          <span class="tag medium">${d.channel}</span>
+          <strong style="margin-left:6px;font-size:13.5px">${d.contact}</strong>
+          <span class="muted" style="margin-left:8px">${d.age}</span>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <span class="tag low">Versión v${d.version}</span>
+          <span class="tag ${d.status === 'SENT' ? 'ok' : 'high'}">${d.status === 'SENT' ? (lang==='es'?'APROBADO Y ENVIADO':'APPROVED & SENT') : d.status}</span>
+        </div>
+      </div>
+      <div class="draft-in"><b>Mensaje recibido:</b> ${d.incoming}</div>
+      <label class="muted" style="font-size:11px">✍️ Borrador preparado en tu voz (editable — cada cambio entrena tu perfil):</label>
+      <textarea class="draft-area" id="draft-txt-${d.draft_id}" ${d.status === 'SENT' ? 'readonly' : ''}>${d.body}</textarea>
+      <div class="draft-actions">
+        <span class="muted" style="font-size:11px">Huella aplicada: Saludo formal + «Cordialmente, Jasmel Acosta»</span>
+        <div style="display:flex;gap:8px">
+          ${d.status !== 'SENT' ? `
+            <button class="btn ghost sm" onclick="saveDraftEdit(${d.draft_id})">💾 Guardar Edición (Entrenar Voz)</button>
+            <button class="btn sm" id="approve-btn-${d.draft_id}" onclick="approveAndSendDraft(${d.draft_id})">✓ Aprobar y Enviar Directo</button>
+          ` : `<span class="tag ok">✓ Despachado con autorización del CEO</span>`}
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  $('#voiceProfileBox').innerHTML = `
+    <div class="row"><span>Propietario del Perfil</span><b>Jasmel Acosta (CEO)</b></div>
+    <div class="row"><span>Saludo Aprendido</span><b>«Estimado/a …,»</b></div>
+    <div class="row"><span>Despedida / Firma</span><b>«Cordialmente, Jasmel Acosta»</b></div>
+    <div class="row"><span>Índice de Formalidad</span><b style="color:var(--acc)">100% (Ejecutivo Conciso)</b></div>
+    <div class="row"><span>Longitud Media Preferida</span><b>34 – 42 palabras</b></div>
+    <div class="row"><span>Idiomas Detectados</span><b>Español / Inglés (Bilingüe)</b></div>
+    <div class="row"><span>Regla de Seguridad (§7)</span><b style="color:var(--ok)">0 Auto-Envíos sin Aprobación</b></div>
+  `;
+}
+
+function saveDraftEdit(draftId) {
+  const d = DRAFTS_QUEUE.find(x => x.draft_id === draftId);
+  const el = document.getElementById('draft-txt-' + draftId);
+  if (!d || !el) return;
+  d.body = el.value;
+  d.version += 1;
+  d.status = 'EDITED · PENDING APPROVAL';
+  trackBehavior('typing', 'draft_revised_' + draftId, {version: d.version});
+  fetch('/api/comms/revise', {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({draft_id: draftId, body: d.body})
+  }).catch(() => {});
+  renderCommsTab();
+  renderAll();
+  showToast(lang === 'es'
+    ? `Borrador #${draftId} actualizado a v${d.version}. Tu perfil de voz aprendió de esta edición.`
+    : `Draft #${draftId} updated to v${d.version}. Your voice profile learned from this edit.`);
+}
+
+function approveAndSendDraft(draftId) {
+  const d = DRAFTS_QUEUE.find(x => x.draft_id === draftId);
+  if (!d) return;
+  const el = document.getElementById('draft-txt-' + draftId);
+  if (el) d.body = el.value;
+  d.status = 'SENT';
+  trackBehavior('click', 'approve_and_send_' + draftId, {contact: d.contact});
+  fetch('/api/comms/approve_send', {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({draft_id: draftId})
+  }).catch(() => {});
+  renderCommsTab();
+  renderAll();
+  showToast(lang === 'es'
+    ? `✓ Borrador #${draftId} aprobado y enviado directamente a ${d.contact}.`
+    : `✓ Draft #${draftId} approved and sent directly to ${d.contact}.`);
+}
+
+function simulateIncomingMsg() {
+  const sender = ($('#simSender').value || 'cliente@empresa.com').trim();
+  const txt = ($('#simText').value || '¿Me confirmas disponibilidad para llamada hoy?').trim();
+  const newId = DRAFTS_QUEUE.length + 1;
+  const contactName = sender.split('@')[0].replace(/[._]/g, ' ');
+  const draftBody = `Estimado/a ${contactName},\n\nGracias por tu mensaje. Confirmamos los detalles solicitados y nuestro equipo ya tiene lista la propuesta actualizada para revisarla hoy mismo.\n\nCordialmente,\nJasmel Acosta`;
+  DRAFTS_QUEUE.unshift({
+    draft_id: newId,
+    thread_id: 'thread-sim-' + newId,
+    channel: 'Gmail',
+    contact: sender,
+    company: cur === 'all' ? 'mbmb' : cur,
+    age: 'ahora',
+    incoming: txt,
+    body: draftBody,
+    version: 1,
+    status: 'PENDING_REVIEW'
+  });
+  trackBehavior('click', 'simulate_incoming_msg', {sender});
+  renderCommsTab();
+  renderAll();
+  showToast(lang === 'es'
+    ? `Nuevo mensaje recibido de ${sender} con borrador IA pre-redactado.`
+    : `New message received from ${sender} with pre-drafted AI reply.`);
+}
+
+/* ── TAB 3: OUTCOMES, GRAPHICS & MONITORING ── */
+function renderOutcomesTab() {
+  // 1. Staff Productivity
+  $('#staffStudyBox').innerHTML = STAFF_MONITOR.map(s => `
+    <div style="padding:10px 0;border-bottom:1px solid var(--hair)">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div><b>${s.name}</b> <span class="muted">· ${s.role}</span></div>
+        <span class="tag ${s.conv >= 30 ? 'ok' : (s.conv >= 20 ? 'medium' : 'high')}">${s.status}</span>
+      </div>
+      <div style="display:flex;gap:16px;font-size:12px;color:var(--dim);margin:6px 0">
+        <span>Pipeline: <b style="color:var(--txt)">${money(s.pipe)}</b></span>
+        <span>Cierres: <b style="color:var(--ok)">${s.closed} (${s.conv}%)</b></span>
+        <span>Tareas completadas: <b>${s.tasks_done}</b></span>
+        <span>Resp. prom: <b>${s.resp_min}m</b></span>
+      </div>
+      <div class="bar"><i style="width:${Math.min(100, s.conv)}%;background:var(--acc)"></i></div>
+    </div>
+  `).join('');
+
+  // 2. Client Health Radar
+  $('#clientStudyBox').innerHTML = CLIENT_MONITOR.map(c => `
+    <div style="padding:10px 0;border-bottom:1px solid var(--hair)">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div><b>${c.client}</b> <span class="tag low">${c.country}</span></div>
+        <b style="color:var(--acc)">${money(c.arr)} ARR</b>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--dim);margin:5px 0">
+        <span>Etapa: <b style="color:var(--txt)">${c.stage}</b> · ${c.visit}</span>
+        <span>Salud: <b style="color:var(--ok)">${c.health}%</b></span>
+      </div>
+      <div class="bar"><i style="width:${c.health}%;background:var(--acc2)"></i></div>
+    </div>
+  `).join('');
+
+  // 3. Meetings & Calendar Study
+  $('#meetingsStudyBox').innerHTML = `
+    <div class="stage"><span class="n">45%</span><div style="flex:1"><div style="display:flex;justify-content:space-between"><span>Demos y Cierres con Clientes (Revenue)</span><b>6.5 hrs/sem</b></div><div class="bar"><i style="width:45%;background:var(--acc)"></i></div></div></div>
+    <div class="stage"><span class="n">30%</span><div style="flex:1"><div style="display:flex;justify-content:space-between"><span>Revisión de Pipeline y Estrategia</span><b>4.0 hrs/sem</b></div><div class="bar"><i style="width:30%;background:var(--acc2)"></i></div></div></div>
+    <div class="stage"><span class="n">15%</span><div style="flex:1"><div style="display:flex;justify-content:space-between"><span>1:1 Desbloqueo de Tareas Críticas</span><b>2.0 hrs/sem</b></div><div class="bar"><i style="width:15%;background:var(--vio)"></i></div></div></div>
+    <div class="stage"><span class="n">10%</span><div style="flex:1"><div style="display:flex;justify-content:space-between"><span>Operación Manual / Admin (Reducido por IA)</span><b>1.2 hrs/sem</b></div><div class="bar"><i style="width:10%;background:var(--warn)"></i></div></div></div>
+    <div class="narr" style="margin-top:12px">
+      <b>Estudio de Tiempo del CEO:</b> La automatización de agendamiento (MBMB Booking Server + Google Meet) y pre-redacción de correos ahorró <b>11.4 horas esta semana</b>.
+    </div>
+  `;
+
+  // 4. Connected Apps ROI & Studies
+  $('#appsOutcomeStudyBox').innerHTML = `
+    <div class="row"><div><b>MBMB Revenue Cycle Analytics</b><div class="t">41 denegaciones detectadas → plan de recuperación activo</div></div><span class="tag ok">$18.4k recuperables</span></div>
+    <div class="row"><div><b>CEDEXX Health Tech SaaS</b><div class="t">Uptime 99.98% · 2 nuevos tenants en onboarding</div></div><span class="tag ok">+$28.0k ARR</span></div>
+    <div class="row"><div><b>305 Business Group Deal Flow</b><div class="t">Auth nativa MC activa · leads sincronizados en tiempo real</div></div><span class="tag medium">14 leads calificados</span></div>
+    <div class="row"><div><b>Cámaras IA & Seguridad</b><div class="t">14 detecciones diurnas normales · 1 evento nocturno aislado</div></div><span class="tag high">99.2% precisión</span></div>
+  `;
+}
+
+/* ── TAB 4: BEHAVIORAL BRAIN ── */
+function renderBehaviorTab() {
+  const R = FALLBACK_ROUTINES[activeSlot] || FALLBACK_ROUTINES.morning;
+  $('#behaviorRoutineBox').innerHTML = `
+    <div class="narr" style="margin-bottom:14px">
+      <b>Hábito Aprendido (${activeSlot.toUpperCase()}):</b> ${lang === 'es' ? R.habit_es : R.habit_en}
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+      ${R.items.map(it => `
+        <div style="background:rgba(7,11,20,.55);border:1px solid var(--hair);padding:12px;border-radius:10px">
+          <div style="font-weight:700;font-size:12.5px">${it.icon} ${lang==='es'?it.title_es:it.title_en}</div>
+          <div class="muted" style="font-size:11px;margin-top:5px">${lang==='es'?it.desc_es:it.desc_en}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  $('#telemetryStatsBox').innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+      <div style="background:rgba(7,11,20,.6);padding:10px;border-radius:9px;border:1px solid var(--hair)">
+        <div class="muted" style="font-size:10px">CLICS APRENDIDOS</div>
+        <div style="font-size:20px;font-weight:800;color:var(--acc)">${localTelemetry.clicks}</div>
+      </div>
+      <div style="background:rgba(7,11,20,.6);padding:10px;border-radius:9px;border:1px solid var(--hair)">
+        <div class="muted" style="font-size:10px">ZONAS MOUSE / FOCO</div>
+        <div style="font-size:20px;font-weight:800;color:var(--acc2)">${localTelemetry.mouse_focus}</div>
+      </div>
+      <div style="background:rgba(7,11,20,.6);padding:10px;border-radius:9px;border:1px solid var(--hair)">
+        <div class="muted" style="font-size:10px">COMANDOS VOZ / TECLADO</div>
+        <div style="font-size:20px;font-weight:800;color:var(--vio)">${localTelemetry.voice_queries + localTelemetry.typing}</div>
+      </div>
+    </div>
+  `;
+
+  $('#telemetryLogBox').innerHTML = localTelemetry.events.slice(0, 10).map(ev => `
+    <div class="row" style="font-size:12px">
+      <div><span class="tag medium">${ev.type}</span> <b style="margin-left:6px">${ev.target}</b></div>
+      <span class="muted">${ev.slot}</span>
+    </div>
+  `).join('');
+}
+
+function saveCeoPreferences() {
+  const drink = $('#prefCoffeeDrink').value.trim();
+  const timeStr = $('#prefCoffeeTime').value.trim();
+  const fmt = $('#prefReportFormat').value.trim();
+  FALLBACK_ROUTINES.morning.items[0].title_es = 'Café Matutino Preparado: ' + drink;
+  FALLBACK_ROUTINES.morning.items[0].title_en = 'Morning Coffee Ready: ' + drink;
+  FALLBACK_ROUTINES.morning.items[0].desc_es = `Orden automática ${timeStr} lista antes de tu informe matutino.`;
+  FALLBACK_ROUTINES.morning.items[1].desc_es = `Formato preferido: ${fmt}.`;
+  trackBehavior('preference_update', 'ceo_morning_preferences', {coffee_drink: drink, coffee_time: timeStr, report_format: fmt});
+  $('#prefSavedNote').textContent = '✓ Preferencias guardadas y activas para mañana.';
+  renderForeseenStrip();
+  showToast('✓ Preferencias de café y formato de reporte actualizadas en el Cerebro Conductual.');
+}
+
+/* ── TAB 5: 1-TIME CEO SETUP & INTEGRATIONS ── */
+function renderSetupTab() {
+  $('#integrationsGrid').innerHTML = INTEGRATIONS.map((ig, idx) => `
+    <div class="row">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:18px">${ig.icon}</span>
+        <div>
+          <b>${ig.name}</b> <span class="tag low">${ig.cat}</span>
+          <div class="t">${ig.detail}</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span class="tag ${ig.connected ? 'ok' : 'critical'}">${ig.connected ? 'CONECTADO' : 'PAUSADO'}</span>
+        <label class="switch">
+          <input type="checkbox" ${ig.connected ? 'checked' : ''} onchange="toggleIntegration(${idx})">
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleIntegration(idx) {
+  INTEGRATIONS[idx].connected = !INTEGRATIONS[idx].connected;
+  trackBehavior('click', 'toggle_integration_' + INTEGRATIONS[idx].id);
+  renderSetupTab();
+  showToast(`${INTEGRATIONS[idx].name}: ${INTEGRATIONS[idx].connected ? 'Conectado' : 'Pausado'}`);
+}
+
+function saveOnboardingSetup() {
+  const brand = ($('#cfgBrandName').value || 'LA JEFATURA').trim();
+  const ceo = ($('#cfgCeoName').value || 'Jasmel Acosta').trim();
+  const mode = $('#cfgOpMode').value;
+  $('#brandLogo').innerHTML = `<b>${brand}</b>`;
+  $('#brandSub').textContent = `CEO: ${ceo.toUpperCase()} · MODO ${mode}`;
+  $('#commsModeBadge').textContent = `MODO ${mode} · ACTIVO`;
+  fetch('/api/onboarding/save', {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({brand_name: brand, ceo_name: ceo, operating_mode: mode})
+  }).catch(() => {});
+  trackBehavior('click', 'save_white_label_setup', {brand, ceo, mode});
+  showToast(`✓ Configuración White-Label guardada para ${brand} (${ceo}).`);
+}
+
+/* ── TAB 6: STEP-BY-STEP FUNCTION BLOGS ── */
+function renderBlogs() {
+  const q = (($('#blogSearchInput') && $('#blogSearchInput').value) || '').toLowerCase().trim();
+  const list = BLOGS_DATA.filter(b =>
+    !q ||
+    b.title_es.toLowerCase().includes(q) ||
+    b.title_en.toLowerCase().includes(q) ||
+    b.summary_es.toLowerCase().includes(q) ||
+    b.tag.toLowerCase().includes(q)
+  );
+  $('#blogsContainer').innerHTML = list.map(b => {
+    const steps = lang === 'es' ? b.steps_es : b.steps_en;
+    return `
+      <article class="blog-card" id="${b.id}">
+        <div>
+          <span class="tag medium">${b.tag}</span>
+          <h2 style="margin-top:8px">${lang === 'es' ? b.title_es : b.title_en}</h2>
+          <p class="muted" style="margin:8px 0 12px;line-height:1.5">${lang === 'es' ? b.summary_es : b.summary_en}</p>
+          <ul class="blog-steps">
+            ${steps.map(s => `<li>${s}</li>`).join('')}
+          </ul>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:6px">
+          <div class="blog-outcome" style="flex:1">${lang === 'es' ? b.outcome_es : b.outcome_en}</div>
+          <button class="btn ghost sm" onclick="switchTab('${b.tabTarget}')">Probar función →</button>
+        </div>
+      </article>
+    `;
+  }).join('');
+}
+
+/* ── Simulated Camera Feeds ── */
+const feeds = [];
+function startFeeds() {
+  feeds.forEach(f => cancelAnimationFrame(f));
+  feeds.length = 0;
+  CAMS.forEach((c, i) => {
+    const cv = document.getElementById('cv' + i);
+    if (!cv) return;
+    const ctx = cv.getContext('2d');
+    const px = ctx.createImageData(320, 180);
+    let t = 0;
+    (function frame() {
+      t++;
+      const d = px.data;
+      for (let j = 0; j < d.length; j += 4) {
+        const v = 18 + Math.random() * 22;
+        d[j] = v * .8; d[j+1] = v; d[j+2] = v * 1.25; d[j+3] = 255;
+      }
+      ctx.putImageData(px, 0, 0);
+      if (t % 140 < 40) {
+        const x = ((t % 140) / 40) * 340 - 10, y = 95 + Math.sin(t * .1) * 4;
+        ctx.fillStyle = 'rgba(200,210,230,.5)';
+        ctx.fillRect(x, y, 14, 42);
+        ctx.beginPath(); ctx.arc(x + 7, y - 7, 7, 0, 7); ctx.fill();
+        ctx.fillStyle = '#2ee06f'; ctx.font = '9px monospace';
+        ctx.fillText('persona 0.87', Math.max(2, x - 8), y - 16);
+      }
+      ctx.strokeStyle = 'rgba(35,217,176,.25)';
+      for (let y = 0; y < 180; y += 30) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(320, y); ctx.stroke(); }
+      feeds.push(requestAnimationFrame(frame));
+    })();
+  });
+}
+setInterval(() => {
+  CAMS.forEach((_, i) => {
+    const e = document.getElementById('st' + i);
+    if (e) e.textContent = new Date().toLocaleTimeString('es-US', {hour12: false});
+  });
+}, 1000);
+
+/* ── PDF Report Download ── */
+$('#pdfBtn').onclick = () => {
+  trackBehavior('report_download', 'pdf_executive_report', {company: cur, lang});
+  if (window.jspdf && window.jspdf.jsPDF) {
+    const {jsPDF} = window.jspdf;
+    const doc = new jsPDF();
+    const coObj = COMPANIES.find(c => c.id === cur) || COMPANIES[0];
+    let y = 16;
+    const line = (txt, size=10, bold=false) => { doc.setFontSize(size); doc.setFont('helvetica', bold?'bold':'normal'); doc.text(txt, 14, y); y += size * .55; };
+    doc.setFillColor(11, 16, 32); doc.rect(0, 0, 210, 30, 'F');
+    doc.setTextColor(35, 217, 176); doc.setFontSize(16);
+    doc.text(`LA JEFATURA — INFORME EJECUTIVO (${coObj.name.toUpperCase()})`, 14, 13);
+    doc.setFontSize(9); doc.setTextColor(230, 237, 247);
+    doc.text(new Date().toLocaleString() + ' · White-Label CEO Mission Control', 14, 21);
+    y = 40; doc.setTextColor(20, 25, 40);
+    line('Resumen Ejecutivo / Executive Summary', 12, true);
+    doc.setFontSize(9.5); doc.setFont('helvetica', 'normal');
+    const narr = lang === 'es'
+      ? `Ingreso mensual proyectado ${money(coObj.rev)} con pipeline total de ${money(coObj.pipe)} y conversion del ${coObj.conv}%. Todas las integraciones (Calendario, Correo, CRM, Tareas, Camaras, Personal y Clientes) operan automaticamente.`
+      : `Projected monthly revenue ${money(coObj.rev)} with ${money(coObj.pipe)} total pipeline at ${coObj.conv}% conversion. All integrations (Calendar, Email, CRM, Tasks, Cameras, Staff & Clients) are running automatically.`;
+    doc.text(doc.splitTextToSize(narr, 182), 14, y); y += 22;
+    line('Pipeline por etapa (USD)', 12, true);
+    doc.autoTable({startY: y, head: [['Etapa', 'Leads', 'Valor']], body: PIPE.map(p => [lang==='es'?p.stage_es:p.stage_en, p.count, money(p.val)]), theme: 'grid', headStyles: {fillColor: [11, 16, 32]}, styles: {fontSize: 9}});
+    y = doc.lastAutoTable.finalY + 10;
+    line('Tareas / Tasks', 12, true);
+    doc.autoTable({startY: y, head: [['Tarea', 'Severidad', 'Estado']], body: TASKS.map(t => [t.title, t.sev, t.status]), theme: 'grid', headStyles: {fillColor: [11, 16, 32]}, styles: {fontSize: 9}});
+    doc.save(`informe-${coObj.id}-${new Date().toISOString().slice(0,10)}.pdf`);
+    showToast(lang === 'es' ? '⬇ Informe PDF generado y descargado.' : '⬇ Executive PDF generated and downloaded.');
+  } else {
+    window.open(`/api/report.pdf?company=${encodeURIComponent(cur)}&lang=${lang}`, '_blank');
+  }
+};
+
+$('#langBtn').onclick = () => {
+  lang = lang === 'es' ? 'en' : 'es';
+  setRoutineSlot(activeSlot);
+  renderAll();
+  if (activeTab === 'comms') renderCommsTab();
+  if (activeTab === 'outcomes') renderOutcomesTab();
+  if (activeTab === 'behavior') renderBehaviorTab();
+  if (activeTab === 'setup') renderSetupTab();
+  if (activeTab === 'blogs') renderBlogs();
+};
+
+/* ── Register Grok 3.0 Voice & DOM Actions ── */
+window.LJ_WIDGET = {lang: 'es'};
+window.LJ.register('switch_company', (name) => {
+  const clean = (name || '').toLowerCase().replace(/\.$/, '').trim();
+  const c = COMPANIES.find(x => x.name.toLowerCase().includes(clean) || x.id === clean);
+  if (!c) return 'Empresa no encontrada. Opciones: ' + COMPANIES.map(x => x.name).join(', ');
+  selectCompany(c.id);
+  return (lang === 'es' ? 'Cambiando vista de Mission Control a ' : 'Switching Mission Control view to ') + c.name + '.';
+});
+
+window.LJ.register('open_tab', (tabId) => {
+  const valid = ['overview', 'comms', 'outcomes', 'behavior', 'setup', 'blogs'];
+  const target = valid.includes(tabId) ? tabId : 'overview';
+  switchTab(target);
+  return (lang === 'es' ? 'Abriendo pestaña ' : 'Opening tab ') + target + '.';
+});
+
+window.LJ.register('download_report', () => {
+  $('#pdfBtn').click();
+  return lang === 'es' ? 'Generando y descargando el informe PDF ejecutivo.' : 'Generating and downloading the executive PDF report.';
+});
+
+window.LJ.register('complete_task', (arg) => {
+  const n = parseInt(arg, 10) - 1;
+  if (isNaN(n) || n < 0 || n >= TASKS.length) return lang === 'es' ? 'Dime el número de tarea (1 a 5).' : 'Give me the task number (1 to 5).';
+  TASKS[n].status = 'done';
+  renderAll();
+  return (lang === 'es' ? 'Tarea completada: ' : 'Task completed: ') + TASKS[n].title;
+});
+
+window.LJ.register('approve_draft', (arg) => {
+  const pending = DRAFTS_QUEUE.find(d => d.status !== 'SENT');
+  if (!pending) return lang === 'es' ? 'Todos los borradores ya fueron aprobados y enviados.' : 'All drafts have already been approved and sent.';
+  approveAndSendDraft(pending.draft_id);
+  return lang === 'es'
+    ? `Borrador #${pending.draft_id} para ${pending.contact} aprobado y enviado directamente.`
+    : `Draft #${pending.draft_id} to ${pending.contact} approved and sent directly.`;
+});
+
+window.LJ.register('draft_reply', () => {
+  switchTab('comms');
+  return lang === 'es'
+    ? `Abriendo bandeja IA. Tienes ${DRAFTS_QUEUE.filter(d=>d.status!=='SENT').length} borradores redactados en tu voz listos para aprobar.`
+    : `Opening AI Inbox. You have ${DRAFTS_QUEUE.filter(d=>d.status!=='SENT').length} drafts in your voice ready for approval.`;
+});
+
+window.LJ.register('confirm_coffee', () => {
+  runForeseenCmd('confirm_coffee');
+  return lang === 'es'
+    ? 'Orden de café matutino confirmada: Cortado Doble Espresso con leche de avena programado a las 07:45 AM.'
+    : 'Morning coffee order confirmed: Double Espresso Cortado with oat milk scheduled for 07:45 AM.';
+});
+
+window.LJ.register('switch_slot', (slot) => {
+  setRoutineSlot(slot || 'morning');
+  return lang === 'es' ? `Cambiando cerebro conductual a rutina de ${slot}.` : `Switching behavioral brain to ${slot} routine.`;
+});
+
+window.LJ.register('explain_plans', () => {
+  return lang === 'es'
+    ? 'Con gusto. La Jefatura conecta tus calendarios, correos, reuniones, Nexus CRM, tareas, cámaras, personal y clientes durante el onboarding inicial. Después, tú no haces nada operativo: solo ves resultados, gráficas, estudios y apruebas borradores con un clic o por voz.'
+    : 'Gladly. La Jefatura connects your calendars, emails, meetings, Nexus CRM, tasks, cameras, staff, and clients during one-time onboarding. After that, you do zero operational work: you only see outcomes, graphics, studies, and approve drafts with one click or voice.';
+});
+
+window.LJ.register('read_brief', () => {
+  const coObj = COMPANIES.find(c => c.id === cur) || COMPANIES[0];
+  return lang === 'es'
+    ? `Resumen del día para ${coObj.name}. Ingreso mensual proyectado: ${money(coObj.rev)}, con pipeline de ${money(coObj.pipe)}. Tienes ${DRAFTS_QUEUE.filter(d=>d.status!=='SENT').length} borradores listos para aprobar y tu café matutino programado a las 07:45.`
+    : `Daily brief for ${coObj.name}. Projected monthly revenue: ${money(coObj.rev)}, pipeline of ${money(coObj.pipe)}. You have ${DRAFTS_QUEUE.filter(d=>d.status!=='SENT').length} drafts ready to approve and your morning coffee scheduled for 07:45 AM.`;
+});
+
+window.LJ.register('status_digest', () => {
+  const open = TASKS.filter(t => t.status !== 'done').length;
+  return lang === 'es'
+    ? `Estado actual: pipeline de 214 mil 500 dólares con 23 leads. ${open} tareas abiertas y ${DRAFTS_QUEUE.filter(d=>d.status!=='SENT').length} respuestas pre-redactadas esperando tu OK.`
+    : `Current status: $214,500 pipeline with 23 leads. ${open} open tasks and ${DRAFTS_QUEUE.filter(d=>d.status!=='SENT').length} pre-drafted replies awaiting your OK.`;
+});
+
+window.LJ.register('refresh', () => { renderAll(); return lang === 'es' ? 'Datos actualizados.' : 'Data refreshed.'; });
+window.LJ.register('help', () => lang === 'es'
+  ? 'Comandos Grok 3.0: cambiar a «empresa» · abrir «pestaña» (mando, bandeja, resultados, cerebro, setup, blogs) · aprobar borrador · pedir café · completar tarea «número» · leer resumen · descargar informe.'
+  : 'Grok 3.0 commands: switch to «company» · open «tab» (overview, comms, outcomes, brain, setup, blogs) · approve draft · order coffee · complete task «number» · read brief · download report.');
+
+setInterval(() => {
+  $('#clock').textContent = new Date().toLocaleString(lang === 'es' ? 'es-US' : 'en-US', {weekday:'short', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false});
+}, 1000);
+
+/* ── UNITEC USA & Building Innovation Live Receptionist Analytics ── */
+let UNITEC_DATA = {
+  health: { status: 'up', latencyMs: 155 },
+  five_key_numbers: {
+    real_conversations_today: { unitec: 10, building: 0, total_today: 10 },
+    contacts_captured_phone: { today: 0, all_time: 29 },
+    advisor_requests: { today: 1, human_assigned: 55, completed: 101 },
+    alert_delivery: { total_escalations: 157, today_escalations: 93, any_delivered_ok: 155, all_channels_failed: 2, delivery_rate_pct: 98.7, escalations_collection_status: '200_OK_VIA_SERVICE_ACCOUNT' },
+    greeting_abandonment: { abandoned: 4466, total_raw: 4665, rate_pct: 95.7 }
+  },
+  kpis: { total_sessions: 4649, real_interactions: 173, real_interaction_rate_pct: 3.72, avg_user_messages: 5.2, contacts_captured: 29 },
+  funnel: [
+    { step: 'load', label_es: 'Sesión creada (widget abierto)', label_en: 'Session created (widget opened)', reached: 4649, pct: 100.0 },
+    { step: 'greeted', label_es: 'El bot guardó su saludo', label_en: 'Bot greeting saved', reached: 2295, pct: 49.37 },
+    { step: 'name', label_es: 'Usuario escribió (nombre)', label_en: 'User replied (name)', reached: 174, pct: 3.74 },
+    { step: 'phone', label_es: 'Dejó su teléfono (contacto)', label_en: 'Phone captured', reached: 145, pct: 3.12 },
+    { step: 'engaged', label_es: 'Conversación real con IA', label_en: 'Real AI conversation', reached: 145, pct: 3.12 }
+  ],
+  intents: [
+    { intent: 'Cotización / Precio', count: 20 },
+    { intent: 'Atención humana / Staff', count: 12 },
+    { intent: 'Catálogo / Productos', count: 9 },
+    { intent: 'Ubicación / Disponibilidad', count: 14 }
+  ],
+  recent_real: [
+    { day: '2026-10-22', status: 'active', userMessages: 4, lastMessage: '¿Ofrecen descuentos para compras al por mayor?' },
+    { day: '2026-10-22', status: 'abandoned', userMessages: 1, lastMessage: '¿Tienen panel WPC para pared exterior?' },
+    { day: '2026-10-22', status: 'completed', userMessages: 7, lastMessage: 'el espesor es de 0.3 cm' }
+  ],
+  security_findings: [
+    { severity: 'critical', title_es: 'config/main expone telegramBotToken en Firestore público', fix_es: 'Mover a env de Vercel, bloquear config/main y rotar en BotFather.' },
+    { severity: 'critical', title_es: 'firebase-applet-config.json permite leer 29 teléfonos sin auth', fix_es: 'Cerrar lectura anónima en Firestore Rules y usar Opción A (/api/mission-control-export).' },
+    { severity: 'ok', title_es: '✅ DESBLOQUEADO: escalations leído con Service Account (157 docs / 93 hoy)', fix_es: '155/157 (98.7%) entregadas vía Telegram. Email falla por falta de RESEND_API_KEY; SMS/WhatsApp falla por credenciales Twilio ausentes.' },
+    { severity: 'high', title_es: 'Building Innovation (Juan CEO): brandId=building tiene 1 sesión vs 4,664 unitec', fix_es: 'Apuntar al deploy/dominio de Building Innovation antes de enviar reporte a Juan.' }
+  ]
+};
+
+function renderUnitecPanel() {
+  const U = UNITEC_DATA;
+  const fk = U.five_key_numbers;
+  const fiveCards = [
+    {
+      lbl: lang === 'es' ? '1. Conv. Reales Hoy' : '1. Real Convs Today',
+      val: `${fk.real_conversations_today.unitec} UNITEC · ${fk.real_conversations_today.building} BLDG`,
+      sub: `${U.kpis.real_interactions} hist (${U.kpis.real_interaction_rate_pct}%) · ${U.kpis.avg_user_messages} msjs/conv`,
+      col: 'var(--acc)'
+    },
+    {
+      lbl: lang === 'es' ? '2. Contactos (Teléfono)' : '2. Contacts (Phone)',
+      val: `${fk.contacts_captured_phone.today} hoy · ${fk.contacts_captured_phone.all_time} hist`,
+      sub: lang === 'es' ? 'Capturados en embudo' : 'Captured in funnel',
+      col: 'var(--acc2)'
+    },
+    {
+      lbl: lang === 'es' ? '3. Solicitudes Asesor' : '3. Advisor Requests',
+      val: `${fk.advisor_requests.today} hoy · ${fk.advisor_requests.human_assigned} asig`,
+      sub: `${fk.advisor_requests.completed} sesiones completadas`,
+      col: 'var(--vio)'
+    },
+    {
+      lbl: lang === 'es' ? '4. Entrega Alertas SLA' : '4. SLA Alert Delivery',
+      val: `${fk.alert_delivery.any_delivered_ok || 155}/${fk.alert_delivery.total_escalations || 157} (${fk.alert_delivery.delivery_rate_pct || 98.7}%)`,
+      sub: `${fk.alert_delivery.today_escalations || 93} hoy · ${fk.alert_delivery.all_channels_failed || 2} fallos totales (TG OK)`,
+      col: 'var(--ok)'
+    },
+    {
+      lbl: lang === 'es' ? '5. Abandono en Saludo' : '5. Greeting Abandonment',
+      val: `${fk.greeting_abandonment.rate_pct}%`,
+      sub: `${fk.greeting_abandonment.abandoned.toLocaleString()} de ${fk.greeting_abandonment.total_raw.toLocaleString()} sesiones`,
+      col: 'var(--warn)'
+    }
+  ];
+  const fnEl = document.getElementById('unitecFiveNumbers');
+  if (fnEl) {
+    fnEl.innerHTML = fiveCards.map(c => `
+      <div style="background:rgba(7,11,20,.65);border:1px solid var(--hair);padding:11px 13px;border-radius:11px">
+        <div class="muted" style="font-size:10.5px;text-transform:uppercase">${c.lbl}</div>
+        <div style="font-weight:800;font-size:16px;margin-top:4px;color:${c.col}">${c.val}</div>
+        <div class="muted" style="font-size:10.5px;margin-top:3px">${c.sub}</div>
+      </div>
+    `).join('');
+  }
+  const funEl = document.getElementById('unitecFunnelBox');
+  if (funEl) {
+    funEl.innerHTML = (U.funnel || []).map(f => `
+      <div class="stage" style="margin-bottom:8px">
+        <span class="n" style="width:42px;font-size:11.5px">${f.reached}</span>
+        <div style="flex:1">
+          <div style="display:flex;justify-content:space-between;font-size:11.5px">
+            <span>${lang === 'es' ? (f.label_es || f.step) : (f.label_en || f.step)}</span>
+            <b>${f.pct}%</b>
+          </div>
+          <div class="bar"><i style="width:${Math.max(4, f.pct)}%;background:var(--acc2)"></i></div>
+        </div>
+      </div>
+    `).join('');
+  }
+  const intEl = document.getElementById('unitecIntentsBox');
+  if (intEl) {
+    intEl.innerHTML = (U.intents || []).slice(0, 4).map(it => `
+      <div class="row" style="padding:4px 0;font-size:12px"><span>${it.intent}</span><b>${it.count}</b></div>
+    `).join('') + `<div style="margin-top:8px;padding-top:6px;border-top:1px solid var(--hair)">` +
+    (U.recent_real || []).slice(0, 3).map(r => `
+      <div style="font-size:11.5px;color:#cfd8ea;padding:3px 0">💬 «${r.lastMessage}» <span class="muted">(${r.userMessages} msjs · ${r.day})</span></div>
+    `).join('') + `</div>`;
+  }
+  const secEl = document.getElementById('unitecSecurityBox');
+  if (secEl) {
+    secEl.innerHTML = (U.security_findings || []).map(s => `
+      <div style="padding:5px 0;border-bottom:1px solid var(--hair);font-size:11.5px">
+        <div><span class="tag ${s.severity === 'critical' ? 'critical' : (s.severity === 'ok' ? 'ok' : 'high')}">${s.severity}</span> <b style="margin-left:4px">${s.title_es}</b></div>
+        <div class="muted" style="font-size:11px;margin-top:2px">→ ${s.fix_es}</div>
+      </div>
+    `).join('');
+  }
+}
+
+function syncUnitecLive(force = false) {
+  fetch('/api/unitec/summary' + (force ? '?refresh=1' : ''))
+    .then(r => r.json())
+    .then(d => {
+      if (d && d.kpis) {
+        UNITEC_DATA = d;
+        renderUnitecPanel();
+        if (force) showToast('✓ Datos de UNITEC USA sincronizados en vivo desde unitec-front-desk.vercel.app.');
+      }
+    })
+    .catch(() => renderUnitecPanel());
+}
+
+/* ── BUILDINGAPP.US (Web + Apple App Store + Google Play) Live Analytics ── */
+let BUILDINGAPP_DATA = {
+  health: { status: 'up', uptimeSec: 10500, geminiOk: true, openaiOk: true },
+  five_key_numbers: {
+    members: {
+      total: 7, customers_total: 6, new_today: 3, new_7d: 3,
+      by_tier: { luxury_enterprise: 6, pro: 0, standard: 0, free: 1 },
+      latest_members: [
+        { name: 'App Store Reviewer', email: 'rev***@buildingapp.us', tier: 'LUXURY', created: '2026-10-23', generations: 6 },
+        { name: 'VIP Unlimited User 3', email: 'vip***@buildingapp.us', tier: 'LUXURY', created: '2026-10-23', generations: 0 },
+        { name: 'VIP Unlimited User 2', email: 'vip***@buildingapp.us', tier: 'LUXURY', created: '2026-10-23', generations: 0 },
+        { name: 'VIP Unlimited User 1', email: 'vip***@buildingapp.us', tier: 'LUXURY', created: '2026-06-20', generations: 120 }
+      ]
+    },
+    ai_usage: { generations_today: 6, generations_total: 130, room_analyses_today: 5, material_renders_total: 124, success_rate_pct: 100, avg_duration_ms: 11947 },
+    activity_today: { customer_logins_today: 3, active_customer_accounts_today: 1, material_views_today: 28, total_requests_today: 215, api_calls_today: 174, account_deletion_tests_today: 1 },
+    catalog: {
+      total_products: 322, categories_count: 12,
+      top_categories: [
+        { category: 'PAREDES', count: 124 },
+        { category: 'LAMINAS', count: 76 },
+        { category: 'PANELES WPC Y ANGULOS', count: 51 },
+        { category: 'PISOS', count: 15 }
+      ],
+      top_materials: [
+        { id: 'ROOM_ANALYSIS', name: 'AI Room Analysis', count: 6, category: 'Room Analysis' },
+        { id: 'floor-oak-natural', name: 'Natural Oak Planks', count: 2, category: 'flooring' },
+        { id: '14031001', name: 'LAMINA PVC BLANCO BRILLANTE H-01-I', count: 1, category: 'CIELO RASO PVC' },
+        { id: '14181107', name: 'FOAM BOARD GOTAS DE AGUA NEGRO', count: 1, category: 'LAMINAS' }
+      ]
+    },
+    cost_and_health: { cost_today_usd: 0.012, cost_total_usd: 2.452, errors_today: 5 }
+  },
+  daily_summary_es: '📊 Resumen Diario BuildingApp (2026-10-23): +3 nuevos miembros hoy (App Store Reviewer, VIP Unlimited User 3, VIP Unlimited User 2), alcanzando 7 miembros registrados (6 Luxury/Enterprise, 1 Free). Uso hoy: 6 generaciones IA (5 análisis de espacios en vivo, 100% éxito, 11.9s prom.), 3 logins de clientes y 28 vistas de materiales sobre 322 productos. Actividad destacada de tienda: Apple App Store Reviewer ejecutó pruebas en vivo hoy (login, flujo DELETE_ACCOUNT y 5 análisis de cuarto con 100% éxito).',
+  daily_summary_en: '📊 BuildingApp Daily Summary (2026-10-23): +3 new members joined today (App Store Reviewer, VIP Unlimited User 3, VIP Unlimited User 2), reaching 7 registered members (6 Luxury/Enterprise, 1 Free). Today\'s usage: 6 AI generations (5 live room analyses, 100% success, 11.9s avg), 3 customer logins, and 28 material views across 322 SKUs. Store milestone: Apple App Store Reviewer ran live certification tests today (login, mandatory DELETE_ACCOUNT flow, and 5 room analyses with 100% success).',
+  recent_activity: [
+    { timestamp: '2026-10-23 16:32 UTC', action: 'ANALYZE', actor: 'rev***@buildingapp.us', detail: 'AI Room Analysis · gemini-3.6-flash (17.6s · OK)' },
+    { timestamp: '2026-10-23 16:30 UTC', action: 'ANALYZE', actor: 'rev***@buildingapp.us', detail: 'AI Room Analysis · gemini-3.6-flash (8.6s · OK)' },
+    { timestamp: '2026-10-23 16:21 UTC', action: 'LOGIN', actor: 'rev***@buildingapp.us', detail: 'Login (LUXURY) vía permanent_account' },
+    { timestamp: '2026-10-23 15:10 UTC', action: 'DELETE_ACCOUNT', actor: 'rev***@buildingapp.us', detail: 'Prueba de eliminación de cuenta (App Store Compliance)' }
+  ]
+};
+
+function renderBuildingAppPanel() {
+  const B = BUILDINGAPP_DATA;
+  const fk = B.five_key_numbers || {};
+  const m = fk.members || {};
+  const ai = fk.ai_usage || {};
+  const act = fk.activity_today || {};
+  const cat = fk.catalog || {};
+  const ch = fk.cost_and_health || {};
+
+  const sumEl = document.getElementById('bappDailySummaryBox');
+  if (sumEl) {
+    sumEl.innerHTML = lang === 'es' ? (B.daily_summary_es || '') : (B.daily_summary_en || '');
+  }
+
+  const cards = [
+    {
+      lbl: lang === 'es' ? '1. Miembros y Nuevos Hoy' : '1. Members & New Today',
+      val: `+${m.new_today || 0} hoy · ${m.total || 7} total`,
+      sub: `${(m.by_tier || {}).luxury_enterprise || 6} Luxury/VIP · ${(m.by_tier || {}).free || 1} Free`,
+      col: 'var(--acc)'
+    },
+    {
+      lbl: lang === 'es' ? '2. Generaciones y Renders IA' : '2. AI Renders & Analyses',
+      val: `${ai.generations_today || 6} hoy · ${ai.generations_total || 130} hist`,
+      sub: `${ai.success_rate_pct || 100}% éxito · ${((ai.avg_duration_ms || 11947)/1000).toFixed(1)}s prom`,
+      col: 'var(--acc2)'
+    },
+    {
+      lbl: lang === 'es' ? '3. Uso Diario (Web/iOS/Android)' : '3. Daily App Activity',
+      val: `${act.customer_logins_today || 3} logins · ${act.material_views_today || 28} vistas`,
+      sub: `${act.total_requests_today || 215} reqs · ${act.account_deletion_tests_today || 1} test App Store`,
+      col: 'var(--vio)'
+    },
+    {
+      lbl: lang === 'es' ? '4. Catálogo Activo' : '4. Active Catalog',
+      val: `${cat.total_products || 322} SKUs`,
+      sub: `${cat.categories_count || 12} categorías (Paredes, Láminas, WPC)`,
+      col: 'var(--ok)'
+    },
+    {
+      lbl: lang === 'es' ? '5. Costo IA y Salud' : '5. AI Cost & Health',
+      val: `$${(ch.cost_today_usd || 0.012).toFixed(3)} hoy · $${(ch.cost_total_usd || 2.45).toFixed(2)} hist`,
+      sub: `Gemini OK · OpenAI OK · Sharp $0`,
+      col: 'var(--warn)'
+    }
+  ];
+
+  const fnEl = document.getElementById('bappFiveNumbers');
+  if (fnEl) {
+    fnEl.innerHTML = cards.map(c => `
+      <div style="background:rgba(7,11,20,.65);border:1px solid var(--hair);padding:11px 13px;border-radius:11px">
+        <div class="muted" style="font-size:10.5px;text-transform:uppercase">${c.lbl}</div>
+        <div style="font-weight:800;font-size:16px;margin-top:4px;color:${c.col}">${c.val}</div>
+        <div class="muted" style="font-size:10.5px;margin-top:3px">${c.sub}</div>
+      </div>
+    `).join('');
+  }
+
+  const memEl = document.getElementById('bappMembersBox');
+  if (memEl) {
+    memEl.innerHTML = (m.latest_members || []).slice(0, 4).map(u => `
+      <div class="row" style="padding:5px 0;font-size:12px">
+        <div>
+          <b>${u.name}</b> <span class="muted">(${u.email})</span>
+          <div class="t">Alta: ${u.created} · ${u.generations} renders/análisis</div>
+        </div>
+        <span class="tag ${u.tier === 'LUXURY' ? 'ok' : 'low'}">${u.tier}</span>
+      </div>
+    `).join('');
+  }
+
+  const matEl = document.getElementById('bappMaterialsBox');
+  if (matEl) {
+    matEl.innerHTML = (cat.top_materials || []).slice(0, 4).map(mt => `
+      <div class="row" style="padding:4px 0;font-size:12px">
+        <span>${mt.name} <span class="muted">(${mt.category})</span></span>
+        <b>${mt.count}</b>
+      </div>
+    `).join('') + `<div style="margin-top:8px;padding-top:6px;border-top:1px solid var(--hair);font-size:11px" class="muted">` +
+    (cat.top_categories || []).slice(0, 4).map(c => `${c.category}: <b>${c.count}</b>`).join(' · ') + `</div>`;
+  }
+
+  const actEl = document.getElementById('bappActivityBox');
+  if (actEl) {
+    actEl.innerHTML = (B.recent_activity || []).slice(0, 4).map(a => `
+      <div style="padding:5px 0;border-bottom:1px solid var(--hair);font-size:11.5px">
+        <div><span class="tag ${a.action === 'ANALYZE' || a.action === 'RENDER' ? 'ok' : 'medium'}">${a.action}</span> <b style="margin-left:4px">${a.actor}</b> <span class="muted" style="float:right;font-size:10px">${a.timestamp}</span></div>
+        <div class="muted" style="font-size:11px;margin-top:2px">→ ${a.detail}</div>
+      </div>
+    `).join('');
+  }
+}
+
+function syncBuildingAppLive(force = false) {
+  fetch('/api/buildingapp/summary' + (force ? '?refresh=1' : ''))
+    .then(r => r.json())
+    .then(d => {
+      if (d && d.five_key_numbers) {
+        BUILDINGAPP_DATA = d;
+        renderBuildingAppPanel();
+        if (force) showToast('✓ Datos de BuildingApp (buildingapp.us) sincronizados en vivo.');
+      }
+    })
+    .catch(() => renderBuildingAppPanel());
+}
+
+renderSeg();
+setRoutineSlot('morning');
+renderAll();
+renderUnitecPanel();
+syncUnitecLive(false);
+renderBuildingAppPanel();
+syncBuildingAppLive(false);
+renderBlogs();
 </script>
 </body>
 </html>

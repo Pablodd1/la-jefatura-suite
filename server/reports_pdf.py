@@ -20,7 +20,7 @@ samples dir is only the demo fallback.
 import json
 import os
 import sys
-import time
+import tempfile; import time
 
 from ai_insights import report_narative
 
@@ -137,7 +137,7 @@ def build_report(company: str, samples_dir: str, out_pdf: str,
     ]))
     story.append(t)
 
-    png = _chart_pipeline(nexus["pipeline_por_etapa"], "/tmp/_pipeline.png")
+    png = _chart_pipeline(nexus["pipeline_por_etapa"], os.path.join(tempfile.gettempdir(), "_pipeline.png"))
     if png:
         story.append(Spacer(1, 8))
         story.append(Image(png, width=5.8 * inch, height=2.2 * inch))
@@ -195,6 +195,6 @@ def build_report(company: str, samples_dir: str, out_pdf: str,
 if __name__ == "__main__":
     company = sys.argv[1] if len(sys.argv) > 1 else "Medical Billing Miami Beach"
     sdir = sys.argv[2] if len(sys.argv) > 2 else "../data/samples"
-    out = sys.argv[3] if len(sys.argv) > 3 else "/tmp/informe_ejecutivo.pdf"
+    out = sys.argv[3] if len(sys.argv) > 3 else os.path.join(tempfile.gettempdir(), "informe_ejecutivo.pdf")
     path = build_report(company, sdir, out)
     print("report written:", path, os.path.getsize(path), "bytes")
