@@ -223,10 +223,27 @@ const URL = 'http://localhost:8931/';
   const learned = await page.evaluate(async () => (await (await fetch('/api/jefesito/profile')).json()).interactions);
   check('21. Every interaction is being recorded for self-learning', learned >= 4, `${learned} interactions`);
 
+  // 8c. Verify Spanish Apple-Style Minimalist Yellow & Black Product Website + Interactive iPhone 16 Pro Reference View (/website)
+  await page.goto('http://localhost:8931/website', { waitUntil: 'networkidle' });
+  const webTitle = await page.title();
+  const iphoneVisible = await page.locator('#iphoneMockup').isVisible();
+  // Test interactive zero-hallucination trap inside the iPhone screen
+  await page.locator('button', { hasText: 'Trampa (No Adivinar)' }).click();
+  await page.waitForTimeout(500);
+  const ipOut = await page.locator('#iosReplyBox').innerText();
+  // Test 1-tap Dr. Molina decision approval inside the iPhone screen
+  await page.locator('#iosApproveBtn').click();
+  const ipStatus = await page.locator('#iosApproveBtn').innerText();
+  const roiSavings = await page.locator('#outTotalUsd').innerText();
+  check('22. Spanish Apple-Style Minimalist Yellow Website + Interactive iPhone 16 Pro View (/website)',
+    webTitle.includes('Decisiones') && iphoneVisible && /no adivino|No tengo ese dato/i.test(ipOut) && /APROBADO Y ENVIADO/i.test(ipStatus) && roiSavings.includes('$'),
+    `iPhone trap="${ipOut.slice(0, 60)}...", ROI=${roiSavings}`);
+  await page.screenshot({ path: path.join(ASSETS_DIR, 'verified-10-website-apple-yellow.png'), fullPage: false });
+
   // 9. Verify Zero Console / Runtime Errors
   check('16. Zero Browser Console or Page Errors', consoleErrors.length === 0 && pageErrors.length === 0,
     `consoleErrors=${consoleErrors.length} (${consoleErrors.join('; ')}), pageErrors=${pageErrors.length}`);
 
   await browser.close();
-  console.log('\n🎉 ALL 16 BROWSER E2E VERIFICATIONS PASSED!');
+  console.log('\n🎉 ALL BROWSER E2E VERIFICATIONS PASSED!');
 })();

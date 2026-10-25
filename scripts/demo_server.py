@@ -200,6 +200,9 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
         if path in ("/", "/index.html"):
             html = open(os.path.join(ROOT, "mock", "demo.html"), "rb").read()
             self._send(200, html, "text/html; charset=utf-8")
+        elif path.rstrip("/") in ("/website", "/web", "/presentacion", "/site"):
+            html = open(os.path.join(ROOT, "mock", "website.html"), "rb").read()
+            self._send(200, html, "text/html; charset=utf-8")
         elif path == "/favicon.ico":
             self._send(204, b"", "image/x-icon")
         elif path.rstrip("/") == "/widgets/lajefatura-widget.js":
