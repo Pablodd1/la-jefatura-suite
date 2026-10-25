@@ -223,9 +223,34 @@ const URL = 'http://localhost:8931/';
   const learned = await page.evaluate(async () => (await (await fetch('/api/jefesito/profile')).json()).interactions);
   check('21. Every interaction is being recorded for self-learning', learned >= 4, `${learned} interactions`);
 
-  // 8c. Verify Spanish Apple-Style Minimalist Yellow & Black Product Website + Interactive iPhone 16 Pro Reference View (/website)
+  // 8c. Verify Horizontal-Scroll Website (/website): Slide 01 (3D Spinning Brain Video + Schematic) & Slide 02 (iPhone 16 Pro + WebApp)
   await page.goto('http://localhost:8931/website', { waitUntil: 'networkidle' });
+  await page.waitForTimeout(450);
   const webTitle = await page.title();
+  const brainCheck = await page.evaluate(async () => {
+    const v = document.getElementById('heroBrainVideo');
+    const c = document.getElementById('brain3dCanvas');
+    const deck = document.getElementById('horizontalDeck');
+    const r = await fetch('/assets/hero-brain-3d.mp4');
+    return {
+      hasVideo: !!v && v.getAttribute('src') === '/assets/hero-brain-3d.mp4',
+      mp4Status: r.status,
+      mp4Type: r.headers.get('content-type'),
+      canvasW: c ? c.width : 0,
+      canvasH: c ? c.height : 0,
+      scrollWidth: deck ? deck.scrollWidth : 0,
+      clientWidth: deck ? deck.clientWidth : 0
+    };
+  });
+  check('22a. Slide 01 Hero 3D Spinning Brain Video (/assets/hero-brain-3d.mp4) + 60fps 3D Cortex Schematic + Horizontal Deck',
+    brainCheck.hasVideo && brainCheck.mp4Status === 200 && brainCheck.mp4Type === 'video/mp4' && brainCheck.canvasW >= 400 && brainCheck.scrollWidth >= brainCheck.clientWidth * 5,
+    JSON.stringify(brainCheck));
+  await page.screenshot({ path: path.join(ASSETS_DIR, 'verified-10-website-3d-brain-hero.png'), fullPage: false });
+
+  // Scroll horizontally ("to the side") to Slide 02 (iPhone 16 Pro + WebApp)
+  await page.locator('#btnNextSlide').click();
+  await page.waitForTimeout(650);
+  const scrolledLeft = await page.evaluate(() => document.getElementById('horizontalDeck').scrollLeft);
   const iphoneVisible = await page.locator('#iphoneMockup').isVisible();
   // Test interactive zero-hallucination trap inside the iPhone screen
   await page.locator('button', { hasText: 'Trampa (No Adivinar)' }).click();
@@ -235,9 +260,9 @@ const URL = 'http://localhost:8931/';
   await page.locator('#iosApproveBtn').click();
   const ipStatus = await page.locator('#iosApproveBtn').innerText();
   const roiSavings = await page.locator('#outTotalUsd').innerText();
-  check('22. Spanish Apple-Style Minimalist Yellow Website + Interactive iPhone 16 Pro View (/website)',
-    webTitle.includes('Decisiones') && iphoneVisible && /no adivino|No tengo ese dato/i.test(ipOut) && /APROBADO Y ENVIADO/i.test(ipStatus) && roiSavings.includes('$'),
-    `iPhone trap="${ipOut.slice(0, 60)}...", ROI=${roiSavings}`);
+  check('22b. Horizontal Scroll to Slide 02 + Interactive Apple iPhone 16 Pro View (/website)',
+    webTitle.includes('Decisiones') && scrolledLeft >= 800 && iphoneVisible && /no adivino|No tengo ese dato/i.test(ipOut) && /APROBADO Y ENVIADO/i.test(ipStatus) && roiSavings.includes('$'),
+    `scrollLeft=${scrolledLeft}, iPhone trap="${ipOut.slice(0, 50)}...", ROI=${roiSavings}`);
   await page.screenshot({ path: path.join(ASSETS_DIR, 'verified-10-website-apple-yellow.png'), fullPage: false });
 
   // 9. Verify Zero Console / Runtime Errors

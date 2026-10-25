@@ -203,6 +203,22 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
         elif path.rstrip("/") in ("/website", "/web", "/presentacion", "/site"):
             html = open(os.path.join(ROOT, "mock", "website.html"), "rb").read()
             self._send(200, html, "text/html; charset=utf-8")
+        elif path.startswith("/assets/"):
+            rel = os.path.basename(path)
+            fpath = os.path.join(ROOT, "assets", rel)
+            if os.path.isfile(fpath):
+                ext = os.path.splitext(rel)[1].lower()
+                mime = {
+                    ".mp4": "video/mp4",
+                    ".webm": "video/webm",
+                    ".png": "image/png",
+                    ".jpg": "image/jpeg",
+                    ".jpeg": "image/jpeg",
+                    ".svg": "image/svg+xml",
+                }.get(ext, "application/octet-stream")
+                self._send(200, open(fpath, "rb").read(), mime)
+            else:
+                self._send(404, {"error": "asset not found"})
         elif path == "/favicon.ico":
             self._send(204, b"", "image/x-icon")
         elif path.rstrip("/") == "/widgets/lajefatura-widget.js":
