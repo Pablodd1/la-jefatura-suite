@@ -31,10 +31,11 @@
         chips: [
           ["📊 Leer Resumen", "leer resumen"],
           ["✉️ Aprobar Borrador", "aprobar borrador"],
+          ["📝 Guardar Nota", "guardar nota: Revisar cierre Doral Urgent Care y métricas BuildingApp"],
+          ["🔍 ¿Qué notas tengo?", "qué notas tengo"],
+          ["📱 Miembros BuildingApp", "cuántos miembros nuevos hay en BuildingApp"],
           ["☕ Mi Café 07:45", "preparar café"],
-          ["📘 Ir a Blogs", "abrir blogs"],
-          ["🧠 Ver Hábitos", "abrir cerebro"],
-          ["🏢 Ir a CEDEXX", "cambiar a CEDEXX"]
+          ["📘 Ir a Blogs", "abrir blogs"]
         ]
       },
       en: {
@@ -49,10 +50,11 @@
         chips: [
           ["📊 Read Brief", "read brief"],
           ["✉️ Approve Draft", "approve draft"],
+          ["📝 Save Note", "save note: Review Doral Urgent Care closure and BuildingApp metrics"],
+          ["🔍 My Notes", "what notes do I have"],
+          ["📱 BuildingApp Members", "how many members in BuildingApp"],
           ["☕ My 07:45 Coffee", "order coffee"],
-          ["📘 Open Blogs", "open blogs"],
-          ["🧠 View Habits", "open brain"],
-          ["🏢 Switch CEDEXX", "switch to CEDEXX"]
+          ["📘 Open Blogs", "open blogs"]
         ]
       }
     };
@@ -102,6 +104,21 @@
     function parse(text) {
       const t = text.trim();
       const low = t.toLowerCase();
+
+      // 0. Knowledge intents (save note/task/meeting/email, list, search, metric questions) are
+      //    answered ONLY by the server from stored data — checked first so words inside the
+      //    note («mañana», «café»…) cannot trigger other commands.
+      if (/^(guardar|guarda|anotar|anota|agregar|agrega|a[ñn]adir|save|add|take|create|crear|crea|new|nota|note|recu[eé]rdame|remind me)\b/i.test(t) &&
+          /(nota|note|tarea|task|reuni[oó]n|meeting|correo|email|recu[eé]rdame|remind me)/i.test(low)) {
+        return { action: "server_cmd", arg: t };
+      }
+      if (/^(buscar|busca|search|find|encuentra|qu[eé] dijo|what did)\b/i.test(low) ||
+          (/\b(notas?|notes?|tareas?|tasks?|reuniones?|meetings?)\b/i.test(low) &&
+           /\b(qu[eé]|cu[aá]les|cu[aá]ntas?|lista|listar|lee|leer|read|list|show|what|how many|dame|muestra)\b/i.test(low) &&
+           !/^(ir a|abrir|abre|open|go to)\b/i.test(low)) ||
+          /\b(miembros|members|conversaciones|conversations|abandono|abandonment|contactos|contacts|alertas|alerts|generaciones|generations|renders|costo|cost)\b/i.test(low)) {
+        return { action: "server_cmd", arg: t };
+      }
 
       // 1. Tab switching
       const tabMap = [
@@ -207,6 +224,24 @@
         window.LJ_BEHAVIOR.track("voice_query", action || "natural_query", { text, action, arg });
       }
 
+      if (action === "server_cmd") {
+        fetch((CFG.api || "") + "/api/voice/command", {
+          method: "POST",
+          headers: Object.assign({ "Content-Type": "application/json" }, CFG.token ? { "X-MC-Token": CFG.token } : {}),
+          body: JSON.stringify({ command: text, tenant: CFG.tenant, lang: CFG.lang }),
+        })
+          .then(r => r.ok ? r.json() : Promise.reject(r.status))
+          .then(d => {
+            speak((d.reply || T.unknown) + (d.sources && d.sources.length && d.grounded
+              ? (CFG.lang === "es" ? " Fuente: " : " Source: ") + d.sources.slice(0, 2).join("; ") : ""));
+            if (typeof window.loadKnowledgeVault === "function") window.loadKnowledgeVault(false);
+          })
+          .catch(() => speak(CFG.lang === "es"
+              ? "No pude consultar el servidor, así que no voy a inventar una respuesta."
+              : "I couldn't reach the server, so I won't make up an answer."));
+        return { ok: true, action, delegated: true };
+      }
+
       if (action === "inspect_page") {
         const dom = inspectDOM();
         const msg = CFG.lang === "es"
@@ -245,10 +280,10 @@
         return { ok: true, action: "dom_match", target: matchedBtn.text };
       }
 
-      // Server fallback
+      // Server fallback (grounded: answers from stored data or says it has no data)
       fetch((CFG.api || "") + "/api/voice/command", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: Object.assign({ "Content-Type": "application/json" }, CFG.token ? { "X-MC-Token": CFG.token } : {}),
         body: JSON.stringify({ command: text, tenant: CFG.tenant, lang: CFG.lang }),
       })
         .then(r => r.json())

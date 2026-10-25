@@ -32,6 +32,8 @@ sys.path.insert(0, os.path.join(ROOT, "server"))
 import behavior_brain  # noqa: E402
 import buildingapp_ingest  # noqa: E402
 import comms_brain  # noqa: E402
+import knowledge_store  # noqa: E402
+import mc_auth  # noqa: E402
 import nexus_ingest  # noqa: E402
 import reports_pdf  # noqa: E402
 import unitec_ingest  # noqa: E402
@@ -87,6 +89,7 @@ def _seed_if_empty():
         nexus_ingest.load_sample(os.path.join(SAMPLES, "nexus_crm.json"))
     comms_brain.ensure_demo_inbox_seeded()
     behavior_brain.ensure_seeded()
+    knowledge_store.ensure_demo_knowledge_seeded()
     unitec_ingest.summary()
     buildingapp_ingest.summary()
 
@@ -102,7 +105,7 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
         self.send_header("Content-Type", ctype)
         self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type, X-Bridge")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type, X-Bridge, X-MC-Token")
         self.send_header("Content-Length", str(len(data)))
         self.end_headers()
         self.wfile.write(data)
@@ -110,10 +113,42 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
     def do_OPTIONS(self):
         self._send(200, {"ok": True})
 
+    def _gate(self, path, qs=None) -> bool:
+        """Anything under /api/ that arrives through the public tunnel needs X-MC-Token,
+        unless it originates from the Mission Control UI hosted on the same tunnel host."""
+        if path.startswith("/api/") and mc_auth.is_remote(self.headers):
+            q_tok = ((qs or {}).get("token") or [""])[0] if qs else ""
+            hdr_tok = self.headers.get("X-MC-Token", "") or q_tok
+            if mc_auth.token_ok(hdr_tok):
+                return True
+            host = (self.headers.get("Host") or "").strip().lower()
+            ref = (self.headers.get("Referer") or "").strip().lower()
+            orig = (self.headers.get("Origin") or "").strip().lower()
+            if host and ((ref and f"://{host}" in ref) or (orig and orig.endswith(f"://{host}"))):
+                return True
+            self._send(401, {"error": "unauthorized: X-MC-Token required for remote access"})
+            return False
+        return True
+
     def do_GET(self):
         parsed = urllib.parse.urlparse(self.path)
         path = parsed.path
         qs = urllib.parse.parse_qs(parsed.query)
+        if not self._gate(path, qs):
+            return
+
+        if path == "/api/ask":
+            q = (qs.get("q") or [""])[0]
+            lang = (qs.get("lang") or ["es"])[0]
+            self._send(200, knowledge_store.ask(q, lang=lang))
+            return
+        if path in ("/api/notes", "/api/tasks", "/api/meetings", "/api/emails"):
+            kind = path.rsplit("/", 1)[1]
+            self._send(200, {kind: knowledge_store.list_items(kind, limit=200)})
+            return
+        if path == "/api/export":
+            self._send(200, knowledge_store.export_all())
+            return
 
         if path in ("/", "/index.html"):
             html = open(os.path.join(ROOT, "mock", "demo.html"), "rb").read()
@@ -152,10 +187,37 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
     def do_POST(self):
         parsed = urllib.parse.urlparse(self.path)
         path = parsed.path
+        qs = urllib.parse.parse_qs(parsed.query)
+        if not self._gate(path, qs):
+            return
         n = int(self.headers.get("Content-Length", 0))
-        body = json.loads(self.rfile.read(n) or b"{}")
+        try:
+            body = json.loads(self.rfile.read(n) or b"{}")
+        except ValueError:
+            self._send(400, {"error": "invalid JSON"})
+            return
 
-        if path == "/api/nexus/push":
+        if path == "/api/notes":
+            r = knowledge_store.add_note(body.get("text", ""), source=body.get("source", "api"),
+                                         company=body.get("company", "all"))
+            self._send(200 if r["ok"] else 400, r)
+        elif path == "/api/tasks":
+            r = knowledge_store.add_task(body.get("title", ""), company=body.get("company", "all"),
+                                         owner=body.get("owner", "CEO"), due=body.get("due", ""),
+                                         severity=body.get("severity", "medium"), source=body.get("source", "api"))
+            self._send(200 if r["ok"] else 400, r)
+        elif path == "/api/meetings":
+            r = knowledge_store.add_meeting_summary(
+                body.get("summary", ""), title=body.get("title", ""), attendees=body.get("attendees", ""),
+                action_items=body.get("action_items", ""), source=body.get("source", "api"),
+                company=body.get("company", "all"))
+            self._send(200 if r["ok"] else 400, r)
+        elif path == "/api/emails/ingest":
+            r = knowledge_store.add_email_summary(
+                body.get("summary", ""), sender=body.get("sender", ""), subject=body.get("subject", ""),
+                source=body.get("source", "ingest"), company=body.get("company", "all"))
+            self._send(200 if r["ok"] else 400, r)
+        elif path == "/api/nexus/push":
             self._send(200, nexus_ingest.push(
                 body, source=self.headers.get("X-Bridge", "direct")))
         elif path == "/api/unitec/push":

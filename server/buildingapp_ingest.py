@@ -33,10 +33,7 @@ os.makedirs(os.path.dirname(DB), exist_ok=True)
 
 BUILDINGAPP_BASE_URL = os.environ.get("BUILDINGAPP_BASE_URL", "https://buildingapp.us")
 CREDS_FILE = os.path.join(ROOT, "data", "buildingapp_credentials.secret.json")
-MC_EXPORT_TOKEN = os.environ.get(
-    "MC_EXPORT_TOKEN",
-    "lj_mc_unitec_9f8e7d6c5b4a3f2e1d0c9b8a7f6e5d4c3b2a1f0e"
-)
+import mc_auth  # noqa: E402  (token lives in env / git-ignored data/mc_token.secret)
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS buildingapp_snapshots (
@@ -420,8 +417,8 @@ def sync_from_live(timeout: int = 12) -> dict:
 
 def push(payload: dict, token: str = "") -> dict:
     """Webhook receiver: POST /api/buildingapp/push."""
-    if token and token != MC_EXPORT_TOKEN:
-        return {"ok": False, "error": "invalid X-MC-Token"}
+    if not mc_auth.token_ok(token):
+        return {"ok": False, "error": "invalid or missing X-MC-Token"}
     c = _db()
     row = c.execute("SELECT payload_json FROM buildingapp_snapshots ORDER BY id DESC LIMIT 1").fetchone()
     base = json.loads(row[0]) if row else json.loads(json.dumps(BASELINE_SNAPSHOT))

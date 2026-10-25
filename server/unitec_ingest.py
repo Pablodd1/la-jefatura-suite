@@ -29,10 +29,7 @@ DB = os.environ.get("MC_DB_PATH") or (
 os.makedirs(os.path.dirname(DB), exist_ok=True)
 
 UNITEC_BASE_URL = os.environ.get("UNITEC_BASE_URL", "https://unitec-front-desk.vercel.app")
-MC_EXPORT_TOKEN = os.environ.get(
-    "MC_EXPORT_TOKEN",
-    "lj_mc_unitec_9f8e7d6c5b4a3f2e1d0c9b8a7f6e5d4c3b2a1f0e"
-)
+import mc_auth  # noqa: E402  (token lives in env / git-ignored data/mc_token.secret)
 
 # Service Account file path (kept strictly outside repo on host disk)
 DEFAULT_SA_PATHS = [
@@ -268,7 +265,7 @@ def sync_from_live(timeout: int = 8) -> dict:
     try:
         req_mc = urllib.request.Request(
             f"{UNITEC_BASE_URL}/api/mission-control-export",
-            headers={"X-MC-Token": MC_EXPORT_TOKEN, "User-Agent": "LaJefatura-MC/1.0"}
+            headers={"X-MC-Token": mc_auth.get_token(), "User-Agent": "LaJefatura-MC/1.0"}
         )
         with urllib.request.urlopen(req_mc, timeout=timeout) as r:
             mc_resp = json.loads(r.read().decode("utf-8"))
@@ -337,8 +334,8 @@ def sync_from_live(timeout: int = 8) -> dict:
 
 def push(payload: dict, token: str = "") -> dict:
     """Option A receiver: POST /api/unitec/push from UniTEC's /api/mission-control-export."""
-    if token and token != MC_EXPORT_TOKEN:
-        return {"ok": False, "error": "invalid X-MC-Token"}
+    if not mc_auth.token_ok(token):
+        return {"ok": False, "error": "invalid or missing X-MC-Token"}
     # Start from latest snapshot or baseline so funnel/intents/SA escalations are preserved
     c = _db()
     row = c.execute("SELECT payload_json FROM unitec_snapshots ORDER BY id DESC LIMIT 1").fetchone()

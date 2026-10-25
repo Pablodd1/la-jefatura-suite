@@ -95,15 +95,17 @@ const URL = 'http://localhost:8931/';
   check('7. Incoming Message Auto-Generates New Draft in CEO Voice', afterSimCount === 5, `${afterSimCount} total threads`);
   await page.screenshot({ path: path.join(ASSETS_DIR, 'verified-2-comms-inbox.png'), fullPage: true });
 
-  // 3. Verify Tab 3: Outcomes, Graphics & Monitoring (People, Clients, Meetings, Apps)
+  // 3. Verify Tab 3: Outcomes, Graphics & Monitoring (People, Clients, Meetings, Apps + Knowledge Vault)
   await page.locator('.nav-tab[data-tab="outcomes"]').click();
+  await page.waitForTimeout(400);
   const staffText = await page.locator('#staffStudyBox').innerText();
   const clientText = await page.locator('#clientStudyBox').innerText();
   const meetingsText = await page.locator('#meetingsStudyBox').innerText();
   const appsText = await page.locator('#appsOutcomeStudyBox').innerText();
-  check('8. People/Staff, Clients, Meetings & Apps Outcome Studies',
-    staffText.includes('Juan Perez') && clientText.includes('Brickell Ortho') && meetingsText.includes('11.4 horas') && appsText.includes('MBMB Revenue Cycle'),
-    'All 4 visual study panels verified');
+  const kvText = await page.locator('#knowledgeVaultCard').innerText();
+  check('8. People/Staff, Clients, Meetings, Apps & Grounded Knowledge Vault',
+    staffText.includes('Juan Perez') && clientText.includes('Brickell Ortho') && meetingsText.includes('11.4 horas') && appsText.includes('MBMB Revenue Cycle') && /memoria ejecutiva/i.test(kvText),
+    'All 5 visual & memory panels verified');
   await page.screenshot({ path: path.join(ASSETS_DIR, 'verified-3-outcomes-monitoring.png'), fullPage: true });
 
   // 4. Verify Tab 4: Behavioral & Temporal Brain (Morning / Afternoon / Evening + Telemetry)
@@ -140,20 +142,26 @@ const URL = 'http://localhost:8931/';
   await page.locator('#blogSearchInput').fill('');
   await page.screenshot({ path: path.join(ASSETS_DIR, 'verified-6-function-blogs.png'), fullPage: true });
 
-  // 7. Verify Grok 3.0 Voice & DOM Brain Widget
+  // 7. Verify Grok 3.0 Voice & DOM Brain Widget + Grounded Note Save & Metric Query
   await page.locator('#ljw-fab').click();
   await page.locator('#ljw-in').fill('qué hay en pantalla');
   await page.locator('#ljw-send').click();
   await page.locator('#ljw-in').fill('preparar café');
   await page.locator('#ljw-send').click();
+  await page.locator('#ljw-in').fill('guardar nota: Revisar métricas de BuildingApp y UNITEC para la demo de mañana');
+  await page.locator('#ljw-send').click();
+  await page.waitForTimeout(400);
+  await page.locator('#ljw-in').fill('cuántos miembros nuevos hay en BuildingApp');
+  await page.locator('#ljw-send').click();
+  await page.waitForTimeout(400);
   await page.locator('#ljw-in').fill('explicar planes');
   await page.locator('#ljw-send').click();
   await page.locator('#ljw-in').fill('abrir mando');
   await page.locator('#ljw-send').click();
   const voiceLog = await page.locator('#ljw-log').innerText();
-  check('14. Grok 3.0 Voice & DOM Brain Commands (Inspect DOM, Coffee, Plans, Tab Switch)',
-    voiceLog.includes('Conciencia DOM Grok 3.0') && voiceLog.includes('café') && voiceLog.includes('onboarding'),
-    'Voice brain DOM inspection & control verified');
+  check('14. Grok 3.0 Voice & DOM Brain Commands (Inspect DOM, Coffee, Grounded Note Save, Metric Citation, Plans, Tab Switch)',
+    voiceLog.includes('Conciencia DOM Grok 3.0') && voiceLog.includes('café') && voiceLog.includes('Nota guardada') && voiceLog.includes('BuildingApp: 7 miembros') && voiceLog.includes('onboarding'),
+    'Voice brain DOM inspection, grounded save & source citation verified');
   await page.screenshot({ path: path.join(ASSETS_DIR, 'demo-console-voice.png'), fullPage: false });
   await page.screenshot({ path: path.join(ASSETS_DIR, 'verified-7-grok3-voice-brain.png'), fullPage: false });
 

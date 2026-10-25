@@ -108,6 +108,37 @@ def parse(command: str, lang: str = "es") -> dict:
     t = command.strip()
     low = t.lower()
 
+    # ── Knowledge intents FIRST: their free text may contain words like «mañana» or «café»
+    # that would otherwise trigger routine/coffee commands. ──
+    m = re.match(r"^(?:guardar|guarda|anotar|anota|agregar|agrega|a[ñn]adir|save|add|take|create|crear|crea)\s+"
+                 r"(?:el\s+|un\s+|una\s+|a\s+|the\s+)?(?:resumen\s+(?:de\s+(?:la\s+)?)?reuni[oó]n|meeting\s+summary|"
+                 r"summary\s+of\s+(?:the\s+)?meeting)\s*[:,\-]?\s*(.+)$", t, re.I)
+    if m:
+        return {"action": "save_meeting", "text": m.group(1).strip()}
+    m = re.match(r"^(?:guardar|guarda|save|add)\s+(?:el\s+|un\s+|the\s+)?(?:resumen\s+(?:de\s+)?(?:correo|email)|"
+                 r"email\s+summary)\s*[:,\-]?\s*(.+)$", t, re.I)
+    if m:
+        return {"action": "save_email", "text": m.group(1).strip()}
+    m = re.match(r"^(?:guardar|guarda|anotar|anota|agregar|agrega|a[ñn]adir|save|add|take|crear|crea|create)\s+"
+                 r"(?:una\s+|a\s+)?(?:nueva\s+|new\s+)?(?:nota|note)\s*[:,\-]?\s*(.+)$", t, re.I) \
+        or re.match(r"^(?:nota|note)\s*[:,\-]\s*(.+)$", t, re.I)
+    if m:
+        return {"action": "save_note", "text": m.group(1).strip()}
+    m = re.match(r"^(?:crear|crea|agregar|agrega|a[ñn]adir|add|create|new)\s+(?:una\s+|a\s+)?(?:nueva\s+|new\s+)?"
+                 r"(?:tarea|task)\s*[:,\-]?\s*(.+)$", t, re.I) \
+        or re.match(r"^(?:recu[ée]rdame|remind me to)\s+(.+)$", t, re.I)
+    if m:
+        return {"action": "save_task", "text": m.group(1).strip()}
+    if re.match(r"^(?:buscar|busca|search|find|encuentra|qu[eé] dijo|what did)\b", low):
+        return {"action": "ask", "text": t}
+    if re.search(r"\b(notas?|notes?|tareas?|tasks?|reuniones?|meetings?|correos? guardados?)\b", low) and \
+            re.search(r"\b(qu[eé]|cu[aá]les|cu[aá]ntas?|lista|listar|lee|leer|read|list|show|what|how many|dame|muestra)\b", low) \
+            and not re.search(r"^(?:ir a|abrir|abre|open|go to)\b", low):
+        return {"action": "ask", "text": t}
+    if re.search(r"\b(miembros|members|conversaciones|conversations|abandono|abandonment|contactos|contacts|"
+                 r"alertas|alerts|generaciones|generations|renders|costo|cost)\b", low):
+        return {"action": "ask", "text": t}
+
     # Tab navigation commands
     tab_match = re.search(
         r"\b(blogs?|gu[ií]as?|funciones|setup|configuraci[oó]n|onboarding|integraciones|"
@@ -231,7 +262,7 @@ def execute(command: str, lang: str = "es", samples_dir: str | None = None) -> d
         tasks_j = json.load(open(os.path.join(sd, "tasks.json"), encoding="utf-8"))
         brief = report_narative("La Jefatura", nexus["kpis"],
                                 tasks_j["resumen"], nexus["pipeline_por_etapa"], lang=lang)
-        reply = brief
+        reply = ("(Datos de ejemplo del demo, no reales) " if lang != "en" else "(Demo sample data, not real) ") + brief
     elif action == "status_digest":
         c = sqlite3.connect(DB)
         t = c.execute("SELECT COUNT(*) FROM tasks WHERE status != 'done'").fetchone()[0]
@@ -248,7 +279,7 @@ def execute(command: str, lang: str = "es", samples_dir: str | None = None) -> d
                    f"con {s['kpis']['leads_activos']} leads; {t} tareas abiertas.{pending}")
         except Exception:
             dig = f"{t} tareas abiertas.{pending}"
-        reply = dig
+        reply = ("(Datos de ejemplo del demo, no reales) " if lang != "en" else "(Demo sample data, not real) ") + dig
     elif action == "draft_reply":
         import comms_brain
         comms_brain.ensure_demo_inbox_seeded()
@@ -280,9 +311,40 @@ def execute(command: str, lang: str = "es", samples_dir: str | None = None) -> d
             r = comms_brain.approve_and_send(row[0])
             reply = ("Borrador aprobado y enviado directamente." if r.get("ok")
                      else f"No se pudo enviar: {r.get('error')}")
-    else:
-        ok = action != "unknown"
+    elif action in ("save_note", "save_task", "save_meeting", "save_email"):
+        import knowledge_store as ks
+        txt = p.get("text", "")
+        es = lang != "en"
+        if action == "save_note":
+            r = ks.add_note(txt, source="voice")
+            reply = (f"Nota guardada con id {r['id']}: «{txt[:100]}»." if es
+                     else f"Note saved as {r['id']}: \"{txt[:100]}\".") if r["ok"] else "No pude guardar una nota vacía."
+        elif action == "save_task":
+            r = ks.add_task(txt, source="voice")
+            reply = (f"Tarea creada con id {r['id']}: «{txt[:100]}»." if es
+                     else f"Task created as {r['id']}: \"{txt[:100]}\".") if r["ok"] else "No pude crear una tarea vacía."
+        elif action == "save_meeting":
+            r = ks.add_meeting_summary(txt, source="voice")
+            reply = (f"Resumen de reunión guardado con id {r['id']}." if es
+                     else f"Meeting summary saved as {r['id']}.") if r["ok"] else "No pude guardar un resumen vacío."
+        else:
+            r = ks.add_email_summary(txt, source="voice")
+            reply = (f"Resumen de correo guardado con id {r['id']}." if es
+                     else f"Email summary saved as {r['id']}.") if r["ok"] else "No pude guardar un resumen vacío."
+        ok = bool(r.get("ok"))
+        return {"ok": ok, "action": action, "parsed": p, "reply": reply, "record": r}
+    elif action == "ask":
+        import knowledge_store as ks
+        a = ks.ask(p.get("text", command), lang=lang)
+        return {"ok": True, "action": action, "parsed": p, "reply": a["answer"],
+                "sources": a["sources"], "grounded": a["grounded"]}
+    elif action != "unknown":
         reply = _reply(action, lang=lang)
+    else:
+        import knowledge_store as ks
+        a = ks.ask(command, lang=lang)
+        return {"ok": a["grounded"], "action": "ask", "parsed": p, "reply": a["answer"],
+                "sources": a["sources"], "grounded": a["grounded"]}
     return {"ok": ok, "action": action, "parsed": p, "reply": reply}
 
 

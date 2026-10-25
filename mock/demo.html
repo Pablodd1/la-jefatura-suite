@@ -347,6 +347,25 @@
       <h3><span class="lhs"><span class="dot" style="background:var(--warn)"></span><span data-i18n="apps_mon">Resultados y Estudios de Apps en Segundo Plano</span></span></h3>
       <div id="appsOutcomeStudyBox"></div>
     </div>
+    <div class="card" style="grid-column:span 12;border-color:rgba(35,217,176,.35)" id="knowledgeVaultCard">
+      <h3>
+        <span class="lhs">
+          <span class="dot" style="background:var(--acc)"></span>
+          <span id="kvTitle">🧠 Memoria Ejecutiva Cero-Alucinaciones (Notas · Tareas · Resúmenes de Reunión · Correos)</span>
+          <span class="tag ok" id="kvBadge">GROUNDED · SQLITE MC.DB</span>
+        </span>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button class="btn ghost sm" onclick="loadKnowledgeVault(true)">🔄 Actualizar Memoria</button>
+        </div>
+      </h3>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px">
+        <input class="inp" id="kvQuickNote" placeholder="🎙 Nota rápida o acuerdo de reunión (ej. Cliente aprobó propuesta)…">
+        <input class="inp" id="kvQuickTask" placeholder="✅ Nueva tarea (ej. Enviar contrato antes del viernes)…">
+        <button class="btn sm" onclick="saveQuickNoteFromUI()">💾 Guardar Nota / Reunión</button>
+        <button class="btn vio sm" onclick="saveQuickTaskFromUI()">➕ Crear Tarea</button>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px" id="knowledgeVaultGrid"></div>
+    </div>
   </div>
 </section>
 
@@ -1267,6 +1286,79 @@ function renderOutcomesTab() {
     <div class="row"><div><b>305 Business Group Deal Flow</b><div class="t">Auth nativa MC activa · leads sincronizados en tiempo real</div></div><span class="tag medium">14 leads calificados</span></div>
     <div class="row"><div><b>Cámaras IA & Seguridad</b><div class="t">14 detecciones diurnas normales · 1 evento nocturno aislado</div></div><span class="tag high">99.2% precisión</span></div>
   `;
+  loadKnowledgeVault(false);
+}
+
+let KNOWLEDGE_VAULT = { notes: [], tasks: [], meetings: [], emails: [] };
+
+function renderKnowledgeVault() {
+  const g = document.getElementById('knowledgeVaultGrid');
+  if (!g) return;
+  const cols = [
+    {
+      title: lang === 'es' ? `📝 Notas del CEO (${(KNOWLEDGE_VAULT.notes||[]).length})` : `📝 CEO Notes (${(KNOWLEDGE_VAULT.notes||[]).length})`,
+      items: (KNOWLEDGE_VAULT.notes || []).slice(0, 4).map(n => `<div style="padding:5px 0;border-bottom:1px solid var(--hair);font-size:11.5px"><span class="tag low">${n.id}</span> ${n.text}</div>`)
+    },
+    {
+      title: lang === 'es' ? `✅ Tareas Guardadas (${(KNOWLEDGE_VAULT.tasks||[]).length})` : `✅ Saved Tasks (${(KNOWLEDGE_VAULT.tasks||[]).length})`,
+      items: (KNOWLEDGE_VAULT.tasks || []).slice(0, 4).map(t => `<div style="padding:5px 0;border-bottom:1px solid var(--hair);font-size:11.5px"><span class="tag ${t.status==='done'?'ok':'high'}">${t.id}</span> ${t.title}</div>`)
+    },
+    {
+      title: lang === 'es' ? `🎥 Resúmenes Reunión (${(KNOWLEDGE_VAULT.meetings||[]).length})` : `🎥 Meeting Summaries (${(KNOWLEDGE_VAULT.meetings||[]).length})`,
+      items: (KNOWLEDGE_VAULT.meetings || []).slice(0, 4).map(m => `<div style="padding:5px 0;border-bottom:1px solid var(--hair);font-size:11.5px"><span class="tag medium">${m.id}</span> <b>${m.title||'Reunión'}</b>: ${m.summary}</div>`)
+    },
+    {
+      title: lang === 'es' ? `✉️ Resúmenes Correo (${(KNOWLEDGE_VAULT.emails||[]).length})` : `✉️ Email Summaries (${(KNOWLEDGE_VAULT.emails||[]).length})`,
+      items: (KNOWLEDGE_VAULT.emails || []).slice(0, 4).map(e => `<div style="padding:5px 0;border-bottom:1px solid var(--hair);font-size:11.5px"><span class="tag ok">${e.id}</span> <b>${e.subject||'Correo'}</b>: ${e.summary}</div>`)
+    }
+  ];
+  g.innerHTML = cols.map(c => `
+    <div style="background:rgba(7,11,20,.55);border:1px solid var(--hair);border-radius:11px;padding:12px 14px">
+      <h4 style="font-size:11px;text-transform:uppercase;color:var(--acc);margin-bottom:8px">${c.title}</h4>
+      ${c.items.join('') || '<div class="muted" style="font-size:11.5px">Sin registros aún.</div>'}
+    </div>
+  `).join('');
+}
+
+function loadKnowledgeVault(toast = false) {
+  fetch('/api/export')
+    .then(r => r.json())
+    .then(d => {
+      if (d) {
+        KNOWLEDGE_VAULT = d;
+        renderKnowledgeVault();
+        if (toast) showToast('✓ Memoria Ejecutiva sincronizada desde mc.db.');
+      }
+    })
+    .catch(() => renderKnowledgeVault());
+}
+
+function saveQuickNoteFromUI() {
+  const el = document.getElementById('kvQuickNote');
+  const txt = (el && el.value || '').trim();
+  if (!txt) return;
+  fetch('/api/notes', {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({text: txt, source: 'ui', company: cur})
+  }).then(r => r.json()).then(d => {
+    if (el) el.value = '';
+    loadKnowledgeVault(false);
+    showToast(`✓ Nota guardada en mc.db (${d.id || 'OK'}).`);
+  });
+}
+
+function saveQuickTaskFromUI() {
+  const el = document.getElementById('kvQuickTask');
+  const txt = (el && el.value || '').trim();
+  if (!txt) return;
+  fetch('/api/tasks', {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({title: txt, source: 'ui', company: cur})
+  }).then(r => r.json()).then(d => {
+    if (el) el.value = '';
+    loadKnowledgeVault(false);
+    showToast(`✓ Tarea guardada en mc.db (${d.id || 'OK'}).`);
+  });
 }
 
 /* ── TAB 4: BEHAVIORAL BRAIN ── */
@@ -1551,15 +1643,15 @@ window.LJ.register('explain_plans', () => {
 window.LJ.register('read_brief', () => {
   const coObj = COMPANIES.find(c => c.id === cur) || COMPANIES[0];
   return lang === 'es'
-    ? `Resumen del día para ${coObj.name}. Ingreso mensual proyectado: ${money(coObj.rev)}, con pipeline de ${money(coObj.pipe)}. Tienes ${DRAFTS_QUEUE.filter(d=>d.status!=='SENT').length} borradores listos para aprobar y tu café matutino programado a las 07:45.`
-    : `Daily brief for ${coObj.name}. Projected monthly revenue: ${money(coObj.rev)}, pipeline of ${money(coObj.pipe)}. You have ${DRAFTS_QUEUE.filter(d=>d.status!=='SENT').length} drafts ready to approve and your morning coffee scheduled for 07:45 AM.`;
+    ? `(Datos de ejemplo del demo, no reales) Resumen del día para ${coObj.name}. Ingreso mensual proyectado: ${money(coObj.rev)}, con pipeline de ${money(coObj.pipe)}. Tienes ${DRAFTS_QUEUE.filter(d=>d.status!=='SENT').length} borradores listos para aprobar y tu café matutino programado a las 07:45.`
+    : `(Demo sample data, not real) Daily brief for ${coObj.name}. Projected monthly revenue: ${money(coObj.rev)}, pipeline of ${money(coObj.pipe)}. You have ${DRAFTS_QUEUE.filter(d=>d.status!=='SENT').length} drafts ready to approve and your morning coffee scheduled for 07:45 AM.`;
 });
 
 window.LJ.register('status_digest', () => {
   const open = TASKS.filter(t => t.status !== 'done').length;
   return lang === 'es'
-    ? `Estado actual: pipeline de 214 mil 500 dólares con 23 leads. ${open} tareas abiertas y ${DRAFTS_QUEUE.filter(d=>d.status!=='SENT').length} respuestas pre-redactadas esperando tu OK.`
-    : `Current status: $214,500 pipeline with 23 leads. ${open} open tasks and ${DRAFTS_QUEUE.filter(d=>d.status!=='SENT').length} pre-drafted replies awaiting your OK.`;
+    ? `(Datos de ejemplo del demo, no reales) Estado actual: pipeline de 214 mil 500 dólares con 23 leads. ${open} tareas abiertas y ${DRAFTS_QUEUE.filter(d=>d.status!=='SENT').length} respuestas pre-redactadas esperando tu OK.`
+    : `(Demo sample data, not real) Current status: $214,500 pipeline with 23 leads. ${open} open tasks and ${DRAFTS_QUEUE.filter(d=>d.status!=='SENT').length} pre-drafted replies awaiting your OK.`;
 });
 
 window.LJ.register('refresh', () => { renderAll(); return lang === 'es' ? 'Datos actualizados.' : 'Data refreshed.'; });
