@@ -21,7 +21,7 @@
     const COPY = {
       es: {
         title: "EL JEFESITO · VOZ Y TEXTO",
-        sub: "Aprende de cada interacción · motor Grok 3.0",
+        sub: "Voz Neural Colombiana (es-CO · Rápida) · Aprende de ti",
         placeholder: "Habla o escribe (ej. «abrir blogs», «aprobar borrador», «pedir café»)…",
         listening: "Escuchando voz con Grok 3.0…",
         help: "Comandos Grok 3.0: cambiar a «empresa» · abrir «pestaña» (mando, bandeja, resultados, cerebro, setup, blogs) · aprobar borrador · redactar respuesta · completar tarea «n» · preparar café · explicar planes · qué hay en pantalla · descargar informe.",
@@ -40,7 +40,7 @@
       },
       en: {
         title: "EL JEFESITO · VOICE & TEXT",
-        sub: "Learns from every interaction · Grok 3.0 engine",
+        sub: "Fast Neural Voice (Colombian ES / EN) · Self-Learning",
         placeholder: "Speak or type (e.g. 'open blogs', 'approve draft', 'order coffee')…",
         listening: "Grok 3.0 listening…",
         help: "Grok 3.0 Commands: switch to «company» · open «tab» (overview, comms, outcomes, brain, setup, blogs) · approve draft · draft reply · complete task «n» · order coffee · explain plans · what is on screen · download report.",
@@ -208,21 +208,63 @@
       return { action: null, raw: t };
     }
 
-    function speak(text) {
-      state.log.push({ who: "lj", text });
-      renderLog();
-      if ("speechSynthesis" in window) {
-        try {
-          const u = new SpeechSynthesisUtterance(text);
-          u.lang = CFG.lang === "es" ? "es-US" : "en-US";
-          u.rate = 1.04;
-          u.onstart = () => { state.speaking = true; root.classList.add("speaking"); };
-          u.onend = () => { state.speaking = false; root.classList.remove("speaking"); };
-          window.speechSynthesis.cancel();
-          window.speechSynthesis.speak(u);
-        } catch (_) {}
+    let currentAudio = null;
+    function stopAudio() {
+      try {
+        if (currentAudio) {
+          currentAudio.pause();
+          currentAudio.currentTime = 0;
+          currentAudio = null;
+        }
+        if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+      } catch (_) {}
+      state.speaking = false;
+      root.classList.remove("speaking");
+    }
+    window.LJ.stopAudio = stopAudio;
+
+    function _browserFallbackSpeak(text) {
+      if (!("speechSynthesis" in window)) return;
+      try {
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = CFG.lang === "es" ? "es-CO" : "en-US";
+        u.rate = 1.24;
+        const voices = window.speechSynthesis.getVoices() || [];
+        const coVoice = voices.find(v => /es[-_]CO/i.test(v.lang)) ||
+                        voices.find(v => /Salome|Gonzalo|Colomb/i.test(v.name)) ||
+                        voices.find(v => /^es/i.test(v.lang) && /Natural|Neural|Online/i.test(v.name));
+        if (CFG.lang === "es" && coVoice) u.voice = coVoice;
+        u.onstart = () => { state.speaking = true; root.classList.add("speaking"); };
+        u.onend = () => { state.speaking = false; root.classList.remove("speaking"); };
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(u);
+      } catch (_) {}
+    }
+
+    function speak(text, logIt = true) {
+      if (logIt) {
+        state.log.push({ who: "lj", text });
+        renderLog();
+      }
+      stopAudio();
+      const url = (CFG.api || "") + "/api/tts?lang=" + encodeURIComponent(CFG.lang) +
+                  "&rate=" + encodeURIComponent("+22%") +
+                  "&text=" + encodeURIComponent((text || "").slice(0, 850));
+      try {
+        const a = new Audio(url);
+        currentAudio = a;
+        a.onplay = () => { state.speaking = true; root.classList.add("speaking"); };
+        a.onended = () => { state.speaking = false; root.classList.remove("speaking"); currentAudio = null; };
+        a.onerror = () => { currentAudio = null; _browserFallbackSpeak(text); };
+        const p = a.play();
+        if (p && typeof p.catch === "function") {
+          p.catch(() => { currentAudio = null; _browserFallbackSpeak(text); });
+        }
+      } catch (_) {
+        _browserFallbackSpeak(text);
       }
     }
+    window.LJ.speak = (t, logIt = false) => speak(t, logIt);
 
     // Every locally-handled interaction is recorded so El Jefesito can learn the user's profile.
     function learn(text, action) {
@@ -430,7 +472,7 @@
       if (!SR) { execute("help"); return; }
       if (state.listening && rec) { rec.stop(); return; }
       rec = new SR();
-      rec.lang = CFG.lang === "es" ? "es-US" : "en-US";
+      rec.lang = CFG.lang === "es" ? "es-CO" : "en-US";
       rec.interimResults = false;
       rec.onstart = () => {
         state.listening = true;

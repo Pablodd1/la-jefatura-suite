@@ -2020,14 +2020,20 @@ function syncGreetPill() {
   if (el) el.textContent = (lang === 'es' ? 'Saludo: ' : 'Greeting: ') + (PREFS.greeting_enabled ? 'ON' : 'OFF');
 }
 function jfSpeak(text) {
-  if (!('speechSynthesis' in window) || !text) return;
-  try {
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = lang === 'es' ? 'es-US' : 'en-US'; u.rate = 1.04;
-    u.onstart = () => { jfPendingSpeech = null; };
-    jfPendingSpeech = text;
-    speechSynthesis.cancel(); speechSynthesis.speak(u);
-  } catch (e) {}
+  if (!text) return;
+  jfPendingSpeech = text;
+  if (window.LJ && typeof window.LJ.speak === 'function') {
+    window.LJ.speak(text, false);
+    return;
+  }
+  if ('speechSynthesis' in window) {
+    try {
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = lang === 'es' ? 'es-CO' : 'en-US'; u.rate = 1.24;
+      u.onstart = () => { jfPendingSpeech = null; };
+      speechSynthesis.cancel(); speechSynthesis.speak(u);
+    } catch (e) {}
+  }
 }
 /* Browsers may block speech before the first click: speak the pending greeting on the first gesture. */
 document.addEventListener('pointerdown', e => {
@@ -2072,7 +2078,7 @@ function toggleGreeting() {
   syncGreetPill();
   if (on) { renderGreeting(true); showToast(lang === 'es' ? '🔔 Saludo activado.' : '🔔 Greeting enabled.'); }
   else {
-    try { speechSynthesis.cancel(); } catch (e) {}
+    try { if (window.LJ && window.LJ.stopAudio) window.LJ.stopAudio(); else speechSynthesis.cancel(); } catch (e) {}
     jfPendingSpeech = null;
     document.getElementById('jfGreeting').style.display = 'none';
     showToast(lang === 'es' ? '🔕 Saludo detenido.' : '🔕 Greeting stopped.');
@@ -2101,7 +2107,7 @@ window.LJ_applyUi = function (ui) {
   if (ui.set_greeting !== undefined) {
     PREFS.greeting_enabled = !!ui.set_greeting; syncGreetPill();
     if (ui.set_greeting) renderGreeting(false);
-    else { try { speechSynthesis.cancel(); } catch (e) {} document.getElementById('jfGreeting').style.display = 'none'; }
+    else { try { if (window.LJ && window.LJ.stopAudio) window.LJ.stopAudio(); else speechSynthesis.cancel(); } catch (e) {} document.getElementById('jfGreeting').style.display = 'none'; }
   }
   if (ui.set_name) { PREFS.ceo_name = ui.set_name; renderGreeting(false); }
   if (ui.show_brief || ui.refresh_brief) renderGreeting(false);

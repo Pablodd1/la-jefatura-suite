@@ -211,6 +211,15 @@ const URL = 'http://localhost:8931/';
   });
   check('20. Printable daily PDF served', pdfRes.status === 200 && pdfRes.magic === '%PDF', JSON.stringify(pdfRes));
 
+  const ttsRes = await page.evaluate(async () => {
+    const r = await fetch('/api/tts?lang=es&rate=%2B22%25&text=Hola%20Jasmel');
+    const b = new Uint8Array(await r.arrayBuffer());
+    return { status: r.status, ctype: r.headers.get('content-type'), size: b.length };
+  });
+  check('20b. Fast Colombian Neural Voice TTS (/api/tts · es-CO-SalomeNeural @ +22%)',
+    ttsRes.status === 200 && ttsRes.ctype === 'audio/mpeg' && ttsRes.size > 2000,
+    JSON.stringify(ttsRes));
+
   const learned = await page.evaluate(async () => (await (await fetch('/api/jefesito/profile')).json()).interactions);
   check('21. Every interaction is being recorded for self-learning', learned >= 4, `${learned} interactions`);
 

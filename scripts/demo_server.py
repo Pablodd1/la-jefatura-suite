@@ -38,6 +38,7 @@ import knowledge_store  # noqa: E402
 import mc_auth  # noqa: E402
 import nexus_ingest  # noqa: E402
 import reports_pdf  # noqa: E402
+import tts_colombia  # noqa: E402
 import unitec_ingest  # noqa: E402
 import voice_commands  # noqa: E402
 
@@ -94,6 +95,18 @@ def _seed_if_empty():
     knowledge_store.ensure_demo_knowledge_seeded()
     unitec_ingest.summary()
     buildingapp_ingest.summary()
+    # Pre-warm Colombian neural voice cache for today's greeting + opening phrase
+    try:
+        b = jefesito.get_day(lang="es")
+        if b and b.get("spoken"):
+            tts_colombia.synthesize(b["spoken"], lang="es")
+        tts_colombia.synthesize(
+            "Soy El Jefesito. Te atiendo por voz o texto, aprendo de cada interacción y puedo cambiar el tema, "
+            "el idioma, el saludo, cerrar el día o imprimir tu resumen. ¿Qué hacemos?",
+            lang="es"
+        )
+    except Exception:
+        pass
 
 
 class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
@@ -140,6 +153,19 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
             return
 
         lang_q = (qs.get("lang") or ["es"])[0]
+        if path == "/api/tts":
+            text = (qs.get("text") or [""])[0]
+            voice = (qs.get("voice") or [None])[0]
+            rate = (qs.get("rate") or ["+22%"])[0]
+            try:
+                mp3 = tts_colombia.synthesize(text, lang=lang_q, voice=voice, rate=rate)
+                if mp3:
+                    self._send(200, mp3, "audio/mpeg")
+                else:
+                    self._send(400, {"error": "empty text"})
+            except Exception as e:
+                self._send(500, {"error": str(e)})
+            return
         if path == "/api/prefs":
             self._send(200, jefesito.get_prefs())
             return
@@ -218,6 +244,20 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
             self._send(400, {"error": "invalid JSON"})
             return
 
+        if path == "/api/tts":
+            text = body.get("text", "")
+            lang_b = body.get("lang", "es")
+            voice = body.get("voice")
+            rate = body.get("rate", "+22%")
+            try:
+                mp3 = tts_colombia.synthesize(text, lang=lang_b, voice=voice, rate=rate)
+                if mp3:
+                    self._send(200, mp3, "audio/mpeg")
+                else:
+                    self._send(400, {"error": "empty text"})
+            except Exception as e:
+                self._send(500, {"error": str(e)})
+            return
         if path == "/api/prefs":
             self._send(200, jefesito.set_prefs(body))
         elif path == "/api/jefesito/close_day":
@@ -290,7 +330,7 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
 
 if __name__ == "__main__":
     _seed_if_empty()
-    srv = __import__("http.server").server.HTTPServer(
+    srv = __import__("http.server").server.ThreadingHTTPServer(
         ("0.0.0.0", PORT), Handler)
     print(f"La Jefatura demo -> http://localhost:{PORT}  (Ctrl-C to stop)")
     try:
