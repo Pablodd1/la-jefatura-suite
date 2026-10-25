@@ -12,13 +12,15 @@
      ===================================================================== */
   :root {
     --bg: #000000;
+    --ar: 255, 212, 0;
+    --vid-filter: hue-rotate(0deg);
     --surface: #0a0a0c;
     --surface2: #121216;
     --surface-glass: rgba(14, 14, 18, 0.84);
     --yellow: #ffd400;
     --yellow-bright: #ffe347;
-    --yellow-soft: rgba(255, 212, 0, 0.12);
-    --yellow-border: rgba(255, 212, 0, 0.28);
+    --yellow-soft: rgba(var(--ar), 0.12);
+    --yellow-border: rgba(var(--ar), 0.28);
     --txt: #ffffff;
     --txt-sub: #c7c7cc;
     --muted: #86868b;
@@ -28,6 +30,42 @@
     --radius-xl: 26px;
     --radius-lg: 18px;
   }
+
+
+  /* ── 3 calmer alternative themes (original Dorado stays the default) ── */
+  :root[data-theme="slate"] {
+    --bg: #07090c; --surface: #0c1015; --surface2: #131820;
+    --yellow: #8fb4d9; --yellow-bright: #aecbe6; --ar: 143, 180, 217;
+    --txt-sub: #b6bfca; --muted: #7d8793; --vid-filter: hue-rotate(160deg) saturate(0.55);
+  }
+  :root[data-theme="sage"] {
+    --bg: #080b09; --surface: #0d120f; --surface2: #141b16;
+    --yellow: #9bbf9e; --yellow-bright: #b5d3b8; --ar: 155, 191, 158;
+    --txt-sub: #b8c4ba; --muted: #7f8c82; --vid-filter: hue-rotate(78deg) saturate(0.5);
+  }
+  :root[data-theme="sand"] {
+    --bg: #0b0a08; --surface: #12100d; --surface2: #1a1713;
+    --yellow: #cdb68c; --yellow-bright: #dccaa6; --ar: 205, 182, 140;
+    --txt-sub: #c4bcae; --muted: #8b8478; --vid-filter: hue-rotate(-8deg) saturate(0.45);
+  }
+  .theme-dots {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 5px 9px; border: 1px solid var(--yellow-border); border-radius: 980px;
+    background: rgba(255,255,255,0.03);
+  }
+  .theme-dots .lbl { font-size: 10px; font-weight: 800; color: var(--muted); letter-spacing: .6px; text-transform: uppercase; }
+  .theme-dot {
+    width: 16px; height: 16px; border-radius: 50%; cursor: pointer; padding: 0;
+    border: 2px solid transparent; outline: 1px solid rgba(255,255,255,0.18); outline-offset: 1px;
+    transition: transform .15s ease;
+  }
+  .theme-dot:hover { transform: scale(1.18); }
+  .theme-dot.active { border-color: #fff; }
+  .theme-dot[data-theme="gold"]  { background: #ffd400; }
+  .theme-dot[data-theme="slate"] { background: #8fb4d9; }
+  .theme-dot[data-theme="sage"]  { background: #9bbf9e; }
+  .theme-dot[data-theme="sand"]  { background: #cdb68c; }
+  body, .h-slide, .apple-nav { transition: background-color .3s ease; }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body {
@@ -53,7 +91,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 28px;
+    padding: 0 18px;
+    gap: 10px;
   }
   .brand {
     display: flex;
@@ -73,13 +112,17 @@
     background: var(--yellow);
     box-shadow: 0 0 16px var(--yellow);
   }
+  .brand { white-space: nowrap; }
   .brand span { color: var(--yellow); }
+  @media (max-width: 1700px) { .brand span { display: none; } }
+  .nav-actions .btn-yellow, .nav-actions .btn-outline { white-space: nowrap; }
+  .nav-actions { flex-shrink: 0; }
 
   .nav-links {
     display: flex;
-    gap: 10px;
+    gap: 2px;
     list-style: none;
-    font-size: 12px;
+    font-size: 11.5px;
     font-weight: 600;
   }
   .nav-links a {
@@ -87,7 +130,7 @@
     text-decoration: none;
     transition: color 0.18s ease;
     cursor: pointer;
-    padding: 6px 11px;
+    padding: 6px 9px;
     border-radius: 980px;
     white-space: nowrap;
   }
@@ -122,7 +165,7 @@
     transform: translateY(-1px);
   }
   .btn-outline {
-    background: rgba(255, 212, 0, 0.08);
+    background: rgba(var(--ar), 0.08);
     color: var(--yellow) !important;
     font-weight: 700;
     font-size: 12.5px;
@@ -135,7 +178,7 @@
     align-items: center;
     gap: 6px;
   }
-  .btn-outline:hover { background: rgba(255, 212, 0, 0.16); }
+  .btn-outline:hover { background: rgba(var(--ar), 0.16); }
 
   /* ── HORIZONTAL SCROLL DECK ("SCROLL TO THE SIDE") ── */
   .horizontal-deck {
@@ -174,7 +217,7 @@
     align-items: center;
     justify-content: center;
     position: relative;
-    border-right: 1px solid rgba(255, 212, 0, 0.14);
+    border-right: 1px solid rgba(var(--ar), 0.14);
   }
 
   .wrap {
@@ -232,7 +275,7 @@
     transition: all 0.18s ease;
   }
   .dock-pill.active {
-    background: rgba(255, 212, 0, 0.18);
+    background: rgba(var(--ar), 0.18);
     color: var(--yellow);
     border-color: var(--yellow);
   }
@@ -286,7 +329,7 @@
     font-style: normal;
     color: var(--yellow);
     text-decoration: underline;
-    text-decoration-color: rgba(255, 212, 0, 0.4);
+    text-decoration-color: rgba(var(--ar), 0.4);
     text-underline-offset: 6px;
   }
   .hero-sub {
@@ -335,12 +378,12 @@
   /* ── 3D Brain Video + Live High-Definition Schematic Stage ── */
   .brain-stage-card {
     position: relative;
-    background: radial-gradient(circle at 50% 50%, rgba(255, 212, 0, 0.14) 0%, rgba(8, 8, 12, 0.96) 68%, #000000 100%);
+    background: radial-gradient(circle at 50% 50%, rgba(var(--ar), 0.14) 0%, rgba(8, 8, 12, 0.96) 68%, #000000 100%);
     border: 1.5px solid var(--yellow);
     border-radius: 26px;
     height: 540px;
     overflow: hidden;
-    box-shadow: 0 24px 70px rgba(255, 212, 0, 0.14), inset 0 0 50px rgba(255, 212, 0, 0.08);
+    box-shadow: 0 24px 70px rgba(var(--ar), 0.14), inset 0 0 50px rgba(var(--ar), 0.08);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -354,7 +397,7 @@
     object-fit: cover;
     opacity: 0.42;
     pointer-events: none;
-    filter: contrast(1.15) saturate(1.2);
+    filter: contrast(1.15) saturate(1.2) var(--vid-filter);
   }
   /* Interactive 4K/Retina 60fps 3D Cortex Schematic Overlay Canvas */
   #brain3dCanvas {
@@ -499,14 +542,14 @@
     outline: 2px solid var(--yellow);
     border-radius: 48px;
     padding: 12px;
-    box-shadow: 0 20px 60px rgba(255, 212, 0, 0.14);
+    box-shadow: 0 20px 60px rgba(var(--ar), 0.14);
     position: relative;
   }
   .iphone-screen {
     background: #000000;
     border-radius: 36px;
     overflow: hidden;
-    border: 1px solid rgba(255, 212, 0, 0.22);
+    border: 1px solid rgba(var(--ar), 0.22);
     display: flex;
     flex-direction: column;
   }
@@ -591,7 +634,7 @@
   .ios-kpi .v { font-size: 16px; font-weight: 800; color: var(--yellow); }
   .ios-kpi .l { font-size: 10px; color: var(--txt-sub); }
   .ios-decision {
-    background: linear-gradient(145deg, rgba(255,212,0,0.16), rgba(255,212,0,0.04));
+    background: linear-gradient(145deg, rgba(var(--ar), 0.16), rgba(var(--ar), 0.04));
     border: 1px solid var(--yellow);
     border-radius: 14px;
     padding: 9px 11px;
@@ -621,7 +664,7 @@
     margin-bottom: 6px;
   }
   .ios-chip {
-    background: rgba(255,212,0,0.12);
+    background: rgba(var(--ar), 0.12);
     color: var(--yellow);
     border: 1px solid var(--yellow-border);
     border-radius: 99px;
@@ -721,7 +764,7 @@
   }
   .wa-card.highlight {
     border-color: var(--yellow);
-    background: linear-gradient(160deg, rgba(255,212,0,0.12), #0e0e13);
+    background: linear-gradient(160deg, rgba(var(--ar), 0.12), #0e0e13);
   }
   .wa-card h5 {
     font-size: 10.5px;
@@ -761,7 +804,7 @@
   }
   .bento-card.gold {
     border-color: var(--yellow);
-    background: radial-gradient(circle at top right, rgba(255,212,0,0.15), var(--surface) 70%);
+    background: radial-gradient(circle at top right, rgba(var(--ar), 0.15), var(--surface) 70%);
   }
   .bento-tag {
     display: inline-block;
@@ -844,7 +887,7 @@
     background: #0d0d12;
   }
   .cmp-table th.col-jf, .cmp-table td.col-jf {
-    background: rgba(255, 212, 0, 0.09);
+    background: rgba(var(--ar), 0.09);
     border-left: 2px solid var(--yellow);
     border-right: 2px solid var(--yellow);
   }
@@ -934,8 +977,15 @@
     <li><a onclick="goSlide(6)">07 · Video Conclusión</a></li>
   </ul>
   <div class="nav-actions">
-    <a href="/api/daily.pdf?lang=es" target="_blank" class="btn-outline">🖨 Hoja del Día PDF</a>
-    <a href="/" class="btn-yellow">🚀 Consola en Vivo →</a>
+    <div class="theme-dots" id="themeDots" role="group" aria-label="Tema de color">
+      <span class="lbl">Tema</span>
+      <button class="theme-dot active" data-theme="gold" title="Dorado (original)" aria-label="Tema Dorado"></button>
+      <button class="theme-dot" data-theme="slate" title="Pizarra · azul grisáceo sobrio" aria-label="Tema Pizarra"></button>
+      <button class="theme-dot" data-theme="sage" title="Salvia · verde suave" aria-label="Tema Salvia"></button>
+      <button class="theme-dot" data-theme="sand" title="Arena · beige cálido" aria-label="Tema Arena"></button>
+    </div>
+    <a href="/api/daily.pdf?lang=es" target="_blank" class="btn-outline">🖨 PDF</a>
+    <a href="/" class="btn-yellow">🚀 Consola →</a>
   </div>
 </nav>
 
@@ -1002,7 +1052,7 @@
               <span class="pulse-dot"></span>
               <span>ESQUEMA 3D HD · EL CEREBRO DE LA EMPRESA (GIRO 360°)</span>
             </div>
-            <div class="brain-badge" style="border-color:rgba(255,212,0,0.4);color:#fff">
+            <div class="brain-badge" style="border-color:rgba(var(--ar), 0.4);color:#fff">
               <span>ARRASTRA PARA GIRAR · 60 FPS</span>
             </div>
           </div>
@@ -1395,7 +1445,7 @@
             <div class="lbl">Nuevos Ingresos por Decisiones a Tiempo</div>
             <p style="font-size:11.5px;color:var(--muted);margin-top:4px">Cotizaciones destrabadas antes de 48h y detección inmediata de fugas en el embudo.</p>
           </div>
-          <div class="roi-stat" style="background:rgba(255,212,0,0.14);border-color:var(--yellow)">
+          <div class="roi-stat" style="background:rgba(var(--ar), 0.14);border-color:var(--yellow)">
             <div class="val" id="outTotalUsd">$24,500 / mes</div>
             <div class="lbl" style="color:#fff">Impacto Total Estimado Mensual</div>
             <p style="font-size:11.5px;color:var(--txt-sub);margin-top:4px">Más velocidad de decisión + mayor conversión + cero errores por datos inventados.</p>
@@ -1420,7 +1470,7 @@
 
       <div style="display:grid;grid-template-columns:1.35fr 0.95fr;gap:22px;align-items:stretch">
         <!-- Left: Cinema HD Video Player Frame -->
-        <div style="background:#07070a;border:2px solid var(--yellow);border-radius:24px;overflow:hidden;box-shadow:0 24px 70px rgba(255,212,0,0.16);display:flex;flex-direction:column;justify-content:space-between">
+        <div style="background:#07070a;border:2px solid var(--yellow);border-radius:24px;overflow:hidden;box-shadow:0 24px 70px rgba(var(--ar), 0.16);display:flex;flex-direction:column;justify-content:space-between">
           <div style="background:#111116;padding:10px 16px;border-bottom:1px solid var(--hair);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
             <div style="display:flex;align-items:center;gap:8px">
               <span class="pulse-dot"></span>
@@ -1506,6 +1556,19 @@
 <script>window.LJ_WIDGET = { lang: "es", accent: "#ffd400" };</script>
 <script src="/widgets/lajefatura-widget.js"></script>
 <script>
+  /* THEMES: gold (original) + 3 calmer options. Persisted in localStorage. */
+  function setTheme(name, silent) {
+    const valid = ['gold', 'slate', 'sage', 'sand'];
+    if (!valid.includes(name)) name = 'gold';
+    if (name === 'gold') document.documentElement.removeAttribute('data-theme');
+    else document.documentElement.setAttribute('data-theme', name);
+    try { localStorage.setItem('lj_site_theme', name); } catch (e) {}
+    document.querySelectorAll('#themeDots .theme-dot').forEach(b => b.classList.toggle('active', b.dataset.theme === name));
+    if (!silent) window.dispatchEvent(new Event('themechange'));
+  }
+  document.querySelectorAll('#themeDots .theme-dot').forEach(b => b.addEventListener('click', () => setTheme(b.dataset.theme)));
+  try { setTheme(localStorage.getItem('lj_site_theme') || 'gold', true); } catch (e) { setTheme('gold', true); }
+
   /* =========================================================================
      1. HORIZONTAL SCROLL ("SCROLL TO THE SIDE") CONTROLLER
      ========================================================================= */
@@ -1594,10 +1657,38 @@
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
 
-    let width = 0, height = 0, dpr = 1;
+    /* ---------- Theme-aware accent (re-read whenever the theme changes) ---------- */
+    let ACC = [255, 212, 0];
+    let ACC_HEX = '#ffd400';
+    let sprite = null;
+    function makeSprite() {
+      const s = document.createElement('canvas');
+      s.width = s.height = 64;
+      const g = s.getContext('2d');
+      const grd = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+      grd.addColorStop(0.0, 'rgba(255,255,255,1)');
+      grd.addColorStop(0.18, `rgba(${Math.min(255, ACC[0] + 40)},${Math.min(255, ACC[1] + 40)},${Math.min(255, ACC[2] + 40)},0.95)`);
+      grd.addColorStop(0.5, `rgba(${ACC[0]},${ACC[1]},${ACC[2]},0.32)`);
+      grd.addColorStop(1.0, `rgba(${ACC[0]},${ACC[1]},${ACC[2]},0)`);
+      g.fillStyle = grd;
+      g.fillRect(0, 0, 64, 64);
+      return s;
+    }
+    function readAccent() {
+      const cs = getComputedStyle(document.documentElement);
+      const ar = (cs.getPropertyValue('--ar') || '255,212,0').split(',').map(v => parseInt(v, 10));
+      if (ar.length === 3 && ar.every(v => !isNaN(v))) ACC = ar;
+      ACC_HEX = (cs.getPropertyValue('--yellow') || '#ffd400').trim();
+      sprite = makeSprite();
+    }
+    readAccent();
+    window.addEventListener('themechange', readAccent);
+
+    /* ---------- Retina / supersampled canvas ---------- */
+    let width = 0, height = 0, dpr = 2;
     function resize() {
       const rect = canvas.getBoundingClientRect();
-      dpr = Math.min(2, window.devicePixelRatio || 1);
+      dpr = Math.max(2, Math.min(3, window.devicePixelRatio || 1));
       width = rect.width || 640;
       height = rect.height || 540;
       canvas.width = Math.round(width * dpr);
@@ -1607,65 +1698,107 @@
     resize();
     window.addEventListener('resize', resize);
 
-    // Deterministic seeded PRNG for anatomical 3D cerebral cortex
-    let seed = 1337;
+    /* ---------- Deterministic PRNG ---------- */
+    let seed = 20261025;
     function rand() {
       seed = (seed * 16807) % 2147483647;
       return (seed - 1) / 2147483646;
     }
 
+    /* ---------- Anatomical brain geometry (Fibonacci-sampled cortex, even density) ---------- */
     const nodes = [];
-    // Sculpt Left & Right Cerebral Hemispheres + Prefrontal Executive Cortex + Deep Core
-    for (let i = 0; i < 380; i++) {
-      const hemi = (i % 2 === 0) ? -1 : 1;
-      const u = rand() * Math.PI;
-      const v = rand() * Math.PI;
-      const rx = 108, ry = 132, rz = 168;
-      const isCore = i >= 300;
-      const shell = isCore ? (0.35 + 0.35 * rand()) : (0.86 + 0.14 * rand());
+    const GOLD = Math.PI * (3 - Math.sqrt(5));
+    const CORTEX_N = 1700;
+    for (let i = 0; i < CORTEX_N; i++) {
+      const uy = 1 - 2 * (i + 0.5) / CORTEX_N;
+      const rr = Math.sqrt(Math.max(0, 1 - uy * uy));
+      const th = GOLD * i;
+      const ux = Math.cos(th) * rr;
+      const uz = Math.sin(th) * rr;
+      const hemi = ux >= 0 ? 1 : -1;
+      const px = Math.abs(ux), py = uy, pz = uz;
 
-      let x = hemi * (16 + rx * shell * Math.sin(u) * Math.sin(v));
-      let y = -14 + ry * shell * Math.cos(u);
-      let z = rz * shell * Math.sin(u) * Math.cos(v);
+      let X = px * (82 - 10 * Math.max(0, pz));      // frontal lobe slightly narrower
+      let Y = py * 100;
+      let Z = pz * 140;
+      if (Y > 0) Y *= 0.56;                           // flatten the underside
+      // temporal lobe bulge (lower-lateral, mid-length)
+      const tb = Math.exp(-Math.pow(pz + 0.08, 2) / 0.12) * Math.exp(-Math.pow(py - 0.38, 2) / 0.10) * px;
+      Y += tb * 24; X += tb * 9;
+      // gyri / sulci: radial folding ripple
+      const g = 1
+        + 0.050 * Math.sin(X * 0.17 + Z * 0.09 + py * 2.2) * Math.cos(Z * 0.12 - Y * 0.10)
+        + 0.032 * Math.sin(Z * 0.26 + X * 0.11) * Math.sin(Y * 0.23)
+        + 0.018 * Math.sin(X * 0.45 + Y * 0.37 + Z * 0.31);
+      X *= g; Y *= g; Z *= g;
 
-      if (y > 35) y *= 0.72;
-      if (z < -25 && y > 8) { y += 20; x *= 1.07; }
-      const gyri = 1 + 0.055 * Math.sin(x * 0.11) * Math.cos(z * 0.09);
-      x *= gyri; y *= gyri; z *= gyri;
-
-      const lobe = z > 42 ? 'FRONTAL' : (z < -70 ? 'OCCIPITAL' : (y > 14 ? 'TEMPORAL' : 'PARIETAL'));
-      nodes.push({ x, y, z, hemi, lobe, isCore });
+      const x = hemi * (7 + X), y = Y - 12, z = Z;
+      const lobe = z > 52 ? 'FRONTAL' : (z < -78 ? 'OCCIPITAL' : (y > 18 ? 'TEMPORAL' : 'PARIETAL'));
+      nodes.push({ x, y, z, nx: ux, ny: uy, nz: uz, hemi, lobe, kind: 'c', size: 1.0 });
     }
-    // Add Cerebellum & Brainstem schematic nodes
-    for (let i = 0; i < 60; i++) {
-      const hemi = (i % 2 === 0) ? -1 : 1;
-      const u = rand() * Math.PI;
-      const v = rand() * Math.PI;
-      const x = hemi * (9 + 62 * Math.sin(u) * Math.sin(v));
-      const y = 86 + 38 * Math.cos(u);
-      const z = -88 + 48 * Math.sin(u) * Math.cos(v);
-      nodes.push({ x, y, z, hemi, lobe: 'CEREBELLUM', isCore: false });
+    // Deep core nuclei (thalamus / basal ganglia / corpus callosum band)
+    for (let i = 0; i < 150; i++) {
+      const hemi = i % 2 === 0 ? -1 : 1;
+      const a = rand() * Math.PI * 2, b = Math.acos(2 * rand() - 1), rad = 0.25 + 0.38 * rand();
+      const x = hemi * (6 + Math.abs(Math.sin(b) * Math.cos(a)) * 62 * rad * 1.5);
+      const y = -10 + Math.cos(b) * 62 * rad * 1.4;
+      const z = Math.sin(b) * Math.sin(a) * 96 * rad * 1.5;
+      nodes.push({ x, y, z, nx: 0, ny: 0, nz: 0, hemi, lobe: 'CORE', kind: 'k', size: 1.9 });
+    }
+    // Cerebellum (striated) + brainstem
+    for (let i = 0; i < 300; i++) {
+      const uy = 1 - 2 * (i + 0.5) / 300, rr = Math.sqrt(1 - uy * uy), th = GOLD * i;
+      const ux = Math.cos(th) * rr, uz = Math.sin(th) * rr;
+      const hemi = ux >= 0 ? 1 : -1;
+      const stri = 1 + 0.05 * Math.sin(uy * 24);
+      const x = hemi * (4 + Math.abs(ux) * 60 * stri);
+      const y = 80 + uy * 30 * stri;
+      const z = -96 + uz * 40 * stri;
+      nodes.push({ x, y, z, nx: ux, ny: uy, nz: uz, hemi, lobe: 'CEREBELLUM', kind: 'b', size: 0.9 });
+    }
+    for (let i = 0; i < 36; i++) {
+      const t = i / 35, a = i * 1.7;
+      const x = Math.cos(a) * 9, y = 40 + t * 96, z = -34 - t * 36 + Math.sin(a) * 9;
+      nodes.push({ x, y, z, nx: 0, ny: 0, nz: 0, hemi: 0, lobe: 'STEM', kind: 's', size: 1.0 });
     }
 
-    // Build 3D synaptic mesh edges + Corpus Callosum inter-hemispheric bridges
+    /* ---------- Synaptic mesh (k-nearest within group) + corpus callosum bridges ---------- */
     const edges = [];
+    function group(n) { return n.kind + n.hemi; }
+    const THR = { c: 20 * 20, k: 46 * 46, b: 16 * 16, s: 22 * 22 };
     for (let i = 0; i < nodes.length; i++) {
       const a = nodes[i];
       const near = [];
       for (let j = i + 1; j < nodes.length; j++) {
         const b = nodes[j];
+        if (group(a) !== group(b)) continue;
         const dx = a.x - b.x, dy = a.y - b.y, dz = a.z - b.z;
         const d2 = dx * dx + dy * dy + dz * dz;
-        if (a.hemi === b.hemi && d2 < 2050) near.push({ d2, j });
-        else if (a.hemi !== b.hemi && Math.abs(a.x) < 40 && Math.abs(b.x) < 40 && d2 < 2500) near.push({ d2, j });
+        if (d2 < THR[a.kind]) near.push({ d2, j });
       }
       near.sort((p, q) => p.d2 - q.d2);
-      for (let k = 0; k < Math.min(3, near.length); k++) {
-        edges.push([i, near[k].j]);
-      }
+      const k = a.kind === 'c' ? 3 : 3;
+      for (let m = 0; m < Math.min(k, near.length); m++) edges.push([i, near[m].j]);
     }
+    // Corpus callosum: bridge core nuclei across hemispheres
+    for (let i = 0; i < nodes.length; i++) {
+      const a = nodes[i];
+      if (a.kind !== 'k' || a.hemi !== -1) continue;
+      let best = null, bd = 1e9;
+      for (let j = 0; j < nodes.length; j++) {
+        const b = nodes[j];
+        if (b.kind !== 'k' || b.hemi !== 1) continue;
+        const dx = a.x - b.x, dy = a.y - b.y, dz = a.z - b.z;
+        const d2 = dx * dx + dy * dy + dz * dz;
+        if (d2 < bd) { bd = d2; best = j; }
+      }
+      if (best !== null && bd < 70 * 70) edges.push([i, best]);
+    }
+    // Travelling synaptic pulses
+    const pulses = [];
+    for (let p = 0; p < 90; p++) pulses.push({ e: Math.floor(rand() * edges.length), ph: rand(), sp: 0.35 + rand() * 0.6 });
 
-    // 5 Orbiting Enterprise Satellites feeding into the Boss's Brain
+    /* ---------- Orbiting enterprise satellites & anatomical callouts ---------- */
     const companies = [
       { name: 'MBMB · $18.6k/m', ang: 0.0, r: 225, y: -55 },
       { name: 'CEDEXX · $12.8k/m', ang: 1.25, r: 235, y: 35 },
@@ -1673,45 +1806,33 @@
       { name: 'UNITEC USA · 29 Leads', ang: 3.77, r: 240, y: 50 },
       { name: 'BuildingApp · 7 VIPs', ang: 5.02, r: 230, y: -45 }
     ];
-
-    // 3D Anatomical Callout Anchors on the Brain
     const callouts = [
-      { x: 0, y: -70, z: 135, title: 'CORTEZA PREFRONTAL EJECUTIVA', sub: 'Decisiones 1-Clic · +$12.4k Dr. Molina' },
-      { x: -105, y: -35, z: 10, title: 'HEMISFERIO LÓGICO · CERO ADIVINANZAS', sub: 'SQLite mc.db + Firestore Verificado' },
-      { x: 105, y: -20, z: -15, title: 'MEMORIA CONDUCTUAL DEL CEO', sub: 'Auto-Aprendizaje de Hábitos y Voz' },
-      { x: 0, y: 95, z: -85, title: 'NÚCLEO DE VOZ COLOMBIANA', sub: 'es-CO-SalomeNeural (+22% Velocidad)' }
+      { x: 0, y: -108, z: 120, title: 'CORTEZA PREFRONTAL EJECUTIVA', sub: 'Decisiones 1-Clic · +$12.4k Dr. Molina' },
+      { x: -92, y: -40, z: 8, title: 'HEMISFERIO LÓGICO · CERO ADIVINANZAS', sub: 'SQLite mc.db + Firestore Verificado' },
+      { x: 92, y: -24, z: -16, title: 'MEMORIA CONDUCTUAL DEL CEO', sub: 'Auto-Aprendizaje de Hábitos y Voz' },
+      { x: 0, y: 112, z: -80, title: 'NÚCLEO DE VOZ COLOMBIANA', sub: 'es-CO-SalomeNeural (+22% Velocidad)' }
     ];
 
-    let rotY = 0.4;
-    let rotX = 0.18;
-    let spinning = true;
-    let mode = 'cortex';
+    let rotY = 0.4, rotX = 0.18, spinning = true, mode = 'cortex';
     let dragging = false, lastX = 0, lastY = 0;
-
-    canvas.addEventListener('pointerdown', (e) => {
-      dragging = true;
-      lastX = e.clientX;
-      lastY = e.clientY;
-    });
+    canvas.addEventListener('pointerdown', (e) => { dragging = true; lastX = e.clientX; lastY = e.clientY; });
     window.addEventListener('pointermove', (e) => {
       if (!dragging) return;
       rotY += (e.clientX - lastX) * 0.008;
       rotX = Math.max(-0.6, Math.min(0.6, rotX + (e.clientY - lastY) * 0.006));
-      lastX = e.clientX;
-      lastY = e.clientY;
+      lastX = e.clientX; lastY = e.clientY;
     });
     window.addEventListener('pointerup', () => { dragging = false; });
 
-    window.setBrainMode = function(m, btn) {
+    window.setBrainMode = function (m, btn) {
       mode = m;
       document.querySelectorAll('.brain-mode-btn').forEach(b => b.classList.remove('active'));
       if (btn) btn.classList.add('active');
     };
-
-    window.toggleBrainSpin = function(btn) {
+    window.toggleBrainSpin = function (btn) {
       spinning = !spinning;
       const vid = document.getElementById('heroBrainVideo');
-      if (vid) { spinning ? vid.play().catch(()=>{}) : vid.pause(); }
+      if (vid) { spinning ? vid.play().catch(() => {}) : vid.pause(); }
       if (btn) btn.textContent = spinning ? '⏸ Pausar Giro' : '▶ Reanudar Giro';
     };
 
@@ -1722,137 +1843,157 @@
       const cx = Math.cos(rotX), sx = Math.sin(rotX);
       const y2 = y * cx - z1 * sx;
       const z2 = y * sx + z1 * cx;
-      const fov = 560;
-      const dist = 480;
+      const fov = 700, dist = 480;
       const scale = fov / Math.max(120, dist + z2);
-      return {
-        px: width * 0.5 + x1 * scale,
-        py: height * 0.5 + y2 * scale,
-        z: z2,
-        scale
-      };
+      return { px: width * 0.5 + x1 * scale, py: height * 0.5 + y2 * scale, z: z2, scale };
+    }
+    function rotNormalZ(nx, ny, nz) {
+      const cy = Math.cos(rotY), sy = Math.sin(rotY);
+      const z1 = -nx * sy + nz * cy;
+      const cx = Math.cos(rotX), sx = Math.sin(rotX);
+      return ny * sx + z1 * cx;
     }
 
+    const BUCKETS = 8;
     let tick = 0;
     function render() {
       tick += 0.025;
-      if (spinning && !dragging) {
-        rotY += 0.0095;
-      }
+      if (spinning && !dragging) rotY += 0.0095;
 
+      ctx.globalCompositeOperation = 'source-over';
       ctx.clearRect(0, 0, width, height);
-
-      // 1. Subtle HUD Technical Schematic Crosshairs & Coordinate Rings
       const cx = width * 0.5, cy = height * 0.5;
-      ctx.strokeStyle = 'rgba(255, 212, 0, 0.12)';
+      const rgb = `${ACC[0]},${ACC[1]},${ACC[2]}`;
+      const dim = mode === 'companies' ? 0.55 : 1;
+
+      // Soft ambient aura behind the cortex
+      const aura = ctx.createRadialGradient(cx, cy, 10, cx, cy, Math.min(width, height) * 0.5);
+      aura.addColorStop(0, `rgba(${rgb},0.16)`);
+      aura.addColorStop(0.6, `rgba(${rgb},0.05)`);
+      aura.addColorStop(1, `rgba(${rgb},0)`);
+      ctx.fillStyle = aura;
+      ctx.fillRect(0, 0, width, height);
+
+      // HUD rings
+      ctx.strokeStyle = `rgba(${rgb},0.12)`;
       ctx.lineWidth = 1;
-      [140, 200, 255].forEach(r => {
-        ctx.beginPath();
-        ctx.arc(cx, cy, r, 0, Math.PI * 2);
-        ctx.stroke();
-      });
+      [140, 200, 255].forEach(r => { ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke(); });
 
-      // 2. Project all 3D Brain Nodes
-      const proj = nodes.map(n => project3D(n.x, n.y, n.z));
-
-      // 3. Draw 3D Synaptic Mesh Edges
-      ctx.lineWidth = mode === 'synapse' ? 1.35 : 0.95;
-      for (let eIdx = 0; eIdx < edges.length; eIdx++) {
-        const [i, j] = edges[eIdx];
-        const p1 = proj[i], p2 = proj[j];
-        const zAvg = (p1.z + p2.z) * 0.5;
-        const depth = Math.max(0.1, Math.min(1, (210 - zAvg) / 400));
-        const pulse = Math.sin(tick * 3.2 + eIdx * 0.19);
-
-        if (pulse > 0.91) {
-          ctx.strokeStyle = `rgba(255, 250, 205, ${Math.min(1, depth + 0.35).toFixed(2)})`;
-        } else if (mode === 'synapse') {
-          ctx.strokeStyle = `rgba(255, 212, 0, ${(depth * 0.72).toFixed(2)})`;
-        } else {
-          ctx.strokeStyle = nodes[i].lobe === 'FRONTAL'
-            ? `rgba(255, 212, 0, ${(depth * 0.58).toFixed(2)})`
-            : `rgba(245, 185, 15, ${(depth * 0.42).toFixed(2)})`;
-        }
-        ctx.beginPath();
-        ctx.moveTo(p1.px, p1.py);
-        ctx.lineTo(p2.px, p2.py);
-        ctx.stroke();
-      }
-
-      // 4. Draw 3D Cortical Nodes & Deep Thalamic Core
+      // Project nodes + rim-light brightness
+      const proj = new Array(nodes.length);
+      const lum = new Float32Array(nodes.length);
       for (let i = 0; i < nodes.length; i++) {
-        const p = proj[i];
         const n = nodes[i];
-        const depth = Math.max(0.15, Math.min(1, (210 - p.z) / 400));
-        const r = Math.max(1.2, (n.isCore ? 3.2 : 2.0) * p.scale);
-        ctx.fillStyle = n.isCore
-          ? `rgba(255, 248, 200, ${depth.toFixed(2)})`
-          : `rgba(255, 212, 0, ${(depth * 0.88).toFixed(2)})`;
-        ctx.beginPath();
-        ctx.arc(p.px, p.py, r, 0, Math.PI * 2);
-        ctx.fill();
+        const p = project3D(n.x, n.y, n.z);
+        proj[i] = p;
+        const depth = Math.max(0.1, Math.min(1, (215 - p.z) / 400));
+        let rim = 0.65;
+        if (n.kind === 'c' || n.kind === 'b') {
+          const nz = rotNormalZ(n.nx, n.ny, n.nz);       // <0 faces the camera
+          rim = 0.35 + 0.65 * (1 - Math.abs(nz));        // bright silhouette, softer centre
+          if (nz > 0.05) rim *= 0.22;                     // back-facing side recedes
+        }
+        lum[i] = depth * rim * dim;
       }
 
-      // 5. Draw Orbiting Company Satellites & Synaptic Data Beams into the Brain Core
+      ctx.globalCompositeOperation = 'lighter';
+
+      // Edges, batched into alpha buckets (one stroke per bucket = fast + crisp)
+      const base = mode === 'synapse' ? 0.8 : 0.5;
+      ctx.lineWidth = mode === 'synapse' ? 1.15 : 0.8;
+      const paths = [];
+      for (let b = 0; b < BUCKETS; b++) paths.push([]);
+      for (let e = 0; e < edges.length; e++) {
+        const l = (lum[edges[e][0]] + lum[edges[e][1]]) * 0.5;
+        const bi = Math.min(BUCKETS - 1, Math.floor(l * BUCKETS * 1.05));
+        paths[bi].push(e);
+      }
+      for (let b = 0; b < BUCKETS; b++) {
+        if (!paths[b].length) continue;
+        ctx.strokeStyle = `rgba(${rgb},${((b + 0.5) / BUCKETS * base).toFixed(3)})`;
+        ctx.beginPath();
+        for (const e of paths[b]) {
+          const p1 = proj[edges[e][0]], p2 = proj[edges[e][1]];
+          ctx.moveTo(p1.px, p1.py); ctx.lineTo(p2.px, p2.py);
+        }
+        ctx.stroke();
+      }
+
+      // Nodes with soft glow sprites (back to front)
+      const order = proj.map((p, i) => i).sort((a, b) => proj[b].z - proj[a].z);
+      for (const i of order) {
+        const n = nodes[i], p = proj[i];
+        const l = lum[i];
+        const r = (n.kind === 'k' ? 5.6 : 3.2) * p.scale * n.size;
+        ctx.globalAlpha = Math.min(1, 0.08 + l * 0.85);
+        ctx.drawImage(sprite, p.px - r, p.py - r, r * 2, r * 2);
+      }
+      ctx.globalAlpha = 1;
+
+      // Travelling synaptic pulses (bright comets along real edges)
+      for (const pu of pulses) {
+        const t = (tick * pu.sp + pu.ph) % 1;
+        const a = proj[edges[pu.e][0]], b = proj[edges[pu.e][1]];
+        const l = (lum[edges[pu.e][0]] + lum[edges[pu.e][1]]) * 0.5;
+        if (l < 0.12) continue;
+        const x = a.px + (b.px - a.px) * t, y = a.py + (b.py - a.py) * t;
+        const r = 9 * a.scale;
+        ctx.globalAlpha = Math.min(1, 0.4 + l);
+        ctx.drawImage(sprite, x - r, y - r, r * 2, r * 2);
+      }
+      ctx.globalAlpha = 1;
+
+      ctx.globalCompositeOperation = 'source-over';
+
+      // Orbiting company satellites
       if (mode === 'companies' || mode === 'cortex') {
-        const coreCenter = project3D(0, -10, 0);
-        companies.forEach((c, idx) => {
+        const core = project3D(0, -10, 0);
+        companies.forEach((c) => {
           const ang = c.ang + rotY * 0.85;
-          const sx = Math.cos(ang) * c.r;
-          const sz = Math.sin(ang) * c.r;
-          const sp = project3D(sx, c.y, sz);
-
-          // Synaptic beam from company satellite to Brain Core
-          ctx.strokeStyle = 'rgba(255, 212, 0, 0.45)';
-          ctx.setLineDash([4, 4]);
-          ctx.beginPath();
-          ctx.moveTo(sp.px, sp.py);
-          ctx.lineTo(coreCenter.px, coreCenter.py);
-          ctx.stroke();
+          const sp = project3D(Math.cos(ang) * c.r, c.y, Math.sin(ang) * c.r);
+          ctx.strokeStyle = `rgba(${rgb},0.42)`;
+          ctx.setLineDash([4, 5]);
+          ctx.beginPath(); ctx.moveTo(sp.px, sp.py); ctx.lineTo(core.px, core.py); ctx.stroke();
           ctx.setLineDash([]);
-
-          // Satellite node
-          ctx.fillStyle = '#ffd400';
-          ctx.beginPath();
-          ctx.arc(sp.px, sp.py, 4.5, 0, Math.PI * 2);
-          ctx.fill();
-
-          // Label pill
+          ctx.globalCompositeOperation = 'lighter';
+          ctx.drawImage(sprite, sp.px - 13, sp.py - 13, 26, 26);
+          ctx.globalCompositeOperation = 'source-over';
           ctx.font = '800 10.5px -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif';
           const tw = ctx.measureText(c.name).width;
-          ctx.fillStyle = 'rgba(0, 0, 0, 0.82)';
-          ctx.fillRect(sp.px + 8, sp.py - 10, tw + 12, 18);
-          ctx.strokeStyle = 'rgba(255, 212, 0, 0.65)';
-          ctx.strokeRect(sp.px + 8, sp.py - 10, tw + 12, 18);
-          ctx.fillStyle = '#ffd400';
-          ctx.fillText(c.name, sp.px + 14, sp.py + 3);
+          const lx = Math.min(sp.px + 10, width - tw - 22);
+          ctx.fillStyle = 'rgba(0,0,0,0.82)';
+          ctx.fillRect(lx, sp.py - 10, tw + 12, 18);
+          ctx.strokeStyle = `rgba(${rgb},0.65)`;
+          ctx.strokeRect(lx, sp.py - 10, tw + 12, 18);
+          ctx.fillStyle = ACC_HEX;
+          ctx.fillText(c.name, lx + 6, sp.py + 3);
         });
       }
 
-      // 6. Draw High-Definition 3D Callout Labels for Brain Lobes
+      // Anatomical callouts
       callouts.forEach(cl => {
         const cp = project3D(cl.x, cl.y, cl.z);
         if (cp.z < 95) {
-          const dir = cp.px >= cx ? -1 : 1; // point inward toward center so text never clips outer border
           const ex = Math.max(135, Math.min(width - 135, cp.px + (cp.px >= cx ? 18 : -18)));
           const ey = Math.max(58, Math.min(height - 58, cp.py - 12));
-          ctx.strokeStyle = 'rgba(255, 212, 0, 0.85)';
+          ctx.strokeStyle = `rgba(${rgb},0.85)`;
           ctx.lineWidth = 1.2;
-          ctx.beginPath();
-          ctx.moveTo(cp.px, cp.py);
-          ctx.lineTo(ex, ey);
-          ctx.stroke();
-
+          ctx.beginPath(); ctx.moveTo(cp.px, cp.py); ctx.lineTo(ex, ey); ctx.stroke();
           ctx.fillStyle = '#fff';
-          ctx.beginPath();
-          ctx.arc(cp.px, cp.py, 3.2, 0, Math.PI * 2);
-          ctx.fill();
-
+          ctx.beginPath(); ctx.arc(cp.px, cp.py, 3.2, 0, Math.PI * 2); ctx.fill();
           const alignRight = ex > cx;
           ctx.textAlign = alignRight ? 'right' : 'left';
           const tx = alignRight ? Math.min(width - 14, ex + 40) : Math.max(14, ex - 40);
+          // dark plate so labels stay legible over the denser mesh
           ctx.font = '800 10px -apple-system, BlinkMacSystemFont, sans-serif';
-          ctx.fillStyle = '#ffd400';
+          const w1 = ctx.measureText(cl.title).width;
+          ctx.font = '600 9.5px -apple-system, BlinkMacSystemFont, sans-serif';
+          const w2 = ctx.measureText(cl.sub).width;
+          const pw = Math.max(w1, w2) + 12;
+          ctx.fillStyle = 'rgba(0,0,0,0.72)';
+          ctx.fillRect(alignRight ? tx - pw + 6 : tx - 6, ey - 15, pw, 32);
+          ctx.font = '800 10px -apple-system, BlinkMacSystemFont, sans-serif';
+          ctx.fillStyle = ACC_HEX;
           ctx.fillText(cl.title, tx, ey - 3);
           ctx.font = '600 9.5px -apple-system, BlinkMacSystemFont, sans-serif';
           ctx.fillStyle = '#d1d1d6';

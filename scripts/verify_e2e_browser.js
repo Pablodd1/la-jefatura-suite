@@ -247,6 +247,28 @@ const URL = 'http://localhost:8931/';
     JSON.stringify(brainCheck));
   await page.screenshot({ path: path.join(ASSETS_DIR, 'verified-10-website-3d-brain-hero.png'), fullPage: false });
 
+  // 3 calmer alternative color themes (Pizarra / Salvia / Arena) + original Dorado
+  const themeResults = [];
+  for (const t of ['slate', 'sage', 'sand', 'gold']) {
+    await page.locator(`#themeDots .theme-dot[data-theme="${t}"]`).click();
+    await page.waitForTimeout(350);
+    themeResults.push(await page.evaluate(() => ({
+      theme: document.documentElement.getAttribute('data-theme') || 'gold',
+      accent: getComputedStyle(document.documentElement).getPropertyValue('--yellow').trim(),
+      saved: localStorage.getItem('lj_site_theme')
+    })));
+    if (t !== 'gold') await page.screenshot({ path: path.join(ASSETS_DIR, `verified-12-website-theme-${t}.png`), fullPage: false });
+  }
+  const accents = themeResults.map(r => r.accent);
+  check('22a2. Three calmer alternative color themes (Pizarra, Salvia, Arena) + original Dorado, persisted',
+    themeResults.map(r => r.theme).join(',') === 'slate,sage,sand,gold' && new Set(accents).size === 4 && themeResults[3].saved === 'gold',
+    accents.join(' | '));
+  await page.locator('#themeDots .theme-dot[data-theme="slate"]').click(); // leave the hero in a calm theme for the Slide-1 hi-res shot
+  await page.waitForTimeout(500);
+  await page.locator('#brain3dCanvas').screenshot({ path: path.join(ASSETS_DIR, 'verified-12-brain-hq-canvas.png') });
+  await page.locator('#themeDots .theme-dot[data-theme="gold"]').click();
+  await page.waitForTimeout(300);
+
   // Scroll horizontally ("to the side") to Slide 02 (iPhone 16 Pro + WebApp)
   await page.locator('#btnNextSlide').click();
   await page.waitForTimeout(650);
