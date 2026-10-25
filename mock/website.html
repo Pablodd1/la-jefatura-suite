@@ -395,7 +395,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    opacity: 0.42;
+    opacity: 0.22;
     pointer-events: none;
     filter: contrast(1.15) saturate(1.2) var(--vid-filter);
   }
@@ -1657,39 +1657,65 @@
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
 
-    /* ---------- Theme-aware accent (re-read whenever the theme changes) ---------- */
-    let ACC = [255, 212, 0];
+    /* ---------- Load High-Fidelity Translucent Cortical Shell Cutout ---------- */
+    const shellImg = new Image();
+    let shellReady = false;
+    shellImg.onload = () => { shellReady = true; };
+    shellImg.src = '/assets/brain-cortex-cutout.png';
+
+    /* ---------- Theme-aware palette (Electric Gold / Amber + subtle Cyan accents) ---------- */
+    let ACC = [255, 204, 48];      // primary electric gold
+    let AMB = [215, 132, 22];      // warm cortical amber
+    let CYN = [110, 205, 235];     // subtle sci-fi cyan HUD accent
     let ACC_HEX = '#ffd400';
-    let sprite = null;
-    function makeSprite() {
-      const s = document.createElement('canvas');
-      s.width = s.height = 64;
-      const g = s.getContext('2d');
-      const grd = g.createRadialGradient(32, 32, 0, 32, 32, 32);
-      grd.addColorStop(0.0, 'rgba(255,255,255,1)');
-      grd.addColorStop(0.18, `rgba(${Math.min(255, ACC[0] + 40)},${Math.min(255, ACC[1] + 40)},${Math.min(255, ACC[2] + 40)},0.95)`);
-      grd.addColorStop(0.5, `rgba(${ACC[0]},${ACC[1]},${ACC[2]},0.32)`);
-      grd.addColorStop(1.0, `rgba(${ACC[0]},${ACC[1]},${ACC[2]},0)`);
-      g.fillStyle = grd;
-      g.fillRect(0, 0, 64, 64);
-      return s;
+    let glowDot = null;
+    let packetDot = null;
+
+    function buildSprites() {
+      const s1 = document.createElement('canvas');
+      s1.width = s1.height = 64;
+      const g1 = s1.getContext('2d');
+      const gr1 = g1.createRadialGradient(32, 32, 0, 32, 32, 32);
+      gr1.addColorStop(0.0, 'rgba(255, 250, 225, 0.95)');
+      gr1.addColorStop(0.22, `rgba(${ACC[0]}, ${ACC[1]}, ${ACC[2]}, 0.78)`);
+      gr1.addColorStop(0.55, `rgba(${AMB[0]}, ${AMB[1]}, ${AMB[2]}, 0.22)`);
+      gr1.addColorStop(1.0, `rgba(${AMB[0]}, ${AMB[1]}, ${AMB[2]}, 0)`);
+      g1.fillStyle = gr1;
+      g1.fillRect(0, 0, 64, 64);
+      glowDot = s1;
+
+      const s2 = document.createElement('canvas');
+      s2.width = s2.height = 64;
+      const g2 = s2.getContext('2d');
+      const gr2 = g2.createRadialGradient(32, 32, 0, 32, 32, 32);
+      gr2.addColorStop(0.0, 'rgba(255, 255, 255, 1)');
+      gr2.addColorStop(0.18, 'rgba(255, 248, 200, 0.95)');
+      gr2.addColorStop(0.45, `rgba(${ACC[0]}, ${ACC[1]}, ${ACC[2]}, 0.52)`);
+      gr2.addColorStop(1.0, `rgba(${ACC[0]}, ${ACC[1]}, ${ACC[2]}, 0)`);
+      g2.fillStyle = gr2;
+      g2.fillRect(0, 0, 64, 64);
+      packetDot = s2;
     }
+
     function readAccent() {
       const cs = getComputedStyle(document.documentElement);
-      const ar = (cs.getPropertyValue('--ar') || '255,212,0').split(',').map(v => parseInt(v, 10));
-      if (ar.length === 3 && ar.every(v => !isNaN(v))) ACC = ar;
+      const ar = (cs.getPropertyValue('--ar') || '255,212,0').split(',').map(v => parseInt(v.trim(), 10));
+      if (ar.length === 3 && ar.every(v => !isNaN(v))) {
+        ACC = ar;
+        AMB = [Math.max(40, Math.round(ar[0] * 0.82)), Math.max(30, Math.round(ar[1] * 0.62)), Math.max(15, Math.round(ar[2] * 0.45))];
+      }
       ACC_HEX = (cs.getPropertyValue('--yellow') || '#ffd400').trim();
-      sprite = makeSprite();
+      buildSprites();
     }
     readAccent();
     window.addEventListener('themechange', readAccent);
 
-    /* ---------- Retina / supersampled canvas ---------- */
+    /* ---------- Retina 2x-3x Supersampled Canvas ---------- */
     let width = 0, height = 0, dpr = 2;
     function resize() {
       const rect = canvas.getBoundingClientRect();
       dpr = Math.max(2, Math.min(3, window.devicePixelRatio || 1));
-      width = rect.width || 640;
+      width = rect.width || 680;
       height = rect.height || 540;
       canvas.width = Math.round(width * dpr);
       canvas.height = Math.round(height * dpr);
@@ -1698,128 +1724,294 @@
     resize();
     window.addEventListener('resize', resize);
 
-    /* ---------- Deterministic PRNG ---------- */
+    /* ---------- Deterministic Seeded PRNG ---------- */
     let seed = 20261025;
     function rand() {
       seed = (seed * 16807) % 2147483647;
       return (seed - 1) / 2147483646;
     }
 
-    /* ---------- Anatomical brain geometry (Fibonacci-sampled cortex, even density) ---------- */
-    const nodes = [];
+    /* =========================================================================
+       1. OBSIDIAN-STYLE BACKGROUND KNOWLEDGE GRAPH (DoF Plexus + Math Overlays)
+       ========================================================================= */
+    const bgNodes = [];
+    const bgEdges = [];
+    for (let i = 0; i < 120; i++) {
+      const ang = rand() * Math.PI * 2;
+      const rad = 0.34 + 0.70 * Math.pow(rand(), 0.72);
+      const x = Math.cos(ang) * rad * 430 + (rand() - 0.5) * 60;
+      const y = Math.sin(ang) * rad * 275 + (rand() - 0.5) * 40;
+      const z = -220 + rand() * 440;
+      const rSize = 1.0 + rand() * 2.4;
+      bgNodes.push({ x, y, z, rSize });
+    }
+    for (let i = 0; i < bgNodes.length; i++) {
+      const a = bgNodes[i];
+      const dists = [];
+      for (let j = i + 1; j < bgNodes.length; j++) {
+        const b = bgNodes[j];
+        const dx = a.x - b.x, dy = a.y - b.y, dz = (a.z - b.z) * 0.5;
+        const d2 = dx * dx + dy * dy + dz * dz;
+        if (d2 < 15000) dists.push({ d2, j });
+      }
+      dists.sort((p, q) => p.d2 - q.d2);
+      for (let k = 0; k < Math.min(3, dists.length); k++) {
+        bgEdges.push([i, dists[k].j]);
+      }
+    }
+
+    const mathOverlays = [
+      { x: -118, y: -152, z: -60, lines: ['X=11.3 Y=42.8 Z=0.081'] },
+      { x: 175, y: -132, z: -90, lines: ['SYS:MC.DB // ZERO-GUESS = 1'] },
+      { x: 238, y: -18, z: -50, lines: ['U:29 // A:98.7% // S:0.04'] },
+      { x: 92, y: 172, z: -40, lines: ['DEV:GEN = 1', '[b=12.401, f=94.12]', '[d=382, t=60fps, h=100%]'] },
+      { x: -235, y: 92, z: -80, lines: ['[SLA:24H/48H // LOCK=0]'] }
+    ];
+
+    /* =========================================================================
+       2. 3D ANATOMICAL BRAIN PARTICLES & INTERNAL SYNAPTIC WEB
+       ========================================================================= */
+    function sculptCortexPoint(theta, phi, hemi, shellScale) {
+      const sx = Math.sin(phi) * Math.cos(theta);
+      const sy = -Math.cos(phi);
+      const sz = Math.sin(phi) * Math.sin(theta);
+
+      let x = sx * 116;
+      let y = sy * 88;
+      let z = hemi * (5 + Math.abs(sz) * 54);
+
+      if (y < 0) {
+        y -= Math.cos(sx * 1.15) * 13;
+      } else {
+        if (x < -16) { y *= 0.36; y -= 9; }
+        else if (x > 38) { y *= 0.42; y -= 4; }
+      }
+      const tempMask = Math.exp(-Math.pow((sx - 0.04) / 0.48, 2)) * Math.exp(-Math.pow((sy - 0.45) / 0.38, 2));
+      y += tempMask * 26;
+      x -= tempMask * 12;
+      z += hemi * tempMask * 11;
+
+      const gyri = 1.0
+        + 0.046 * Math.sin(x * 0.14 + y * 0.11) * Math.cos(y * 0.16 - z * 0.09)
+        + 0.030 * Math.cos(x * 0.23 - y * 0.19 + z * 0.12);
+
+      return {
+        x: x * gyri * shellScale,
+        y: (y * gyri - 12) * shellScale,
+        z: z * gyri * shellScale,
+        sulcus: gyri
+      };
+    }
+
+    const particles = [];
     const GOLD = Math.PI * (3 - Math.sqrt(5));
-    const CORTEX_N = 1700;
-    for (let i = 0; i < CORTEX_N; i++) {
-      const uy = 1 - 2 * (i + 0.5) / CORTEX_N;
-      const rr = Math.sqrt(Math.max(0, 1 - uy * uy));
-      const th = GOLD * i;
-      const ux = Math.cos(th) * rr;
-      const uz = Math.sin(th) * rr;
-      const hemi = ux >= 0 ? 1 : -1;
-      const px = Math.abs(ux), py = uy, pz = uz;
+    const N_CORTEX = 1850;
+    for (let i = 0; i < N_CORTEX; i++) {
+      const u = 1 - 2 * (i + 0.5) / N_CORTEX;
+      const phi = Math.acos(Math.max(-1, Math.min(1, u)));
+      const theta = (GOLD * i) % (Math.PI * 2);
+      const hemi = (i % 2 === 0) ? 1 : -1;
+      const shell = (i % 4 === 0) ? (0.55 + 0.35 * rand()) : (0.93 + 0.08 * rand());
+      const p = sculptCortexPoint(theta, phi, hemi, shell);
+      const ridgeBoost = Math.max(0.2, Math.min(1.15, (p.sulcus - 0.95) * 11.0));
+      particles.push({
+        x: p.x, y: p.y, z: p.z,
+        nx: p.x / 120, ny: p.y / 95, nz: p.z / 60,
+        size: 0.6 + rand() * 1.05,
+        bright: (0.32 + 0.62 * ridgeBoost) * (shell > 0.9 ? 1.0 : 0.6),
+        kind: 'cortex'
+      });
+    }
+    // Limbic C-arch
+    for (let i = 0; i < 240; i++) {
+      const t = (i / 239) * Math.PI * 1.25 - 0.30;
+      const rTube = 3.5 + rand() * 8;
+      const aTube = rand() * Math.PI * 2;
+      const cx = -5 + Math.cos(Math.PI - t) * 52 + Math.cos(aTube) * rTube;
+      const cy = -6 - Math.sin(Math.PI - t) * 38 + Math.sin(aTube) * rTube * 0.8;
+      const cz = (rand() - 0.5) * 24;
+      particles.push({
+        x: cx, y: cy, z: cz,
+        nx: 0, ny: -0.3, nz: cz >= 0 ? 0.8 : -0.8,
+        size: 0.95 + rand() * 1.15,
+        bright: 0.8 + rand() * 0.3,
+        kind: 'limbic'
+      });
+    }
+    // Striated Cerebellum + Brainstem
+    for (let i = 0; i < 360; i++) {
+      const u = 1 - 2 * (i + 0.5) / 360;
+      const phi = Math.acos(Math.max(-1, Math.min(1, u)));
+      const theta = GOLD * i;
+      const hemi = (i % 2 === 0) ? 1 : -1;
+      const folia = 1.0 + 0.06 * Math.sin(u * 28);
+      const sx = Math.sin(phi) * Math.cos(theta);
+      const sy = -Math.cos(phi);
+      const sz = Math.sin(phi) * Math.sin(theta);
+      particles.push({
+        x: 40 + sx * 35 * folia,
+        y: 48 + sy * 23 * folia,
+        z: hemi * (4 + Math.abs(sz) * 30 * folia),
+        nx: sx, ny: sy, nz: hemi * Math.abs(sz),
+        size: 0.6 + rand() * 0.9,
+        bright: 0.42 + 0.45 * Math.abs(Math.sin(u * 28)),
+        kind: 'cerebellum'
+      });
+    }
+    for (let i = 0; i < 120; i++) {
+      const t = i / 119;
+      const ang = GOLD * i;
+      const rad = (11.5 - t * 5) * (0.75 + 0.25 * rand());
+      particles.push({
+        x: 7 + t * 13 + Math.cos(ang) * rad,
+        y: 38 + t * 52,
+        z: Math.sin(ang) * rad * 0.85,
+        nx: Math.cos(ang), ny: 0.2, nz: Math.sin(ang),
+        size: 0.6 + rand() * 0.85,
+        bright: 0.4 + (1 - t) * 0.35,
+        kind: 'stem'
+      });
+    }
 
-      let X = px * (82 - 10 * Math.max(0, pz));      // frontal lobe slightly narrower
-      let Y = py * 100;
-      let Z = pz * 140;
-      if (Y > 0) Y *= 0.56;                           // flatten the underside
-      // temporal lobe bulge (lower-lateral, mid-length)
-      const tb = Math.exp(-Math.pow(pz + 0.08, 2) / 0.12) * Math.exp(-Math.pow(py - 0.38, 2) / 0.10) * px;
-      Y += tb * 24; X += tb * 9;
-      // gyri / sulci: radial folding ripple
-      const g = 1
-        + 0.050 * Math.sin(X * 0.17 + Z * 0.09 + py * 2.2) * Math.cos(Z * 0.12 - Y * 0.10)
-        + 0.032 * Math.sin(Z * 0.26 + X * 0.11) * Math.sin(Y * 0.23)
-        + 0.018 * Math.sin(X * 0.45 + Y * 0.37 + Z * 0.31);
-      X *= g; Y *= g; Z *= g;
-
-      const x = hemi * (7 + X), y = Y - 12, z = Z;
-      const lobe = z > 52 ? 'FRONTAL' : (z < -78 ? 'OCCIPITAL' : (y > 18 ? 'TEMPORAL' : 'PARIETAL'));
-      nodes.push({ x, y, z, nx: ux, ny: uy, nz: uz, hemi, lobe, kind: 'c', size: 1.0 });
-    }
-    // Deep core nuclei (thalamus / basal ganglia / corpus callosum band)
-    for (let i = 0; i < 150; i++) {
-      const hemi = i % 2 === 0 ? -1 : 1;
-      const a = rand() * Math.PI * 2, b = Math.acos(2 * rand() - 1), rad = 0.25 + 0.38 * rand();
-      const x = hemi * (6 + Math.abs(Math.sin(b) * Math.cos(a)) * 62 * rad * 1.5);
-      const y = -10 + Math.cos(b) * 62 * rad * 1.4;
-      const z = Math.sin(b) * Math.sin(a) * 96 * rad * 1.5;
-      nodes.push({ x, y, z, nx: 0, ny: 0, nz: 0, hemi, lobe: 'CORE', kind: 'k', size: 1.9 });
-    }
-    // Cerebellum (striated) + brainstem
-    for (let i = 0; i < 300; i++) {
-      const uy = 1 - 2 * (i + 0.5) / 300, rr = Math.sqrt(1 - uy * uy), th = GOLD * i;
-      const ux = Math.cos(th) * rr, uz = Math.sin(th) * rr;
-      const hemi = ux >= 0 ? 1 : -1;
-      const stri = 1 + 0.05 * Math.sin(uy * 24);
-      const x = hemi * (4 + Math.abs(ux) * 60 * stri);
-      const y = 80 + uy * 30 * stri;
-      const z = -96 + uz * 40 * stri;
-      nodes.push({ x, y, z, nx: ux, ny: uy, nz: uz, hemi, lobe: 'CEREBELLUM', kind: 'b', size: 0.9 });
-    }
-    for (let i = 0; i < 36; i++) {
-      const t = i / 35, a = i * 1.7;
-      const x = Math.cos(a) * 9, y = 40 + t * 96, z = -34 - t * 36 + Math.sin(a) * 9;
-      nodes.push({ x, y, z, nx: 0, ny: 0, nz: 0, hemi: 0, lobe: 'STEM', kind: 's', size: 1.0 });
-    }
-
-    /* ---------- Synaptic mesh (k-nearest within group) + corpus callosum bridges ---------- */
-    const edges = [];
-    function group(n) { return n.kind + n.hemi; }
-    const THR = { c: 20 * 20, k: 46 * 46, b: 16 * 16, s: 22 * 22 };
-    for (let i = 0; i < nodes.length; i++) {
-      const a = nodes[i];
-      const near = [];
-      for (let j = i + 1; j < nodes.length; j++) {
-        const b = nodes[j];
-        if (group(a) !== group(b)) continue;
+    const webEdges = [];
+    for (let i = 0; i < particles.length; i += 2) {
+      const a = particles[i];
+      let best1 = -1, best2 = -1, d1 = 175, d2 = 175;
+      for (let j = i + 1; j < Math.min(particles.length, i + 90); j++) {
+        const b = particles[j];
         const dx = a.x - b.x, dy = a.y - b.y, dz = a.z - b.z;
-        const d2 = dx * dx + dy * dy + dz * dz;
-        if (d2 < THR[a.kind]) near.push({ d2, j });
+        const dd = dx * dx + dy * dy + dz * dz;
+        if (dd < d1) { d2 = d1; best2 = best1; d1 = dd; best1 = j; }
+        else if (dd < d2) { d2 = dd; best2 = j; }
       }
-      near.sort((p, q) => p.d2 - q.d2);
-      const k = a.kind === 'c' ? 3 : 3;
-      for (let m = 0; m < Math.min(k, near.length); m++) edges.push([i, near[m].j]);
+      if (best1 !== -1) webEdges.push([i, best1]);
+      if (best2 !== -1) webEdges.push([i, best2]);
     }
-    // Corpus callosum: bridge core nuclei across hemispheres
-    for (let i = 0; i < nodes.length; i++) {
-      const a = nodes[i];
-      if (a.kind !== 'k' || a.hemi !== -1) continue;
-      let best = null, bd = 1e9;
-      for (let j = 0; j < nodes.length; j++) {
-        const b = nodes[j];
-        if (b.kind !== 'k' || b.hemi !== 1) continue;
-        const dx = a.x - b.x, dy = a.y - b.y, dz = a.z - b.z;
-        const d2 = dx * dx + dy * dy + dz * dz;
-        if (d2 < bd) { bd = d2; best = j; }
+
+    /* =========================================================================
+       3. FLOATING HOLOGRAPHIC COMPANY NODES & DYNAMIC CURVED BEZIER SPLINES
+       ========================================================================= */
+    const companyNodes = [
+      {
+        id: 'mbmb',
+        title: 'MBMB',
+        metric: '$18.6k/m',
+        x: -175, y: -110, z: 20,
+        labelDy: -14,
+        splines: [
+          { cp1: [-125, -108, 28], cp2: [-82, -88, 22], dst: [-48, -62, 18] }
+        ]
+      },
+      {
+        id: 'cedexx_l',
+        title: 'CEDEXX',
+        metric: '$12.8k/m',
+        x: -232, y: -18, z: -12,
+        labelDy: -14,
+        splines: [
+          { cp1: [-182, 18, 16], cp2: [-132, 26, 20], dst: [-86, 12, 16] }
+        ]
+      },
+      {
+        id: 'dlm',
+        title: 'DLM',
+        metric: '$16.8k/m',
+        x: -188, y: 106, z: 14,
+        labelDy: -14,
+        splines: [
+          { cp1: [-134, 108, 18], cp2: [-92, 82, 20], dst: [-46, 36, 18] }
+        ]
+      },
+      {
+        id: 'cedexx_top',
+        title: 'CEDEXX',
+        metric: '$12.8k/m',
+        x: 108, y: -142, z: -18,
+        labelDy: -8,
+        splines: [
+          { cp1: [58, -138, -8], cp2: [28, -106, 10], dst: [10, -72, 14] }
+        ]
+      },
+      {
+        id: 'unitec',
+        title: 'UNITEC USA',
+        metric: '29 Leads',
+        x: 162, y: -82, z: 24,
+        labelDy: -8,
+        splines: [
+          { cp1: [115, -86, 22], cp2: [82, -68, 18], dst: [52, -42, 16] },
+          { cp1: [136, -34, 12], cp2: [106, -4, 14], dst: [70, 12, 12] }
+        ]
+      },
+      {
+        id: 'bapp_top',
+        title: 'BuildingApp.us',
+        metric: '7 VIPs',
+        x: 178, y: -12, z: -8,
+        labelDy: -10,
+        splines: [
+          { cp1: [148, 28, 14], cp2: [114, 42, 16], dst: [76, 22, 14] }
+        ]
+      },
+      {
+        id: 'bapp_bot',
+        title: 'BuildingApp.us',
+        metric: '130 Renders',
+        x: 154, y: 106, z: 16,
+        labelDy: -10,
+        splines: [
+          { cp1: [152, 54, 14], cp2: [122, 26, 18], dst: [76, 12, 14] },
+          { cp1: [116, 114, 10], cp2: [86, 100, 12], dst: [54, 68, 10] }
+        ]
       }
-      if (best !== null && bd < 70 * 70) edges.push([i, best]);
+    ];
+
+    const allSplines = [];
+    companyNodes.forEach((cn, cIdx) => {
+      cn.splines.forEach((sp, sIdx) => {
+        const packets = [];
+        const pCount = 2 + ((cIdx + sIdx) % 2);
+        for (let k = 0; k < pCount; k++) {
+          packets.push({
+            offset: k / pCount + rand() * 0.22,
+            speed: 0.22 + rand() * 0.12,
+            size: 0.78 + rand() * 0.32
+          });
+        }
+        allSplines.push({
+          p0: [cn.x, cn.y, cn.z],
+          p1: sp.cp1,
+          p2: sp.cp2,
+          p3: sp.dst,
+          packets
+        });
+      });
+    });
+
+    function evalBezier3D(p0, p1, p2, p3, t) {
+      const u = 1 - t;
+      const b0 = u * u * u;
+      const b1 = 3 * u * u * t;
+      const b2 = 3 * u * t * t;
+      const b3 = t * t * t;
+      return [
+        b0 * p0[0] + b1 * p1[0] + b2 * p2[0] + b3 * p3[0],
+        b0 * p0[1] + b1 * p1[1] + b2 * p2[1] + b3 * p3[1],
+        b0 * p0[2] + b1 * p1[2] + b2 * p2[2] + b3 * p3[2]
+      ];
     }
-    // Travelling synaptic pulses
-    const pulses = [];
-    for (let p = 0; p < 90; p++) pulses.push({ e: Math.floor(rand() * edges.length), ph: rand(), sp: 0.35 + rand() * 0.6 });
 
-    /* ---------- Orbiting enterprise satellites & anatomical callouts ---------- */
-    const companies = [
-      { name: 'MBMB · $18.6k/m', ang: 0.0, r: 225, y: -55 },
-      { name: 'CEDEXX · $12.8k/m', ang: 1.25, r: 235, y: 35 },
-      { name: 'DLM · $16.8k/m', ang: 2.51, r: 220, y: -25 },
-      { name: 'UNITEC USA · 29 Leads', ang: 3.77, r: 240, y: 50 },
-      { name: 'BuildingApp · 7 VIPs', ang: 5.02, r: 230, y: -45 }
-    ];
-    const callouts = [
-      { x: 0, y: -108, z: 120, title: 'CORTEZA PREFRONTAL EJECUTIVA', sub: 'Decisiones 1-Clic · +$12.4k Dr. Molina' },
-      { x: -92, y: -40, z: 8, title: 'HEMISFERIO LÓGICO · CERO ADIVINANZAS', sub: 'SQLite mc.db + Firestore Verificado' },
-      { x: 92, y: -24, z: -16, title: 'MEMORIA CONDUCTUAL DEL CEO', sub: 'Auto-Aprendizaje de Hábitos y Voz' },
-      { x: 0, y: 112, z: -80, title: 'NÚCLEO DE VOZ COLOMBIANA', sub: 'es-CO-SalomeNeural (+22% Velocidad)' }
-    ];
-
-    let rotY = 0.4, rotX = 0.18, spinning = true, mode = 'cortex';
+    let rotY = 0.0;
+    let rotX = -0.08;
+    let spinning = true;
+    let mode = 'cortex';
     let dragging = false, lastX = 0, lastY = 0;
+
     canvas.addEventListener('pointerdown', (e) => { dragging = true; lastX = e.clientX; lastY = e.clientY; });
     window.addEventListener('pointermove', (e) => {
       if (!dragging) return;
-      rotY += (e.clientX - lastX) * 0.008;
-      rotX = Math.max(-0.6, Math.min(0.6, rotX + (e.clientY - lastY) * 0.006));
+      rotY += (e.clientX - lastX) * 0.007;
+      rotX = Math.max(-0.5, Math.min(0.5, rotX + (e.clientY - lastY) * 0.005));
       lastX = e.clientX; lastY = e.clientY;
     });
     window.addEventListener('pointerup', () => { dragging = false; });
@@ -1836,171 +2028,307 @@
       if (btn) btn.textContent = spinning ? '⏸ Pausar Giro' : '▶ Reanudar Giro';
     };
 
-    function project3D(x, y, z) {
-      const cy = Math.cos(rotY), sy = Math.sin(rotY);
+    function project3D(x, y, z, rotScale = 1.0) {
+      const ry = rotY * rotScale;
+      const rx = rotX * (0.6 + 0.4 * rotScale);
+      const cy = Math.cos(ry), sy = Math.sin(ry);
       const x1 = x * cy + z * sy;
       const z1 = -x * sy + z * cy;
-      const cx = Math.cos(rotX), sx = Math.sin(rotX);
+      const cx = Math.cos(rx), sx = Math.sin(rx);
       const y2 = y * cx - z1 * sx;
       const z2 = y * sx + z1 * cx;
-      const fov = 700, dist = 480;
-      const scale = fov / Math.max(120, dist + z2);
-      return { px: width * 0.5 + x1 * scale, py: height * 0.5 + y2 * scale, z: z2, scale };
-    }
-    function rotNormalZ(nx, ny, nz) {
-      const cy = Math.cos(rotY), sy = Math.sin(rotY);
-      const z1 = -nx * sy + nz * cy;
-      const cx = Math.cos(rotX), sx = Math.sin(rotX);
-      return ny * sx + z1 * cx;
+      const fov = Math.min(width, height) * 1.18;
+      const dist = 520;
+      const scale = fov / Math.max(140, dist + z2);
+      return {
+        px: width * 0.5 + x1 * scale,
+        py: height * 0.51 + y2 * scale,
+        z: z2,
+        scale
+      };
     }
 
-    const BUCKETS = 8;
     let tick = 0;
     function render() {
-      tick += 0.025;
-      if (spinning && !dragging) rotY += 0.0095;
+      tick += 0.016;
+      if (spinning && !dragging) {
+        if (mode === 'synapse') {
+          rotY += 0.0085;
+        } else {
+          rotY = Math.sin(tick * 0.55) * 0.34;
+          rotX = -0.07 + Math.cos(tick * 0.4) * 0.04;
+        }
+      }
 
       ctx.globalCompositeOperation = 'source-over';
       ctx.clearRect(0, 0, width, height);
-      const cx = width * 0.5, cy = height * 0.5;
-      const rgb = `${ACC[0]},${ACC[1]},${ACC[2]}`;
-      const dim = mode === 'companies' ? 0.55 : 1;
 
-      // Soft ambient aura behind the cortex
-      const aura = ctx.createRadialGradient(cx, cy, 10, cx, cy, Math.min(width, height) * 0.5);
-      aura.addColorStop(0, `rgba(${rgb},0.16)`);
-      aura.addColorStop(0.6, `rgba(${rgb},0.05)`);
-      aura.addColorStop(1, `rgba(${rgb},0)`);
-      ctx.fillStyle = aura;
+      const cx = width * 0.5, cy = height * 0.51;
+      const rgbAcc = `${ACC[0]},${ACC[1]},${ACC[2]}`;
+      const rgbAmb = `${AMB[0]},${AMB[1]},${AMB[2]}`;
+      const rgbCyn = `${CYN[0]},${CYN[1]},${CYN[2]}`;
+
+      /* -------------------------------------------------------------------
+         PASS 1: Deep Graphite & Slate-Black Volumetric Backdrop + Golden Aura
+         ------------------------------------------------------------------- */
+      const bgGrad = ctx.createRadialGradient(cx, cy, 10, cx, cy, Math.max(width, height) * 0.68);
+      bgGrad.addColorStop(0.0, 'rgba(25, 31, 39, 0.94)');
+      bgGrad.addColorStop(0.48, 'rgba(13, 16, 21, 0.97)');
+      bgGrad.addColorStop(1.0, 'rgba(4, 5, 8, 1.0)');
+      ctx.fillStyle = bgGrad;
       ctx.fillRect(0, 0, width, height);
 
-      // HUD rings
-      ctx.strokeStyle = `rgba(${rgb},0.12)`;
-      ctx.lineWidth = 1;
-      [140, 200, 255].forEach(r => { ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke(); });
+      const coreAura = ctx.createRadialGradient(cx, cy - 4, 8, cx, cy - 4, Math.min(width, height) * 0.38);
+      coreAura.addColorStop(0.0, `rgba(${rgbAcc}, 0.24)`);
+      coreAura.addColorStop(0.45, `rgba(${rgbAmb}, 0.10)`);
+      coreAura.addColorStop(1.0, `rgba(${rgbAmb}, 0)`);
+      ctx.fillStyle = coreAura;
+      ctx.fillRect(0, 0, width, height);
 
-      // Project nodes + rim-light brightness
-      const proj = new Array(nodes.length);
-      const lum = new Float32Array(nodes.length);
-      for (let i = 0; i < nodes.length; i++) {
-        const n = nodes[i];
-        const p = project3D(n.x, n.y, n.z);
-        proj[i] = p;
-        const depth = Math.max(0.1, Math.min(1, (215 - p.z) / 400));
-        let rim = 0.65;
-        if (n.kind === 'c' || n.kind === 'b') {
-          const nz = rotNormalZ(n.nx, n.ny, n.nz);       // <0 faces the camera
-          rim = 0.35 + 0.65 * (1 - Math.abs(nz));        // bright silhouette, softer centre
-          if (nz > 0.05) rim *= 0.22;                     // back-facing side recedes
-        }
-        lum[i] = depth * rim * dim;
-      }
-
-      ctx.globalCompositeOperation = 'lighter';
-
-      // Edges, batched into alpha buckets (one stroke per bucket = fast + crisp)
-      const base = mode === 'synapse' ? 0.8 : 0.5;
-      ctx.lineWidth = mode === 'synapse' ? 1.15 : 0.8;
-      const paths = [];
-      for (let b = 0; b < BUCKETS; b++) paths.push([]);
-      for (let e = 0; e < edges.length; e++) {
-        const l = (lum[edges[e][0]] + lum[edges[e][1]]) * 0.5;
-        const bi = Math.min(BUCKETS - 1, Math.floor(l * BUCKETS * 1.05));
-        paths[bi].push(e);
-      }
-      for (let b = 0; b < BUCKETS; b++) {
-        if (!paths[b].length) continue;
-        ctx.strokeStyle = `rgba(${rgb},${((b + 0.5) / BUCKETS * base).toFixed(3)})`;
+      /* -------------------------------------------------------------------
+         PASS 2: Obsidian Knowledge Graph Background (DoF Plexus + Math HUD)
+         ------------------------------------------------------------------- */
+      const bgProj = bgNodes.map(n => project3D(n.x, n.y, n.z, 0.28));
+      ctx.lineWidth = 0.7;
+      for (let i = 0; i < bgEdges.length; i++) {
+        const [aIdx, bIdx] = bgEdges[i];
+        const pa = bgProj[aIdx], pb = bgProj[bIdx];
+        const zAvg = (pa.z + pb.z) * 0.5;
+        const dof = Math.max(0.04, Math.min(0.26, (240 - Math.abs(zAvg)) / 950));
+        ctx.strokeStyle = `rgba(175, 195, 215, ${dof.toFixed(3)})`;
         ctx.beginPath();
-        for (const e of paths[b]) {
-          const p1 = proj[edges[e][0]], p2 = proj[edges[e][1]];
-          ctx.moveTo(p1.px, p1.py); ctx.lineTo(p2.px, p2.py);
+        ctx.moveTo(pa.px, pa.py);
+        ctx.lineTo(pb.px, pb.py);
+        ctx.stroke();
+      }
+      for (let i = 0; i < bgNodes.length; i++) {
+        const p = bgProj[i], n = bgNodes[i];
+        const dof = Math.max(0.08, Math.min(0.48, (260 - Math.abs(p.z)) / 620));
+        const r = n.rSize * p.scale;
+        if (Math.abs(p.z) > 95) {
+          ctx.fillStyle = `rgba(180, 200, 220, ${(dof * 0.22).toFixed(3)})`;
+          ctx.beginPath();
+          ctx.arc(p.px, p.py, r * 2.6, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.fillStyle = (i % 7 === 0)
+          ? `rgba(${rgbAcc}, ${(dof * 0.75).toFixed(3)})`
+          : `rgba(200, 215, 230, ${dof.toFixed(3)})`;
+        ctx.beginPath();
+        ctx.arc(p.px, p.py, Math.max(0.8, r * 0.85), 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.font = '500 8.5px "SF Mono", "JetBrains Mono", Consolas, monospace';
+      mathOverlays.forEach(mo => {
+        const mp = project3D(mo.x, mo.y, mo.z, 0.22);
+        ctx.fillStyle = 'rgba(165, 185, 205, 0.28)';
+        mo.lines.forEach((ln, idx) => {
+          ctx.fillText(ln, mp.px, mp.py + idx * 10);
+        });
+      });
+
+      /* -------------------------------------------------------------------
+         PASS 3: High-Fidelity Iridescent Cortical Shell + Gyri/Sulci Folds
+         ------------------------------------------------------------------- */
+      if (shellReady && mode !== 'synapse') {
+        ctx.save();
+        const breath = 1.0 + Math.sin(tick * 1.4) * 0.012;
+        const perspX = Math.cos(rotY * 0.65) * breath;
+        const skewY = Math.sin(rotY * 0.5) * 0.06;
+        const shellW = Math.min(width, height) * 0.66;
+        const shellH = shellW * (696 / 816);
+        ctx.translate(cx + Math.sin(rotY) * 10, cy + 2);
+        ctx.transform(perspX, skewY, -skewY * 0.5, breath, 0, 0);
+        ctx.globalAlpha = 0.92;
+        ctx.drawImage(shellImg, -shellW * 0.5, -shellH * 0.5, shellW, shellH);
+        ctx.restore();
+      }
+
+      /* -------------------------------------------------------------------
+         PASS 4: 3D Sparkling Neural Particles & Synaptic Filaments
+         ------------------------------------------------------------------- */
+      ctx.globalCompositeOperation = 'lighter';
+      const pProj = new Array(particles.length);
+      const pLum = new Float32Array(particles.length);
+      const cyRot = Math.cos(rotY), syRot = Math.sin(rotY);
+
+      for (let i = 0; i < particles.length; i++) {
+        const pt = particles[i];
+        const pr = project3D(pt.x, pt.y, pt.z, 1.0);
+        pProj[i] = pr;
+        const nz = -pt.nx * syRot + pt.nz * cyRot;
+        const rim = 0.25 + 0.75 * Math.pow(1.0 - Math.min(1.0, Math.abs(nz)), 1.35);
+        const frontBoost = pr.z < 15 ? 1.0 : 0.32;
+        const pulse = 0.75 + 0.25 * Math.sin(tick * 2.6 + i * 0.13);
+        pLum[i] = pt.bright * rim * frontBoost * pulse;
+      }
+
+      // Draw fine synaptic web filaments inside the brain
+      const BUCKETS = 5;
+      const bPaths = Array.from({ length: BUCKETS }, () => []);
+      for (let e = 0; e < webEdges.length; e++) {
+        const [i, j] = webEdges[e];
+        const l = (pLum[i] + pLum[j]) * 0.5;
+        const bi = Math.min(BUCKETS - 1, Math.floor(l * BUCKETS));
+        bPaths[bi].push(e);
+      }
+      ctx.lineWidth = mode === 'synapse' ? 0.95 : 0.55;
+      for (let b = 0; b < BUCKETS; b++) {
+        if (!bPaths[b].length) continue;
+        const alpha = (0.03 + (b / BUCKETS) * (mode === 'synapse' ? 0.45 : 0.18)).toFixed(3);
+        ctx.strokeStyle = b >= BUCKETS - 2 ? `rgba(${rgbAcc}, ${alpha})` : `rgba(${rgbAmb}, ${alpha})`;
+        ctx.beginPath();
+        for (const e of bPaths[b]) {
+          const p1 = pProj[webEdges[e][0]], p2 = pProj[webEdges[e][1]];
+          ctx.moveTo(p1.px, p1.py);
+          ctx.lineTo(p2.px, p2.py);
         }
         ctx.stroke();
       }
 
-      // Nodes with soft glow sprites (back to front)
-      const order = proj.map((p, i) => i).sort((a, b) => proj[b].z - proj[a].z);
-      for (const i of order) {
-        const n = nodes[i], p = proj[i];
-        const l = lum[i];
-        const r = (n.kind === 'k' ? 5.6 : 3.2) * p.scale * n.size;
-        ctx.globalAlpha = Math.min(1, 0.08 + l * 0.85);
-        ctx.drawImage(sprite, p.px - r, p.py - r, r * 2, r * 2);
-      }
-      ctx.globalAlpha = 1;
+      // Render fine 3D golden & amber neural particles
+      const order = pProj.map((_, i) => i).sort((a, b) => pProj[b].z - pProj[a].z);
+      for (let k = 0; k < order.length; k++) {
+        const i = order[k];
+        const pt = particles[i], pr = pProj[i], l = pLum[i];
+        if (l < 0.08) continue;
+        const r = pt.size * pr.scale;
 
-      // Travelling synaptic pulses (bright comets along real edges)
-      for (const pu of pulses) {
-        const t = (tick * pu.sp + pu.ph) % 1;
-        const a = proj[edges[pu.e][0]], b = proj[edges[pu.e][1]];
-        const l = (lum[edges[pu.e][0]] + lum[edges[pu.e][1]]) * 0.5;
-        if (l < 0.12) continue;
-        const x = a.px + (b.px - a.px) * t, y = a.py + (b.py - a.py) * t;
-        const r = 9 * a.scale;
-        ctx.globalAlpha = Math.min(1, 0.4 + l);
-        ctx.drawImage(sprite, x - r, y - r, r * 2, r * 2);
-      }
-      ctx.globalAlpha = 1;
-
-      ctx.globalCompositeOperation = 'source-over';
-
-      // Orbiting company satellites
-      if (mode === 'companies' || mode === 'cortex') {
-        const core = project3D(0, -10, 0);
-        companies.forEach((c) => {
-          const ang = c.ang + rotY * 0.85;
-          const sp = project3D(Math.cos(ang) * c.r, c.y, Math.sin(ang) * c.r);
-          ctx.strokeStyle = `rgba(${rgb},0.42)`;
-          ctx.setLineDash([4, 5]);
-          ctx.beginPath(); ctx.moveTo(sp.px, sp.py); ctx.lineTo(core.px, core.py); ctx.stroke();
-          ctx.setLineDash([]);
-          ctx.globalCompositeOperation = 'lighter';
-          ctx.drawImage(sprite, sp.px - 13, sp.py - 13, 26, 26);
-          ctx.globalCompositeOperation = 'source-over';
-          ctx.font = '800 10.5px -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif';
-          const tw = ctx.measureText(c.name).width;
-          const lx = Math.min(sp.px + 10, width - tw - 22);
-          ctx.fillStyle = 'rgba(0,0,0,0.82)';
-          ctx.fillRect(lx, sp.py - 10, tw + 12, 18);
-          ctx.strokeStyle = `rgba(${rgb},0.65)`;
-          ctx.strokeRect(lx, sp.py - 10, tw + 12, 18);
-          ctx.fillStyle = ACC_HEX;
-          ctx.fillText(c.name, lx + 6, sp.py + 3);
-        });
-      }
-
-      // Anatomical callouts
-      callouts.forEach(cl => {
-        const cp = project3D(cl.x, cl.y, cl.z);
-        if (cp.z < 95) {
-          const ex = Math.max(135, Math.min(width - 135, cp.px + (cp.px >= cx ? 18 : -18)));
-          const ey = Math.max(58, Math.min(height - 58, cp.py - 12));
-          ctx.strokeStyle = `rgba(${rgb},0.85)`;
-          ctx.lineWidth = 1.2;
-          ctx.beginPath(); ctx.moveTo(cp.px, cp.py); ctx.lineTo(ex, ey); ctx.stroke();
-          ctx.fillStyle = '#fff';
-          ctx.beginPath(); ctx.arc(cp.px, cp.py, 3.2, 0, Math.PI * 2); ctx.fill();
-          const alignRight = ex > cx;
-          ctx.textAlign = alignRight ? 'right' : 'left';
-          const tx = alignRight ? Math.min(width - 14, ex + 40) : Math.max(14, ex - 40);
-          // dark plate so labels stay legible over the denser mesh
-          ctx.font = '800 10px -apple-system, BlinkMacSystemFont, sans-serif';
-          const w1 = ctx.measureText(cl.title).width;
-          ctx.font = '600 9.5px -apple-system, BlinkMacSystemFont, sans-serif';
-          const w2 = ctx.measureText(cl.sub).width;
-          const pw = Math.max(w1, w2) + 12;
-          ctx.fillStyle = 'rgba(0,0,0,0.72)';
-          ctx.fillRect(alignRight ? tx - pw + 6 : tx - 6, ey - 15, pw, 32);
-          ctx.font = '800 10px -apple-system, BlinkMacSystemFont, sans-serif';
-          ctx.fillStyle = ACC_HEX;
-          ctx.fillText(cl.title, tx, ey - 3);
-          ctx.font = '600 9.5px -apple-system, BlinkMacSystemFont, sans-serif';
-          ctx.fillStyle = '#d1d1d6';
-          ctx.fillText(cl.sub, tx, ey + 9);
+        if (pt.kind === 'limbic' || l > 0.64) {
+          ctx.globalAlpha = Math.min(0.65, l * 0.48);
+          const gr = r * 2.6;
+          ctx.drawImage(glowDot, pr.px - gr, pr.py - gr, gr * 2, gr * 2);
         }
+
+        ctx.globalAlpha = Math.min(0.95, 0.20 + l * 0.85);
+        ctx.fillStyle = (l > 0.65 || pt.kind === 'limbic')
+          ? '#fff6d6'
+          : (l > 0.35 ? `rgb(${rgbAcc})` : `rgb(${rgbAmb})`);
+        ctx.beginPath();
+        ctx.arc(pr.px, pr.py, Math.max(0.55, r * 0.65), 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1.0;
+
+      /* -------------------------------------------------------------------
+         PASS 5: Dynamic Curved Bezier Spline Connectors & Streaming Light Packets
+         ------------------------------------------------------------------- */
+      allSplines.forEach((sp) => {
+        const SEGS = 34;
+        const pts2D = [];
+        for (let s = 0; s <= SEGS; s++) {
+          const t = s / SEGS;
+          const pos3 = evalBezier3D(sp.p0, sp.p1, sp.p2, sp.p3, t);
+          const rBlend = 0.22 + 0.78 * (t * t);
+          pts2D.push(project3D(pos3[0], pos3[1], pos3[2], rBlend));
+        }
+
+        // Soft outer golden glow on the Bezier spline
+        ctx.strokeStyle = `rgba(${rgbAmb}, 0.30)`;
+        ctx.lineWidth = 3.0;
+        ctx.beginPath();
+        pts2D.forEach((p, idx) => idx === 0 ? ctx.moveTo(p.px, p.py) : ctx.lineTo(p.px, p.py));
+        ctx.stroke();
+
+        // Crisp inner geodesic Bezier spline
+        ctx.strokeStyle = `rgba(${rgbAcc}, 0.85)`;
+        ctx.lineWidth = 1.25;
+        ctx.beginPath();
+        pts2D.forEach((p, idx) => idx === 0 ? ctx.moveTo(p.px, p.py) : ctx.lineTo(p.px, p.py));
+        ctx.stroke();
+
+        const dstP = pts2D[SEGS];
+        ctx.drawImage(glowDot, dstP.px - 9, dstP.py - 9, 18, 18);
+
+        // Luminous data packets with tapered golden-white comet tails
+        sp.packets.forEach(pk => {
+          const tHead = (tick * pk.speed + pk.offset) % 1.0;
+          const tailLen = 0.11;
+          for (let ts = 0; ts < 7; ts++) {
+            const tA = Math.max(0, tHead - (ts / 7) * tailLen);
+            const tB = Math.max(0, tHead - ((ts + 1) / 7) * tailLen);
+            if (tA <= 0) continue;
+            const posA = evalBezier3D(sp.p0, sp.p1, sp.p2, sp.p3, tA);
+            const posB = evalBezier3D(sp.p0, sp.p1, sp.p2, sp.p3, tB);
+            const pA = project3D(posA[0], posA[1], posA[2], 0.22 + 0.78 * tA * tA);
+            const pB = project3D(posB[0], posB[1], posB[2], 0.22 + 0.78 * tB * tB);
+            const frac = 1 - ts / 7;
+            ctx.strokeStyle = `rgba(255, 248, 210, ${(frac * 0.88).toFixed(2)})`;
+            ctx.lineWidth = (0.8 + frac * 2.2) * pk.size;
+            ctx.beginPath();
+            ctx.moveTo(pA.px, pA.py);
+            ctx.lineTo(pB.px, pB.py);
+            ctx.stroke();
+          }
+
+          const posH = evalBezier3D(sp.p0, sp.p1, sp.p2, sp.p3, tHead);
+          const pH = project3D(posH[0], posH[1], posH[2], 0.22 + 0.78 * tHead * tHead);
+          const pr = 5.2 * pk.size * pH.scale;
+          ctx.drawImage(packetDot, pH.px - pr, pH.py - pr, pr * 2, pr * 2);
+
+          if (tHead > 0.90) {
+            const flash = (1.0 - (1.0 - tHead) / 0.10) * 11;
+            ctx.drawImage(packetDot, dstP.px - flash, dstP.py - flash, flash * 2, flash * 2);
+          }
+        });
       });
-      ctx.textAlign = 'left';
+
+      /* -------------------------------------------------------------------
+         PASS 6: Holographic Circular Target Reticles & Frameless Futuristic Labels
+         ------------------------------------------------------------------- */
+      ctx.globalCompositeOperation = 'source-over';
+      companyNodes.forEach((cn, idx) => {
+        const np = project3D(cn.x, cn.y, cn.z, 0.22);
+        const dofAlpha = Math.max(0.55, Math.min(1.0, (280 - Math.abs(np.z)) / 300));
+
+        const r1 = 7 * np.scale, r2 = 14 * np.scale, r3 = 21 * np.scale;
+        ctx.strokeStyle = `rgba(200, 218, 235, ${(0.28 * dofAlpha).toFixed(2)})`;
+        ctx.lineWidth = 0.85;
+        ctx.beginPath(); ctx.arc(np.px, np.py, r1, 0, Math.PI * 2); ctx.stroke();
+
+        ctx.strokeStyle = `rgba(${rgbCyn}, ${(0.22 * dofAlpha).toFixed(2)})`;
+        ctx.beginPath(); ctx.arc(np.px, np.py, r2, 0, Math.PI * 2); ctx.stroke();
+
+        const rotArc = tick * 0.45 * (idx % 2 === 0 ? 1 : -1) + idx;
+        ctx.strokeStyle = `rgba(${rgbAcc}, ${(0.42 * dofAlpha).toFixed(2)})`;
+        ctx.lineWidth = 1.1;
+        ctx.beginPath();
+        ctx.arc(np.px, np.py, r3, rotArc, rotArc + Math.PI * 0.65);
+        ctx.stroke();
+
+        ctx.globalCompositeOperation = 'lighter';
+        ctx.drawImage(packetDot, np.px - 8, np.py - 8, 16, 16);
+        ctx.globalCompositeOperation = 'source-over';
+
+        ctx.font = '700 11.5px "SF Pro Display", "Inter", -apple-system, sans-serif';
+        const wTitle = ctx.measureText(cn.title).width;
+        ctx.font = '500 11px "SF Pro Text", "Inter", -apple-system, sans-serif';
+        const wMetric = ctx.measureText(' - ' + cn.metric).width;
+        const totalW = wTitle + wMetric;
+
+        const lx = Math.max(12, Math.min(width - totalW - 10, np.px + 12));
+        const ly = Math.max(44, Math.min(height - 52, np.py + cn.labelDy));
+
+        ctx.strokeStyle = `rgba(210, 225, 240, ${(0.38 * dofAlpha).toFixed(2)})`;
+        ctx.lineWidth = 0.85;
+        ctx.beginPath();
+        ctx.moveTo(np.px, np.py);
+        ctx.lineTo(lx - 4, ly + 4);
+        ctx.lineTo(lx + totalW + 4, ly + 4);
+        ctx.stroke();
+
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.95)';
+        ctx.shadowBlur = 8;
+        ctx.font = '700 12px "SF Pro Display", "Inter", -apple-system, sans-serif';
+        ctx.fillStyle = `rgba(255, 255, 255, ${dofAlpha.toFixed(2)})`;
+        ctx.fillText(cn.title, lx, ly);
+
+        ctx.font = '500 11.5px "SF Pro Text", "Inter", -apple-system, sans-serif';
+        ctx.fillStyle = `rgba(205, 215, 228, ${(dofAlpha * 0.88).toFixed(2)})`;
+        ctx.fillText(' - ' + cn.metric, lx + wTitle, ly);
+        ctx.shadowBlur = 0;
+      });
 
       requestAnimationFrame(render);
     }
