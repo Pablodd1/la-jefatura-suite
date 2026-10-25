@@ -32,6 +32,8 @@ sys.path.insert(0, os.path.join(ROOT, "server"))
 import behavior_brain  # noqa: E402
 import buildingapp_ingest  # noqa: E402
 import comms_brain  # noqa: E402
+import daily_pdf  # noqa: E402
+import jefesito  # noqa: E402
 import knowledge_store  # noqa: E402
 import mc_auth  # noqa: E402
 import nexus_ingest  # noqa: E402
@@ -137,6 +139,25 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
         if not self._gate(path, qs):
             return
 
+        lang_q = (qs.get("lang") or ["es"])[0]
+        if path == "/api/prefs":
+            self._send(200, jefesito.get_prefs())
+            return
+        if path == "/api/jefesito/brief":
+            self._send(200, jefesito.get_day(lang=lang_q))
+            return
+        if path == "/api/jefesito/pages":
+            self._send(200, {"pages": jefesito.pages(lang_q)})
+            return
+        if path == "/api/jefesito/profile":
+            self._send(200, jefesito.profile())
+            return
+        if path == "/api/daily.pdf":
+            out = os.path.join(tempfile.gettempdir(), "_jefesito_daily.pdf")
+            built = daily_pdf.build(out, lang=lang_q)
+            ctype = "application/pdf" if built.endswith(".pdf") else "text/markdown; charset=utf-8"
+            self._send(200, open(built, "rb").read(), ctype)
+            return
         if path == "/api/ask":
             q = (qs.get("q") or [""])[0]
             lang = (qs.get("lang") or ["es"])[0]
@@ -197,7 +218,14 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
             self._send(400, {"error": "invalid JSON"})
             return
 
-        if path == "/api/notes":
+        if path == "/api/prefs":
+            self._send(200, jefesito.set_prefs(body))
+        elif path == "/api/jefesito/close_day":
+            self._send(200, jefesito.close_day())
+        elif path == "/api/jefesito/learn":
+            self._send(200, jefesito.record(body.get("text", ""), body.get("channel", "text"),
+                                            body.get("action"), body.get("lang", "es")))
+        elif path == "/api/notes":
             r = knowledge_store.add_note(body.get("text", ""), source=body.get("source", "api"),
                                          company=body.get("company", "all"))
             self._send(200 if r["ok"] else 400, r)
@@ -253,7 +281,9 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
         elif path == "/api/voice/command":
             cmd = body.get("command", "")
             lang = body.get("lang", "es")
-            self._send(200, voice_commands.execute(cmd, lang=lang, samples_dir=SAMPLES))
+            res = voice_commands.execute(cmd, lang=lang, samples_dir=SAMPLES)
+            jefesito.record(cmd, body.get("channel", "text"), res.get("action"), lang)
+            self._send(200, res)
         else:
             self._send(404, {"error": "not found"})
 

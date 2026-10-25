@@ -229,6 +229,17 @@ def execute(command: str, lang: str = "es", samples_dir: str | None = None) -> d
     except Exception:
         pass
 
+    # El Jefesito control requests (theme, language, greeting, close day, print, profile, name).
+    try:
+        import jefesito
+        ctl = jefesito.control(command, lang)
+    except Exception as e:  # never break voice because of a control bug
+        print("jefesito.control error:", e, file=sys.stderr)
+        ctl = None
+    if ctl:
+        return {"ok": True, "action": "control", "parsed": {"action": "control"}, "reply": ctl["reply"],
+                "ui": ctl.get("ui"), "sources": ctl.get("sources", []), "grounded": True}
+
     p = parse(command, lang)
     action = p["action"]
     ok = True

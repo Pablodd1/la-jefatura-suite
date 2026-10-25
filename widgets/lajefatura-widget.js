@@ -20,14 +20,14 @@
 
     const COPY = {
       es: {
-        title: "GROK 3.0 VOICE · CEREBRO CEO",
-        sub: "Conciencia DOM + Perfil Conductual Activo",
+        title: "EL JEFESITO · VOZ Y TEXTO",
+        sub: "Aprende de cada interacción · motor Grok 3.0",
         placeholder: "Habla o escribe (ej. «abrir blogs», «aprobar borrador», «pedir café»)…",
         listening: "Escuchando voz con Grok 3.0…",
         help: "Comandos Grok 3.0: cambiar a «empresa» · abrir «pestaña» (mando, bandeja, resultados, cerebro, setup, blogs) · aprobar borrador · redactar respuesta · completar tarea «n» · preparar café · explicar planes · qué hay en pantalla · descargar informe.",
         unknown: "Analicé la pantalla pero no encontré esa acción exacta. Prueba: «abrir blogs», «aprobar borrador», «cambiar a CEDEXX» o «leer resumen».",
         offline: "Modo local activo.",
-        open: "Cerebro Grok 3.0 conectado. Veo toda tu consola, tus 5 empresas y tu perfil conductual. ¿Qué ejecutamos?",
+        open: "Soy El Jefesito. Te atiendo por voz o texto, aprendo de cada interacción y puedo cambiar el tema, el idioma, el saludo, cerrar el día o imprimir tu resumen. ¿Qué hacemos?",
         chips: [
           ["📊 Leer Resumen", "leer resumen"],
           ["✉️ Aprobar Borrador", "aprobar borrador"],
@@ -39,14 +39,14 @@
         ]
       },
       en: {
-        title: "GROK 3.0 VOICE · CEO BRAIN",
-        sub: "Live DOM Awareness + Behavioral Profile Active",
+        title: "EL JEFESITO · VOICE & TEXT",
+        sub: "Learns from every interaction · Grok 3.0 engine",
         placeholder: "Speak or type (e.g. 'open blogs', 'approve draft', 'order coffee')…",
         listening: "Grok 3.0 listening…",
         help: "Grok 3.0 Commands: switch to «company» · open «tab» (overview, comms, outcomes, brain, setup, blogs) · approve draft · draft reply · complete task «n» · order coffee · explain plans · what is on screen · download report.",
         unknown: "I scanned the page but couldn't match that exact command. Try: 'open blogs', 'approve draft', 'switch to CEDEXX', or 'read brief'.",
         offline: "Local brain mode active.",
-        open: "Grok 3.0 Voice Brain online. I have full visibility of your console, 5 companies, and behavioral profile. What should we run?",
+        open: "I'm El Jefesito. I take voice or text, learn from every interaction, and can change the theme, language, greeting, close the day or print your summary. What should we do?",
         chips: [
           ["📊 Read Brief", "read brief"],
           ["✉️ Approve Draft", "approve draft"],
@@ -59,13 +59,14 @@
       }
     };
 
-    const state = { open: false, listening: false, speaking: false, log: [] };
+    const state = { open: false, listening: false, speaking: false, log: [], channel: "text" };
     const actions = {};
     window.LJ = window.LJ || {};
     window.LJ.register = (name, fn) => { actions[name] = fn; };
     window.LJ.execute = execute;
     window.LJ.inspectDOM = inspectDOM;
     window.LJ.setLang = (l) => { CFG.lang = l === "en" ? "en" : "es"; renderPanelLocale(); };
+    window.LJ.speak = (t) => speak(t);
 
     function getT() {
       return COPY[CFG.lang] || COPY.es;
@@ -117,6 +118,16 @@
            /\b(qu[eé]|cu[aá]les|cu[aá]ntas?|lista|listar|lee|leer|read|list|show|what|how many|dame|muestra)\b/i.test(low) &&
            !/^(ir a|abrir|abre|open|go to)\b/i.test(low)) ||
           /\b(miembros|members|conversaciones|conversations|abandono|abandonment|contactos|contacts|alertas|alerts|generaciones|generations|renders|costo|cost)\b/i.test(low)) {
+        return { action: "server_cmd", arg: t };
+      }
+
+      // 0b. Jefesito control requests (theme, language, greeting, close day, print, profile, name)
+      //     are executed by the server so they persist and are learned.
+      if (/\b(tema|temas|theme|themes|saludo|greeting|idioma|language|perfil|profile|aprendido|learned)\b/i.test(low) ||
+          /(cierra|cerrar|close)\b.*\b(d[ií]a|day)\b/i.test(low) ||
+          /resumen (del d[ií]a|diario)|daily (summary|brief)|imprim|\bprint\b/i.test(low) ||
+          /\b(habla|hablar|speak|talk)\b.*(ingl[eé]s|english|espa[nñ]ol|spanish)/i.test(low) ||
+          /^(ll[aá]mame|me llamo|mi nombre es|call me)\b/i.test(low)) {
         return { action: "server_cmd", arg: t };
       }
 
@@ -213,6 +224,17 @@
       }
     }
 
+    // Every locally-handled interaction is recorded so El Jefesito can learn the user's profile.
+    function learn(text, action) {
+      try {
+        fetch((CFG.api || "") + "/api/jefesito/learn", {
+          method: "POST",
+          headers: Object.assign({ "Content-Type": "application/json" }, CFG.token ? { "X-MC-Token": CFG.token } : {}),
+          body: JSON.stringify({ text, action, channel: state.channel, lang: CFG.lang }),
+        }).catch(() => {});
+      } catch (_) {}
+    }
+
     function execute(text) {
       const T = getT();
       const { action, arg } = parse(text);
@@ -224,16 +246,19 @@
         window.LJ_BEHAVIOR.track("voice_query", action || "natural_query", { text, action, arg });
       }
 
+      if (action && action !== "server_cmd") learn(text, action);
+
       if (action === "server_cmd") {
         fetch((CFG.api || "") + "/api/voice/command", {
           method: "POST",
           headers: Object.assign({ "Content-Type": "application/json" }, CFG.token ? { "X-MC-Token": CFG.token } : {}),
-          body: JSON.stringify({ command: text, tenant: CFG.tenant, lang: CFG.lang }),
+          body: JSON.stringify({ command: text, tenant: CFG.tenant, lang: CFG.lang, channel: state.channel }),
         })
           .then(r => r.ok ? r.json() : Promise.reject(r.status))
           .then(d => {
             speak((d.reply || T.unknown) + (d.sources && d.sources.length && d.grounded
               ? (CFG.lang === "es" ? " Fuente: " : " Source: ") + d.sources.slice(0, 2).join("; ") : ""));
+            if (d.ui && typeof window.LJ_applyUi === "function") window.LJ_applyUi(d.ui);
             if (typeof window.loadKnowledgeVault === "function") window.loadKnowledgeVault(false);
           })
           .catch(() => speak(CFG.lang === "es"
@@ -284,7 +309,7 @@
       fetch((CFG.api || "") + "/api/voice/command", {
         method: "POST",
         headers: Object.assign({ "Content-Type": "application/json" }, CFG.token ? { "X-MC-Token": CFG.token } : {}),
-        body: JSON.stringify({ command: text, tenant: CFG.tenant, lang: CFG.lang }),
+        body: JSON.stringify({ command: text, tenant: CFG.tenant, lang: CFG.lang, channel: state.channel }),
       })
         .then(r => r.json())
         .then(d => speak(d.reply || T.unknown))
@@ -349,7 +374,7 @@
           <button id="ljw-mic" title="Voice Input">🎙</button>
         </div>
       </div>
-      <button class="fab" id="ljw-fab" title="Grok 3.0 Voice & DOM Brain">🎙<span class="fab-badge">GROK 3.0</span></button>`;
+      <button class="fab" id="ljw-fab" title="Grok 3.0 Voice & DOM Brain">🎙<span class="fab-badge">JEFESITO</span></button>`;
     document.body.appendChild(root);
 
     const $ = (s) => root.querySelector(s);
@@ -423,7 +448,7 @@
       rec.onresult = (e) => {
         const text = e.results[0][0].transcript;
         input.value = text;
-        setTimeout(() => { execute(text); input.value = ""; }, 300);
+        setTimeout(() => { state.channel = "voice"; execute(text); state.channel = "text"; input.value = ""; }, 300);
       };
       rec.start();
     }

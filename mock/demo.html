@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="graphite">
 <head>
 <meta charset="UTF-8">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('ljTheme')||'graphite'}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>La Jefatura — White-Label CEO Mission Control</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -124,6 +125,48 @@
   .foot{padding:14px 22px 26px;text-align:center;color:var(--dim);font-size:11px}
   @media(max-width:1050px){.grid{grid-template-columns:repeat(6,1fr)}.foreseen-cards,.blog-grid{grid-template-columns:1fr}}
   @media(max-width:680px){.grid{grid-template-columns:1fr}}
+
+  /* ══ THEMES (3 minimalist, easy to read) ══ */
+  :root[data-theme="graphite"]{--bg:#0f1114;--panel:#16181c;--panel2:#1b1e23;--panel3:#22262c;--hair:rgba(255,255,255,.1);
+    --txt:#eef0f3;--txt2:#d5d9e0;--dim:#a0a7b3;--acc:#4fd1b5;--acc2:#6cb8ff;--vio:#a99bff;--warn:#ffb454;--crit:#ff6b6b;--ok:#46d68c;
+    --inset:rgba(0,0,0,.28);--onacc:#06231c;--hdr:rgba(22,24,28,.94);--nav:rgba(27,30,35,.75)}
+  :root[data-theme="light"]{--bg:#f4f5f7;--panel:#ffffff;--panel2:#fafbfc;--panel3:#eef0f3;--hair:rgba(15,23,42,.14);
+    --txt:#161a22;--txt2:#2b3340;--dim:#566070;--acc:#0b7a6b;--acc2:#0a66b0;--vio:#5645d4;--warn:#b45309;--crit:#c62828;--ok:#18794e;
+    --inset:#f0f2f5;--onacc:#ffffff;--hdr:rgba(255,255,255,.96);--nav:rgba(238,240,243,.95)}
+  :root[data-theme="yellow"]{--bg:#000000;--panel:#0a0a0a;--panel2:#111111;--panel3:#181818;--hair:rgba(255,212,0,.32);
+    --txt:#ffffff;--txt2:#f4f4f4;--dim:#d6d6d6;--acc:#ffd400;--acc2:#ffe566;--vio:#ffd400;--warn:#ffb000;--crit:#ff5a4d;--ok:#9be564;
+    --inset:#000000;--onacc:#000000;--hdr:rgba(0,0,0,.96);--nav:#0a0a0a}
+  header{background:var(--hdr)!important}
+  .nav-bar{background:var(--nav)!important}
+  .btn,.seg button.on,#themeSeg button.on{color:var(--onacc)!important}
+  #themeSeg button.on{background:var(--acc)}
+  .btn.ghost{background:var(--panel2)!important;color:var(--txt)!important;border:1px solid var(--hair)!important}
+  #ljw .msg.user{background:var(--inset)!important;color:var(--txt)!important;border-right:3px solid var(--acc)}
+  #ljw .input button{color:var(--acc)!important}
+  .seg button{color:var(--dim)}
+  .seg button.on{color:var(--onacc)!important}
+  .toast{background:var(--panel)!important;color:var(--txt)!important}
+  .inp,.draft-area{background:var(--inset)!important;color:var(--txt)!important;border-color:var(--hair)!important}
+  .narr,.blog-steps li,.draft-in{color:var(--txt2)!important}
+  .blog-steps li,.f-card,.draft-card{background:var(--inset)!important}
+  [style*="rgba(7,11,20"]{background:var(--inset)!important}
+  [style*="#cfd8ea"]{color:var(--txt2)!important}
+  #ljw .panel{background:var(--panel)!important;border-color:var(--acc)!important}
+  #ljw .head,#ljw .input{background:var(--panel2)!important}
+  #ljw .chips{background:var(--inset)!important}
+  #ljw .chip{background:var(--inset)!important;color:var(--txt)!important;border-color:var(--hair)!important}
+  #ljw .msg.lj{background:var(--inset)!important;color:var(--txt)!important}
+  #ljw .head-title,#ljw .input input{color:var(--txt)!important}
+  #ljw .fab{color:var(--onacc)!important}
+  :root[data-theme="light"] .kpi,:root[data-theme="light"] h2,:root[data-theme="light"] h4{color:var(--txt)}
+  #themeSeg button{font-size:11px}
+  #jfGreeting{display:none;max-width:1520px;margin:14px auto 0;padding:0 22px}
+  .jf-card{background:var(--panel);border:1px solid var(--acc);border-radius:14px;padding:16px 18px}
+  .jf-card .jf-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+  .jf-card .jf-title{font-size:16px;font-weight:800;color:var(--txt)}
+  .jf-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;margin-top:12px}
+  .jf-sec{background:var(--inset);border:1px solid var(--hair);border-radius:10px;padding:10px 12px;font-size:12.5px;line-height:1.5;color:var(--txt2)}
+  .jf-sec b{display:block;color:var(--acc);font-size:11px;text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px}
 </style>
 </head>
 <body>
@@ -137,6 +180,12 @@
   <div class="sp"></div>
   <div class="pill" id="slotPill" style="cursor:pointer" title="Click to cycle Morning / Afternoon / Evening">🌅 <span id="slotLabel">Rutina Mañana</span></div>
   <div class="pill" id="clock"></div>
+  <div class="pill" id="jfGreetPill" style="cursor:pointer" title="Saludo al abrir la app: activar / detener" onclick="toggleGreeting()">🔔 <span id="jfGreetLbl">Saludo: ON</span></div>
+  <div class="seg" id="themeSeg" title="Tema / Theme">
+    <button data-theme="light" onclick="setTheme('light')">☀ Claro</button>
+    <button data-theme="graphite" class="on" onclick="setTheme('graphite')">◐ Grafito</button>
+    <button data-theme="yellow" onclick="setTheme('yellow')">■ Amarillo</button>
+  </div>
   <button class="btn ghost" id="langBtn">EN</button>
   <button class="btn" id="pdfBtn">⬇ Informe PDF</button>
 </header>
@@ -150,6 +199,9 @@
   <button class="nav-tab" data-tab="setup" onclick="switchTab('setup')">⚙️ <span data-i18n="tab_setup">Configuración (1-Vez)</span></button>
   <button class="nav-tab" data-tab="blogs" onclick="switchTab('blogs')">📘 <span data-i18n="tab_blogs">Blogs por Función (Paso a Paso)</span></button>
 </nav>
+
+<!-- El Jefesito: daily greeting / day summary (spoken on open unless stopped) -->
+<div id="jfGreeting"></div>
 
 <!-- ==================== TAB 1: OVERVIEW (CEO COMMAND CENTER) ==================== -->
 <section class="tab-pane active" id="pane-overview">
@@ -1640,12 +1692,7 @@ window.LJ.register('explain_plans', () => {
     : 'Gladly. La Jefatura connects your calendars, emails, meetings, Nexus CRM, tasks, cameras, staff, and clients during one-time onboarding. After that, you do zero operational work: you only see outcomes, graphics, studies, and approve drafts with one click or voice.';
 });
 
-window.LJ.register('read_brief', () => {
-  const coObj = COMPANIES.find(c => c.id === cur) || COMPANIES[0];
-  return lang === 'es'
-    ? `(Datos de ejemplo del demo, no reales) Resumen del día para ${coObj.name}. Ingreso mensual proyectado: ${money(coObj.rev)}, con pipeline de ${money(coObj.pipe)}. Tienes ${DRAFTS_QUEUE.filter(d=>d.status!=='SENT').length} borradores listos para aprobar y tu café matutino programado a las 07:45.`
-    : `(Demo sample data, not real) Daily brief for ${coObj.name}. Projected monthly revenue: ${money(coObj.rev)}, pipeline of ${money(coObj.pipe)}. You have ${DRAFTS_QUEUE.filter(d=>d.status!=='SENT').length} drafts ready to approve and your morning coffee scheduled for 07:45 AM.`;
-});
+window.LJ.register('read_brief', () => { jfReadBrief(); return ''; });
 
 window.LJ.register('status_digest', () => {
   const open = TASKS.filter(t => t.status !== 'done').length;
@@ -1656,8 +1703,8 @@ window.LJ.register('status_digest', () => {
 
 window.LJ.register('refresh', () => { renderAll(); return lang === 'es' ? 'Datos actualizados.' : 'Data refreshed.'; });
 window.LJ.register('help', () => lang === 'es'
-  ? 'Comandos Grok 3.0: cambiar a «empresa» · abrir «pestaña» (mando, bandeja, resultados, cerebro, setup, blogs) · aprobar borrador · pedir café · completar tarea «número» · leer resumen · descargar informe.'
-  : 'Grok 3.0 commands: switch to «company» · open «tab» (overview, comms, outcomes, brain, setup, blogs) · approve draft · order coffee · complete task «number» · read brief · download report.');
+  ? 'El Jefesito: cambiar a «empresa» · abrir «pestaña» · aprobar borrador · pedir café · completar tarea «n» · leer resumen · descargar informe · «tema claro / grafito / amarillo» · «detén el saludo» · «cerrar el día» · «imprime el resumen del día» · «habla en inglés» · «qué has aprendido de mí» · «llámame Juan» · «guardar nota: …».'
+  : 'El Jefesito: switch to «company» · open «tab» · approve draft · order coffee · complete task «n» · read brief · download report · «light / graphite / yellow theme» · «stop the greeting» · «close the day» · «print the daily summary» · «speak Spanish» · «what have you learned about me» · «call me Juan» · «save note: …».');
 
 setInterval(() => {
   $('#clock').textContent = new Date().toLocaleString(lang === 'es' ? 'es-US' : 'en-US', {weekday:'short', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false});
@@ -1950,6 +1997,123 @@ syncUnitecLive(false);
 renderBuildingAppPanel();
 syncBuildingAppLive(false);
 renderBlogs();
+
+/* ══ EL JEFESITO: themes, preferences, daily greeting, close day ══ */
+const THEME_NAMES = {light: '☀ Claro', graphite: '◐ Grafito', yellow: '■ Amarillo'};
+let PREFS = {theme: 'graphite', lang: 'es', greeting_enabled: true, ceo_name: 'Jasmel'};
+let JF_BRIEF = null, jfPendingSpeech = null;
+
+function applyTheme(t) {
+  if (!THEME_NAMES[t]) t = 'graphite';
+  document.documentElement.dataset.theme = t;
+  document.querySelectorAll('#themeSeg button').forEach(b => b.classList.toggle('on', b.dataset.theme === t));
+  try { localStorage.setItem('ljTheme', t); } catch (e) {}
+}
+function savePrefs(p) {
+  Object.assign(PREFS, p);
+  return fetch('/api/prefs', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(p)}).catch(() => {});
+}
+function setTheme(t) { applyTheme(t); savePrefs({theme: t}); trackBehavior('click', 'theme_' + t); }
+
+function syncGreetPill() {
+  const el = document.getElementById('jfGreetLbl');
+  if (el) el.textContent = (lang === 'es' ? 'Saludo: ' : 'Greeting: ') + (PREFS.greeting_enabled ? 'ON' : 'OFF');
+}
+function jfSpeak(text) {
+  if (!('speechSynthesis' in window) || !text) return;
+  try {
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = lang === 'es' ? 'es-US' : 'en-US'; u.rate = 1.04;
+    u.onstart = () => { jfPendingSpeech = null; };
+    jfPendingSpeech = text;
+    speechSynthesis.cancel(); speechSynthesis.speak(u);
+  } catch (e) {}
+}
+/* Browsers may block speech before the first click: speak the pending greeting on the first gesture. */
+document.addEventListener('pointerdown', e => {
+  if (jfPendingSpeech && PREFS.greeting_enabled && !e.target.closest('#jfGreeting,#ljw,#jfGreetPill')) {
+    const t = jfPendingSpeech; jfPendingSpeech = null; jfSpeak(t); jfPendingSpeech = null;
+  }
+}, {capture: true, once: true});
+
+async function renderGreeting(doSpeak) {
+  const box = document.getElementById('jfGreeting');
+  try {
+    const [b, p] = await Promise.all([
+      fetch('/api/jefesito/brief?lang=' + lang).then(r => r.json()),
+      fetch('/api/jefesito/profile').then(r => r.json())
+    ]);
+    JF_BRIEF = b;
+    const es = lang === 'es';
+    const secs = (b.sections || []).map(s => `<div class="jf-sec"><b>${s.title}</b>${s.lines.join(' ')}</div>`).join('');
+    box.style.display = 'block';
+    box.innerHTML = `<div class="jf-card">
+      <div class="jf-head">
+        <div>
+          <div class="jf-title">🧠 El Jefesito — ${b.greeting}</div>
+          <div class="muted" style="margin-top:3px">${b.label} · ${b.closed ? (es ? 'DÍA CERRADO ✓' : 'DAY CLOSED ✓') : (es ? 'DÍA ABIERTO' : 'DAY OPEN')} · ${es ? 'Aprendiendo de ti' : 'Learning about you'}: ${p.interactions} ${es ? 'interacciones' : 'interactions'}</div>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn ghost sm" onclick="jfSpeak(JF_BRIEF && JF_BRIEF.spoken)">🔊 ${es ? 'Repetir' : 'Repeat'}</button>
+          <button class="btn ghost sm" onclick="toggleGreeting()">⏹ ${es ? 'Detener saludo' : 'Stop greeting'}</button>
+          <button class="btn ghost sm" onclick="closeDay()">✓ ${es ? 'Cerrar el día' : 'Close the day'}</button>
+          <button class="btn sm" onclick="window.open('/api/daily.pdf?lang=' + lang, '_blank')">🖨 ${es ? 'PDF del día' : 'Daily PDF'}</button>
+          <button class="btn ghost sm" onclick="document.getElementById('jfGreeting').style.display='none'">✕</button>
+        </div>
+      </div>
+      <div class="jf-grid">${secs}</div>
+    </div>`;
+    if (doSpeak) jfSpeak(b.spoken);
+  } catch (e) { box.style.display = 'none'; }
+}
+function toggleGreeting() {
+  const on = !PREFS.greeting_enabled;
+  savePrefs({greeting_enabled: on});
+  syncGreetPill();
+  if (on) { renderGreeting(true); showToast(lang === 'es' ? '🔔 Saludo activado.' : '🔔 Greeting enabled.'); }
+  else {
+    try { speechSynthesis.cancel(); } catch (e) {}
+    jfPendingSpeech = null;
+    document.getElementById('jfGreeting').style.display = 'none';
+    showToast(lang === 'es' ? '🔕 Saludo detenido.' : '🔕 Greeting stopped.');
+  }
+}
+function closeDay() {
+  fetch('/api/jefesito/close_day', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: '{}'})
+    .then(r => r.json())
+    .then(d => {
+      showToast(lang === 'es' ? `✓ Día ${d.closed} cerrado. Hoja nueva para ${d.next}.` : `✓ Day ${d.closed} closed. New sheet for ${d.next}.`);
+      renderGreeting(false);
+    });
+}
+function jfReadBrief() {
+  fetch('/api/jefesito/brief?lang=' + lang).then(r => r.json()).then(b => {
+    JF_BRIEF = b;
+    window.LJ.speak(b.spoken + (b.sources && b.sources.length ? (lang === 'es' ? ' Fuente: ' : ' Source: ') + b.sources.join('; ') : ''));
+    renderGreeting(false);
+  }).catch(() => window.LJ.speak(lang === 'es' ? 'No pude leer el resumen del servidor, no voy a inventarlo.' : "I couldn't read the summary from the server, so I won't make it up."));
+}
+/* UI directives returned by the server when the user asks (by text or voice) to change something. */
+window.LJ_applyUi = function (ui) {
+  if (!ui) return;
+  if (ui.set_theme) { applyTheme(ui.set_theme); PREFS.theme = ui.set_theme; }
+  if (ui.set_lang && ui.set_lang !== lang) { PREFS.lang = ui.set_lang; document.getElementById('langBtn').click(); syncGreetPill(); }
+  if (ui.set_greeting !== undefined) {
+    PREFS.greeting_enabled = !!ui.set_greeting; syncGreetPill();
+    if (ui.set_greeting) renderGreeting(false);
+    else { try { speechSynthesis.cancel(); } catch (e) {} document.getElementById('jfGreeting').style.display = 'none'; }
+  }
+  if (ui.set_name) { PREFS.ceo_name = ui.set_name; renderGreeting(false); }
+  if (ui.show_brief || ui.refresh_brief) renderGreeting(false);
+  if (ui.open_url) window.open(ui.open_url, '_blank');
+};
+(async function initJefesito() {
+  try { Object.assign(PREFS, await (await fetch('/api/prefs')).json()); } catch (e) {}
+  applyTheme(PREFS.theme);
+  if (PREFS.lang && PREFS.lang !== lang) document.getElementById('langBtn').click();
+  syncGreetPill();
+  if (PREFS.greeting_enabled) renderGreeting(true);
+})();
 </script>
 </body>
 </html>

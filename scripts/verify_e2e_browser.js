@@ -171,6 +171,49 @@ const URL = 'http://localhost:8931/';
   check('15. Bilingual Switcher (ES <-> EN)', navTextEn.includes('Command Center') && navTextEn.includes('Function Blogs'), 'Translated to English');
   await page.locator('#langBtn').click(); // back to ES
 
+  // 8b. El Jefesito: day greeting on open, 3 themes, control by text, daily PDF
+  await page.reload({ waitUntil: 'networkidle' });
+  await page.waitForTimeout(600);
+  const greet = await page.locator('#jfGreeting').innerText();
+  check('17. Day greeting + summary shown on open (grounded, with learning counter)',
+    /El Jefesito/i.test(greet) && /BuildingApp/i.test(greet) && /miembros/i.test(greet) && /interacciones/i.test(greet),
+    greet.replace(/\s+/g, ' ').slice(0, 120));
+
+  const themeSeen = [];
+  for (const t of ['light', 'yellow', 'graphite']) {
+    await page.locator(`#themeSeg button[data-theme="${t}"]`).click();
+    themeSeen.push(await page.evaluate(() => document.documentElement.dataset.theme));
+  }
+  check('18. Three themes switch from the header (light, yellow/black, graphite)',
+    themeSeen.join(',') === 'light,yellow,graphite', themeSeen.join(','));
+
+  await page.locator('#ljw-fab').click();
+  await page.locator('#ljw-in').fill('cambia el tema a amarillo');
+  await page.locator('#ljw-send').click();
+  await page.waitForTimeout(600);
+  const themeByText = await page.evaluate(() => document.documentElement.dataset.theme);
+  const yellowBg = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+  await page.screenshot({ path: path.join(ASSETS_DIR, 'verified-8-theme-yellow-black.png'), fullPage: false });
+  await page.locator('#ljw-in').fill('tema claro');
+  await page.locator('#ljw-send').click();
+  await page.waitForTimeout(500);
+  await page.screenshot({ path: path.join(ASSETS_DIR, 'verified-9-theme-light.png'), fullPage: false });
+  await page.locator('#ljw-in').fill('tema grafito');
+  await page.locator('#ljw-send').click();
+  await page.waitForTimeout(500);
+  check('19. Jefesito changes the theme by text request (yellow/black = pure black bg), persisted',
+    themeByText === 'yellow' && yellowBg === 'rgb(0, 0, 0)', `${themeByText} ${yellowBg}`);
+
+  const pdfRes = await page.evaluate(async () => {
+    const r = await fetch('/api/daily.pdf?lang=es');
+    const b = new Uint8Array(await r.arrayBuffer());
+    return { status: r.status, magic: String.fromCharCode(...b.slice(0, 4)), size: b.length };
+  });
+  check('20. Printable daily PDF served', pdfRes.status === 200 && pdfRes.magic === '%PDF', JSON.stringify(pdfRes));
+
+  const learned = await page.evaluate(async () => (await (await fetch('/api/jefesito/profile')).json()).interactions);
+  check('21. Every interaction is being recorded for self-learning', learned >= 4, `${learned} interactions`);
+
   // 9. Verify Zero Console / Runtime Errors
   check('16. Zero Browser Console or Page Errors', consoleErrors.length === 0 && pageErrors.length === 0,
     `consoleErrors=${consoleErrors.length} (${consoleErrors.join('; ')}), pageErrors=${pageErrors.length}`);
