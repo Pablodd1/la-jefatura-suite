@@ -1,0 +1,922 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>La Jefatura & El Jefesito — Edición Apple Editorial Claro (Marfil & Titanio)</title>
+<style>
+  /* =====================================================================
+     DISEÑO WEB 2: APPLE CUPERTINO EDITORIAL IVORY, WHITE & TITANIUM
+     Clean vertical storytelling layout, high daylight contrast, zero clutter
+     ===================================================================== */
+  :root {
+    --bg: #f5f5f7;
+    --bg-alt: #ffffff;
+    --card: #ffffff;
+    --ink: #1d1d1f;
+    --ink-sub: #515154;
+    --muted: #86868b;
+    --accent: #0066cc;
+    --accent-hover: #0071e3;
+    --bronze: #9a7432;
+    --bronze-soft: rgba(154, 116, 50, 0.10);
+    --border: rgba(0, 0, 0, 0.08);
+    --shadow-sm: 0 4px 18px rgba(0, 0, 0, 0.04);
+    --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.08);
+    --ok: #1d8348;
+    --danger: #d93025;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+  }
+
+  /* ── Top Website Edition Switcher Ribbon ── */
+  .edition-ribbon {
+    background: #1d1d1f;
+    color: #f5f5f7;
+    padding: 8px 20px;
+    font-size: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    z-index: 300;
+  }
+  .edition-ribbon span.lbl {
+    font-weight: 700;
+    color: #a1a1a6;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    font-size: 11px;
+  }
+  .ed-pill {
+    text-decoration: none;
+    padding: 5px 13px;
+    border-radius: 980px;
+    font-weight: 700;
+    font-size: 11.5px;
+    color: #d2d2d7;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    transition: all 0.15s ease;
+  }
+  .ed-pill:hover { background: rgba(255, 255, 255, 0.18); color: #fff; }
+  .ed-pill.active {
+    background: #ffffff;
+    color: #1d1d1f;
+    border-color: #ffffff;
+    font-weight: 800;
+  }
+
+  /* ── Sticky Apple Frosted White Header ── */
+  .apple-header {
+    position: sticky;
+    top: 39px;
+    z-index: 250;
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 1px solid var(--border);
+    height: 54px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+  }
+  .brand {
+    font-weight: 800;
+    font-size: 16px;
+    letter-spacing: -0.4px;
+    color: var(--ink);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .brand-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--bronze);
+  }
+  .brand span { color: var(--bronze); font-weight: 600; }
+
+  .nav-links {
+    display: flex;
+    gap: 20px;
+    list-style: none;
+    font-size: 12.5px;
+    font-weight: 600;
+  }
+  .nav-links a {
+    color: var(--ink-sub);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+
+  .nav-cta { display: flex; gap: 8px; align-items: center; }
+  .btn-primary {
+    background: var(--ink);
+    color: #ffffff !important;
+    font-weight: 700;
+    font-size: 12.5px;
+    padding: 8px 18px;
+    border-radius: 980px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+  .btn-primary:hover { background: #333336; transform: translateY(-1px); }
+
+  .btn-blue {
+    background: var(--accent);
+    color: #ffffff !important;
+    font-weight: 700;
+    font-size: 13px;
+    padding: 10px 20px;
+    border-radius: 980px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-blue:hover { background: var(--accent-hover); }
+
+  .btn-ghost {
+    background: #ffffff;
+    color: var(--ink) !important;
+    font-weight: 600;
+    font-size: 12.5px;
+    padding: 8px 16px;
+    border-radius: 980px;
+    text-decoration: none;
+    border: 1px solid rgba(0, 0, 0, 0.16);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-ghost:hover { border-color: var(--ink); }
+
+  .wrap {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 0 28px;
+  }
+  section { padding: 76px 0; }
+  section.alt { background: var(--bg-alt); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+
+  /* ── Hero Section: Editorial Center Header + Wide Dark Titanium 3D Brain Window ── */
+  .hero-center {
+    text-align: center;
+    max-width: 880px;
+    margin: 0 auto 38px;
+  }
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 14px;
+    border-radius: 980px;
+    background: var(--bronze-soft);
+    color: var(--bronze);
+    font-size: 11.5px;
+    font-weight: 800;
+    letter-spacing: 0.7px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  h1.hero-title {
+    font-size: clamp(34px, 4.4vw, 58px);
+    font-weight: 800;
+    letter-spacing: -1.6px;
+    line-height: 1.06;
+    color: var(--ink);
+    margin-bottom: 16px;
+  }
+  h1.hero-title span {
+    background: linear-gradient(90deg, #1d1d1f 0%, #9a7432 60%, #0066cc 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .hero-lead {
+    font-size: 18px;
+    color: var(--ink-sub);
+    max-width: 740px;
+    margin: 0 auto 24px;
+    font-weight: 400;
+  }
+  .hero-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  /* ── Wide Titanium Obsidian Cinema Frame for the 3D Brain ── */
+  .brain-cinema-window {
+    position: relative;
+    background: #080b11;
+    border-radius: 28px;
+    border: 6px solid #e2e2e7;
+    box-shadow: 0 28px 70px rgba(0, 0, 0, 0.16);
+    height: 510px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  #heroBrainVideo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.20;
+    pointer-events: none;
+  }
+  #brain3dCanvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    cursor: grab;
+    z-index: 2;
+  }
+  .brain-bar-top, .brain-bar-bot {
+    position: relative;
+    z-index: 5;
+    padding: 14px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .brain-chip {
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(12px);
+    color: #f5f5f7;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 5px 12px;
+    border-radius: 980px;
+  }
+  .brain-mode-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: #d2d2d7;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    padding: 6px 12px;
+    border-radius: 980px;
+    font-size: 11.5px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .brain-mode-btn.active {
+    background: #ffffff;
+    color: #1d1d1f;
+    border-color: #ffffff;
+  }
+
+  /* ── 4 Editorial KPI Cards ── */
+  .kpi-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-top: 26px;
+  }
+  .kpi-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
+  }
+  .kpi-num {
+    font-size: 34px;
+    font-weight: 800;
+    color: var(--ink);
+    letter-spacing: -1px;
+  }
+  .kpi-lbl { font-size: 14px; font-weight: 700; color: var(--bronze); margin-top: 4px; }
+  .kpi-sub { font-size: 12.5px; color: var(--ink-sub); margin-top: 4px; }
+
+  /* ── Section Headings ── */
+  h2.sec-title {
+    font-size: clamp(28px, 3.4vw, 44px);
+    font-weight: 800;
+    letter-spacing: -1.1px;
+    line-height: 1.1;
+    color: var(--ink);
+  }
+  h2.sec-title span { color: var(--bronze); }
+  .sec-lead {
+    font-size: 17px;
+    color: var(--ink-sub);
+    max-width: 760px;
+    margin-top: 10px;
+  }
+
+  /* ── Interactive Apple iPhone 16 Pro Titanium + Light WebApp Studio ── */
+  .studio-grid {
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    gap: 28px;
+    margin-top: 32px;
+    align-items: stretch;
+  }
+  .iphone-titanium {
+    width: 360px;
+    margin: 0 auto;
+    background: #d6d3cd;
+    border: 4px solid #b8b4ad;
+    border-radius: 50px;
+    padding: 12px;
+    box-shadow: var(--shadow-lg);
+  }
+  .iphone-screen-light {
+    background: #f5f5f7;
+    color: var(--ink);
+    border-radius: 38px;
+    overflow: hidden;
+    border: 1px solid rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+  }
+  .ios-status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px 8px;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .ios-island {
+    background: #1d1d1f;
+    color: #fff;
+    padding: 3px 12px;
+    border-radius: 99px;
+    font-size: 9.5px;
+    font-weight: 700;
+  }
+  .ios-body-light {
+    padding: 12px 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .ios-white-card {
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 11px 13px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  }
+  .ios-white-card h4 {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--bronze);
+    margin-bottom: 4px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .ios-white-card p { font-size: 11.5px; color: var(--ink-sub); line-height: 1.4; }
+  .ios-approve-btn {
+    margin-top: 8px;
+    width: 100%;
+    background: var(--accent);
+    color: #fff;
+    border: 0;
+    border-radius: 10px;
+    padding: 8px 10px;
+    font-weight: 700;
+    font-size: 11.5px;
+    cursor: pointer;
+  }
+  .ios-chip-light {
+    background: #f0f0f5;
+    color: var(--ink);
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    padding: 4px 8px;
+    font-size: 10px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .ios-chip-light:hover { background: #e5e5ea; }
+
+  .webapp-studio {
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .studio-topbar {
+    background: #f5f5f7;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .studio-body {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    flex: 1;
+  }
+  .studio-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .st-card {
+    background: #f9f9fb;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 16px;
+  }
+  .st-card h5 { font-size: 11px; color: var(--bronze); text-transform: uppercase; margin-bottom: 4px; }
+  .st-card .big { font-size: 24px; font-weight: 800; color: var(--ink); margin-bottom: 4px; }
+  .st-card p { font-size: 12px; color: var(--ink-sub); }
+
+  /* ── Bento Pillars & Integration Cards ── */
+  .bento-light {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-top: 28px;
+  }
+  .bl-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
+  }
+  .bl-card h3 { font-size: 19px; font-weight: 800; margin: 6px 0 8px; color: var(--ink); }
+  .bl-card p { font-size: 13.5px; color: var(--ink-sub); }
+
+  .req-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+    margin-top: 28px;
+  }
+  .req-card {
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+  }
+  .req-num {
+    display: inline-flex;
+    width: 30px; height: 30px;
+    border-radius: 9px;
+    background: var(--ink);
+    color: #fff;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+  .req-card h4 { font-size: 15px; font-weight: 800; margin-bottom: 6px; }
+  .req-card p { font-size: 12.5px; color: var(--ink-sub); margin-bottom: 10px; }
+  .req-card code {
+    display: block;
+    background: #f5f5f7;
+    padding: 6px 8px;
+    border-radius: 8px;
+    font-size: 11px;
+    color: var(--bronze);
+  }
+
+  /* ── Comparison Table ── */
+  .cmp-box {
+    margin-top: 28px;
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    overflow-x: auto;
+    box-shadow: var(--shadow-sm);
+  }
+  table.cmp-table { width: 100%; border-collapse: collapse; text-align: left; }
+  .cmp-table th, .cmp-table td { padding: 14px 18px; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .cmp-table th { background: #f9f9fb; color: var(--ink-sub); font-size: 11.5px; text-transform: uppercase; }
+  .cmp-table th.col-jf, .cmp-table td.col-jf { background: rgba(154, 116, 50, 0.06); font-weight: 600; }
+
+  /* ── ROI Box ── */
+  .roi-light {
+    margin-top: 28px;
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 26px;
+    padding: 32px;
+    box-shadow: var(--shadow-lg);
+    display: grid;
+    grid-template-columns: 1fr 1.15fr;
+    gap: 28px;
+    align-items: center;
+  }
+  .slider-group { margin-bottom: 16px; }
+  .slider-group label { display: flex; justify-content: space-between; font-size: 13.5px; font-weight: 700; margin-bottom: 6px; }
+  .slider-group input[type=range] { width: 100%; accent-color: var(--accent); }
+  .roi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .roi-stat { background: #f5f5f7; border-radius: 18px; padding: 18px; }
+  .roi-stat .val { font-size: 28px; font-weight: 800; color: var(--ink); }
+  .roi-stat .lbl { font-size: 12.5px; color: var(--ink-sub); font-weight: 600; }
+
+  @media (max-width: 1024px) {
+    .studio-grid, .roi-light, .bento-light { grid-template-columns: 1fr; }
+    .kpi-strip, .req-grid { grid-template-columns: repeat(2, 1fr); }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ==================== TOP WEBSITE EDITION SWITCHER ==================== -->
+<div class="edition-ribbon">
+  <span class="lbl">🎨 Comparador de 3 Diseños Web (Elige tu Favorito):</span>
+  <a href="/website-v2" class="ed-pill active">☀️ Diseño 1 · Apple Editorial Claro (Marfil & Titanio)</a>
+  <a href="/website-v3" class="ed-pill">🏦 Diseño 2 · Swiss Bank & Bloomberg Navy (Azul Noche)</a>
+  <a href="/website-v1" class="ed-pill">⚡ Diseño 3 · Obsidian & Oro Horizontal (Sci-Fi)</a>
+</div>
+
+<!-- ==================== STICKY APPLE HEADER ==================== -->
+<header class="apple-header">
+  <a href="#top" class="brand">
+    <span class="brand-dot"></span>
+    LA JEFATURA <span>· EDITORIAL EDITION</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#top">Cerebro 3D</a></li>
+    <li><a href="#iphone-webapp">Vista iPhone & WebApp</a></li>
+    <li><a href="#decisiones">Cero Adivinanzas</a></li>
+    <li><a href="#integracion">Integración</a></li>
+    <li><a href="#comparativa">Comparativa</a></li>
+    <li><a href="#roi">ROI & Video Gemini</a></li>
+  </ul>
+  <div class="nav-cta">
+    <a href="/api/daily.pdf?lang=es" target="_blank" class="btn-ghost">🖨 Hoja del Día PDF</a>
+    <a href="/" class="btn-primary">🚀 Abrir Consola en Vivo →</a>
+  </div>
+</header>
+
+<!-- ==================== 1. HERO + 3D BRAIN CINEMA WINDOW ==================== -->
+<section id="top">
+  <div class="wrap">
+    <div class="hero-center">
+      <div class="eyebrow">🧠 El Cerebro Central de tu Empresa · Cero Alucinaciones</div>
+      <h1 class="hero-title">
+        Menos pantallas.<br>
+        <span>Mejores decisiones en 60 segundos.</span>
+      </h1>
+      <p class="hero-lead">
+        <b>La Jefatura</b> y su asistente <b>El Jefesito</b> consolidan todas tus empresas (<b>MBMB, CEDEXX, DLM, UNITEC USA y BuildingApp.us</b>) en una sola verdad verificada. Jamás adivina un número y prepara cada decisión para que apruebes con un toque desde tu <b>Apple iPhone</b> o tu escritorio.
+      </p>
+      <div class="hero-actions">
+        <a href="/" class="btn-blue">🚀 Entrar al Centro de Mando</a>
+        <button class="btn-ghost" onclick="speakHeroDemo()">🔊 Escuchar Resumen (Voz Colombiana)</button>
+        <a href="#iphone-webapp" class="btn-ghost">📱 Ver Apple iPhone & WebApp ↓</a>
+      </div>
+    </div>
+
+    <!-- Wide Dark Titanium Window Framing the 60FPS 3D Brain Data Network -->
+    <div class="brain-cinema-window">
+      <video id="heroBrainVideo" src="/assets/hero-brain-3d.mp4" autoplay loop muted playsinline></video>
+      <canvas id="brain3dCanvas"></canvas>
+
+      <div class="brain-bar-top">
+        <span class="brain-chip">🧠 RED DE DATOS DEL CEREBRO 3D · 5 EMPRESAS EN VIVO</span>
+        <span class="brain-chip">ARRASTRA PARA GIRAR · 60 FPS RETINA</span>
+      </div>
+
+      <div class="brain-bar-bot">
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="brain-mode-btn active" onclick="setBrainMode('cortex', this)">🧠 Corteza Ejecutiva 3D</button>
+          <button class="brain-mode-btn" onclick="setBrainMode('synapse', this)">⚡ Giro Completo 360°</button>
+          <button class="brain-mode-btn" onclick="setBrainMode('companies', this)">🛰 Nodos de Empresas</button>
+        </div>
+        <button class="brain-mode-btn" onclick="toggleBrainSpin(this)">⏸ Pausar Giro</button>
+      </div>
+    </div>
+
+    <div class="kpi-strip">
+      <div class="kpi-card">
+        <div class="kpi-num">0%</div>
+        <div class="kpi-lbl">Alucinaciones o Adivinanzas</div>
+        <div class="kpi-sub">Cada respuesta cita su ID real en SQLite/Firestore o rehúsa inventar.</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-num">11.4 h</div>
+        <div class="kpi-lbl">Ahorradas por Semana</div>
+        <div class="kpi-sub">Correos pre-redactados en tu voz y hoja del día automática en PDF.</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-num">1 Toque</div>
+        <div class="kpi-lbl">Para Ejecutar Decisiones</div>
+        <div class="kpi-sub">Aprueba contratos, cobros y seguimientos desde tu Apple iPhone.</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-num">5 Empresas</div>
+        <div class="kpi-lbl">En una Sola Corteza</div>
+        <div class="kpi-sub">MBMB · CEDEXX · DLM · UNITEC USA · BuildingApp.us.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 2. INTERACTIVE APPLE IPHONE + WEBAPP STUDIO ==================== -->
+<section id="iphone-webapp" class="alt">
+  <div class="wrap">
+    <div class="eyebrow">📱 + 💻 Referencia Interactiva en Vivo</div>
+    <h2 class="sec-title">En tu <span>Apple iPhone</span> en movimiento o en tu <span>WebApp Ejecutiva</span>.</h2>
+    <p class="sec-lead">Prueba aquí mismo el flujo real de aprobación en 1 toque y hazle una pregunta trampa al motor Cero Alucinaciones.</p>
+
+    <div class="studio-grid" id="showcaseStage">
+      <!-- Natural Titanium Apple iPhone 16 Pro -->
+      <div class="iphone-titanium" id="iphoneMockup">
+        <div class="iphone-screen-light">
+          <div class="ios-status">
+            <span>9:41</span>
+            <span class="ios-island">● JEFESITO VOZ</span>
+            <span>5G 100%</span>
+          </div>
+          <div class="ios-body-light">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <strong style="font-size:14px">La Jefatura · iOS</strong>
+              <span style="background:var(--bronze-soft);color:var(--bronze);font-size:10px;font-weight:800;padding:2px 8px;border-radius:99px">DÍA ABIERTO</span>
+            </div>
+
+            <div class="ios-white-card">
+              <h4><span>🧠 Saludo del Día</span> <span style="cursor:pointer;color:var(--accent)" onclick="speakHeroDemo()">🔊 Oír</span></h4>
+              <p id="iosBriefText">Buenos días, Jasmel. BuildingApp suma <b>7 miembros (+3 hoy)</b> y 130 renders IA (100% éxito). UNITEC registra <b>29 teléfonos</b> y 98.7% de alertas entregadas.</p>
+            </div>
+
+            <div class="ios-white-card" style="border-color:var(--accent)">
+              <h4><span>⚡ Decisión Lista · +$12,400/mes</span></h4>
+              <p><b>Dr. Molina (Doral Urgent Care):</b> Firma hoy si incluimos módulo de denegaciones sin subir el fee. Borrador listo.</p>
+              <button class="ios-approve-btn" id="iosApproveBtn" onclick="approveFromIphone()">✓ Aprobar Decisión y Enviar (1-Toque)</button>
+            </div>
+
+            <div class="ios-white-card">
+              <h4><span>🎙 Prueba Cero Alucinaciones</span></h4>
+              <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px">
+                <button class="ios-chip-light" onclick="askIphone('cuántos miembros nuevos hay en BuildingApp')">📱 Miembros BuildingApp</button>
+                <button class="ios-chip-light" onclick="askIphone('cuál es el teléfono del doctor Khalil')">🚫 Trampa (No Adivinar)</button>
+              </div>
+              <div id="iosReplyBox" style="font-size:11px;background:#f5f5f7;padding:8px;border-radius:8px;border-left:3px solid var(--accent)">
+                Toca un botón arriba para consultar la base verificada.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Light Mode WebApp Studio -->
+      <div class="webapp-studio">
+        <div class="studio-topbar">
+          <div style="display:flex;gap:6px">
+            <span style="width:11px;height:11px;border-radius:50%;background:#ff5f56;display:inline-block"></span>
+            <span style="width:11px;height:11px;border-radius:50%;background:#ffbd2e;display:inline-block"></span>
+            <span style="width:11px;height:11px;border-radius:50%;background:#27c93f;display:inline-block"></span>
+          </div>
+          <span style="font-size:12px;font-weight:700;color:var(--ink-sub)">🔒 la-jefatura.ceo · Estudio de Decisiones Multimarca</span>
+          <a href="/" style="font-size:12px;font-weight:700;color:var(--accent);text-decoration:none">Abrir Consola Completa ↗</a>
+        </div>
+        <div class="studio-body">
+          <div>
+            <span style="font-size:11px;font-weight:800;color:var(--bronze);text-transform:uppercase">3 DECISIONES EJECUTIVAS DETECTADAS HOY</span>
+            <h3 style="font-size:22px;font-weight:800;margin-top:2px">De datos dispersos a acciones rentables en un clic</h3>
+          </div>
+
+          <div class="studio-cards">
+            <div class="st-card">
+              <h5>1. Decisión Comercial</h5>
+              <div class="big">95.7% Abandono</div>
+              <p>Detectado en el saludo del recepcionista UNITEC (4,466 de 4,665 sesiones). Simplificar captura inicial para duplicar leads.</p>
+            </div>
+            <div class="st-card">
+              <h5>2. Decisión de Producto</h5>
+              <div class="big">$0.018 / Render</div>
+              <p>BuildingApp logró 130 generaciones con 100% éxito ($2.45 total) y aprobó revisión en Apple App Store.</p>
+            </div>
+            <div class="st-card">
+              <h5>3. Decisión de Equipo</h5>
+              <div class="big">62h Vencida</div>
+              <p>El motor SLA 24h/48h aísla la tarea que bloquea $12.4k y presenta el borrador ya redactado en tu voz.</p>
+            </div>
+          </div>
+
+          <div class="st-card" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+            <div>
+              <h5>📄 Hoja del Día Imprimible (Siempre Lista en PDF)</h5>
+              <strong style="font-size:15px">Página 1: Resumen del Día Abierto · Página 2: Hoja Nueva del Día Siguiente</strong>
+              <p style="margin-top:2px">Al decir «cerrar el día», la hoja actual queda archivada y se abre papel nuevo para mañana sin inventar cifras.</p>
+            </div>
+            <a href="/api/daily.pdf?lang=es" target="_blank" class="btn-primary">🖨 Ver Hoja del Día PDF</a>
+          </div>
+
+          <div style="background:#f5f5f7;padding:12px 16px;border-radius:12px;font-family:monospace;font-size:11.5px;color:var(--ink)">
+            &lt;meta name="apple-mobile-web-app-capable" content="yes"&gt;<br>
+            &lt;script src="https://tu-dominio.com/widgets/lajefatura-widget.js" data-theme="light" data-lang="es"&gt;&lt;/script&gt;
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 3. LOS PILARES & INTEGRACIÓN ==================== -->
+<section id="decisiones">
+  <div class="wrap">
+    <div class="eyebrow">🎯 Arquitectura de Decisiones</div>
+    <h2 class="sec-title">Por qué este asistente hace que el CEO <span>gane más tiempo y dinero</span>.</h2>
+
+    <div class="bento-light">
+      <div class="bl-card">
+        <span style="font-size:11px;font-weight:800;color:var(--bronze)">01 · CERO ALUCINACIONES</span>
+        <h3>Jamás adivina un número</h3>
+        <p>Conectado a tu base SQLite (<code>mc.db</code>) y Firestore en vivo. Si un dato existe, cita la fuente exacta; si no existe, lo declara con transparencia y ofrece guardarlo al instante.</p>
+      </div>
+      <div class="bl-card">
+        <span style="font-size:11px;font-weight:800;color:var(--bronze)">02 · MODO C (PRE-DECISIÓN)</span>
+        <h3>Borradores listos en tu propia voz</h3>
+        <p>En lugar de darte más trabajo, el asistente redacta el correo o mensaje de WhatsApp en tu estilo ejecutivo para que solo toques «Aprobar y Enviar».</p>
+      </div>
+      <div class="bl-card">
+        <span style="font-size:11px;font-weight:800;color:var(--bronze)">03 · AUTO-APRENDIZAJE + VOZ COLOMBIANA</span>
+        <h3>Aprende tus hábitos cada día</h3>
+        <p>Te saluda al abrir con voz neural colombiana rápida (<code>+22%</code>), aprende tus horarios y prioridades, y mantiene tu Hoja del Día lista para imprimir.</p>
+      </div>
+    </div>
+
+    <div id="integracion" style="margin-top:64px">
+      <div class="eyebrow">🔌 Integración en 15 Minutos · 1 Sola Vez</div>
+      <h2 class="sec-title">Qué necesita tu empresa para <span>conectarse en el Día 1</span>.</h2>
+      <div class="req-grid">
+        <div class="req-card"><div class="req-num">01</div><h4>Webs & Bases de Datos</h4><p>Service Account JSON de lectura o Webhook Opción A.</p><code>POST /api/unitec/push</code></div>
+        <div class="req-card"><div class="req-num">02</div><h4>WhatsApp & Telefonía</h4><p>Para resumir chats de clientes y despachar aprobaciones.</p><code>Green API / Twilio / Telegram</code></div>
+        <div class="req-card"><div class="req-num">03</div><h4>Correo & Calendario</h4><p>OAuth de 1 clic para reuniones, facturas y borradores.</p><code>Google Workspace / M365</code></div>
+        <div class="req-card"><div class="req-num">04</div><h4>Analítica & App Stores</h4><p>Cruza tráfico web con nuevos miembros en iOS y Android.</p><code>GA4 + App Store Connect</code></div>
+        <div class="req-card"><div class="req-num">05</div><h4>Cámaras IP (Opcional)</h4><p>Conteo de ocupación y alertas en clínicas u oficinas.</p><code>Flujo RTSP / ONVIF</code></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 4. COMPARATIVA, ROI & VIDEO GEMINI ==================== -->
+<section id="comparativa" class="alt">
+  <div class="wrap">
+    <div class="eyebrow">⚖️ Comparativa & Retorno Financiero</div>
+    <h2 class="sec-title">Comparativa frente a <span>otros asistentes</span> y simulador de ROI.</h2>
+
+    <div class="cmp-box">
+      <table class="cmp-table">
+        <thead>
+          <tr>
+            <th>Criterio Ejecutivo</th>
+            <th class="col-jf">⚡ La Jefatura + El Jefesito</th>
+            <th>ChatGPT / Copilot Genérico</th>
+            <th>Dashboards BI Tradicionales</th>
+            <th>Asistente Humano</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>Regla de Cero Adivinanzas</b></td>
+            <td class="col-jf">100% Estricta: cita la fuente real o declara que el dato no consta.</td>
+            <td>Riesgo de inventar cifras cuando desconoce un dato.</td>
+            <td>Solo gráficos estáticos; no responde por voz ni ejecuta órdenes.</td>
+            <td>Depende de la memoria humana y tarda horas en consolidar.</td>
+          </tr>
+          <tr>
+            <td><b>Toma de Decisiones en 1 Clic</b></td>
+            <td class="col-jf">Proactivo (Modo C): entrega el borrador listo desde tu iPhone.</td>
+            <td>Pasivo: requiere escribir largos prompts manualmente.</td>
+            <td>Exige analizar decenas de tablas para hallar el cuello de botella.</td>
+            <td>Horario limitado; costo de $3,500–$7,000+/mes.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ROI Calculator -->
+    <div id="roi" class="roi-light">
+      <div>
+        <span style="font-size:11px;font-weight:800;color:var(--bronze);text-transform:uppercase">SIMULADOR DE IMPACTO MENSUAL</span>
+        <h3 style="font-size:24px;font-weight:800;margin:4px 0 16px">Calcula tu ahorro de tiempo y nuevos ingresos</h3>
+        <div class="slider-group">
+          <label><span>Empresas supervisadas</span> <b id="lblCos">3 empresas</b></label>
+          <input type="range" id="rngCos" min="1" max="8" value="3" oninput="calcRoi()">
+        </div>
+        <div class="slider-group">
+          <label><span>Valor hora del CEO (USD)</span> <b id="lblRate">$250 / h</b></label>
+          <input type="range" id="rngRate" min="100" max="800" step="50" value="250" oninput="calcRoi()">
+        </div>
+        <div class="slider-group">
+          <label><span>Pipeline mensual (USD)</span> <b id="lblPipe">$150,000</b></label>
+          <input type="range" id="rngPipe" min="30000" max="500000" step="10000" value="150000" oninput="calcRoi()">
+        </div>
+      </div>
+      <div class="roi-grid">
+        <div class="roi-stat"><div class="val" id="outHours">50 h / mes</div><div class="lbl">Tiempo Ejecutivo Recuperado</div></div>
+        <div class="roi-stat"><div class="val" id="outTimeUsd">$12,500 / mes</div><div class="lbl">Ahorro en Tiempo del CEO</div></div>
+        <div class="roi-stat"><div class="val" id="outRevUsd">+$12,000 / mes</div><div class="lbl">Nuevos Ingresos Destrabados</div></div>
+        <div class="roi-stat" style="background:var(--bronze-soft);border:1px solid var(--bronze)"><div class="val" id="outTotalUsd" style="color:var(--bronze)">$24,500 / mes</div><div class="lbl">Impacto Total Estimado</div></div>
+      </div>
+    </div>
+
+    <!-- Video Conclusion Generated by Google Gemini -->
+    <div style="margin-top:42px;background:#ffffff;border:1px solid var(--border);border-radius:26px;padding:28px;box-shadow:var(--shadow-sm);display:grid;grid-template-columns:1.25fr 1fr;gap:24px;align-items:center">
+      <div style="background:#000;border-radius:18px;overflow:hidden">
+        <video id="conclusionVideo" src="/assets/gemini-conclusion.mp4" controls autoplay loop muted playsinline style="width:100%;max-height:340px;display:block"></video>
+      </div>
+      <div>
+        <div class="eyebrow">🎬 Video Conclusión · Google Gemini</div>
+        <h3 style="font-size:24px;font-weight:800;margin-bottom:8px">Un solo cerebro para dirigir todas tus empresas sin adivinar jamás.</h3>
+        <p style="font-size:14px;color:var(--ink-sub);margin-bottom:14px">
+          Enlace oficial adjunto del video generado con Google Gemini:<br>
+          <a href="https://share.gemini.google/k5oJZCLID5IP" target="_blank" rel="noopener" id="geminiShareLinkBtn" style="color:var(--accent);font-weight:700">https://share.gemini.google/k5oJZCLID5IP ↗</a>
+        </p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <a href="/" class="btn-blue">🚀 Entrar a la Consola en Vivo →</a>
+          <a href="https://share.gemini.google/k5oJZCLID5IP" target="_blank" rel="noopener" class="btn-ghost">✨ Abrir en Google Gemini ↗</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>window.LJ_WIDGET = { lang: "es", accent: "#0066cc" };</script>
+<script src="/widgets/lajefatura-widget.js"></script>
+<script src="/widgets/brain-network-3d.js"></script>
+<script>
+  window.initBrainNetwork('brain3dCanvas', 'editorial');
+
+  function speakHeroDemo() {
+    const txt = document.getElementById('iosBriefText').innerText;
+    if (window.LJ && typeof window.LJ.speak === 'function') window.LJ.speak(txt, false);
+  }
+  function approveFromIphone() {
+    const btn = document.getElementById('iosApproveBtn');
+    btn.textContent = '✓ APROBADO Y ENVIADO AL DR. MOLINA ($12.4K)';
+    btn.style.background = '#1d8348';
+    fetch('/api/comms/approve_send', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ draft_id: 1 }) }).catch(() => {});
+  }
+  function askIphone(q) {
+    const box = document.getElementById('iosReplyBox');
+    box.textContent = 'Consultando base de datos verificada (mc.db)…';
+    fetch('/api/voice/command', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ command: q, lang: 'es', channel: 'text' }) })
+      .then(r => r.json())
+      .then(d => { box.textContent = '🧠 ' + (d.reply || ''); })
+      .catch(() => { box.textContent = 'No pude conectar con el servidor; jamás invento una respuesta.'; });
+  }
+  function calcRoi() {
+    const cos = Number(document.getElementById('rngCos').value);
+    const rate = Number(document.getElementById('rngRate').value);
+    const pipe = Number(document.getElementById('rngPipe').value);
+    document.getElementById('lblCos').textContent = cos + (cos === 1 ? ' empresa' : ' empresas');
+    document.getElementById('lblRate').textContent = '$' + rate.toLocaleString('en-US') + ' / h';
+    document.getElementById('lblPipe').textContent = '$' + pipe.toLocaleString('en-US');
+    const hours = Math.round(32 + cos * 6);
+    const timeUsd = hours * rate;
+    const revUsd = Math.round(pipe * 0.08);
+    document.getElementById('outHours').textContent = hours + ' h / mes';
+    document.getElementById('outTimeUsd').textContent = '$' + timeUsd.toLocaleString('en-US') + ' / mes';
+    document.getElementById('outRevUsd').textContent = '+$' + revUsd.toLocaleString('en-US') + ' / mes';
+    document.getElementById('outTotalUsd').textContent = '$' + (timeUsd + revUsd).toLocaleString('en-US') + ' / mes';
+  }
+  calcRoi();
+</script>
+</body>
+</html>
