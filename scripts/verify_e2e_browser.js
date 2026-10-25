@@ -308,48 +308,15 @@ const URL = 'http://localhost:8931/';
     JSON.stringify(conclusionCheck));
   await page.screenshot({ path: path.join(ASSETS_DIR, 'verified-11-website-gemini-conclusion.png'), fullPage: false });
 
-  // 8d. Verify Website Design 1 (/website-v2 · Apple Cupertino Editorial Ivory, White & Titanium)
-  await page.goto('http://localhost:8931/website-v2', { waitUntil: 'networkidle' });
-  await page.waitForTimeout(550);
-  const editorialCheck = await page.evaluate(() => {
-    const c = document.getElementById('brain3dCanvas');
-    const bg = getComputedStyle(document.body).backgroundColor;
-    const switcher = document.querySelector('.edition-ribbon');
-    return {
-      title: document.title,
-      bg,
-      canvasW: c ? c.width : 0,
-      hasSwitcher: !!switcher,
-      hasRoi: (document.getElementById('outTotalUsd') || {}).textContent || ''
-    };
+  // 8d. Verify Design 3 (/website) has zero AI-style icons or emojis in rendered text
+  const iconCheck = await page.evaluate(() => {
+    const txt = document.body.innerText || '';
+    const m = txt.match(/[\u23F0-\u23FF\u2600-\u27BF\u2B00-\u2BFF\uFE0F\u{1F000}-\u{1FAFF}]/gu);
+    return { count: m ? m.length : 0, found: m ? m.slice(0, 10) : [] };
   });
-  check('22d. Website Design 1 (/website-v2 · Apple Editorial Claro: Marfil, Blanco & Titanio + 3D Brain Cinema Window)',
-    editorialCheck.bg === 'rgb(245, 245, 247)' && editorialCheck.canvasW >= 400 && editorialCheck.hasSwitcher && editorialCheck.hasRoi.includes('$24,500'),
-    JSON.stringify(editorialCheck));
-  await page.screenshot({ path: path.join(ASSETS_DIR, 'verified-13-website-editorial-light.png'), fullPage: false });
-
-  // 8e. Verify Website Design 2 (/website-v3 · Swiss Private Bank & Bloomberg Executive Navy-Slate)
-  await page.goto('http://localhost:8931/website-v3', { waitUntil: 'networkidle' });
-  await page.waitForTimeout(550);
-  await page.screenshot({ path: path.join(ASSETS_DIR, 'verified-14-website-bloomberg-navy.png'), fullPage: false });
-  await page.locator('#approveMolinaBtn').click();
-  await page.locator('#zeroGuessBtn').click();
-  const bloombergCheck = await page.evaluate(() => {
-    const c = document.getElementById('brain3dCanvas');
-    const bg = getComputedStyle(document.body).backgroundColor;
-    const out = (document.getElementById('zeroGuessOutput') || {}).innerText || '';
-    const roi = (document.getElementById('bTotalSavings') || {}).innerText || '';
-    return {
-      title: document.title,
-      bg,
-      canvasW: c ? c.width : 0,
-      guardOut: out.slice(0, 80),
-      roi
-    };
-  });
-  check('22e. Website Design 2 (/website-v3 · Swiss Bank & Bloomberg Navy Bento Grid + 3D Brain Terminal)',
-    bloombergCheck.bg === 'rgb(11, 16, 27)' && bloombergCheck.canvasW >= 400 && /ZERO-HALLUCINATION GUARD ACTIVADO/i.test(bloombergCheck.guardOut) && bloombergCheck.roi.includes('$24,500'),
-    JSON.stringify(bloombergCheck));
+  check('22d. Zero AI-style icons or emojis on Website Design 3 (/website)',
+    iconCheck.count === 0,
+    JSON.stringify(iconCheck));
 
   // 9. Verify Zero Console / Runtime Errors
   check('16. Zero Browser Console or Page Errors', consoleErrors.length === 0 && pageErrors.length === 0,

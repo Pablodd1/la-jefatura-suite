@@ -29,13 +29,13 @@
         offline: "Modo local activo.",
         open: "Soy El Jefesito. Te atiendo por voz o texto, aprendo de cada interacción y puedo cambiar el tema, el idioma, el saludo, cerrar el día o imprimir tu resumen. ¿Qué hacemos?",
         chips: [
-          ["📊 Leer Resumen", "leer resumen"],
-          ["✉️ Aprobar Borrador", "aprobar borrador"],
-          ["📝 Guardar Nota", "guardar nota: Revisar cierre Doral Urgent Care y métricas BuildingApp"],
-          ["🔍 ¿Qué notas tengo?", "qué notas tengo"],
-          ["📱 Miembros BuildingApp", "cuántos miembros nuevos hay en BuildingApp"],
-          ["☕ Mi Café 07:45", "preparar café"],
-          ["📘 Ir a Blogs", "abrir blogs"]
+          ["Leer Resumen", "leer resumen"],
+          ["Aprobar Borrador", "aprobar borrador"],
+          ["Guardar Nota", "guardar nota: Revisar cierre Doral Urgent Care y métricas BuildingApp"],
+          ["¿Qué notas tengo?", "qué notas tengo"],
+          ["Miembros BuildingApp", "cuántos miembros nuevos hay en BuildingApp"],
+          ["Mi Café 07:45", "preparar café"],
+          ["Ir a Blogs", "abrir blogs"]
         ]
       },
       en: {
@@ -48,13 +48,13 @@
         offline: "Local brain mode active.",
         open: "I'm El Jefesito. I take voice or text, learn from every interaction, and can change the theme, language, greeting, close the day or print your summary. What should we do?",
         chips: [
-          ["📊 Read Brief", "read brief"],
-          ["✉️ Approve Draft", "approve draft"],
-          ["📝 Save Note", "save note: Review Doral Urgent Care closure and BuildingApp metrics"],
-          ["🔍 My Notes", "what notes do I have"],
-          ["📱 BuildingApp Members", "how many members in BuildingApp"],
-          ["☕ My 07:45 Coffee", "order coffee"],
-          ["📘 Open Blogs", "open blogs"]
+          ["Read Brief", "read brief"],
+          ["Approve Draft", "approve draft"],
+          ["Save Note", "save note: Review Doral Urgent Care closure and BuildingApp metrics"],
+          ["My Notes", "what notes do I have"],
+          ["BuildingApp Members", "how many members in BuildingApp"],
+          ["My 07:45 Coffee", "order coffee"],
+          ["Open Blogs", "open blogs"]
         ]
       }
     };
@@ -364,10 +364,11 @@
     const css = `
 .lj-voice-touch{outline:2px solid #23d9b0 !important;box-shadow:0 0 0 6px rgba(35,217,176,.35) !important;transition:box-shadow .25s ease !important}
 #ljw{position:fixed;${CFG.position.includes("left") ? "left:20px" : "right:20px"};bottom:20px;z-index:9999;font-family:-apple-system,'SF Pro Display',Inter,Segoe UI,sans-serif}
-#ljw .fab{width:60px;height:60px;border-radius:50%;border:2px solid rgba(255,255,255,.15);cursor:pointer;background:linear-gradient(135deg,#23d9b0,#00b4d8);color:#042019;font-size:24px;box-shadow:0 10px 30px rgba(0,212,255,.35);transition:.2s;display:flex;align-items:center;justify-content:center;position:relative}
-#ljw .fab:hover{transform:scale(1.06)}
+#ljw .fab{padding:0 18px;height:44px;border-radius:999px;border:1px solid rgba(255,255,255,.22);cursor:pointer;background:#111318;color:#f5f5f7;font-size:11.5px;font-weight:800;letter-spacing:.08em;box-shadow:0 10px 28px rgba(0,0,0,.55);transition:.2s;display:flex;align-items:center;justify-content:center;gap:8px;position:relative}
+#ljw .fab::before{content:"";width:7px;height:7px;border-radius:50%;background:#ffd400;box-shadow:0 0 8px #ffd400}
+#ljw .fab:hover{transform:translateY(-1px);border-color:#ffd400}
 #ljw .fab.on,#ljw.speaking .fab{animation:ljpulse 1.4s infinite}
-#ljw .fab-badge{position:absolute;top:-5px;right:-6px;background:#7c6cff;color:#fff;font-size:9px;font-weight:800;padding:2px 6px;border-radius:10px;letter-spacing:.4px;border:1px solid rgba(255,255,255,.25)}
+#ljw .fab-badge{display:none}
 @keyframes ljpulse{50%{box-shadow:0 0 0 14px rgba(35,217,176,.18)}}
 #ljw .panel{position:absolute;bottom:72px;${CFG.position.includes("left") ? "left:0" : "right:0"};width:370px;max-height:520px;background:rgba(13,19,34,.97);backdrop-filter:blur(18px);border:1px solid rgba(35,217,176,.28);border-radius:18px;box-shadow:0 22px 60px rgba(0,0,0,.65);display:none;flex-direction:column;overflow:hidden}
 #ljw .panel.open{display:flex}
@@ -412,11 +413,11 @@
         <div class="log" id="ljw-log"></div>
         <div class="input">
           <input id="ljw-in" autocomplete="off">
-          <button id="ljw-send" title="Send">↵</button>
-          <button id="ljw-mic" title="Voice Input">🎙</button>
+          <button id="ljw-send" title="Send" style="font-size:12px">ENVIAR</button>
+          <button id="ljw-mic" title="Voice Input" style="font-size:11px">VOZ</button>
         </div>
       </div>
-      <button class="fab" id="ljw-fab" title="Grok 3.0 Voice & DOM Brain">🎙<span class="fab-badge">JEFESITO</span></button>`;
+      <button class="fab" id="ljw-fab" title="El Jefesito · Voz y Texto">JEFESITO · VOZ</button>`;
     document.body.appendChild(root);
 
     const $ = (s) => root.querySelector(s);
@@ -437,7 +438,7 @@
 
     function renderLog() {
       log.innerHTML = state.log.slice(-30).map(m =>
-        `<div class="msg ${m.who}">${m.who === "user" ? "▸ " : "🧠 "}${m.text}</div>`
+        `<div class="msg ${m.who}">${m.text}</div>`
       ).join("");
       log.scrollTop = log.scrollHeight;
     }
@@ -477,13 +478,13 @@
       rec.onstart = () => {
         state.listening = true;
         fab.classList.add("on");
-        $("#ljw-mic").textContent = "■";
+        $("#ljw-mic").textContent = "PARAR";
         input.placeholder = T.listening;
       };
       rec.onend = () => {
         state.listening = false;
         fab.classList.remove("on");
-        $("#ljw-mic").textContent = "🎙";
+        $("#ljw-mic").textContent = "VOZ";
         input.placeholder = T.placeholder;
       };
       rec.onerror = () => { state.listening = false; };

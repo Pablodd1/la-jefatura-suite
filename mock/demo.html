@@ -178,27 +178,27 @@
   </div>
   <div class="seg" id="companySeg"></div>
   <div class="sp"></div>
-  <div class="pill" id="slotPill" style="cursor:pointer" title="Click to cycle Morning / Afternoon / Evening">🌅 <span id="slotLabel">Rutina Mañana</span></div>
+  <div class="pill" id="slotPill" style="cursor:pointer" title="Click to cycle Morning / Afternoon / Evening"><span id="slotLabel">Rutina Mañana</span></div>
   <div class="pill" id="clock"></div>
-  <div class="pill" id="jfGreetPill" style="cursor:pointer" title="Saludo al abrir la app: activar / detener" onclick="toggleGreeting()">🔔 <span id="jfGreetLbl">Saludo: ON</span></div>
+  <div class="pill" id="jfGreetPill" style="cursor:pointer" title="Saludo al abrir la app: activar / detener" onclick="toggleGreeting()"><span id="jfGreetLbl">Saludo: ON</span></div>
   <div class="seg" id="themeSeg" title="Tema / Theme">
-    <button data-theme="light" onclick="setTheme('light')">☀ Claro</button>
+    <button data-theme="light" onclick="setTheme('light')">Claro</button>
     <button data-theme="graphite" class="on" onclick="setTheme('graphite')">◐ Grafito</button>
     <button data-theme="yellow" onclick="setTheme('yellow')">■ Amarillo</button>
   </div>
   <button class="btn ghost" id="langBtn">EN</button>
-  <a class="btn ghost" href="/website" style="text-decoration:none" id="webSiteBtn">📱 Web & Vista iPhone</a>
-  <button class="btn" id="pdfBtn">⬇ Informe PDF</button>
+  <a class="btn ghost" href="/website" style="text-decoration:none" id="webSiteBtn">Web & Vista iPhone</a>
+  <button class="btn" id="pdfBtn">Informe PDF</button>
 </header>
 
 <!-- Navigation Tabs -->
 <nav class="nav-bar" id="mainNav">
-  <button class="nav-tab active" data-tab="overview" onclick="switchTab('overview')">📊 <span data-i18n="tab_overview">Centro de Mando</span></button>
-  <button class="nav-tab" data-tab="comms" onclick="switchTab('comms')">✉️ <span data-i18n="tab_comms">Bandeja IA (Aprobar y Enviar)</span> <span class="cnt" id="pendingDraftsBadge">4</span></button>
-  <button class="nav-tab" data-tab="outcomes" onclick="switchTab('outcomes')">📈 <span data-i18n="tab_outcomes">Resultados y Monitoreo</span></button>
-  <button class="nav-tab" data-tab="behavior" onclick="switchTab('behavior')">🧠 <span data-i18n="tab_behavior">Cerebro Conductual</span></button>
-  <button class="nav-tab" data-tab="setup" onclick="switchTab('setup')">⚙️ <span data-i18n="tab_setup">Configuración (1-Vez)</span></button>
-  <button class="nav-tab" data-tab="blogs" onclick="switchTab('blogs')">📘 <span data-i18n="tab_blogs">Blogs por Función (Paso a Paso)</span></button>
+  <button class="nav-tab active" data-tab="overview" onclick="switchTab('overview')"><span data-i18n="tab_overview">Centro de Mando</span></button>
+  <button class="nav-tab" data-tab="comms" onclick="switchTab('comms')"><span data-i18n="tab_comms">Bandeja IA (Aprobar y Enviar)</span> <span class="cnt" id="pendingDraftsBadge">4</span></button>
+  <button class="nav-tab" data-tab="outcomes" onclick="switchTab('outcomes')"><span data-i18n="tab_outcomes">Resultados y Monitoreo</span></button>
+  <button class="nav-tab" data-tab="behavior" onclick="switchTab('behavior')"><span data-i18n="tab_behavior">Cerebro Conductual</span></button>
+  <button class="nav-tab" data-tab="setup" onclick="switchTab('setup')"><span data-i18n="tab_setup">Configuración (1-Vez)</span></button>
+  <button class="nav-tab" data-tab="blogs" onclick="switchTab('blogs')"><span data-i18n="tab_blogs">Blogs por Función (Paso a Paso)</span></button>
 </nav>
 
 <!-- El Jefesito: daily greeting / day summary (spoken on open unless stopped) -->
@@ -214,9 +214,9 @@
         <strong style="margin-left:8px;font-size:13.5px" id="foreseenTitle">Tu Cerebro Conductual preparó tu sesión de la mañana</strong>
       </div>
       <div style="display:flex;gap:6px">
-        <button class="btn ghost sm" onclick="setRoutineSlot('morning')">🌅 Mañana</button>
-        <button class="btn ghost sm" onclick="setRoutineSlot('afternoon')">☀️ Tarde</button>
-        <button class="btn ghost sm" onclick="setRoutineSlot('evening')">🌙 Noche</button>
+        <button class="btn ghost sm" onclick="setRoutineSlot('morning')">Mañana</button>
+        <button class="btn ghost sm" onclick="setRoutineSlot('afternoon')">Tarde</button>
+        <button class="btn ghost sm" onclick="setRoutineSlot('evening')">Noche</button>
       </div>
     </div>
     <div class="foreseen-cards" id="foreseenCards"></div>
@@ -245,7 +245,7 @@
     <div class="card" style="grid-column:span 8">
       <h3>
         <span class="lhs"><span class="dot" style="background:var(--acc)"></span><span data-i18n="exec_digest">Resumen Ejecutivo Diario (Todas las Apps Conectadas)</span></span>
-        <button class="btn ghost sm" onclick="window.LJ.execute(lang==='es'?'leer resumen':'read brief')">🔊 Escuchar Voz Grok 3.0</button>
+        <button class="btn ghost sm" onclick="window.LJ.execute(lang==='es'?'leer resumen':'read brief')">Escuchar Voz Grok 3.0</button>
       </h3>
       <div class="narr" id="execDigestNarr"></div>
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px" id="miniAppOutcomes"></div>
@@ -265,12 +265,12 @@
       <h3>
         <span class="lhs">
           <span class="dot" style="background:var(--acc2)"></span>
-          <span id="unitecCardTitle">🤖 Recepcionista IA Front-Desk — UNITEC USA & Building Innovation (Producción en Vivo: unitec-front-desk.vercel.app)</span>
+          <span id="unitecCardTitle">Recepcionista IA Front-Desk — UNITEC USA & Building Innovation (Producción en Vivo: unitec-front-desk.vercel.app)</span>
           <span class="tag ok" id="unitecLiveBadge">EN VIVO · 155ms · 200 OK</span>
         </span>
         <div style="display:flex;gap:8px;align-items:center">
           <span class="tag medium">OPCIÓN A + API PÚBLICA ACTIVA</span>
-          <button class="btn ghost sm" onclick="syncUnitecLive(true)">🔄 Sincronizar Vercel en Vivo</button>
+          <button class="btn ghost sm" onclick="syncUnitecLive(true)">Sincronizar Vercel en Vivo</button>
         </div>
       </h3>
       <div id="unitecFiveNumbers" style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px"></div>
@@ -284,7 +284,7 @@
           <div id="unitecIntentsBox"></div>
         </div>
         <div style="grid-column:span 4;background:rgba(255,92,92,.05);border:1px solid rgba(255,92,92,.28);border-radius:11px;padding:12px 14px">
-          <h4 style="font-size:11px;text-transform:uppercase;color:var(--crit);margin-bottom:10px">⚠️ Auditoría de Seguridad y Reporte a Juan (Building Innovation)</h4>
+          <h4 style="font-size:11px;text-transform:uppercase;color:var(--crit);margin-bottom:10px">Auditoría de Seguridad y Reporte a Juan (Building Innovation)</h4>
           <div id="unitecSecurityBox"></div>
         </div>
       </div>
@@ -295,27 +295,27 @@
       <h3>
         <span class="lhs">
           <span class="dot" style="background:var(--acc2)"></span>
-          <span>📱 BuildingApp AI — Resumen Diario de Uso y Nuevos Miembros (Web · Apple App Store · Google Play)</span>
+          <span>BuildingApp AI — Resumen Diario de Uso y Nuevos Miembros (Web · Apple App Store · Google Play)</span>
           <span class="tag ok" id="bappHealthBadge">ONLINE · 322 SKUs · iOS & ANDROID</span>
         </span>
         <div style="display:flex;gap:8px;align-items:center">
           <span class="muted" style="font-size:11px">buildingapp.us/#/landing · com.buildinginnovation.app</span>
-          <button class="btn ghost sm" onclick="syncBuildingAppLive(true)">🔄 Sincronizar BuildingApp</button>
+          <button class="btn ghost sm" onclick="syncBuildingAppLive(true)">Sincronizar BuildingApp</button>
         </div>
       </h3>
       <div class="narr" id="bappDailySummaryBox" style="margin-bottom:12px;border-left-color:var(--acc2)"></div>
       <div id="bappFiveNumbers" style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px"></div>
       <div style="display:grid;grid-template-columns:repeat(12,1fr);gap:12px">
         <div style="grid-column:span 4;background:rgba(7,11,20,.55);border:1px solid var(--hair);border-radius:11px;padding:12px 14px">
-          <h4 style="font-size:11px;text-transform:uppercase;color:var(--dim);margin-bottom:10px">👥 Nuevos Miembros y Planes (Sin PII Expuesta)</h4>
+          <h4 style="font-size:11px;text-transform:uppercase;color:var(--dim);margin-bottom:10px">Nuevos Miembros y Planes (Sin PII Expuesta)</h4>
           <div id="bappMembersBox"></div>
         </div>
         <div style="grid-column:span 4;background:rgba(7,11,20,.55);border:1px solid var(--hair);border-radius:11px;padding:12px 14px">
-          <h4 style="font-size:11px;text-transform:uppercase;color:var(--dim);margin-bottom:10px">🧱 Top Materiales Renderizados y Categorías</h4>
+          <h4 style="font-size:11px;text-transform:uppercase;color:var(--dim);margin-bottom:10px">Top Materiales Renderizados y Categorías</h4>
           <div id="bappMaterialsBox"></div>
         </div>
         <div style="grid-column:span 4;background:rgba(35,217,176,.05);border:1px solid rgba(35,217,176,.28);border-radius:11px;padding:12px 14px">
-          <h4 style="font-size:11px;text-transform:uppercase;color:var(--acc);margin-bottom:10px">⚡ Actividad en Vivo (Web · App Store · Play Store)</h4>
+          <h4 style="font-size:11px;text-transform:uppercase;color:var(--acc);margin-bottom:10px">Actividad en Vivo (Web · App Store · Play Store)</h4>
           <div id="bappActivityBox"></div>
         </div>
       </div>
@@ -375,7 +375,7 @@
       <div style="display:flex;flex-direction:column;gap:8px">
         <input class="inp" id="simSender" placeholder="Remitente (ej. socio@inversiones.com)" value="dr.khalil@sunshinedental.com">
         <input class="inp" id="simText" placeholder="Mensaje entrante…" value="Hola Jasmel, ¿podemos incluir las 2 clínicas de Tampa en el mismo contrato anual si firmamos este viernes?">
-        <button class="btn" onclick="simulateIncomingMsg()">⚡ Recibir y Pre-Redactar Borrador IA</button>
+        <button class="btn" onclick="simulateIncomingMsg()">Recibir y Pre-Redactar Borrador IA</button>
       </div>
     </div>
   </div>
@@ -404,18 +404,18 @@
       <h3>
         <span class="lhs">
           <span class="dot" style="background:var(--acc)"></span>
-          <span id="kvTitle">🧠 Memoria Ejecutiva Cero-Alucinaciones (Notas · Tareas · Resúmenes de Reunión · Correos)</span>
+          <span id="kvTitle">Memoria Ejecutiva Cero-Alucinaciones (Notas · Tareas · Resúmenes de Reunión · Correos)</span>
           <span class="tag ok" id="kvBadge">GROUNDED · SQLITE MC.DB</span>
         </span>
         <div style="display:flex;gap:8px;align-items:center">
-          <button class="btn ghost sm" onclick="loadKnowledgeVault(true)">🔄 Actualizar Memoria</button>
+          <button class="btn ghost sm" onclick="loadKnowledgeVault(true)">Actualizar Memoria</button>
         </div>
       </h3>
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px">
-        <input class="inp" id="kvQuickNote" placeholder="🎙 Nota rápida o acuerdo de reunión (ej. Cliente aprobó propuesta)…">
-        <input class="inp" id="kvQuickTask" placeholder="✅ Nueva tarea (ej. Enviar contrato antes del viernes)…">
-        <button class="btn sm" onclick="saveQuickNoteFromUI()">💾 Guardar Nota / Reunión</button>
-        <button class="btn vio sm" onclick="saveQuickTaskFromUI()">➕ Crear Tarea</button>
+        <input class="inp" id="kvQuickNote" placeholder="Nota rápida o acuerdo de reunión (ej. Cliente aprobó propuesta)…">
+        <input class="inp" id="kvQuickTask" placeholder="Nueva tarea (ej. Enviar contrato antes del viernes)…">
+        <button class="btn sm" onclick="saveQuickNoteFromUI()">Guardar Nota / Reunión</button>
+        <button class="btn vio sm" onclick="saveQuickTaskFromUI()">Crear Tarea</button>
       </div>
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px" id="knowledgeVaultGrid"></div>
     </div>
@@ -429,9 +429,9 @@
       <h3>
         <span class="lhs"><span class="dot" style="background:var(--acc)"></span><span data-i18n="beh_title">Aprendizaje Conductual por Horario (Mañana · Tarde · Noche)</span></span>
         <div style="display:flex;gap:6px">
-          <button class="btn ghost sm" onclick="setRoutineSlot('morning')">🌅 Mañana</button>
-          <button class="btn ghost sm" onclick="setRoutineSlot('afternoon')">☀️ Tarde</button>
-          <button class="btn ghost sm" onclick="setRoutineSlot('evening')">🌙 Noche</button>
+          <button class="btn ghost sm" onclick="setRoutineSlot('morning')">Mañana</button>
+          <button class="btn ghost sm" onclick="setRoutineSlot('afternoon')">Tarde</button>
+          <button class="btn ghost sm" onclick="setRoutineSlot('evening')">Noche</button>
         </div>
       </h3>
       <div id="behaviorRoutineBox"></div>
@@ -439,20 +439,20 @@
       <h3><span class="lhs"><span class="dot" style="background:var(--vio)"></span><span data-i18n="beh_prefs">Preferencias Anticipadas del CEO (Café, Formato de Reporte, Estilo)</span></span></h3>
       <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:8px">
         <div>
-          <label class="muted">☕ Café / Bebida Matutina Favorita</label>
+          <label class="muted">Café / Bebida Matutina Favorita</label>
           <input class="inp" id="prefCoffeeDrink" value="Double Espresso Cortado (Oat Milk)" style="margin-top:4px">
         </div>
         <div>
-          <label class="muted">⏰ Hora de Preparación Automática</label>
+          <label class="muted">Hora de Preparación Automática</label>
           <input class="inp" id="prefCoffeeTime" value="07:45 AM" style="margin-top:4px">
         </div>
         <div style="grid-column:span 2">
-          <label class="muted">📑 Formato de Reporte Matutino Preferido</label>
+          <label class="muted">Formato de Reporte Matutino Preferido</label>
           <input class="inp" id="prefReportFormat" value="Resumen Visual Ejecutivo + Audio 60s + PDF Consolidado" style="margin-top:4px">
         </div>
       </div>
       <div style="margin-top:12px;display:flex;gap:10px;align-items:center">
-        <button class="btn" onclick="saveCeoPreferences()">💾 Guardar y Entrenar Perfil Conductual</button>
+        <button class="btn" onclick="saveCeoPreferences()">Guardar y Entrenar Perfil Conductual</button>
         <span class="muted" id="prefSavedNote"></span>
       </div>
     </div>
@@ -494,7 +494,7 @@
             <option value="A">Modo A — Solo Observación y Resumen Ejecutivo</option>
           </select>
         </div>
-        <button class="btn" onclick="saveOnboardingSetup()">✅ Guardar Configuración White-Label</button>
+        <button class="btn" onclick="saveOnboardingSetup()">Guardar Configuración White-Label</button>
       </div>
     </div>
 
@@ -655,15 +655,15 @@ const CLIENT_MONITOR = [
 ];
 
 const INTEGRATIONS = [
-  {id:"gcal", icon:"📅", name:"Google Calendar & Outlook", cat:"Calendarios y Agenda", connected:true, detail:"Sincronización bidireccional en tiempo real"},
-  {id:"gmail", icon:"✉️", name:"Gmail / Brevo / Correo Corporativo", cat:"Correos y Borradores IA", connected:true, detail:"Pre-redacción automática en la voz del CEO"},
-  {id:"meetings", icon:"🎥", name:"Google Meet & Zoom Intelligence", cat:"Reuniones y Minutas", connected:true, detail:"Resumen automático de acuerdos y tareas post-llamada"},
-  {id:"nexus", icon:"📊", name:"Nexus CRM Global", cat:"Pipeline y Ventas", connected:true, detail:"Sincronización cada 5 min (USA, CO, MX, CL)"},
-  {id:"tasks", icon:"✅", name:"Motor de Tareas y Escalaciones", cat:"Asignaciones de Equipo", connected:true, detail:"Recordatorio 24h al staff · Alerta 48h al CEO"},
-  {id:"cameras", icon:"📹", name:"Cámaras ONVIF / RTSP + Visión IA", cat:"Monitoreo de Sedes", connected:true, detail:"4 zonas en vivo + digest de eventos fuera de horario"},
-  {id:"people", icon:"👥", name:"Monitoreo de Personal y Productividad", cat:"Equipo y Vendedores", connected:true, detail:"Velocidad de respuesta, cierres y carga de trabajo"},
-  {id:"clients", icon:"🤝", name:"Radar de Salud de Clientes", cat:"Retención y Visitas", connected:true, detail:"Monitoreo de contratos, visitas y renovaciones"},
-  {id:"grok", icon:"🎙", name:"Grok 3.0 Voice & DOM Brain", cat:"Voz y Cerebro Conductual", connected:true, detail:"Control total por voz + aprendizaje Mañana/Tarde/Noche"}
+  {id:"gcal", icon:"", name:"Google Calendar & Outlook", cat:"Calendarios y Agenda", connected:true, detail:"Sincronización bidireccional en tiempo real"},
+  {id:"gmail", icon:"", name:"Gmail / Brevo / Correo Corporativo", cat:"Correos y Borradores IA", connected:true, detail:"Pre-redacción automática en la voz del CEO"},
+  {id:"meetings", icon:"", name:"Google Meet & Zoom Intelligence", cat:"Reuniones y Minutas", connected:true, detail:"Resumen automático de acuerdos y tareas post-llamada"},
+  {id:"nexus", icon:"", name:"Nexus CRM Global", cat:"Pipeline y Ventas", connected:true, detail:"Sincronización cada 5 min (USA, CO, MX, CL)"},
+  {id:"tasks", icon:"", name:"Motor de Tareas y Escalaciones", cat:"Asignaciones de Equipo", connected:true, detail:"Recordatorio 24h al staff · Alerta 48h al CEO"},
+  {id:"cameras", icon:"", name:"Cámaras ONVIF / RTSP + Visión IA", cat:"Monitoreo de Sedes", connected:true, detail:"4 zonas en vivo + digest de eventos fuera de horario"},
+  {id:"people", icon:"", name:"Monitoreo de Personal y Productividad", cat:"Equipo y Vendedores", connected:true, detail:"Velocidad de respuesta, cierres y carga de trabajo"},
+  {id:"clients", icon:"", name:"Radar de Salud de Clientes", cat:"Retención y Visitas", connected:true, detail:"Monitoreo de contratos, visitas y renovaciones"},
+  {id:"grok", icon:"", name:"Grok 3.0 Voice & DOM Brain", cat:"Voz y Cerebro Conductual", connected:true, detail:"Control total por voz + aprendizaje Mañana/Tarde/Noche"}
 ];
 
 const BLOGS_DATA = [
@@ -955,8 +955,8 @@ function switchTab(tabId) {
 function setRoutineSlot(slot) {
   activeSlot = slot;
   const labels = {
-    es: {morning: "🌅 Rutina Mañana (05:00–11:59)", afternoon: "☀️ Rutina Tarde (12:00–17:59)", evening: "🌙 Rutina Noche (18:00+)"},
-    en: {morning: "🌅 Morning Routine (05:00–11:59)", afternoon: "☀️ Afternoon Routine (12:00–17:59)", evening: "🌙 Evening Routine (18:00+)"}
+    es: {morning: "Rutina Mañana (05:00–11:59)", afternoon: "Rutina Tarde (12:00–17:59)", evening: "Rutina Noche (18:00+)"},
+    en: {morning: "Morning Routine (05:00–11:59)", afternoon: "Afternoon Routine (12:00–17:59)", evening: "Evening Routine (18:00+)"}
   };
   $('#slotPill').innerHTML = labels[lang][slot] || labels.es.morning;
   renderForeseenStrip();
@@ -981,9 +981,9 @@ const FALLBACK_ROUTINES = {
     habit_es: "Por la mañana revisas primero flujo de caja proyectado, desbloqueas tareas críticas vencidas (>48h) y apruebas borradores urgentes mientras tomas tu Cortado Doble.",
     habit_en: "In the morning you check projected cashflow first, unblock overdue critical tasks (>48h), and approve urgent drafts while having your Double Espresso Cortado.",
     items: [
-      {icon:"☕", title_es:"Café Matutino Preparado: Cortado Doble Espresso", title_en:"Morning Coffee Ready: Double Espresso Cortado", desc_es:"Orden automática 07:45 AM (leche de avena, extra caliente) lista antes de tu informe de las 08:17 AM.", desc_en:"Auto-scheduled 07:45 AM order (oat milk, extra hot) ready before your 08:17 AM briefing.", btn_es:"Confirmar Café", btn_en:"Confirm Coffee", cmd:"confirm_coffee"},
-      {icon:"📑", title_es:"Informe Matutino Pre-Generado (Visual + PDF)", title_en:"Pre-Generated Morning Report (Visual + PDF)", desc_es:"Formato preferido detectado: 5 empresas consolidadas, 3 párrafos ejecutivos y embudo de conversión.", desc_en:"Preferred format detected: 5 consolidated companies, 3 executive paragraphs, and conversion funnel.", btn_es:"Descargar PDF", btn_en:"Download PDF", cmd:"download_report"},
-      {icon:"✉️", title_es:"Borrador Urgente Listo: Dr. Molina ($12.4k)", title_en:"Urgent Draft Ready: Dr. Molina ($12.4k)", desc_es:"Pre-redactado en tu voz formal con firma «Cordialmente, Jasmel Acosta». Listo para aprobar con 1 clic.", desc_en:"Pre-drafted in your formal voice with signature. Ready for 1-click approval.", btn_es:"Revisar y Aprobar", btn_en:"Review & Approve", cmd:"open_comms"}
+      {icon:"", title_es:"Café Matutino Preparado: Cortado Doble Espresso", title_en:"Morning Coffee Ready: Double Espresso Cortado", desc_es:"Orden automática 07:45 AM (leche de avena, extra caliente) lista antes de tu informe de las 08:17 AM.", desc_en:"Auto-scheduled 07:45 AM order (oat milk, extra hot) ready before your 08:17 AM briefing.", btn_es:"Confirmar Café", btn_en:"Confirm Coffee", cmd:"confirm_coffee"},
+      {icon:"", title_es:"Informe Matutino Pre-Generado (Visual + PDF)", title_en:"Pre-Generated Morning Report (Visual + PDF)", desc_es:"Formato preferido detectado: 5 empresas consolidadas, 3 párrafos ejecutivos y embudo de conversión.", desc_en:"Preferred format detected: 5 consolidated companies, 3 executive paragraphs, and conversion funnel.", btn_es:"Descargar PDF", btn_en:"Download PDF", cmd:"download_report"},
+      {icon:"", title_es:"Borrador Urgente Listo: Dr. Molina ($12.4k)", title_en:"Urgent Draft Ready: Dr. Molina ($12.4k)", desc_es:"Pre-redactado en tu voz formal con firma «Cordialmente, Jasmel Acosta». Listo para aprobar con 1 clic.", desc_en:"Pre-drafted in your formal voice with signature. Ready for 1-click approval.", btn_es:"Revisar y Aprobar", btn_en:"Review & Approve", cmd:"open_comms"}
     ]
   },
   afternoon: {
@@ -992,9 +992,9 @@ const FALLBACK_ROUTINES = {
     habit_es: "Por la tarde te enfocas en cierres de Nexus CRM, visitas a clientes (USA/Colombia/México) y velocidad de entrega del equipo.",
     habit_en: "In the afternoon you focus on Nexus CRM closures, client visits (USA/Colombia/Mexico), and staff delivery velocity.",
     items: [
-      {icon:"🎯", title_es:"Dossier Pre-Demo Listo: Doral Urgent Care (14:00)", title_en:"Pre-Demo Dossier Ready: Doral Urgent Care (2:00 PM)", desc_es:"Preparado antes de tu llamada con Dr. Molina: historial de visitas y retorno proyectado.", desc_en:"Prepared before your call with Dr. Molina: visit history and projected ROI.", btn_es:"Ver Estudio Clientes", btn_en:"View Client Study", cmd:"open_outcomes"},
-      {icon:"👥", title_es:"Pulso de Equipo: 3 Cotizaciones Activas", title_en:"Team Pulse: 3 Active Quotes", desc_es:"Sueles auditar el avance de Juan, María y Carlos a las 15:00. Gráfico de productividad actualizado.", desc_en:"You typically audit Juan, Maria, and Carlos at 3:00 PM. Productivity chart updated.", btn_es:"Ver Personal", btn_en:"View Staff", cmd:"open_outcomes"},
-      {icon:"🎙", title_es:"Lectura de Voz de Media Tarde (Grok 3.0)", title_en:"Mid-Afternoon Voice Readout (Grok 3.0)", desc_es:"Resumen hablado de 30 segundos sobre movimientos del pipeline y tareas completadas.", desc_en:"30-second spoken summary on pipeline movements and completed tasks.", btn_es:"Escuchar Resumen", btn_en:"Listen Brief", cmd:"read_brief"}
+      {icon:"", title_es:"Dossier Pre-Demo Listo: Doral Urgent Care (14:00)", title_en:"Pre-Demo Dossier Ready: Doral Urgent Care (2:00 PM)", desc_es:"Preparado antes de tu llamada con Dr. Molina: historial de visitas y retorno proyectado.", desc_en:"Prepared before your call with Dr. Molina: visit history and projected ROI.", btn_es:"Ver Estudio Clientes", btn_en:"View Client Study", cmd:"open_outcomes"},
+      {icon:"", title_es:"Pulso de Equipo: 3 Cotizaciones Activas", title_en:"Team Pulse: 3 Active Quotes", desc_es:"Sueles auditar el avance de Juan, María y Carlos a las 15:00. Gráfico de productividad actualizado.", desc_en:"You typically audit Juan, Maria, and Carlos at 3:00 PM. Productivity chart updated.", btn_es:"Ver Personal", btn_en:"View Staff", cmd:"open_outcomes"},
+      {icon:"", title_es:"Lectura de Voz de Media Tarde (Grok 3.0)", title_en:"Mid-Afternoon Voice Readout (Grok 3.0)", desc_es:"Resumen hablado de 30 segundos sobre movimientos del pipeline y tareas completadas.", desc_en:"30-second spoken summary on pipeline movements and completed tasks.", btn_es:"Escuchar Resumen", btn_en:"Listen Brief", cmd:"read_brief"}
     ]
   },
   evening: {
@@ -1003,9 +1003,9 @@ const FALLBACK_ROUTINES = {
     habit_es: "Por la noche prefieres modo silencioso: revisas el digest de cámaras IA fuera de horario, despejas borradores con 1 clic y validas la agenda de mañana.",
     habit_en: "In the evening you prefer low-noise mode: review after-hours AI camera digests, clear pending drafts with 1 click, and lock tomorrow's agenda.",
     items: [
-      {icon:"📹", title_es:"Auditoría Nocturna de Cámaras IA (4 Zonas)", title_en:"Evening AI Camera Security Audit (4 Zones)", desc_es:"1 evento fuera de horario en Bodega/Archivo (21:47) con snapshot guardado.", desc_en:"1 after-hours event in Warehouse/Records (21:47) with saved snapshot.", btn_es:"Ver Cámaras", btn_en:"View Cameras", cmd:"open_outcomes"},
-      {icon:"⚡", title_es:"Bandeja Cero: Borradores Listos para Enviar", title_en:"Inbox Zero: Drafts Ready to Send", desc_es:"Despeja todas las respuestas pendientes del día con un solo clic de aprobación.", desc_en:"Clear all pending replies from today with a single approval click.", btn_es:"Ir a Bandeja IA", btn_en:"Open AI Inbox", cmd:"open_comms"},
-      {icon:"🌙", title_es:"Mañana Listo: Agenda + Café 07:45 AM", title_en:"Tomorrow Locked: Schedule + 07:45 AM Coffee", desc_es:"4 reuniones sincronizadas y tu preferencia de café programada para las 07:45 AM.", desc_en:"4 meetings synced and your coffee preference scheduled for 07:45 AM.", btn_es:"Ver Hábitos", btn_en:"View Habits", cmd:"open_behavior"}
+      {icon:"", title_es:"Auditoría Nocturna de Cámaras IA (4 Zonas)", title_en:"Evening AI Camera Security Audit (4 Zones)", desc_es:"1 evento fuera de horario en Bodega/Archivo (21:47) con snapshot guardado.", desc_en:"1 after-hours event in Warehouse/Records (21:47) with saved snapshot.", btn_es:"Ver Cámaras", btn_en:"View Cameras", cmd:"open_outcomes"},
+      {icon:"", title_es:"Bandeja Cero: Borradores Listos para Enviar", title_en:"Inbox Zero: Drafts Ready to Send", desc_es:"Despeja todas las respuestas pendientes del día con un solo clic de aprobación.", desc_en:"Clear all pending replies from today with a single approval click.", btn_es:"Ir a Bandeja IA", btn_en:"Open AI Inbox", cmd:"open_comms"},
+      {icon:"", title_es:"Mañana Listo: Agenda + Café 07:45 AM", title_en:"Tomorrow Locked: Schedule + 07:45 AM Coffee", desc_es:"4 reuniones sincronizadas y tu preferencia de café programada para las 07:45 AM.", desc_en:"4 meetings synced and your coffee preference scheduled for 07:45 AM.", btn_es:"Ver Hábitos", btn_en:"View Habits", cmd:"open_behavior"}
     ]
   }
 };
@@ -1014,8 +1014,8 @@ function runForeseenCmd(cmd) {
   trackBehavior('click', 'foreseen_' + cmd);
   if (cmd === 'confirm_coffee') {
     const msg = lang === 'es'
-      ? '☕ Orden confirmada: Cortado Doble Espresso (Leche de Avena, 165°F) programado para las 07:45 AM.'
-      : '☕ Order confirmed: Double Espresso Cortado (Oat Milk, 165°F) scheduled for 07:45 AM.';
+      ? 'Orden confirmada: Cortado Doble Espresso (Leche de Avena, 165°F) programado para las 07:45 AM.'
+      : 'Order confirmed: Double Espresso Cortado (Oat Milk, 165°F) scheduled for 07:45 AM.';
     showToast(msg);
   } else if (cmd === 'download_report') {
     $('#pdfBtn').click();
@@ -1105,7 +1105,7 @@ function renderAll() {
       </div>
       <div class="muted" style="font-size:11.5px;line-height:1.35">${d.body.slice(0, 95)}…</div>
       <div style="display:flex;gap:6px">
-        ${d.status !== 'SENT' ? `<button class="btn sm" onclick="approveAndSendDraft(${d.draft_id})">✓ ${lang==='es'?'Aprobar y Enviar':'Approve & Send'}</button>` : ''}
+        ${d.status !== 'SENT' ? `<button class="btn sm" onclick="approveAndSendDraft(${d.draft_id})">${lang==='es'?'Aprobar y Enviar':'Approve & Send'}</button>` : ''}
         <button class="btn ghost sm" onclick="switchTab('comms')">${lang==='es'?'Editar':'Edit'}</button>
       </div>
     </div>
@@ -1199,15 +1199,15 @@ function renderCommsTab() {
         </div>
       </div>
       <div class="draft-in"><b>Mensaje recibido:</b> ${d.incoming}</div>
-      <label class="muted" style="font-size:11px">✍️ Borrador preparado en tu voz (editable — cada cambio entrena tu perfil):</label>
+      <label class="muted" style="font-size:11px">Borrador preparado en tu voz (editable — cada cambio entrena tu perfil):</label>
       <textarea class="draft-area" id="draft-txt-${d.draft_id}" ${d.status === 'SENT' ? 'readonly' : ''}>${d.body}</textarea>
       <div class="draft-actions">
         <span class="muted" style="font-size:11px">Huella aplicada: Saludo formal + «Cordialmente, Jasmel Acosta»</span>
         <div style="display:flex;gap:8px">
           ${d.status !== 'SENT' ? `
-            <button class="btn ghost sm" onclick="saveDraftEdit(${d.draft_id})">💾 Guardar Edición (Entrenar Voz)</button>
-            <button class="btn sm" id="approve-btn-${d.draft_id}" onclick="approveAndSendDraft(${d.draft_id})">✓ Aprobar y Enviar Directo</button>
-          ` : `<span class="tag ok">✓ Despachado con autorización del CEO</span>`}
+            <button class="btn ghost sm" onclick="saveDraftEdit(${d.draft_id})">Guardar Edición (Entrenar Voz)</button>
+            <button class="btn sm" id="approve-btn-${d.draft_id}" onclick="approveAndSendDraft(${d.draft_id})">Aprobar y Enviar Directo</button>
+          ` : `<span class="tag ok">Despachado con autorización del CEO</span>`}
         </div>
       </div>
     </div>
@@ -1257,8 +1257,8 @@ function approveAndSendDraft(draftId) {
   renderCommsTab();
   renderAll();
   showToast(lang === 'es'
-    ? `✓ Borrador #${draftId} aprobado y enviado directamente a ${d.contact}.`
-    : `✓ Draft #${draftId} approved and sent directly to ${d.contact}.`);
+    ? `Borrador #${draftId} aprobado y enviado directamente a ${d.contact}.`
+    : `Draft #${draftId} approved and sent directly to ${d.contact}.`);
 }
 
 function simulateIncomingMsg() {
@@ -1349,19 +1349,19 @@ function renderKnowledgeVault() {
   if (!g) return;
   const cols = [
     {
-      title: lang === 'es' ? `📝 Notas del CEO (${(KNOWLEDGE_VAULT.notes||[]).length})` : `📝 CEO Notes (${(KNOWLEDGE_VAULT.notes||[]).length})`,
+      title: lang === 'es' ? `Notas del CEO (${(KNOWLEDGE_VAULT.notes||[]).length})` : `CEO Notes (${(KNOWLEDGE_VAULT.notes||[]).length})`,
       items: (KNOWLEDGE_VAULT.notes || []).slice(0, 4).map(n => `<div style="padding:5px 0;border-bottom:1px solid var(--hair);font-size:11.5px"><span class="tag low">${n.id}</span> ${n.text}</div>`)
     },
     {
-      title: lang === 'es' ? `✅ Tareas Guardadas (${(KNOWLEDGE_VAULT.tasks||[]).length})` : `✅ Saved Tasks (${(KNOWLEDGE_VAULT.tasks||[]).length})`,
+      title: lang === 'es' ? `Tareas Guardadas (${(KNOWLEDGE_VAULT.tasks||[]).length})` : `Saved Tasks (${(KNOWLEDGE_VAULT.tasks||[]).length})`,
       items: (KNOWLEDGE_VAULT.tasks || []).slice(0, 4).map(t => `<div style="padding:5px 0;border-bottom:1px solid var(--hair);font-size:11.5px"><span class="tag ${t.status==='done'?'ok':'high'}">${t.id}</span> ${t.title}</div>`)
     },
     {
-      title: lang === 'es' ? `🎥 Resúmenes Reunión (${(KNOWLEDGE_VAULT.meetings||[]).length})` : `🎥 Meeting Summaries (${(KNOWLEDGE_VAULT.meetings||[]).length})`,
+      title: lang === 'es' ? `Resúmenes Reunión (${(KNOWLEDGE_VAULT.meetings||[]).length})` : `Meeting Summaries (${(KNOWLEDGE_VAULT.meetings||[]).length})`,
       items: (KNOWLEDGE_VAULT.meetings || []).slice(0, 4).map(m => `<div style="padding:5px 0;border-bottom:1px solid var(--hair);font-size:11.5px"><span class="tag medium">${m.id}</span> <b>${m.title||'Reunión'}</b>: ${m.summary}</div>`)
     },
     {
-      title: lang === 'es' ? `✉️ Resúmenes Correo (${(KNOWLEDGE_VAULT.emails||[]).length})` : `✉️ Email Summaries (${(KNOWLEDGE_VAULT.emails||[]).length})`,
+      title: lang === 'es' ? `Resúmenes Correo (${(KNOWLEDGE_VAULT.emails||[]).length})` : `Email Summaries (${(KNOWLEDGE_VAULT.emails||[]).length})`,
       items: (KNOWLEDGE_VAULT.emails || []).slice(0, 4).map(e => `<div style="padding:5px 0;border-bottom:1px solid var(--hair);font-size:11.5px"><span class="tag ok">${e.id}</span> <b>${e.subject||'Correo'}</b>: ${e.summary}</div>`)
     }
   ];
@@ -1380,7 +1380,7 @@ function loadKnowledgeVault(toast = false) {
       if (d) {
         KNOWLEDGE_VAULT = d;
         renderKnowledgeVault();
-        if (toast) showToast('✓ Memoria Ejecutiva sincronizada desde mc.db.');
+        if (toast) showToast('Memoria Ejecutiva sincronizada desde mc.db.');
       }
     })
     .catch(() => renderKnowledgeVault());
@@ -1396,7 +1396,7 @@ function saveQuickNoteFromUI() {
   }).then(r => r.json()).then(d => {
     if (el) el.value = '';
     loadKnowledgeVault(false);
-    showToast(`✓ Nota guardada en mc.db (${d.id || 'OK'}).`);
+    showToast(`Nota guardada en mc.db (${d.id || 'OK'}).`);
   });
 }
 
@@ -1410,7 +1410,7 @@ function saveQuickTaskFromUI() {
   }).then(r => r.json()).then(d => {
     if (el) el.value = '';
     loadKnowledgeVault(false);
-    showToast(`✓ Tarea guardada en mc.db (${d.id || 'OK'}).`);
+    showToast(`Tarea guardada en mc.db (${d.id || 'OK'}).`);
   });
 }
 
@@ -1465,9 +1465,9 @@ function saveCeoPreferences() {
   FALLBACK_ROUTINES.morning.items[0].desc_es = `Orden automática ${timeStr} lista antes de tu informe matutino.`;
   FALLBACK_ROUTINES.morning.items[1].desc_es = `Formato preferido: ${fmt}.`;
   trackBehavior('preference_update', 'ceo_morning_preferences', {coffee_drink: drink, coffee_time: timeStr, report_format: fmt});
-  $('#prefSavedNote').textContent = '✓ Preferencias guardadas y activas para mañana.';
+  $('#prefSavedNote').textContent = 'Preferencias guardadas y activas para mañana.';
   renderForeseenStrip();
-  showToast('✓ Preferencias de café y formato de reporte actualizadas en el Cerebro Conductual.');
+  showToast('Preferencias de café y formato de reporte actualizadas en el Cerebro Conductual.');
 }
 
 /* ── TAB 5: 1-TIME CEO SETUP & INTEGRATIONS ── */
@@ -1511,7 +1511,7 @@ function saveOnboardingSetup() {
     body: JSON.stringify({brand_name: brand, ceo_name: ceo, operating_mode: mode})
   }).catch(() => {});
   trackBehavior('click', 'save_white_label_setup', {brand, ceo, mode});
-  showToast(`✓ Configuración White-Label guardada para ${brand} (${ceo}).`);
+  showToast(`Configuración White-Label guardada para ${brand} (${ceo}).`);
 }
 
 /* ── TAB 6: STEP-BY-STEP FUNCTION BLOGS ── */
@@ -1612,7 +1612,7 @@ $('#pdfBtn').onclick = () => {
     line('Tareas / Tasks', 12, true);
     doc.autoTable({startY: y, head: [['Tarea', 'Severidad', 'Estado']], body: TASKS.map(t => [t.title, t.sev, t.status]), theme: 'grid', headStyles: {fillColor: [11, 16, 32]}, styles: {fontSize: 9}});
     doc.save(`informe-${coObj.id}-${new Date().toISOString().slice(0,10)}.pdf`);
-    showToast(lang === 'es' ? '⬇ Informe PDF generado y descargado.' : '⬇ Executive PDF generated and downloaded.');
+    showToast(lang === 'es' ? 'Informe PDF generado y descargado.' : 'Executive PDF generated and downloaded.');
   } else {
     window.open(`/api/report.pdf?company=${encodeURIComponent(cur)}&lang=${lang}`, '_blank');
   }
@@ -1743,7 +1743,7 @@ let UNITEC_DATA = {
   security_findings: [
     { severity: 'critical', title_es: 'config/main expone telegramBotToken en Firestore público', fix_es: 'Mover a env de Vercel, bloquear config/main y rotar en BotFather.' },
     { severity: 'critical', title_es: 'firebase-applet-config.json permite leer 29 teléfonos sin auth', fix_es: 'Cerrar lectura anónima en Firestore Rules y usar Opción A (/api/mission-control-export).' },
-    { severity: 'ok', title_es: '✅ DESBLOQUEADO: escalations leído con Service Account (157 docs / 93 hoy)', fix_es: '155/157 (98.7%) entregadas vía Telegram. Email falla por falta de RESEND_API_KEY; SMS/WhatsApp falla por credenciales Twilio ausentes.' },
+    { severity: 'ok', title_es: 'DESBLOQUEADO: escalations leído con Service Account (157 docs / 93 hoy)', fix_es: '155/157 (98.7%) entregadas vía Telegram. Email falla por falta de RESEND_API_KEY; SMS/WhatsApp falla por credenciales Twilio ausentes.' },
     { severity: 'high', title_es: 'Building Innovation (Juan CEO): brandId=building tiene 1 sesión vs 4,664 unitec', fix_es: 'Apuntar al deploy/dominio de Building Innovation antes de enviar reporte a Juan.' }
   ]
 };
@@ -1814,7 +1814,7 @@ function renderUnitecPanel() {
       <div class="row" style="padding:4px 0;font-size:12px"><span>${it.intent}</span><b>${it.count}</b></div>
     `).join('') + `<div style="margin-top:8px;padding-top:6px;border-top:1px solid var(--hair)">` +
     (U.recent_real || []).slice(0, 3).map(r => `
-      <div style="font-size:11.5px;color:#cfd8ea;padding:3px 0">💬 «${r.lastMessage}» <span class="muted">(${r.userMessages} msjs · ${r.day})</span></div>
+      <div style="font-size:11.5px;color:#cfd8ea;padding:3px 0">«${r.lastMessage}» <span class="muted">(${r.userMessages} msjs · ${r.day})</span></div>
     `).join('') + `</div>`;
   }
   const secEl = document.getElementById('unitecSecurityBox');
@@ -1835,7 +1835,7 @@ function syncUnitecLive(force = false) {
       if (d && d.kpis) {
         UNITEC_DATA = d;
         renderUnitecPanel();
-        if (force) showToast('✓ Datos de UNITEC USA sincronizados en vivo desde unitec-front-desk.vercel.app.');
+        if (force) showToast('Datos de UNITEC USA sincronizados en vivo desde unitec-front-desk.vercel.app.');
       }
     })
     .catch(() => renderUnitecPanel());
@@ -1874,8 +1874,8 @@ let BUILDINGAPP_DATA = {
     },
     cost_and_health: { cost_today_usd: 0.012, cost_total_usd: 2.452, errors_today: 5 }
   },
-  daily_summary_es: '📊 Resumen Diario BuildingApp (2026-10-23): +3 nuevos miembros hoy (App Store Reviewer, VIP Unlimited User 3, VIP Unlimited User 2), alcanzando 7 miembros registrados (6 Luxury/Enterprise, 1 Free). Uso hoy: 6 generaciones IA (5 análisis de espacios en vivo, 100% éxito, 11.9s prom.), 3 logins de clientes y 28 vistas de materiales sobre 322 productos. Actividad destacada de tienda: Apple App Store Reviewer ejecutó pruebas en vivo hoy (login, flujo DELETE_ACCOUNT y 5 análisis de cuarto con 100% éxito).',
-  daily_summary_en: '📊 BuildingApp Daily Summary (2026-10-23): +3 new members joined today (App Store Reviewer, VIP Unlimited User 3, VIP Unlimited User 2), reaching 7 registered members (6 Luxury/Enterprise, 1 Free). Today\'s usage: 6 AI generations (5 live room analyses, 100% success, 11.9s avg), 3 customer logins, and 28 material views across 322 SKUs. Store milestone: Apple App Store Reviewer ran live certification tests today (login, mandatory DELETE_ACCOUNT flow, and 5 room analyses with 100% success).',
+  daily_summary_es: 'Resumen Diario BuildingApp (2026-10-23): +3 nuevos miembros hoy (App Store Reviewer, VIP Unlimited User 3, VIP Unlimited User 2), alcanzando 7 miembros registrados (6 Luxury/Enterprise, 1 Free). Uso hoy: 6 generaciones IA (5 análisis de espacios en vivo, 100% éxito, 11.9s prom.), 3 logins de clientes y 28 vistas de materiales sobre 322 productos. Actividad destacada de tienda: Apple App Store Reviewer ejecutó pruebas en vivo hoy (login, flujo DELETE_ACCOUNT y 5 análisis de cuarto con 100% éxito).',
+  daily_summary_en: 'BuildingApp Daily Summary (2026-10-23): +3 new members joined today (App Store Reviewer, VIP Unlimited User 3, VIP Unlimited User 2), reaching 7 registered members (6 Luxury/Enterprise, 1 Free). Today\'s usage: 6 AI generations (5 live room analyses, 100% success, 11.9s avg), 3 customer logins, and 28 material views across 322 SKUs. Store milestone: Apple App Store Reviewer ran live certification tests today (login, mandatory DELETE_ACCOUNT flow, and 5 room analyses with 100% success).',
   recent_activity: [
     { timestamp: '2026-10-23 16:32 UTC', action: 'ANALYZE', actor: 'rev***@buildingapp.us', detail: 'AI Room Analysis · gemini-3.6-flash (17.6s · OK)' },
     { timestamp: '2026-10-23 16:30 UTC', action: 'ANALYZE', actor: 'rev***@buildingapp.us', detail: 'AI Room Analysis · gemini-3.6-flash (8.6s · OK)' },
@@ -1984,7 +1984,7 @@ function syncBuildingAppLive(force = false) {
       if (d && d.five_key_numbers) {
         BUILDINGAPP_DATA = d;
         renderBuildingAppPanel();
-        if (force) showToast('✓ Datos de BuildingApp (buildingapp.us) sincronizados en vivo.');
+        if (force) showToast('Datos de BuildingApp (buildingapp.us) sincronizados en vivo.');
       }
     })
     .catch(() => renderBuildingAppPanel());
@@ -2000,7 +2000,7 @@ syncBuildingAppLive(false);
 renderBlogs();
 
 /* ══ EL JEFESITO: themes, preferences, daily greeting, close day ══ */
-const THEME_NAMES = {light: '☀ Claro', graphite: '◐ Grafito', yellow: '■ Amarillo'};
+const THEME_NAMES = {light: 'Claro', graphite: '◐ Grafito', yellow: '■ Amarillo'};
 let PREFS = {theme: 'graphite', lang: 'es', greeting_enabled: true, ceo_name: 'Jasmel'};
 let JF_BRIEF = null, jfPendingSpeech = null;
 
@@ -2057,15 +2057,15 @@ async function renderGreeting(doSpeak) {
     box.innerHTML = `<div class="jf-card">
       <div class="jf-head">
         <div>
-          <div class="jf-title">🧠 El Jefesito — ${b.greeting}</div>
-          <div class="muted" style="margin-top:3px">${b.label} · ${b.closed ? (es ? 'DÍA CERRADO ✓' : 'DAY CLOSED ✓') : (es ? 'DÍA ABIERTO' : 'DAY OPEN')} · ${es ? 'Aprendiendo de ti' : 'Learning about you'}: ${p.interactions} ${es ? 'interacciones' : 'interactions'}</div>
+          <div class="jf-title">El Jefesito — ${b.greeting}</div>
+          <div class="muted" style="margin-top:3px">${b.label} · ${b.closed ? (es ? 'DÍA CERRADO ' : 'DAY CLOSED ') : (es ? 'DÍA ABIERTO' : 'DAY OPEN')} · ${es ? 'Aprendiendo de ti' : 'Learning about you'}: ${p.interactions} ${es ? 'interacciones' : 'interactions'}</div>
         </div>
         <div style="display:flex;gap:6px;flex-wrap:wrap">
-          <button class="btn ghost sm" onclick="jfSpeak(JF_BRIEF && JF_BRIEF.spoken)">🔊 ${es ? 'Repetir' : 'Repeat'}</button>
-          <button class="btn ghost sm" onclick="toggleGreeting()">⏹ ${es ? 'Detener saludo' : 'Stop greeting'}</button>
-          <button class="btn ghost sm" onclick="closeDay()">✓ ${es ? 'Cerrar el día' : 'Close the day'}</button>
-          <button class="btn sm" onclick="window.open('/api/daily.pdf?lang=' + lang, '_blank')">🖨 ${es ? 'PDF del día' : 'Daily PDF'}</button>
-          <button class="btn ghost sm" onclick="document.getElementById('jfGreeting').style.display='none'">✕</button>
+          <button class="btn ghost sm" onclick="jfSpeak(JF_BRIEF && JF_BRIEF.spoken)">${es ? 'Repetir' : 'Repeat'}</button>
+          <button class="btn ghost sm" onclick="toggleGreeting()">${es ? 'Detener saludo' : 'Stop greeting'}</button>
+          <button class="btn ghost sm" onclick="closeDay()">${es ? 'Cerrar el día' : 'Close the day'}</button>
+          <button class="btn sm" onclick="window.open('/api/daily.pdf?lang=' + lang, '_blank')">${es ? 'PDF del día' : 'Daily PDF'}</button>
+          <button class="btn ghost sm" onclick="document.getElementById('jfGreeting').style.display='none'"></button>
         </div>
       </div>
       <div class="jf-grid">${secs}</div>
@@ -2077,19 +2077,19 @@ function toggleGreeting() {
   const on = !PREFS.greeting_enabled;
   savePrefs({greeting_enabled: on});
   syncGreetPill();
-  if (on) { renderGreeting(true); showToast(lang === 'es' ? '🔔 Saludo activado.' : '🔔 Greeting enabled.'); }
+  if (on) { renderGreeting(true); showToast(lang === 'es' ? 'Saludo activado.' : 'Greeting enabled.'); }
   else {
     try { if (window.LJ && window.LJ.stopAudio) window.LJ.stopAudio(); else speechSynthesis.cancel(); } catch (e) {}
     jfPendingSpeech = null;
     document.getElementById('jfGreeting').style.display = 'none';
-    showToast(lang === 'es' ? '🔕 Saludo detenido.' : '🔕 Greeting stopped.');
+    showToast(lang === 'es' ? 'Saludo detenido.' : 'Greeting stopped.');
   }
 }
 function closeDay() {
   fetch('/api/jefesito/close_day', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: '{}'})
     .then(r => r.json())
     .then(d => {
-      showToast(lang === 'es' ? `✓ Día ${d.closed} cerrado. Hoja nueva para ${d.next}.` : `✓ Day ${d.closed} closed. New sheet for ${d.next}.`);
+      showToast(lang === 'es' ? `Día ${d.closed} cerrado. Hoja nueva para ${d.next}.` : `Day ${d.closed} closed. New sheet for ${d.next}.`);
       renderGreeting(false);
     });
 }

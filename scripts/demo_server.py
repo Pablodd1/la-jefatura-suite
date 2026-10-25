@@ -200,14 +200,8 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
         if path in ("/", "/index.html", "/demo"):
             html = open(os.path.join(ROOT, "mock", "demo.html"), "rb").read()
             self._send(200, html, "text/html; charset=utf-8")
-        elif path.rstrip("/") in ("/website", "/web", "/presentacion", "/site", "/website-v1"):
+        elif path.rstrip("/") in ("/website", "/web", "/presentacion", "/site", "/website-v1", "/website-v2", "/website-v3"):
             html = open(os.path.join(ROOT, "mock", "website.html"), "rb").read()
-            self._send(200, html, "text/html; charset=utf-8")
-        elif path.rstrip("/") in ("/website-v2", "/editorial", "/website-editorial", "/website-apple"):
-            html = open(os.path.join(ROOT, "mock", "website_editorial.html"), "rb").read()
-            self._send(200, html, "text/html; charset=utf-8")
-        elif path.rstrip("/") in ("/website-v3", "/bloomberg", "/website-bloomberg", "/website-navy"):
-            html = open(os.path.join(ROOT, "mock", "website_bloomberg.html"), "rb").read()
             self._send(200, html, "text/html; charset=utf-8")
         elif path.startswith("/assets/"):
             rel = os.path.basename(path)
