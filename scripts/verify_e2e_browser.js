@@ -265,6 +265,27 @@ const URL = 'http://localhost:8931/';
     `scrollLeft=${scrolledLeft}, iPhone trap="${ipOut.slice(0, 50)}...", ROI=${roiSavings}`);
   await page.screenshot({ path: path.join(ASSETS_DIR, 'verified-10-website-apple-yellow.png'), fullPage: false });
 
+  // Scroll horizontally all the way to the last slide (Slide 07 · Video Conclusión with Gemini video + link)
+  await page.locator('#dockPills button', { hasText: '07 · Conclusión' }).click();
+  await page.waitForTimeout(700);
+  const conclusionCheck = await page.evaluate(async () => {
+    const cv = document.getElementById('conclusionVideo');
+    const link = document.getElementById('geminiShareLinkBtn');
+    const deck = document.getElementById('horizontalDeck');
+    const r = await fetch('/assets/gemini-conclusion.mp4');
+    return {
+      hasConclusionVid: !!cv && cv.getAttribute('src') === '/assets/gemini-conclusion.mp4',
+      mp4Status: r.status,
+      mp4Type: r.headers.get('content-type'),
+      geminiHref: link ? link.getAttribute('href') : '',
+      scrollLeft: deck ? deck.scrollLeft : 0
+    };
+  });
+  check('22c. Final Horizontal Slide (Slide 07): Gemini Conclusion Video (/assets/gemini-conclusion.mp4) + Attached Link (https://share.gemini.google/k5oJZCLID5IP)',
+    conclusionCheck.hasConclusionVid && conclusionCheck.mp4Status === 200 && conclusionCheck.mp4Type === 'video/mp4' && conclusionCheck.geminiHref === 'https://share.gemini.google/k5oJZCLID5IP' && conclusionCheck.scrollLeft >= 7000,
+    JSON.stringify(conclusionCheck));
+  await page.screenshot({ path: path.join(ASSETS_DIR, 'verified-11-website-gemini-conclusion.png'), fullPage: false });
+
   // 9. Verify Zero Console / Runtime Errors
   check('16. Zero Browser Console or Page Errors', consoleErrors.length === 0 && pageErrors.length === 0,
     `consoleErrors=${consoleErrors.length} (${consoleErrors.join('; ')}), pageErrors=${pageErrors.length}`);

@@ -926,11 +926,12 @@
   </a>
   <ul class="nav-links" id="topNavLinks">
     <li><a class="active" onclick="goSlide(0)">01 · Cerebro 3D</a></li>
-    <li><a onclick="goSlide(1)">02 · Vista iPhone & WebApp</a></li>
+    <li><a onclick="goSlide(1)">02 · iPhone & WebApp</a></li>
     <li><a onclick="goSlide(2)">03 · Cero Adivinanzas</a></li>
     <li><a onclick="goSlide(3)">04 · Integración</a></li>
     <li><a onclick="goSlide(4)">05 · Comparativa</a></li>
     <li><a onclick="goSlide(5)">06 · Ahorro y Dinero</a></li>
+    <li><a onclick="goSlide(6)">07 · Video Conclusión</a></li>
   </ul>
   <div class="nav-actions">
     <a href="/api/daily.pdf?lang=es" target="_blank" class="btn-outline">🖨 Hoja del Día PDF</a>
@@ -1372,7 +1373,8 @@
             <input type="range" id="rngPipe" min="30000" max="500000" step="10000" value="150000" oninput="calcRoi()">
           </div>
           <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
-            <a href="/" class="btn-yellow">🚀 Abrir Consola en Vivo (La Jefatura)</a>
+            <button class="btn-yellow" onclick="goSlide(6)">🎬 Ir al Video de Conclusión (Slide 07) →</button>
+            <a href="/" class="btn-outline">🚀 Abrir Consola en Vivo</a>
             <a href="/api/daily.pdf?lang=es" target="_blank" class="btn-outline">🖨 Descargar Hoja del Día PDF</a>
           </div>
         </div>
@@ -1403,6 +1405,86 @@
     </div>
   </section>
 
+  <!-- ==================== SLIDE 7: VIDEO DE CONCLUSIÓN EJECUTIVA (GOOGLE GEMINI) ==================== -->
+  <section class="h-slide" id="conclusion" data-slide="6">
+    <div class="wrap">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;margin-bottom:16px">
+        <div>
+          <div class="eyebrow">🎬 Slide 07 · Conclusión Ejecutiva · Video Generado con Google Gemini</div>
+          <h2 class="sec-title">El Futuro del CEO: <span>Un Solo Cerebro. Mejores Decisiones. Cero Adivinanzas.</span></h2>
+        </div>
+        <a href="https://share.gemini.google/k5oJZCLID5IP" target="_blank" rel="noopener" class="btn-outline" id="geminiShareLinkBtn">
+          ✨ Ver Video Original en Google Gemini (share.gemini.google/k5oJZCLID5IP) ↗
+        </a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1.35fr 0.95fr;gap:22px;align-items:stretch">
+        <!-- Left: Cinema HD Video Player Frame -->
+        <div style="background:#07070a;border:2px solid var(--yellow);border-radius:24px;overflow:hidden;box-shadow:0 24px 70px rgba(255,212,0,0.16);display:flex;flex-direction:column;justify-content:space-between">
+          <div style="background:#111116;padding:10px 16px;border-bottom:1px solid var(--hair);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+            <div style="display:flex;align-items:center;gap:8px">
+              <span class="pulse-dot"></span>
+              <span style="font-size:11.5px;font-weight:800;color:var(--yellow);letter-spacing:0.5px">VIDEO DE CONCLUSIÓN · GENERADO CON GOOGLE GEMINI (HD 720p + AUDIO)</span>
+            </div>
+            <a href="https://share.gemini.google/k5oJZCLID5IP" target="_blank" rel="noopener" style="color:var(--txt-sub);font-size:11.5px;font-weight:700;text-decoration:underline">
+              https://share.gemini.google/k5oJZCLID5IP ↗
+            </a>
+          </div>
+
+          <div style="position:relative;background:#000;flex:1;display:flex;align-items:center;justify-content:center">
+            <video id="conclusionVideo" src="/assets/gemini-conclusion.mp4" controls autoplay loop muted playsinline style="width:100%;max-height:390px;display:block;object-fit:contain;background:#000"></video>
+          </div>
+
+          <div style="padding:12px 16px;background:#0b0b0f;border-top:1px solid var(--hair);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="btn-yellow" id="btnConclusionAudio" onclick="toggleConclusionAudio()">🔊 Activar Audio del Video</button>
+              <button class="btn-outline" onclick="replayConclusionVideo()">↻ Reproducir desde el Inicio</button>
+            </div>
+            <a href="https://share.gemini.google/k5oJZCLID5IP" target="_blank" rel="noopener" class="btn-outline">
+              🔗 Abrir Enlace Gemini Adjunto ↗
+            </a>
+          </div>
+        </div>
+
+        <!-- Right: Executive Summary & Final Action Cards -->
+        <div style="display:flex;flex-direction:column;justify-content:space-between;gap:12px">
+          <div class="bento-card gold" style="padding:18px">
+            <span class="bento-tag">CONCLUSIÓN PARA EL CEO</span>
+            <h3 style="font-size:20px;margin-bottom:6px">De información dispersa a decisiones rentables en 1 toque</h3>
+            <p style="font-size:13px">
+              Con <b>La Jefatura</b> y <b>El Jefesito</b>, el dueño deja de perder horas buscando reportes o corrigiendo errores. Todas tus empresas (<b>MBMB, CEDEXX, DLM, UNITEC USA y BuildingApp.us</b>) convergen en un solo cerebro que <b>jamás adivina</b>, aprende de ti cada día y te acompaña en tu <b>Apple iPhone</b>, en la <b>WebApp</b> y en tu <b>Hoja del Día Imprimible en PDF</b>.
+            </p>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div class="hk-card">
+              <div class="hk-num">100%</div>
+              <div class="hk-lbl">Datos Verificados</div>
+              <div class="hk-sub">Cero alucinaciones: cada cifra cita su fuente real.</div>
+            </div>
+            <div class="hk-card">
+              <div class="hk-num">+$24.5k</div>
+              <div class="hk-lbl">Impacto Mensual Est.</div>
+              <div class="hk-sub">Tiempo ejecutivo ahorrado + cierres acelerados.</div>
+            </div>
+          </div>
+
+          <div class="bento-card" style="padding:16px;border-color:var(--yellow-border)">
+            <span class="bento-tag">ENLACE DE VIDEO ADJUNTO (GOOGLE GEMINI)</span>
+            <p style="font-size:12px;color:#fff;margin-bottom:10px;word-break:break-all">
+              🔗 <b> Enlace oficial:</b> <a href="https://share.gemini.google/k5oJZCLID5IP" target="_blank" rel="noopener" style="color:var(--yellow);font-weight:800">https://share.gemini.google/k5oJZCLID5IP</a>
+            </p>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <a href="/" class="btn-yellow">🚀 Entrar al Centro de Mando en Vivo →</a>
+              <a href="/api/daily.pdf?lang=es" target="_blank" class="btn-outline">🖨 Hoja del Día PDF</a>
+              <button class="btn-outline" onclick="goSlide(0)">↺ Volver al Slide 01</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
 </main>
 
 <!-- ==================== BOTTOM HORIZONTAL NAVIGATION DOCK ==================== -->
@@ -1415,6 +1497,7 @@
     <button class="dock-pill" onclick="goSlide(3)">04 · Integración</button>
     <button class="dock-pill" onclick="goSlide(4)">05 · Comparativa</button>
     <button class="dock-pill" onclick="goSlide(5)">06 · ROI & Dinero</button>
+    <button class="dock-pill" onclick="goSlide(6)">07 · Conclusión</button>
   </div>
   <button class="dock-arrow" id="btnNextSlide" onclick="stepSlide(1)">Siguiente →</button>
 </div>
@@ -1450,6 +1533,28 @@
     if (progressBar) {
       progressBar.style.width = (((idx + 1) / slides.length) * 100).toFixed(2) + '%';
     }
+    const cv = document.getElementById('conclusionVideo');
+    if (cv && idx === slides.length - 1) {
+      cv.play().catch(() => {});
+    }
+  }
+
+  function toggleConclusionAudio() {
+    const cv = document.getElementById('conclusionVideo');
+    const btn = document.getElementById('btnConclusionAudio');
+    if (!cv) return;
+    cv.muted = !cv.muted;
+    cv.play().catch(() => {});
+    if (btn) {
+      btn.textContent = cv.muted ? '🔊 Activar Audio del Video' : '🔇 Silenciar Audio del Video';
+    }
+  }
+
+  function replayConclusionVideo() {
+    const cv = document.getElementById('conclusionVideo');
+    if (!cv) return;
+    cv.currentTime = 0;
+    cv.play().catch(() => {});
   }
 
   deck.addEventListener('scroll', () => {
