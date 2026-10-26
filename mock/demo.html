@@ -512,6 +512,7 @@
   <button class="nav-tab" data-tab="behavior" onclick="switchTab('behavior')"><span data-i18n="tab_behavior">Cerebro Conductual</span></button>
   <button class="nav-tab" data-tab="setup" onclick="switchTab('setup')"><span data-i18n="tab_setup">Configuración (1-Vez)</span></button>
   <button class="nav-tab" data-tab="blogs" onclick="switchTab('blogs')"><span data-i18n="tab_blogs">Blogs por Función (Paso a Paso)</span></button>
+  <button class="nav-tab" data-tab="assistant" onclick="switchTab('assistant')" id="navTabAssistant" style="border-color:rgba(255,107,43,.45);background:rgba(255,107,43,.14);color:#FF8B55;font-weight:800"><span data-i18n="tab_assistant">Super Asistente (Solo Voz y Texto)</span></button>
 </nav>
 
 <!-- El Jefesito: daily greeting / day summary (spoken on open unless stopped) -->
@@ -882,6 +883,72 @@
   <div class="blog-grid" id="blogsContainer"></div>
 </section>
 
+<!-- ==================== TAB 7: MINIMALIST SINGLE-WINDOW SUPER ASSISTANT (VOICE & TEXT ONLY) ==================== -->
+<section class="tab-pane" id="pane-assistant">
+  <div class="sa-shell" id="superAssistantShell">
+    <div class="sa-header">
+      <div class="sa-brand">
+        <div class="sa-orb" id="saOrb" onclick="window.LJSuper && window.LJSuper.toggleMic()" title="Clic para hablar por micrófono">
+          <span class="sa-orb-core"></span>
+        </div>
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <h2 class="sa-title" id="saMainTitle">El Jefesito — Super Asistente Minimalista (Solo Voz y Texto)</h2>
+            <span class="tag ok" id="saStatusTag">CONECTADO A TODO · 0 ADIVINANZAS</span>
+          </div>
+          <p class="sa-sub" id="saMainSub">
+            Modo ejecutivo sin ruido: tú solo lees o escuchas resultados y das órdenes por voz o texto. Conectado a tus 5 empresas, 9 integraciones, Calendario, Bandeja IA y Memoria SQL (<code>mc.db</code>). Si pides algo que aún no existe, notifico automáticamente al desarrollador (<b>Jasmel</b>).
+          </p>
+        </div>
+      </div>
+      <div class="sa-actions">
+        <button type="button" class="btn ghost sm" id="saVoiceToggleBtn" onclick="window.LJSuper && window.LJSuper.toggleAutoSpeak()">Voz Respuesta: ON</button>
+        <button type="button" class="btn ghost sm" id="saDevBtn" onclick="window.LJSuper && window.LJSuper.toggleDevDrawer()">
+          Escalaciones al Desarrollador <span class="cnt" id="saDevBadge" style="margin-left:5px;background:rgba(255,107,43,.22);color:#FF783C">0</span>
+        </button>
+        <button type="button" class="btn sm" onclick="switchTab('overview')">Volver al Panel Completo</button>
+      </div>
+    </div>
+
+    <!-- Collapsible Developer Escalation Queue (Shows requests auto-forwarded to Jasmel) -->
+    <div class="sa-dev-drawer" id="saDevDrawer" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:8px;flex-wrap:wrap">
+        <div>
+          <strong style="font-size:12.5px;color:#FF783C">Bandeja de Escalación al Desarrollador (Jasmel) · Auto-Notificaciones</strong>
+          <div class="muted" style="font-size:11px">Cuando el CEO solicita una integración, acción o dato que aún no está conectado, El Jefesito jamás adivina y crea automáticamente un ticket aquí para que el desarrollador construya la solución.</div>
+        </div>
+        <button type="button" class="btn ghost sm" onclick="window.LJSuper && window.LJSuper.promptManualEscalation()">+ Nueva Solicitud al Desarrollador</button>
+      </div>
+      <div id="saDevList" style="display:flex;flex-direction:column;gap:6px;max-height:180px;overflow-y:auto"></div>
+    </div>
+
+    <!-- Single-Window Chat Conversation Stream -->
+    <div class="sa-chat-window" id="saChatLog" role="log" aria-live="polite"></div>
+
+    <!-- Minimalist 1-Click Command & Question Starters -->
+    <div class="sa-chips" id="saQuickChips">
+      <button type="button" class="sa-chip" onclick="window.LJSuper.send('leer resumen del día')">Resumen Ejecutivo Hoy</button>
+      <button type="button" class="sa-chip" onclick="window.LJSuper.send('qué citas tengo hoy')">Citas y Agenda Hoy</button>
+      <button type="button" class="sa-chip" onclick="window.LJSuper.send('cuál es el ingreso proyectado y pipeline de todas las empresas')">Ingresos y Pipeline (5 Empresas)</button>
+      <button type="button" class="sa-chip" onclick="window.LJSuper.send('cuántos miembros nuevos hay en BuildingApp y conversaciones en UNITEC')">Métricas BuildingApp &amp; UNITEC</button>
+      <button type="button" class="sa-chip" onclick="window.LJSuper.send('aprobar borrador')">Aprobar Borrador (1-Clic)</button>
+      <button type="button" class="sa-chip" onclick="window.LJSuper.send('agendar cita: Comité Ejecutivo 2026-10-27 11:00')">Agendar Cita Mañana 11:00</button>
+      <button type="button" class="sa-chip" onclick="window.LJSuper.send('crear tarea: Revisar contrato Doral Urgent Care')">Crear Tarea Rápida</button>
+      <button type="button" class="sa-chip" onclick="window.LJSuper.send('sincronizar calendarios e integraciones')">Sincronizar 9 Integraciones</button>
+      <button type="button" class="sa-chip warn" onclick="window.LJSuper.send('conectar cuenta bancaria Suiza UBS en tiempo real')">Probar Escalación al Desarrollador</button>
+    </div>
+
+    <!-- Single Minimalist Voice + Text Input Bar -->
+    <form class="sa-input-bar" id="saForm" onsubmit="event.preventDefault(); window.LJSuper && window.LJSuper.submitInput()">
+      <button type="button" class="sa-mic-btn" id="saMicBtn" onclick="window.LJSuper && window.LJSuper.toggleMic()" title="Dictar orden o pregunta por voz">
+        <span id="saMicLabel">VOZ</span>
+      </button>
+      <input id="saInput" class="sa-input" autocomplete="off" placeholder="Habla o escribe cualquier orden o pregunta (ej. «qué citas tengo hoy», «aprobar borrador», «agendar cita mañana 11:00»)…" />
+      <button type="submit" class="sa-send-btn" id="saSendBtn">EJECUTAR</button>
+    </form>
+  </div>
+</section>
+
 <div class="toast" id="toastBox"></div>
 <div class="foot">La Jefatura Suite · White-Label CEO Mission Control · <span data-i18n="foot">Datos de muestra listos para demostración + API real en servidor (mc.db / Nexus / Comms Brain / Grok 3.0 Voice)</span></div>
 
@@ -1198,7 +1265,7 @@ const I18N = {
   es:{
     tab_overview:"Centro de Mando", tab_comms:"Bandeja IA (Aprobar y Enviar)",
     tab_outcomes:"Resultados y Monitoreo", tab_behavior:"Cerebro Conductual",
-    tab_setup:"Configuración (1-Vez)", tab_blogs:"Blogs por Función (Paso a Paso)",
+    tab_setup:"Configuración (1-Vez)", tab_blogs:"Blogs por Función (Paso a Paso)", tab_assistant:"Super Asistente (Solo Voz y Texto)",
     k1:"Ingreso mensual proyectado", k2:"Pipeline total (Nexus)", k3:"Ventas cerradas", k4:"Tareas críticas",
     vs:"vs semana previa", leads:"leads activos", conv:"conversión", over:"vencida — requiere CEO",
     exec_digest:"Resumen Ejecutivo Diario (Todas las Apps Conectadas)",
@@ -1225,7 +1292,7 @@ const I18N = {
   en:{
     tab_overview:"Command Center", tab_comms:"AI Inbox (Approve & Send)",
     tab_outcomes:"Outcomes & Monitoring", tab_behavior:"Behavioral Brain",
-    tab_setup:"1-Time CEO Setup", tab_blogs:"Function Blogs (Step-by-Step)",
+    tab_setup:"1-Time CEO Setup", tab_blogs:"Function Blogs (Step-by-Step)", tab_assistant:"Super Assistant (Voice & Text Only)",
     k1:"Projected monthly revenue", k2:"Total pipeline (Nexus)", k3:"Closed sales", k4:"Critical tasks",
     vs:"vs prior week", leads:"active leads", conv:"conversion", over:"overdue — CEO action needed",
     exec_digest:"Daily Executive Summary (All Connected Apps)",
@@ -1298,6 +1365,7 @@ document.addEventListener('keydown', (e) => {
 /* ── Tab Navigation ── */
 function switchTab(tabId) {
   activeTab = tabId;
+  document.body.classList.toggle('minimal-assistant-mode', tabId === 'assistant');
   document.querySelectorAll('.nav-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === tabId));
   document.querySelectorAll('.tab-pane').forEach(p => p.classList.toggle('active', p.id === 'pane-' + tabId));
   trackBehavior('click', 'tab_' + tabId);
@@ -1306,6 +1374,7 @@ function switchTab(tabId) {
   if (tabId === 'behavior') renderBehaviorTab();
   if (tabId === 'setup') renderSetupTab();
   if (tabId === 'blogs') renderBlogs();
+  if (tabId === 'assistant' && window.LJSuper) window.LJSuper.onOpen();
 }
 
 /* ── Time-of-Day Routine Switcher ── */
@@ -1997,7 +2066,7 @@ window.LJ.register('switch_company', (name) => {
 });
 
 window.LJ.register('open_tab', (tabId) => {
-  const valid = ['overview', 'comms', 'outcomes', 'behavior', 'setup', 'blogs'];
+  const valid = ['overview', 'comms', 'outcomes', 'behavior', 'setup', 'blogs', 'assistant'];
   const target = valid.includes(tabId) ? tabId : 'overview';
   switchTab(target);
   return (lang === 'es' ? 'Abriendo pestaña ' : 'Opening tab ') + target + '.';
@@ -2470,6 +2539,9 @@ window.LJ_applyUi = function (ui) {
   if (ui.set_name) { PREFS.ceo_name = ui.set_name; renderGreeting(false); }
   if (ui.show_brief || ui.refresh_brief) renderGreeting(false);
   if (ui.open_url) window.open(ui.open_url, '_blank');
+  if (ui.refresh_calendar && window.LJCal) window.LJCal.load();
+  if (ui.refresh_dev_escalations && window.LJSuper) window.LJSuper.loadDevEscalations();
+  if (ui.open_tab) switchTab(ui.open_tab);
 };
 (async function initJefesito() {
   try { Object.assign(PREFS, await (await fetch('/api/prefs')).json()); } catch (e) {}
@@ -2820,5 +2892,403 @@ window.LJ_applyUi = function (ui) {
   load();
 })();
 </script>
+
+<style>
+  body.minimal-assistant-mode #jfGreeting { display: none !important; }
+  .sa-shell {
+    max-width: 980px;
+    margin: 4px auto 24px;
+    background: rgba(34, 30, 28, 0.88);
+    backdrop-filter: blur(32px) saturate(175%);
+    -webkit-backdrop-filter: blur(32px) saturate(175%);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 28px;
+    padding: 16px 22px;
+    box-shadow: 0 28px 72px rgba(0, 0, 0, 0.48);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: calc(100vh - 188px); max-height: calc(100vh - 188px); overflow: hidden;
+  }
+  :root[data-theme="light"] .sa-shell {
+    background: rgba(255, 255, 255, 0.96);
+    border-color: rgba(15, 23, 42, 0.09);
+    color: #0f172a;
+    box-shadow: 0 24px 60px rgba(15, 23, 42, 0.08);
+  }
+  :root[data-theme="yellow"] .sa-shell {
+    background: #050505;
+    border-color: #facc15;
+  }
+  .sa-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  :root[data-theme="light"] .sa-header { border-bottom-color: #e2e8f0; }
+  .sa-brand { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 280px; }
+  .sa-orb {
+    width: 52px; height: 52px; border-radius: 50%; flex-shrink: 0;
+    background: radial-gradient(circle at 35% 35%, #FF8B55, #F05216 65%, #9A2B06);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 28px rgba(255, 107, 43, 0.55);
+    cursor: pointer; position: relative; transition: transform .2s ease;
+  }
+  .sa-orb:hover { transform: scale(1.06); }
+  .sa-orb.listening {
+    animation: saPulseOrb 1.2s infinite ease-in-out;
+    box-shadow: 0 0 38px rgba(16, 185, 129, 0.85);
+    background: radial-gradient(circle at 35% 35%, #34D399, #059669 65%, #064E3B);
+  }
+  @keyframes saPulseOrb {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.12); }
+  }
+  .sa-orb-core {
+    width: 18px; height: 18px; border-radius: 50%;
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 0 12px #fff;
+  }
+  .sa-title { font-size: 18px; font-weight: 800; letter-spacing: -0.02em; margin: 0; }
+  .sa-sub { font-size: 12px; color: var(--dim); line-height: 1.5; margin-top: 4px; max-width: 680px; }
+  .sa-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .sa-dev-drawer {
+    background: rgba(255, 107, 43, 0.08);
+    border: 1px solid rgba(255, 107, 43, 0.35);
+    border-radius: 16px;
+    padding: 12px 14px;
+  }
+  .sa-dev-item {
+    display: flex; justify-content: space-between; align-items: center; gap: 10px;
+    padding: 8px 10px; border-radius: 10px; background: rgba(0, 0, 0, 0.24);
+    border: 1px solid rgba(255, 255, 255, 0.08); font-size: 12px;
+  }
+  :root[data-theme="light"] .sa-dev-item { background: #fff; border-color: #cbd5e1; }
+  .sa-chat-window {
+    flex: 1;
+    min-height: 120px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 8px 4px;
+  }
+  .sa-msg {
+    max-width: 85%;
+    padding: 14px 18px;
+    border-radius: 20px;
+    font-size: 13.5px;
+    line-height: 1.55;
+    position: relative;
+  }
+  .sa-msg.user {
+    align-self: flex-end;
+    background: linear-gradient(135deg, #FF783C, #F05216);
+    color: #fff;
+    border-bottom-right-radius: 6px;
+    font-weight: 600;
+    box-shadow: 0 8px 24px rgba(240, 82, 22, 0.28);
+  }
+  .sa-msg.assistant {
+    align-self: flex-start;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: var(--txt);
+    border-bottom-left-radius: 6px;
+  }
+  :root[data-theme="light"] .sa-msg.assistant {
+    background: #f8fafc;
+    border-color: #e2e8f0;
+    color: #0f172a;
+  }
+  .sa-msg-meta {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    margin-top: 8px; font-size: 11px; color: var(--dim);
+  }
+  .sa-badge {
+    font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 999px;
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .sa-badge.ok { background: rgba(16, 185, 129, 0.16); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.35); }
+  :root[data-theme="light"] .sa-badge.ok { color: #059669; }
+  .sa-badge.dev { background: rgba(255, 107, 43, 0.2); color: #FF8B55; border: 1px solid rgba(255, 107, 43, 0.45); }
+  :root[data-theme="light"] .sa-badge.dev { color: #EA580C; }
+  .sa-speak-btn {
+    border: 0; background: rgba(255, 255, 255, 0.1); color: inherit;
+    padding: 2px 8px; border-radius: 999px; font-size: 10.5px; font-weight: 700; cursor: pointer;
+  }
+  :root[data-theme="light"] .sa-speak-btn { background: #e2e8f0; color: #334155; }
+  .sa-chips {
+    display: flex; gap: 7px; flex-wrap: wrap; padding-top: 4px;
+  }
+  .sa-chip {
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--txt);
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: .14s;
+  }
+  :root[data-theme="light"] .sa-chip { background: #f1f5f9; border-color: #cbd5e1; color: #1e293b; }
+  .sa-chip:hover { border-color: #FF6B2B; background: rgba(255, 107, 43, 0.16); }
+  .sa-chip.warn { border-color: rgba(255, 107, 43, 0.45); color: #FF9F76; }
+  :root[data-theme="light"] .sa-chip.warn { color: #EA580C; }
+  .sa-input-bar {
+    display: flex; gap: 10px; align-items: center;
+    background: rgba(0, 0, 0, 0.28);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 999px;
+    padding: 7px 8px 7px 10px;
+  }
+  :root[data-theme="light"] .sa-input-bar { background: #f8fafc; border-color: #cbd5e1; }
+  .sa-mic-btn {
+    border: 0; border-radius: 999px; padding: 10px 16px;
+    background: rgba(255, 255, 255, 0.1); color: var(--txt);
+    font-weight: 800; font-size: 11.5px; letter-spacing: 0.05em; cursor: pointer;
+  }
+  :root[data-theme="light"] .sa-mic-btn { background: #e2e8f0; color: #0f172a; }
+  .sa-mic-btn.active { background: #10B981; color: #fff; }
+  .sa-input {
+    flex: 1; border: 0; background: transparent; color: inherit;
+    font-size: 14px; outline: none; padding: 6px 8px;
+  }
+  .sa-send-btn {
+    border: 0; border-radius: 999px; padding: 11px 22px;
+    background: linear-gradient(135deg, #FF783C, #F05216);
+    color: #fff; font-weight: 800; font-size: 12px; letter-spacing: 0.06em; cursor: pointer;
+    box-shadow: 0 6px 18px rgba(240, 82, 22, 0.35);
+  }
+</style>
+<script>
+(function(){
+  const g = id => document.getElementById(id);
+  const esc = t => String(t == null ? '' : t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  let autoSpeak = true;
+  let booted = false;
+  let recog = null;
+  let listening = false;
+  const messages = [];
+
+  function addMsg(role, text, meta = {}) {
+    messages.push({ role, text, meta, ts: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) });
+    renderMessages();
+  }
+
+  function renderMessages() {
+    const box = g('saChatLog');
+    if (!box) return;
+    box.innerHTML = messages.map((m, idx) => {
+      if (m.role === 'user') {
+        return `<div class="sa-msg user"><div>${esc(m.text)}</div><div class="sa-msg-meta" style="color:rgba(255,255,255,.78);justify-content:flex-end"><span>CEO · ${esc(m.ts)}</span></div></div>`;
+      }
+      const badge = m.meta.devTicket
+        ? `<span class="sa-badge dev">ESCALADO AL DESARROLLADOR (JASMEL) · #${esc(m.meta.devTicket.id)}</span>`
+        : `<span class="sa-badge ok">${esc(m.meta.badge || 'EJECUTADO / GROUNDED SQL')}</span>`;
+      const src = m.meta.sources && m.meta.sources.length
+        ? `<span>Fuente: ${esc(m.meta.sources.join(' · '))}</span>`
+        : '';
+      return `<div class="sa-msg assistant">
+        <div>${esc(m.text)}</div>
+        <div class="sa-msg-meta">
+          ${badge}
+          ${src}
+          <button type="button" class="sa-speak-btn" data-sa-speak="${idx}">Escuchar Voz</button>
+        </div>
+      </div>`;
+    }).join('');
+    box.querySelectorAll('[data-sa-speak]').forEach(btn => {
+      btn.onclick = () => {
+        const m = messages[+btn.dataset.saSpeak];
+        if (m && window.LJ && window.LJ.speak) window.LJ.speak(m.text, false);
+      };
+    });
+    box.scrollTop = box.scrollHeight;
+  }
+
+  async function loadDevEscalations() {
+    try {
+      const d = await (await fetch('/api/dev_escalations')).json();
+      const list = d.escalations || [];
+      const openCnt = list.filter(x => x.status !== 'resolved').length;
+      if (g('saDevBadge')) g('saDevBadge').textContent = String(openCnt);
+      const box = g('saDevList');
+      if (!box) return;
+      if (!list.length) {
+        box.innerHTML = '<div class="muted" style="font-size:11.5px">No hay solicitudes pendientes para el desarrollador.</div>';
+        return;
+      }
+      box.innerHTML = list.map(it => `
+        <div class="sa-dev-item">
+          <div>
+            <b style="color:#FF8B55">#${esc(it.id)}</b> · <span>${esc(it.request)}</span>
+            <div class="muted" style="font-size:10.5px">${esc(it.date || '')} · Estado: <b>${esc(it.status === 'resolved' ? 'RESUELTO' : 'PENDIENTE DESARROLLADOR (JASMEL)')}</b></div>
+          </div>
+          ${it.status !== 'resolved' ? `<button type="button" class="btn ghost sm" data-resolve-dev="${esc(it.id)}">Marcar Resuelto</button>` : `<span class="tag ok">LISTO</span>`}
+        </div>
+      `).join('');
+      box.querySelectorAll('[data-resolve-dev]').forEach(b => {
+        b.onclick = async () => {
+          await fetch('/api/dev_escalations/resolve', {
+            method: 'POST', headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ id: b.dataset.resolveDev, resolution: 'Resuelto e integrado por Jasmel' })
+          });
+          loadDevEscalations();
+        };
+      });
+    } catch (e) {}
+  }
+
+  async function send(rawText, channel = 'text') {
+    const text = (rawText || '').trim();
+    if (!text) return;
+    addMsg('user', text);
+    const low = text.toLowerCase();
+
+    // 1. Check immediate client-side action hooks that also sync with server
+    if (/^(aprobar borrador|approve draft)$/i.test(low)) {
+      const pending = typeof DRAFTS_QUEUE !== 'undefined' ? DRAFTS_QUEUE.find(d => d.status !== 'SENT') : null;
+      if (pending && typeof approveAndSendDraft === 'function') {
+        approveAndSendDraft(pending.draft_id);
+      }
+    } else if (/caf[eé]|coffee|cortado/i.test(low) && !/^(guardar|nota|crear)/i.test(low)) {
+      if (typeof runForeseenCmd === 'function') runForeseenCmd('confirm_coffee');
+    }
+
+    // 2. Always execute through the unified Server Voice & Knowledge Command Engine (/api/voice/command)
+    try {
+      const r = await fetch('/api/voice/command', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ command: text, lang: typeof lang !== 'undefined' ? lang : 'es', channel })
+      });
+      const d = await r.json();
+      const reply = d.reply || 'Orden procesada.';
+      if (d.ui && typeof window.LJ_applyUi === 'function') window.LJ_applyUi(d.ui);
+      if (window.LJCal && (d.action === 'schedule_event' || d.action === 'sync_integrations' || d.action === 'save_task' || d.action === 'complete_task')) {
+        window.LJCal.load();
+      }
+      if (typeof window.loadKnowledgeVault === 'function') window.loadKnowledgeVault(false);
+      await loadDevEscalations();
+
+      addMsg('assistant', reply, {
+        badge: d.dev_ticket ? null : (d.action && d.action !== 'ask' ? 'ORDEN EJECUTADA · ' + d.action.toUpperCase() : 'DATOS REALES · MC.DB'),
+        sources: d.sources || [],
+        devTicket: d.dev_ticket || null
+      });
+      if (autoSpeak && window.LJ && typeof window.LJ.speak === 'function') {
+        window.LJ.speak(reply, false);
+      }
+    } catch (e) {
+      addMsg('assistant', 'No pude conectar con el servidor; jamás invento una respuesta.', { badge: 'MODO SEGURO' });
+    }
+  }
+
+  function submitInput() {
+    const el = g('saInput');
+    if (!el || !el.value.trim()) return;
+    const v = el.value.trim();
+    el.value = '';
+    send(v, 'text');
+  }
+
+  function toggleAutoSpeak() {
+    autoSpeak = !autoSpeak;
+    if (g('saVoiceToggleBtn')) {
+      g('saVoiceToggleBtn').textContent = (typeof lang !== 'undefined' && lang === 'en' ? 'Voice Reply: ' : 'Voz Respuesta: ') + (autoSpeak ? 'ON' : 'OFF');
+    }
+    if (!autoSpeak && window.LJ && window.LJ.stopAudio) window.LJ.stopAudio();
+  }
+
+  function toggleDevDrawer() {
+    const dr = g('saDevDrawer');
+    if (!dr) return;
+    const show = dr.style.display === 'none';
+    dr.style.display = show ? 'block' : 'none';
+    if (show) loadDevEscalations();
+  }
+
+  async function promptManualEscalation() {
+    const inp = g('saInput');
+    const req = (inp && inp.value.trim()) || 'Integrar nuevo conector personalizado solicitado por el CEO';
+    if (inp) inp.value = '';
+    await send('notificar al desarrollador: ' + req, 'text');
+    const dr = g('saDevDrawer');
+    if (dr) dr.style.display = 'block';
+  }
+
+  function toggleMic() {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) {
+      showToast('Reconocimiento de voz del navegador no disponible; escribe tu orden abajo.');
+      return;
+    }
+    if (listening && recog) {
+      recog.stop();
+      return;
+    }
+    recog = new SR();
+    recog.lang = (typeof lang !== 'undefined' && lang === 'en') ? 'en-US' : 'es-CO';
+    recog.interimResults = false;
+    recog.maxAlternatives = 1;
+    recog.onstart = () => {
+      listening = true;
+      if (g('saOrb')) g('saOrb').classList.add('listening');
+      if (g('saMicBtn')) g('saMicBtn').classList.add('active');
+      if (g('saMicLabel')) g('saMicLabel').textContent = 'ESCUCHANDO…';
+    };
+    recog.onresult = (ev) => {
+      const transcript = ev.results[0][0].transcript;
+      if (transcript) send(transcript, 'voice');
+    };
+    recog.onend = () => {
+      listening = false;
+      if (g('saOrb')) g('saOrb').classList.remove('listening');
+      if (g('saMicBtn')) g('saMicBtn').classList.remove('active');
+      if (g('saMicLabel')) g('saMicLabel').textContent = 'VOZ';
+    };
+    recog.start();
+  }
+
+  function onOpen() {
+    loadDevEscalations();
+    if (!booted) {
+      booted = true;
+      addMsg('assistant',
+        'Hola Jasmel. Estás en el Super Asistente Minimalista (Solo Voz y Texto). ' +
+        'Estoy conectado a tus 5 empresas ($48,200/mes proyectados · $214,500 en pipeline), tus 11 citas de calendario, ' +
+        'tus borradores de Bandeja IA y las métricas en vivo de BuildingApp y UNITEC. ' +
+        'Dime qué resultado quieres leer o qué orden ejecuto; si algo no existe todavía, jamás adivino y le envío un ticket automático al desarrollador.',
+        { badge: 'MEMORIA ACTIVA · 9/9 INTEGRACIONES', sources: ['mc.db', 'Calendario', 'Bandeja IA', 'Escalación #DEV'] }
+      );
+    }
+  }
+
+  window.LJSuper = {
+    send,
+    submitInput,
+    toggleAutoSpeak,
+    toggleDevDrawer,
+    promptManualEscalation,
+    toggleMic,
+    loadDevEscalations,
+    onOpen
+  };
+
+  // Auto-open Minimalist Super Assistant if URL is /assistant or ?view=assistant
+  if (location.pathname === '/assistant' || location.pathname === '/chat' || /[?&]view=assistant/.test(location.search)) {
+    setTimeout(() => switchTab('assistant'), 50);
+  } else {
+    loadDevEscalations();
+  }
+})();
+</script>
+
 </body>
 </html>

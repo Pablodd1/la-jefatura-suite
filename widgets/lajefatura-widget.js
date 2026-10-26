@@ -109,8 +109,12 @@
       // 0. Knowledge intents (save note/task/meeting/email, list, search, metric questions) are
       //    answered ONLY by the server from stored data — checked first so words inside the
       //    note («mañana», «café»…) cannot trigger other commands.
-      if (/^(guardar|guarda|anotar|anota|agregar|agrega|a[ñn]adir|save|add|take|create|crear|crea|new|nota|note|recu[eé]rdame|remind me)\b/i.test(t) &&
-          /(nota|note|tarea|task|reuni[oó]n|meeting|correo|email|recu[eé]rdame|remind me)/i.test(low)) {
+      if (/^(guardar|guarda|anotar|anota|agregar|agrega|a[ñn]adir|agendar|agenda|programar|programa|notificar|notifica|escalar|escala|save|add|take|create|crear|crea|schedule|book|notify|escalate|new|nota|note|recu[eé]rdame|remind me)\b/i.test(t) &&
+          /(nota|note|tarea|task|cita|evento|appointment|reuni[oó]n|meeting|correo|email|desarrollador|developer|jasmel|recu[eé]rdame|remind me)/i.test(low)) {
+        return { action: "server_cmd", arg: t };
+      }
+      if (/\b(sincronizar|sincroniza|sync)\b.*\b(calendario|agenda|integraciones|apps|todo|all)\b/i.test(low) ||
+          /\b(citas?|agenda|eventos?|calendario|appointments?|ingresos?|facturaci[oó]n|portafolio|misi[oó]n|directiva|desarrollador)\b/i.test(low)) {
         return { action: "server_cmd", arg: t };
       }
       if (/^(buscar|busca|search|find|encuentra|qu[eé] dijo|what did)\b/i.test(low) ||
@@ -133,6 +137,7 @@
 
       // 1. Tab switching
       const tabMap = [
+        [/\b(super\s*asistente|vista\s*simple|modo\s*simple|solo\s*voz|single\s*chat|assistant)\b/i, "assistant"],
         [/\b(blogs?|gu[ií]as?|paso a paso|step by step|funciones|explicaci[oó]n)\b/i, "blogs"],
         [/\b(setup|configuraci[oó]n|onboarding|integraciones|conectar|white[- ]?label)\b/i, "setup"],
         [/\b(cerebro|behavior|conductual|h[aá]bitos|habits|rutina|aprendizaje|learning)\b/i, "behavior"],

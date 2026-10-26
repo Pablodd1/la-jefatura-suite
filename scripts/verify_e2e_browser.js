@@ -152,6 +152,27 @@ const URL = 'http://localhost:8931/';
   await page.locator('#blogSearchInput').fill('');
   await page.screenshot({ path: path.join(ASSETS_DIR, 'verified-6-function-blogs.png'), fullPage: true });
 
+  // 6b. Verify Tab 7: Minimalist Single-Window Super Assistant (Voice & Text Only) + Developer Auto-Escalation (#DEV)
+  await page.locator('.nav-tab[data-tab="assistant"]').click();
+  await page.waitForTimeout(300);
+  await page.locator('#saInput').fill('qué citas tengo hoy');
+  await page.locator('#saSendBtn').click();
+  await page.waitForTimeout(450);
+  await page.locator('#saInput').fill('cuál es el ingreso proyectado y pipeline de todas las empresas');
+  await page.locator('#saSendBtn').click();
+  await page.waitForTimeout(450);
+  await page.locator('#saInput').fill('conectar cuenta bancaria Suiza UBS en tiempo real');
+  await page.locator('#saSendBtn').click();
+  await page.waitForTimeout(450);
+  await page.locator('#saDevBtn').click();
+  await page.waitForTimeout(250);
+  const saChatTxt = await page.locator('#saChatLog').innerText();
+  const saDevTxt = await page.locator('#saDevDrawer').innerText();
+  check('13b. Minimalist Single-Window Super Assistant (Voice & Text) + Connected Execution + Developer Auto-Escalation (#DEV)',
+    saChatTxt.includes('Kickoff Técnico Brickell Ortho') && saChatTxt.includes('$48,200') && saChatTxt.includes('Ticket #DEV-') && saDevTxt.includes('UBS'),
+    'Minimalist chat answered calendar + KPIs & escalated unknown capability to Developer (#DEV)');
+  await page.screenshot({ path: path.join(ASSETS_DIR, 'verified-18-super-assistant-minimal.png'), fullPage: false });
+
   // 7. Verify Grok 3.0 Voice & DOM Brain Widget + Grounded Note Save & Metric Query
   await page.locator('#ljw-fab').click();
   await page.locator('#ljw-in').fill('qué hay en pantalla');

@@ -195,6 +195,9 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
             kind = path.rsplit("/", 1)[1]
             self._send(200, {kind: knowledge_store.list_items(kind, limit=200)})
             return
+        if path == "/api/dev_escalations":
+            self._send(200, {"escalations": knowledge_store.list_dev_escalations()})
+            return
         if path == "/api/events":
             self._send(200, {"events": knowledge_store.list_events()})
             return
@@ -205,7 +208,7 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
             self._send(200, knowledge_store.export_all())
             return
 
-        if path in ("/", "/index.html", "/demo"):
+        if path in ("/", "/index.html", "/demo", "/assistant", "/chat"):
             html = open(os.path.join(ROOT, "mock", "demo.html"), "rb").read()
             self._send(200, html, "text/html; charset=utf-8")
         elif path.rstrip("/") in ("/website", "/web", "/presentacion", "/site", "/website-v1", "/website-v2", "/website-v3"):
@@ -304,6 +307,12 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
                                          owner=body.get("owner", "CEO"), due=body.get("due", ""),
                                          severity=body.get("severity", "medium"), source=body.get("source", "api"))
             self._send(200 if r["ok"] else 400, r)
+        elif path == "/api/dev_escalations":
+            r = knowledge_store.log_dev_escalation(
+                body.get("request", ""), body.get("reason", "ui_escalation"), body.get("channel", "ui"))
+            self._send(200 if r.get("ok") else 400, r)
+        elif path == "/api/dev_escalations/resolve":
+            self._send(200, knowledge_store.resolve_dev_escalation(body.get("id", ""), body.get("resolution", "Resuelto")))
         elif path == "/api/events":
             r = knowledge_store.add_event(body.get("title", ""), body.get("date", ""), body.get("time", ""),
                                           body.get("duration", 30), body.get("company", "all"),

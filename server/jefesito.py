@@ -442,7 +442,7 @@ def control(command: str, lang: str = "es"):
                           else f"You have 3 themes: {opts}. Say 'light theme', 'graphite theme' or 'yellow theme'.")}
 
     if re.search(r"\b(saludo|greeting|bienvenida)\b", low):
-        if re.search(r"\b(deten|detener|detenga|para|parar|apaga|apagar|desactiva|desactivar|silencia|quita|"
+        if re.search(r"\b(deten|detener|detenga|parar|apaga|apagar|desactiva|desactivar|silencia|quita|"
                      r"stop|disable|mute|turn off|no mas)\b", low):
             set_prefs({"greeting_enabled": False})
             return {"reply": ("Saludo detenido. No lo diré al abrir la app hasta que me pidas activarlo." if es
@@ -460,8 +460,7 @@ def control(command: str, lang: str = "es"):
         d = get_day(lang=lang)
         return {"reply": d["spoken"], "ui": {"show_brief": True}, "sources": d["sources"]}
 
-    if (re.search(r"(cierra|cerrar|cierre|close|finaliza|terminar|termina|end)\b", low)
-            and re.search(r"\b(dia|day)\b", low)):
+    if re.search(r"\b(cierra|cerrar|close|finaliza|terminar)\s+(el\s+|the\s+)?(dia|day)\b", low):
         r = close_day()
         return {"reply": (f"Día {r['closed']} cerrado. Empieza hoja nueva para {r['next']}." if es
                           else f"Day {r['closed']} closed. A new sheet starts for {r['next']}."),
