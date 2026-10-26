@@ -193,6 +193,12 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
             kind = path.rsplit("/", 1)[1]
             self._send(200, {kind: knowledge_store.list_items(kind, limit=200)})
             return
+        if path == "/api/events":
+            self._send(200, {"events": knowledge_store.list_events()})
+            return
+        if path == "/api/calendar.ics":
+            self._send(200, knowledge_store.events_ics().encode("utf-8"), "text/calendar; charset=utf-8")
+            return
         if path == "/api/export":
             self._send(200, knowledge_store.export_all())
             return
@@ -296,6 +302,21 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
                                          owner=body.get("owner", "CEO"), due=body.get("due", ""),
                                          severity=body.get("severity", "medium"), source=body.get("source", "api"))
             self._send(200 if r["ok"] else 400, r)
+        elif path == "/api/events":
+            r = knowledge_store.add_event(body.get("title", ""), body.get("date", ""), body.get("time", ""),
+                                          body.get("duration", 30), body.get("company", "all"),
+                                          body.get("notes", ""), body.get("source", "ui"))
+            self._send(200 if r["ok"] else 400, r)
+        elif path == "/api/events/update":
+            r = knowledge_store.update_event(body.get("id", ""), **{k: v for k, v in body.items() if k != "id"})
+            self._send(200 if r["ok"] else 400, r)
+        elif path == "/api/events/delete":
+            self._send(200, knowledge_store.delete_event(body.get("id", "")))
+        elif path == "/api/tasks/update":
+            r = knowledge_store.update_task(body.get("id", ""), body.get("title"), body.get("due"), body.get("status"))
+            self._send(200 if r["ok"] else 400, r)
+        elif path == "/api/tasks/delete":
+            self._send(200, knowledge_store.delete_task(body.get("id", "")))
         elif path == "/api/meetings":
             r = knowledge_store.add_meeting_summary(
                 body.get("summary", ""), title=body.get("title", ""), attendees=body.get("attendees", ""),

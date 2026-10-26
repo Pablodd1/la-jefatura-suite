@@ -402,3 +402,106 @@ def ask(question: str, lang: str = "es") -> dict:
 
 if __name__ == "__main__":
     print(json.dumps(ask("cuántos miembros hay"), ensure_ascii=False, indent=2))
+
+# ───────────────────────── calendar events & task edits ─────────────────────────
+_EV_SCHEMA = """
+CREATE TABLE IF NOT EXISTS events (
+    id TEXT PRIMARY KEY, title TEXT, date TEXT, time TEXT, duration INTEGER,
+    company TEXT, notes TEXT, source TEXT, status TEXT, ts REAL);
+"""
+
+
+def _evdb():
+    c = _db()
+    c.executescript(_EV_SCHEMA)
+    return c
+
+
+def add_event(title: str, date: str, time_: str = "", duration: int = 30, company: str = "all",
+              notes: str = "", source: str = "ui") -> dict:
+    title = _clean(title, 300)
+    date = (date or "").strip()
+    if not title or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", date):
+        return {"ok": False, "error": "title and date (YYYY-MM-DD) required"}
+    time_ = (time_ or "").strip()
+    if time_ and not re.fullmatch(r"\d{2}:\d{2}", time_):
+        return {"ok": False, "error": "time must be HH:MM"}
+    eid = "E-" + uuid.uuid4().hex[:8]
+    c = _evdb()
+    c.execute("INSERT INTO events VALUES(?,?,?,?,?,?,?,?,?,?)",
+              (eid, title, date, time_, int(duration or 30), company, _clean(notes, 1000),
+               source, "scheduled", time.time()))
+    c.commit(); c.close()
+    return {"ok": True, "id": eid, "title": title}
+
+
+def update_event(eid: str, **fields) -> dict:
+    allowed = {"title", "date", "time", "duration", "company", "notes", "status"}
+    sets = {k: v for k, v in fields.items() if k in allowed and v is not None}
+    if not sets:
+        return {"ok": False, "error": "nothing to update"}
+    c = _evdb()
+    cur = c.execute("UPDATE events SET " + ",".join(f"{k}=?" for k in sets) + " WHERE id=?",
+                    list(sets.values()) + [eid])
+    c.commit(); n = cur.rowcount; c.close()
+    return {"ok": n > 0, "id": eid}
+
+
+def delete_event(eid: str) -> dict:
+    c = _evdb()
+    n = c.execute("DELETE FROM events WHERE id=?", (eid,)).rowcount
+    c.commit(); c.close()
+    return {"ok": n > 0, "id": eid}
+
+
+def list_events() -> list:
+    c = _evdb()
+    rows = [dict(r) for r in c.execute("SELECT * FROM events ORDER BY date, time").fetchall()]
+    c.close()
+    return rows
+
+
+def update_task(tid: str, title=None, due=None, status=None) -> dict:
+    sets = {}
+    if title is not None: sets["title"] = _clean(title, 500)
+    if due is not None: sets["due"] = due
+    if status is not None:
+        sets["status"] = status
+        sets["done"] = time.time() if status == "done" else None
+    if not sets:
+        return {"ok": False, "error": "nothing to update"}
+    c = _db()
+    n = c.execute("UPDATE tasks SET " + ",".join(f"{k}=?" for k in sets) + " WHERE id=?",
+                  list(sets.values()) + [tid]).rowcount
+    c.commit(); c.close()
+    return {"ok": n > 0, "id": tid}
+
+
+def delete_task(tid: str) -> dict:
+    c = _db()
+    n = c.execute("DELETE FROM tasks WHERE id=?", (tid,)).rowcount
+    c.commit(); c.close()
+    return {"ok": n > 0, "id": tid}
+
+
+def events_ics() -> str:
+    """iCalendar feed (events + dated tasks). Subscribe from Google Calendar / Outlook / Apple."""
+    def esc(s): return (s or "").replace("\\", "\\\\").replace(";", "\\;").replace(",", "\\,").replace("\n", "\\n")
+    out = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//La Jefatura//Agenda//ES", "CALSCALE:GREGORIAN"]
+    for e in list_events():
+        d = e["date"].replace("-", "")
+        out += ["BEGIN:VEVENT", f"UID:{e['id']}@lajefatura"]
+        if e["time"]:
+            hh, mm = int(e["time"][:2]), int(e["time"][3:])
+            end = hh * 60 + mm + int(e["duration"] or 30)
+            out += [f"DTSTART:{d}T{hh:02d}{mm:02d}00",
+                    f"DTEND:{d}T{min(end // 60, 23):02d}{end % 60 if end < 1440 else 59:02d}00"]
+        else:
+            out.append(f"DTSTART;VALUE=DATE:{d}")
+        out += [f"SUMMARY:{esc(e['title'])}", f"DESCRIPTION:{esc(e['notes'])}", "END:VEVENT"]
+    for t in list_items("tasks", limit=100000):
+        if re.fullmatch(r"\d{4}-\d{2}-\d{2}", t.get("due") or "") and t["status"] != "done":
+            out += ["BEGIN:VEVENT", f"UID:{t['id']}@lajefatura",
+                    f"DTSTART;VALUE=DATE:{t['due'].replace('-', '')}", f"SUMMARY:{esc('Tarea: ' + t['title'])}", "END:VEVENT"]
+    out.append("END:VCALENDAR")
+    return "\r\n".join(out) + "\r\n"
