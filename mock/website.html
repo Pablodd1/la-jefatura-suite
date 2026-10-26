@@ -11,21 +11,21 @@
      APPLE-STYLE MINIMALIST YELLOW & PURE BLACK · HORIZONTAL SLIDE WEBSITE
      ===================================================================== */
   :root {
-    --bg: #000000;
-    --ar: 255, 212, 0;
+    --bg: #050506;
+    --ar: 255, 107, 43;
     --vid-filter: hue-rotate(0deg);
-    --surface: #0a0a0c;
-    --surface2: #121216;
-    --surface-glass: rgba(14, 14, 18, 0.84);
-    --yellow: #ffd400;
-    --yellow-bright: #ffe347;
-    --yellow-soft: rgba(var(--ar), 0.12);
-    --yellow-border: rgba(var(--ar), 0.28);
+    --surface: #141210;
+    --surface2: #1c1917;
+    --surface-glass: rgba(34, 30, 27, 0.84);
+    --yellow: #ff6b2b;
+    --yellow-bright: #ff854d;
+    --yellow-soft: rgba(var(--ar), 0.14);
+    --yellow-border: rgba(var(--ar), 0.32);
     --txt: #ffffff;
-    --txt-sub: #c7c7cc;
-    --muted: #86868b;
-    --hair: rgba(255, 255, 255, 0.11);
-    --ok: #32d74b;
+    --txt-sub: #d6d3d1;
+    --muted: #a8a29e;
+    --hair: rgba(255, 255, 255, 0.12);
+    --ok: #10b981;
     --danger: #ff453a;
     --radius-xl: 26px;
     --radius-lg: 18px;
@@ -61,7 +61,7 @@
   }
   .theme-dot:hover { transform: scale(1.18); }
   .theme-dot.active { border-color: #fff; }
-  .theme-dot[data-theme="gold"]  { background: #ffd400; }
+  .theme-dot[data-theme="gold"]  { background: #ff6b2b; }
   .theme-dot[data-theme="slate"] { background: #8fb4d9; }
   .theme-dot[data-theme="sage"]  { background: #9bbf9e; }
   .theme-dot[data-theme="sand"]  { background: #cdb68c; }
@@ -135,8 +135,8 @@
     white-space: nowrap;
   }
   .nav-links a:hover, .nav-links a.active {
-    color: #000;
-    background: var(--yellow);
+    color: #fff;
+    background: linear-gradient(135deg, #ff783c, #f05216);
     font-weight: 800;
   }
 
@@ -146,8 +146,8 @@
     align-items: center;
   }
   .btn-yellow {
-    background: var(--yellow);
-    color: #000000 !important;
+    background: linear-gradient(135deg, #ff783c, #f05216);
+    color: #ffffff !important;
     font-weight: 800;
     font-size: 12.5px;
     padding: 8px 16px;
@@ -244,8 +244,8 @@
     box-shadow: 0 12px 36px rgba(0, 0, 0, 0.85);
   }
   .dock-arrow {
-    background: var(--yellow);
-    color: #000;
+    background: linear-gradient(135deg, #ff783c, #f05216);
+    color: #fff;
     border: 0;
     border-radius: 980px;
     padding: 6px 13px;
@@ -957,6 +957,728 @@
     .req-grid { grid-template-columns: repeat(2, 1fr); }
     .nav-links { display: none; }
   }
+
+  /* =====================================================================
+     V12 SPATIAL GLASS TEMPLATE (VISION-OS WARM GLASS + SUNSET ORANGE + QUIXOTIC)
+     ===================================================================== */
+  #top.h-slide {
+    align-items: flex-start !important;
+    padding-top: 66px !important;
+    padding-bottom: 84px !important;
+  }
+  .v12-wrap {
+    width: 100%;
+    max-width: 1380px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+  .v12-room-stage {
+    position: relative;
+    width: 100%;
+    min-height: 625px;
+    border-radius: 26px;
+    overflow: hidden;
+    background: url('/assets/spatial-room-bg.jpg') center center / cover no-repeat;
+    padding: 18px 22px 58px;
+    box-shadow: 0 28px 80px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.12);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .v12-room-stage::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 40%, rgba(25, 20, 16, 0.10), rgba(15, 12, 10, 0.36));
+    pointer-events: none;
+  }
+
+  /* 3-Column Spatial Glass Layout (Sidebar + Main Glass + Right Inspector) */
+  .v12-spatial-grid {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: 56px 1fr 292px;
+    gap: 14px;
+    align-items: stretch;
+    min-height: 535px;
+  }
+
+  /* Left Floating Vertical Pill Sidebar */
+  .v12-sidebar {
+    background: rgba(44, 39, 36, 0.84);
+    backdrop-filter: blur(28px) saturate(160%);
+    -webkit-backdrop-filter: blur(28px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 999px;
+    padding: 14px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+  }
+  .v12-logo-mark {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ff6b2b;
+  }
+  .v12-nav-col {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+  }
+  .v12-nav-btn {
+    position: relative;
+    width: 38px;
+    height: 38px;
+    border-radius: 13px;
+    border: none;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.65);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.18s ease;
+  }
+  .v12-nav-btn:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.10);
+  }
+  .v12-nav-btn.active {
+    background: linear-gradient(135deg, #ff783c, #f05216);
+    color: #ffffff;
+    box-shadow: 0 6px 16px rgba(240, 82, 22, 0.5);
+  }
+  .v12-nav-tooltip {
+    position: absolute;
+    left: 48px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(18, 18, 20, 0.94);
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 5px 12px;
+    border-radius: 999px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.18s ease, transform 0.18s ease;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+    border: 1px solid rgba(255,255,255,0.12);
+    z-index: 30;
+  }
+  .v12-nav-btn:hover .v12-nav-tooltip,
+  .v12-nav-btn.show-tip .v12-nav-tooltip {
+    opacity: 1;
+  }
+  .v12-theme-pill {
+    background: rgba(24, 22, 20, 0.72);
+    border-radius: 999px;
+    padding: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: center;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .v12-sun-dot {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ff783c, #f05216);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(240, 82, 22, 0.6);
+  }
+  .v12-moon-dot {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    color: rgba(255,255,255,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Center Main Spatial Glass Window */
+  .v12-main-glass {
+    background: rgba(45, 41, 38, 0.80);
+    backdrop-filter: blur(30px) saturate(165%);
+    -webkit-backdrop-filter: blur(30px) saturate(165%);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 28px;
+    padding: 20px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    box-shadow: 0 22px 50px rgba(0, 0, 0, 0.45);
+  }
+  .v12-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .v12-greeting h1 {
+    font-size: 21px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.3px;
+  }
+  .v12-greeting p {
+    font-size: 11.5px;
+    color: rgba(255, 255, 255, 0.62);
+    margin-top: 2px;
+  }
+  .v12-search-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .v12-search-box {
+    background: rgba(20, 19, 18, 0.78);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 999px;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 250px;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 11.5px;
+  }
+  .v12-search-box input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #fff;
+    font-size: 11.5px;
+    width: 100%;
+  }
+  .v12-bell-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(20, 19, 18, 0.78);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    cursor: pointer;
+  }
+  .v12-bell-dot {
+    position: absolute;
+    top: 7px;
+    right: 8px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #ff453a;
+  }
+
+  /* Subview Containers inside Main Glass */
+  .v12-pane { display: none; flex-direction: column; gap: 14px; flex: 1; }
+  .v12-pane.active { display: flex; }
+
+  /* Row 1: 4 Crisp White Metric Cards */
+  .v12-kpi-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  .v12-wcard {
+    background: #ffffff;
+    color: #18181b;
+    border-radius: 18px;
+    padding: 13px 15px;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.16);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 108px;
+  }
+  .v12-wcard-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 700;
+    color: #27272a;
+  }
+  .v12-mini-ico {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .v12-bars-viz {
+    display: flex;
+    align-items: flex-end;
+    gap: 5px;
+    height: 26px;
+    margin: 8px 0 6px;
+  }
+  .v12-bars-viz span {
+    width: 4px;
+    border-radius: 99px;
+    display: inline-block;
+  }
+  .v12-wcard-val {
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: -0.4px;
+  }
+  .v12-wcard-val small {
+    font-size: 10.5px;
+    font-weight: 600;
+    color: #71717a;
+    margin-left: 3px;
+  }
+
+  /* Row 2: Activity Curve Card + Right Split Feature Card */
+  .v12-mid-row {
+    display: grid;
+    grid-template-columns: 1.38fr 1fr;
+    gap: 12px;
+  }
+  .v12-chart-card {
+    background: #ffffff;
+    color: #18181b;
+    border-radius: 20px;
+    padding: 15px 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.16);
+  }
+  .v12-chart-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .v12-chart-head h3 {
+    font-size: 13px;
+    font-weight: 700;
+    color: #18181b;
+  }
+  .v12-pill-select {
+    background: #f4f4f5;
+    color: #52525b;
+    font-size: 10.5px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 999px;
+  }
+  .v12-split-card {
+    background: #ffffff;
+    color: #18181b;
+    border-radius: 20px;
+    padding: 15px;
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: 12px;
+    align-items: stretch;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.16);
+  }
+  .v12-split-visual {
+    border-radius: 14px;
+    overflow: hidden;
+    position: relative;
+    background: radial-gradient(circle at 50% 50%, #1d2432, #090b10);
+    display: flex;
+     flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    color: #fff;
+  }
+
+  /* Row 3: Diet / Executive Decision Plan Cards (White + Sunset Orange Active + White) */
+  .v12-section-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 2px;
+  }
+  .v12-section-bar h4 {
+    font-size: 13px;
+    font-weight: 700;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .v12-section-bar h4::before {
+    content: "";
+    width: 3px;
+    height: 13px;
+    border-radius: 4px;
+    background: #ff6b2b;
+    display: inline-block;
+  }
+  .v12-plan-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .v12-plan-card {
+    background: #ffffff;
+    color: #18181b;
+    border-radius: 18px;
+    padding: 13px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.16);
+    cursor: pointer;
+    transition: transform 0.18s ease;
+  }
+  .v12-plan-card:hover { transform: translateY(-2px); }
+  .v12-plan-card.orange {
+    background: linear-gradient(135deg, #ff7a3d 0%, #f05216 100%);
+    color: #ffffff;
+    box-shadow: 0 12px 26px rgba(240, 82, 22, 0.42);
+  }
+  .v12-plan-card h5 {
+    font-size: 12.5px;
+    font-weight: 800;
+    margin-bottom: 3px;
+  }
+  .v12-plan-card p {
+    font-size: 10px;
+    color: #71717a;
+    line-height: 1.35;
+    margin-bottom: 8px;
+  }
+  .v12-plan-card.orange p {
+    color: rgba(255, 255, 255, 0.86);
+  }
+  .v12-day-pill {
+    display: inline-block;
+    font-size: 9.5px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: #f4f4f5;
+    color: #3f3f46;
+  }
+  .v12-plan-card.orange .v12-day-pill {
+    background: #ffffff;
+    color: #f05216;
+  }
+  .v12-plan-Ring {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 800;
+    background: #f4f4f5;
+    color: #18181b;
+    border: 3px solid #e4e4e7;
+  }
+  .v12-plan-card.orange .v12-plan-Ring {
+    background: rgba(0, 0, 0, 0.22);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.45);
+  }
+
+  /* Right Spatial Glass Profile & Calendar Inspector */
+  .v12-right-glass {
+    background: rgba(44, 39, 36, 0.84);
+    backdrop-filter: blur(30px) saturate(165%);
+    -webkit-backdrop-filter: blur(30px) saturate(165%);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 28px;
+    padding: 18px 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 12px;
+    box-shadow: 0 22px 50px rgba(0, 0, 0, 0.45);
+  }
+  .v12-profile-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .v12-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ff7a3d, #f05216);
+    color: #fff;
+    font-weight: 800;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid rgba(255, 255, 255, 0.25);
+  }
+  .v12-user-stats {
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 10px 12px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    text-align: center;
+  }
+  .v12-user-stats b {
+    font-size: 12.5px;
+    color: #ffffff;
+    display: block;
+  }
+  .v12-user-stats span {
+    font-size: 9.5px;
+    color: rgba(255, 255, 255, 0.55);
+  }
+  .v12-cal-box {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 18px;
+    padding: 12px;
+  }
+  .v12-cal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+  .v12-cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 3px;
+    text-align: center;
+    font-size: 9.5px;
+    color: rgba(255, 255, 255, 0.65);
+  }
+  .v12-cal-grid span {
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+  }
+  .v12-cal-grid .cal-dow {
+    color: rgba(255, 255, 255, 0.4);
+    font-weight: 600;
+  }
+  .v12-cal-grid .cal-green {
+    background: #10b981;
+    color: #fff;
+    font-weight: 800;
+  }
+  .v12-cal-grid .cal-orange {
+    background: #ff6b2b;
+    color: #fff;
+    font-weight: 800;
+  }
+  .v12-cal-grid .cal-pink {
+    background: #ec4899;
+    color: #fff;
+    font-weight: 800;
+  }
+  .v12-sched-list {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .v12-sched-item {
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 13px;
+    padding: 8px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .v12-sched-badge {
+    font-size: 8.5px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.8);
+    display: inline-block;
+    margin-bottom: 2px;
+  }
+  .v12-sched-item h6 {
+    font-size: 11px;
+    color: #fff;
+    font-weight: 700;
+  }
+  .v12-sched-item p {
+    font-size: 9.5px;
+    color: rgba(255, 255, 255, 0.52);
+  }
+
+  /* Bottom Floating Switcher (SWITCH: Dashboard 1 | Dashboard 2 | Admin) */
+  .v12-bottom-switcher {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 25;
+    background: rgba(24, 24, 28, 0.92);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 999px;
+    padding: 5px 8px 5px 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.65);
+  }
+  .v12-switch-lbl {
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    color: rgba(255, 255, 255, 0.45);
+    margin-right: 4px;
+  }
+  .v12-sw-btn {
+    border: none;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.18s ease;
+  }
+  .v12-sw-btn.active-d1 {
+    background: linear-gradient(135deg, #ff783c, #f05216);
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(240, 82, 22, 0.5);
+  }
+  .v12-sw-btn.active-d2 {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.5);
+  }
+  .v12-sw-btn.active-admin {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(59, 130, 246, 0.5);
+  }
+
+  /* Quixotic Dashboard 2 (Clean White & Emerald Green Fintech View) */
+  .v12-quixotic-stage {
+    position: relative;
+    z-index: 2;
+    background: #f4f5f8;
+    color: #18181b;
+    border-radius: 24px;
+    padding: 18px 22px;
+    min-height: 535px;
+    display: none;
+    flex-direction: column;
+    gap: 14px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+  }
+  .v12-quixotic-stage.active {
+    display: flex;
+  }
+  .qx-topbar {
+    background: #ffffff;
+    border-radius: 999px;
+    padding: 8px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .qx-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.35fr 1fr;
+    gap: 14px;
+  }
+  .qx-card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 16px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+  }
+  .qx-visa {
+    background: linear-gradient(135deg, #147a46 0%, #0d5932 100%);
+    color: #ffffff;
+    border-radius: 16px;
+    padding: 16px;
+    margin: 12px 0;
+  }
+
+  /* Lower Tray: macOS JSX Code Window + 3D Brain Data Network */
+  .v12-lower-tray {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap: 20px;
+    align-items: stretch;
+  }
+  .v12-code-window {
+    background: #0d1117;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 18px;
+    padding: 16px 20px;
+    font-family: "JetBrains Mono", "SF Mono", Consolas, monospace;
+    font-size: 12px;
+    line-height: 1.65;
+    color: #e6edf3;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .v12-code-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .v12-mac-dots {
+    display: flex;
+    gap: 7px;
+  }
+  .v12-mac-dots span {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+  }
+  .v12-jsx-badge {
+    background: rgba(255, 255, 255, 0.08);
+    color: #8b949e;
+    font-size: 10.5px;
+    padding: 2px 9px;
+    border-radius: 6px;
+  }
+
 </style>
 </head>
 <body>
@@ -996,55 +1718,548 @@
 <!-- ==================== HORIZONTAL SLIDE-TO-THE-SIDE DECK ==================== -->
 <main class="horizontal-deck" id="horizontalDeck">
 
-  <!-- ==================== SLIDE 1: HERO VIDEO · 3D SPINNING BRAIN SCHEME ==================== -->
+  <!-- ==================== SLIDE 1: V12 SPATIAL GLASS DASHBOARD + 3D BRAIN & JSX ==================== -->
   <section class="h-slide" id="top" data-slide="0">
-    <div class="wrap">
-      <div class="hero-brain-grid">
-        <!-- Left Column: Executive Pitch + KPIs -->
-        <div>
-          <div class="eyebrow">EL CEREBRO DEL JEFE · ESQUEMA 3D EN ALTA DEFINICIÓN</div>
-          <h1 class="hero-title">
-            El Cerebro Central de tu Empresa.<br>
-            <em>Toma mejores decisiones</em> en 60 segundos.
-          </h1>
-          <p class="hero-sub">
-            <b>La Jefatura</b> y su cerebro de voz y texto <b>El Jefesito</b> conectan todas tus empresas (<b>MBMB, CEDEXX, DLM, UNITEC USA y BuildingApp.us</b>) en una sola corteza ejecutiva. <b>Jamás adivina, jamás inventa un número</b> y deja cada decisión lista para aprobar con 1 toque desde tu <b>Apple iPhone</b> o tu escritorio.
-          </p>
-          <div class="hero-cta-row">
-            <button class="btn-yellow" onclick="goSlide(1)">Deslizar a Vista iPhone y WebApp →</button>
-            <button class="btn-outline" onclick="speakHeroDemo()">Escuchar al Cerebro (Voz Colombiana)</button>
-            <a href="/" class="btn-outline">Abrir Centro de Mando</a>
+    <div class="v12-wrap">
+
+      <!-- TOP: V12 SPATIAL GLASS ROOM STAGE (EXACT MATCH TO VIDEO TEMPLATE) -->
+      <div class="v12-room-stage" id="v12RoomStage">
+
+        <!-- DASHBOARD 1: VISION-OS WARM SPATIAL GLASS -->
+        <div class="v12-spatial-grid" id="v12Dashboard1">
+
+          <!-- Left Vertical Pill Sidebar -->
+          <aside class="v12-sidebar">
+            <div class="v12-logo-mark" title="La Jefatura · El Jefesito">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 9v6M18 9v6M3 11v2M21 11v2M6 12h12"/></svg>
+            </div>
+
+            <div class="v12-nav-col">
+              <button class="v12-nav-btn active show-tip" onclick="switchV12Tab('overview', this)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>
+                <span class="v12-nav-tooltip">Overview</span>
+              </button>
+              <button class="v12-nav-btn" onclick="switchV12Tab('analytics', this)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+                <span class="v12-nav-tooltip">Analytics</span>
+              </button>
+              <button class="v12-nav-btn" onclick="switchV12Tab('schedule', this)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                <span class="v12-nav-tooltip">Schedule</span>
+              </button>
+              <button class="v12-nav-btn" onclick="switchV12Tab('stopwatch', this)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M10 2h4"/></svg>
+                <span class="v12-nav-tooltip">Stopwatch</span>
+              </button>
+              <button class="v12-nav-btn" onclick="goSlide(1)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <span class="v12-nav-tooltip">iPhone &amp; Voz</span>
+              </button>
+              <button class="v12-nav-btn" onclick="goSlide(3)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                <span class="v12-nav-tooltip">Integración</span>
+              </button>
+            </div>
+
+            <div class="v12-theme-pill">
+              <div class="v12-sun-dot">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="5"/></svg>
+              </div>
+              <div class="v12-moon-dot">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+              </div>
+            </div>
+          </aside>
+
+          <!-- Center Main Spatial Glass Window -->
+          <div class="v12-main-glass">
+            <div class="v12-header">
+              <div class="v12-greeting">
+                <h1>Good Morning, <strong>Jasmel</strong></h1>
+                <p>El Jefesito · 5 empresas auditadas hoy sin adivinar jamás</p>
+              </div>
+              <div class="v12-search-row">
+                <div class="v12-search-box">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                  <input type="text" placeholder="Search or ask El Jefesito (mc.db)..." onkeydown="if(event.key==='Enter'){goSlide(1);askIphone(this.value);}">
+                </div>
+                <button class="v12-bell-btn" onclick="speakHeroDemo()" title="Escuchar Resumen con Voz Colombiana">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                  <span class="v12-bell-dot"></span>
+                </button>
+              </div>
+            </div>
+
+            <!-- PANE 1: OVERVIEW (Default) -->
+            <div class="v12-pane active" id="v12Pane-overview">
+              <div class="v12-kpi-row">
+                <!-- Card 1: Ingresos (Orange Bars) -->
+                <div class="v12-wcard">
+                  <div class="v12-wcard-top">
+                    <span>Ingresos Mes</span>
+                    <span class="v12-mini-ico" style="background:#fff0e8;color:#ff6b2b">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    </span>
+                  </div>
+                  <div class="v12-bars-viz">
+                    <span style="height:10px;background:#fed7aa"></span>
+                    <span style="height:18px;background:#ff6b2b"></span>
+                    <span style="height:14px;background:#fed7aa"></span>
+                    <span style="height:24px;background:#ff6b2b"></span>
+                    <span style="height:16px;background:#ff6b2b"></span>
+                    <span style="height:12px;background:#fed7aa"></span>
+                    <span style="height:22px;background:#ff6b2b"></span>
+                  </div>
+                  <div class="v12-wcard-val" style="color:#f05216">$48,200<small>USD/m</small></div>
+                </div>
+
+                <!-- Card 2: Pipeline (Pink ECG Wave) -->
+                <div class="v12-wcard">
+                  <div class="v12-wcard-top">
+                    <span>Pipeline Activo</span>
+                    <span class="v12-mini-ico" style="background:#ffe4e6;color:#e11d48">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                    </span>
+                  </div>
+                  <div style="margin:6px 0 4px">
+                    <svg width="100%" height="28" viewBox="0 0 120 28" fill="none">
+                      <path d="M4 16 H32 L39 6 L46 24 L53 10 L59 19 L65 16 H114" stroke="#e11d48" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+                  <div class="v12-wcard-val" style="color:#e11d48">$214.5k<small>31% conv</small></div>
+                </div>
+
+                <!-- Card 3: UNITEC USA (Emerald Arc Gauge) -->
+                <div class="v12-wcard">
+                  <div class="v12-wcard-top">
+                    <span>UNITEC Leads</span>
+                    <span class="v12-mini-ico" style="background:#d1fae5;color:#10b981">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="8"/></svg>
+                    </span>
+                  </div>
+                  <div style="margin:4px 0 2px;display:flex;justify-content:center">
+                    <svg width="70" height="32" viewBox="0 0 70 34">
+                      <path d="M8 30 A26 26 0 0 1 62 30" fill="none" stroke="#e4e4e7" stroke-width="5" stroke-linecap="round"/>
+                      <path d="M8 30 A26 26 0 0 1 54 14" fill="none" stroke="#10b981" stroke-width="5" stroke-linecap="round"/>
+                    </svg>
+                  </div>
+                  <div class="v12-wcard-val" style="color:#10b981">29<small>Leads (98.9%)</small></div>
+                </div>
+
+                <!-- Card 4: BuildingApp.us (Blue Bars) -->
+                <div class="v12-wcard">
+                  <div class="v12-wcard-top">
+                    <span>BuildingApp IA</span>
+                    <span class="v12-mini-ico" style="background:#dbeafe;color:#2563eb">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+                    </span>
+                  </div>
+                  <div class="v12-bars-viz">
+                    <span style="height:12px;background:#bfdbfe"></span>
+                    <span style="height:22px;background:#2563eb"></span>
+                    <span style="height:16px;background:#2563eb"></span>
+                    <span style="height:10px;background:#bfdbfe"></span>
+                    <span style="height:24px;background:#2563eb"></span>
+                    <span style="height:18px;background:#2563eb"></span>
+                    <span style="height:14px;background:#bfdbfe"></span>
+                  </div>
+                  <div class="v12-wcard-val" style="color:#2563eb">130<small>Renders · 7 VIPs</small></div>
+                </div>
+              </div>
+
+              <!-- Row 2: Activity Curve + Right Split Decision Card -->
+              <div class="v12-mid-row">
+                <div class="v12-chart-card">
+                  <div class="v12-chart-head">
+                    <h3>Activity Tracking · Velocidad de Decisiones</h3>
+                    <span class="v12-pill-select">Weekly ▾</span>
+                  </div>
+                  <div style="margin-top:6px">
+                    <svg width="100%" height="126" viewBox="0 0 420 126" fill="none">
+                      <defs>
+                        <linearGradient id="v12OrangeFill" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stop-color="#ff6b2b" stop-opacity="0.34"/>
+                          <stop offset="100%" stop-color="#ff6b2b" stop-opacity="0.0"/>
+                        </linearGradient>
+                      </defs>
+                      <line x1="34" y1="24" x2="405" y2="24" stroke="#f4f4f5" stroke-width="1"/>
+                      <line x1="34" y1="52" x2="405" y2="52" stroke="#f4f4f5" stroke-width="1"/>
+                      <line x1="34" y1="80" x2="405" y2="80" stroke="#f4f4f5" stroke-width="1"/>
+                      <line x1="34" y1="106" x2="405" y2="106" stroke="#f4f4f5" stroke-width="1"/>
+                      <text x="4" y="27" fill="#a1a1aa" font-size="8.5">100%</text>
+                      <text x="8" y="55" fill="#a1a1aa" font-size="8.5">80%</text>
+                      <text x="8" y="83" fill="#a1a1aa" font-size="8.5">60%</text>
+                      <text x="8" y="109" fill="#a1a1aa" font-size="8.5">20%</text>
+
+                      <path d="M40 102 C72 98, 95 72, 130 82 C162 90, 180 68, 212 76 C236 82, 248 36, 266 36 C286 36, 304 68, 336 70 C364 72, 382 54, 404 60 L404 108 L40 108 Z" fill="url(#v12OrangeFill)"/>
+                      <path d="M40 102 C72 98, 95 72, 130 82 C162 90, 180 68, 212 76 C236 82, 248 36, 266 36 C286 36, 304 68, 336 70 C364 72, 382 54, 404 60" stroke="#f05216" stroke-width="2.6" stroke-linecap="round"/>
+
+                      <line x1="266" y1="36" x2="266" y2="108" stroke="#f05216" stroke-width="1" stroke-dasharray="3 3"/>
+                      <circle cx="266" cy="36" r="4.5" fill="#fff" stroke="#f05216" stroke-width="2.5"/>
+                      <rect x="234" y="10" width="64" height="18" rx="9" fill="#fff" stroke="#fdba74" stroke-width="1.2"/>
+                      <text x="266" y="22" text-anchor="middle" fill="#ea580c" font-size="8.5" font-weight="700">$48.2k/m</text>
+
+                      <text x="40" y="121" fill="#a1a1aa" font-size="8">Jan</text>
+                      <text x="80" y="121" fill="#a1a1aa" font-size="8">Feb</text>
+                      <text x="120" y="121" fill="#a1a1aa" font-size="8">Mar</text>
+                      <text x="160" y="121" fill="#a1a1aa" font-size="8">Apr</text>
+                      <text x="200" y="121" fill="#a1a1aa" font-size="8">May</text>
+                      <text x="260" y="121" fill="#18181b" font-size="8" font-weight="700">Jun</text>
+                      <text x="300" y="121" fill="#a1a1aa" font-size="8">Jul</text>
+                      <text x="340" y="121" fill="#a1a1aa" font-size="8">Aug</text>
+                      <text x="385" y="121" fill="#a1a1aa" font-size="8">Oct</text>
+                    </svg>
+                  </div>
+                </div>
+
+                <!-- Right Split Feature Card -->
+                <div class="v12-split-card">
+                  <div style="display:flex;flex-direction:column;justify-content:space-between">
+                    <div>
+                      <h4 style="font-size:12.5px;font-weight:800;line-height:1.25;color:#18181b">Cerebro 3D &amp; Cierre Dr. Molina</h4>
+                    </div>
+                    <div>
+                      <div style="font-size:15px;font-weight:800;color:#18181b">$12.4k <span style="font-size:10px;font-weight:600;color:#71717a">/ mes</span></div>
+                      <div style="font-size:9.5px;color:#71717a;margin-bottom:8px">Cotización hoy (CEDEXX)</div>
+                      <div style="font-size:15px;font-weight:800;color:#18181b">11.4 hrs</div>
+                      <div style="font-size:9.5px;color:#71717a">Ahorradas por semana</div>
+                    </div>
+                  </div>
+                  <div class="v12-split-visual" style="background:url('/assets/brain-reference-hd.jpg') center/cover no-repeat">
+                    <span style="background:rgba(0,0,0,0.72);padding:3px 8px;border-radius:99px;font-size:9px;font-weight:700;border:1px solid rgba(255,212,0,0.4)">5 EMPRESAS EN VIVO</span>
+                    <button onclick="goSlide(1)" style="width:100%;background:linear-gradient(135deg,#ff783c,#f05216);color:#fff;border:none;border-radius:99px;padding:6px 10px;font-size:10px;font-weight:800;cursor:pointer">Aprobar 1-Clic →</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Row 3: Diet / Decision Plan (3 Horizontal Cards with Sunset Orange Middle Card) -->
+              <div class="v12-section-bar">
+                <h4>Decision Plan · Prioridades del CEO</h4>
+                <span style="font-size:10.5px;color:rgba(255,255,255,0.65);cursor:pointer" onclick="goSlide(1)">view all</span>
+              </div>
+              <div class="v12-plan-row">
+                <div class="v12-plan-card" onclick="goSlide(1)">
+                  <div>
+                    <h5>MBMB · Clínica del Mar</h5>
+                    <p>Orden PO-2214 ($9,800) verificada en mc.db lista para iniciar.</p>
+                    <span class="v12-day-pill">Prioridad 1</span>
+                  </div>
+                  <div class="v12-plan-Ring">$9.8k</div>
+                </div>
+
+                <div class="v12-plan-card orange" onclick="goSlide(1)">
+                  <div>
+                    <h5>CEDEXX · Dr. Molina</h5>
+                    <p>Borrador listo en tu voz · Aprobar y enviar con 1 toque.</p>
+                    <span class="v12-day-pill">Prioridad 2 · Hoy</span>
+                  </div>
+                  <div class="v12-plan-Ring">$12.4k</div>
+                </div>
+
+                <div class="v12-plan-card" onclick="goSlide(2)">
+                  <div>
+                    <h5>UNITEC &amp; BuildingApp</h5>
+                    <p>29 leads capturados y 7 miembros VIP con 100% éxito IA.</p>
+                    <span class="v12-day-pill">Prioridad 3</span>
+                  </div>
+                  <div class="v12-plan-Ring">100%</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- PANE 2: ANALYTICS (Matches v12_analytics_open.jpg) -->
+            <div class="v12-pane" id="v12Pane-analytics">
+              <div class="v12-kpi-row">
+                <div class="v12-wcard">
+                  <div class="v12-wcard-top"><span>Impacto Mensual</span></div>
+                  <div class="v12-wcard-val" style="color:#f05216;font-size:20px;margin:8px 0">$24,500 <small>USD</small></div>
+                  <div style="font-size:10px;color:#10b981;font-weight:700">+12% vs mes previo</div>
+                </div>
+                <div class="v12-wcard">
+                  <div class="v12-wcard-top"><span>Renders IA</span></div>
+                  <div class="v12-wcard-val" style="color:#e11d48;font-size:20px;margin:8px 0">130 <small>gens</small></div>
+                  <div style="font-size:10px;color:#71717a">BuildingApp 100% éxito</div>
+                </div>
+                <div class="v12-wcard">
+                  <div class="v12-wcard-top"><span>Zero-Guess SQL</span></div>
+                  <div class="v12-wcard-val" style="color:#10b981;font-size:20px;margin:8px 0">100% <small>Score</small></div>
+                  <div style="font-size:10px;color:#10b981;font-weight:700">Cero alucinaciones</div>
+                </div>
+                <div class="v12-wcard">
+                  <div class="v12-wcard-top"><span>Índice Eficiencia</span></div>
+                  <div class="v12-wcard-val" style="color:#2563eb;font-size:20px;margin:8px 0">9.8 <small>/10</small></div>
+                  <div style="font-size:10px;color:#71717a">5 empresas conectadas</div>
+                </div>
+              </div>
+
+              <div class="v12-wcard" style="padding:18px">
+                <h3 style="font-size:14px;font-weight:800;margin-bottom:14px;color:#18181b">Distribución de Ingresos y Carga por Empresa (mc.db)</h3>
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+                  <div style="background:#f8fafc;border-radius:14px;padding:12px">
+                    <div style="font-size:10.5px;color:#71717a">MBMB Medical Billing</div>
+                    <div style="font-size:18px;font-weight:800;color:#f05216;margin:4px 0 8px">38%</div>
+                    <div style="height:4px;background:#e4e4e7;border-radius:4px"><div style="width:76%;height:100%;background:#f05216;border-radius:4px"></div></div>
+                  </div>
+                  <div style="background:#f8fafc;border-radius:14px;padding:12px">
+                    <div style="font-size:10.5px;color:#71717a">DLM &amp; CEDEXX</div>
+                    <div style="font-size:18px;font-weight:800;color:#10b981;margin:4px 0 8px">28%</div>
+                    <div style="height:4px;background:#e4e4e7;border-radius:4px"><div style="width:62%;height:100%;background:#10b981;border-radius:4px"></div></div>
+                  </div>
+                  <div style="background:#f8fafc;border-radius:14px;padding:12px">
+                    <div style="font-size:10.5px;color:#71717a">UNITEC USA</div>
+                    <div style="font-size:18px;font-weight:800;color:#2563eb;margin:4px 0 8px">18%</div>
+                    <div style="height:4px;background:#e4e4e7;border-radius:4px"><div style="width:48%;height:100%;background:#2563eb;border-radius:4px"></div></div>
+                  </div>
+                  <div style="background:#f8fafc;border-radius:14px;padding:12px">
+                    <div style="font-size:10.5px;color:#71717a">BuildingApp.us</div>
+                    <div style="font-size:18px;font-weight:800;color:#e11d48;margin:4px 0 8px">16%</div>
+                    <div style="height:4px;background:#e4e4e7;border-radius:4px"><div style="width:42%;height:100%;background:#e11d48;border-radius:4px"></div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- PANE 3: SCHEDULE (Matches v12_schedule.jpg) -->
+            <div class="v12-pane" id="v12Pane-schedule">
+              <div class="v12-wcard" style="min-height:auto;flex-direction:row;align-items:center;padding:12px 18px">
+                <div>
+                  <div style="font-size:14px;font-weight:800;color:#18181b">Plan Ejecutivo de Decisiones Semanales</div>
+                  <div style="font-size:10.5px;color:#71717a">Sincronizado con tu Hoja del Día Imprimible en PDF</div>
+                </div>
+                <button onclick="window.open('/api/daily.pdf?lang=es','_blank')" style="background:linear-gradient(135deg,#ff783c,#f05216);color:#fff;border:none;border-radius:999px;padding:7px 14px;font-size:11px;font-weight:700;cursor:pointer">+ Hoja PDF</button>
+              </div>
+              <div class="v12-wcard" style="min-height:auto;flex-direction:row;align-items:center;padding:11px 18px">
+                <div><div style="font-size:9px;font-weight:800;color:#10b981">LUNES</div><div style="font-size:12.5px;font-weight:700">Auditoría Consolidada MBMB ($18.6k/m) &amp; DLM ($16.8k/m)</div></div>
+                <span style="font-size:10.5px;font-weight:700;color:#10b981">Completed</span>
+              </div>
+              <div class="v12-wcard" style="min-height:auto;flex-direction:row;align-items:center;padding:11px 18px">
+                <div><div style="font-size:9px;font-weight:800;color:#10b981">MARTES</div><div style="font-size:12.5px;font-weight:700">Revisión Apple App Store BuildingApp (130 renders · 7 VIPs)</div></div>
+                <span style="font-size:10.5px;font-weight:700;color:#10b981">Completed</span>
+              </div>
+              <div class="v12-wcard" style="min-height:auto;flex-direction:row;align-items:center;padding:11px 18px">
+                <div><div style="font-size:9px;font-weight:800;color:#f05216">MIÉRCOLES</div><div style="font-size:12.5px;font-weight:700">Aprobar Cotización Dr. Molina ($12,400/m · Doral Urgent Care)</div></div>
+                <span style="font-size:10.5px;font-weight:700;color:#f05216">In Progress</span>
+              </div>
+              <div class="v12-wcard" style="min-height:auto;flex-direction:row;align-items:center;padding:11px 18px">
+                <div><div style="font-size:9px;font-weight:800;color:#2563eb">JUEVES</div><div style="font-size:12.5px;font-weight:700">Optimización Recepcionista IA UNITEC USA (29 teléfonos)</div></div>
+                <span style="font-size:10.5px;font-weight:700;color:#2563eb">Scheduled (Tomorrow)</span>
+              </div>
+            </div>
+
+            <!-- PANE 4: STOPWATCH (Matches 2nd uploaded screenshot media_1793028144228_69b75431.png) -->
+            <div class="v12-pane" id="v12Pane-stopwatch">
+              <div class="v12-wcard" style="align-items:center;text-align:center;padding:24px 20px">
+                <div style="font-size:10px;font-weight:800;letter-spacing:0.08em;color:#71717a">EXECUTIVE 60-SECOND DECISION SPRINT SESSION</div>
+                <div id="v12TimerDisplay" style="font-size:46px;font-weight:800;color:#f05216;letter-spacing:-1px;margin:8px 0">45:20</div>
+                <div style="font-size:11px;color:#52525b;margin-bottom:14px">Decisión <strong>4 de 8</strong> (Aprobación 1-Clic: 45s / Auditoría SQL: 15s)</div>
+                <div style="display:flex;gap:10px;justify-content:center">
+                  <button onclick="toggleV12Timer(this)" style="background:linear-gradient(135deg,#ff783c,#f05216);color:#fff;border:none;border-radius:999px;padding:8px 18px;font-size:11.5px;font-weight:700;cursor:pointer">Start Timer</button>
+                  <button onclick="resetV12Timer()" style="background:#f4f4f5;color:#3f3f46;border:none;border-radius:999px;padding:8px 16px;font-size:11.5px;font-weight:700;cursor:pointer">Reset</button>
+                  <button onclick="goSlide(1)" style="background:#f4f4f5;color:#3f3f46;border:none;border-radius:999px;padding:8px 16px;font-size:11.5px;font-weight:700;cursor:pointer">Lap Split (iPhone)</button>
+                </div>
+              </div>
+
+              <div class="v12-wcard" style="padding:16px 18px">
+                <div style="font-size:12px;font-weight:800;color:#18181b;margin-bottom:10px">Recent Interval Laps · Decisiones Ejecutadas</div>
+                <div style="display:flex;justify-content:space-between;font-size:11.5px;padding:6px 0;border-bottom:1px solid #f4f4f5">
+                  <span style="color:#52525b">Lap 3: Cotización Dr. Molina ($12,400/m · CEDEXX)</span>
+                  <strong style="color:#10b981">01:14.2</strong>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-size:11.5px;padding:6px 0">
+                  <span style="color:#52525b">Lap 2: Orden PO-2214 Clínica del Mar ($9,800 · MBMB)</span>
+                  <strong style="color:#f05216">01:18.9</strong>
+                </div>
+              </div>
+            </div>
+
           </div>
 
-          <div class="hero-kpis">
-            <div class="hk-card">
-              <div class="hk-num">0%</div>
-              <div class="hk-lbl">Alucinaciones</div>
-              <div class="hk-sub">Cita su fuente real en SQLite/Firestore o rehúsa adivinar.</div>
+          <!-- Right Spatial Glass Profile & Calendar Inspector -->
+          <aside class="v12-right-glass">
+            <div class="v12-profile-row">
+              <div style="display:flex;align-items:center;gap:10px">
+                <div class="v12-avatar">JA</div>
+                <div>
+                  <div style="font-size:12.5px;font-weight:700;color:#fff">Jasmel Acosta ▾</div>
+                  <div style="font-size:10px;color:rgba(255,255,255,0.55)">@lajefatura.ceo</div>
+                </div>
+              </div>
+              <button onclick="window.open('/','_self')" style="width:28px;height:28px;border-radius:50%;border:none;background:rgba(255,255,255,0.1);color:#fff;cursor:pointer">•••</button>
             </div>
-            <div class="hk-card">
-              <div class="hk-num">11.4 h</div>
-              <div class="hk-lbl">Ahorradas / Sem.</div>
-              <div class="hk-sub">Borradores listos y hoja del día automática en PDF.</div>
+
+            <div class="v12-user-stats">
+              <div><b>5 Emp.</b><span>Portafolio</span></div>
+              <div><b>11.4 h</b><span>Ahorro/sem</span></div>
+              <div><b>0% Err</b><span>Zero-Guess</span></div>
             </div>
-            <div class="hk-card">
-              <div class="hk-num">1 Clic</div>
-              <div class="hk-lbl">Para Decidir</div>
-              <div class="hk-sub">Desbloquea contratos y cobros desde el iPhone.</div>
+
+            <div class="v12-cal-box">
+              <div class="v12-cal-head">
+                <span>October 2026</span>
+                <span style="color:rgba(255,255,255,0.5)">‹ ›</span>
+              </div>
+              <div class="v12-cal-grid">
+                <span class="cal-dow">Su</span><span class="cal-dow">Mo</span><span class="cal-dow">Tu</span><span class="cal-dow">We</span><span class="cal-dow">Th</span><span class="cal-dow">Fr</span><span class="cal-dow">Sa</span>
+                <span></span><span></span><span></span><span></span><span>1</span><span>2</span><span>3</span>
+                <span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
+                <span>11</span><span>12</span><span>13</span><span>14</span><span>15</span><span>16</span><span class="cal-green">17</span>
+                <span>18</span><span>19</span><span>20</span><span class="cal-green">21</span><span>22</span><span class="cal-orange">23</span><span>24</span>
+                <span class="cal-pink">25</span><span>26</span><span>27</span><span>28</span><span>29</span><span>30</span><span>31</span>
+              </div>
             </div>
-            <div class="hk-card">
-              <div class="hk-num">5 Empresas</div>
-              <div class="hk-lbl">En 1 Cerebro</div>
-              <div class="hk-sub">MBMB · CEDEXX · DLM · UNITEC · BuildingApp.</div>
+
+            <div>
+              <div class="v12-section-bar" style="margin-bottom:8px">
+                <h4>Scheduled</h4>
+                <span style="font-size:10px;color:rgba(255,255,255,0.55);cursor:pointer" onclick="window.open('/api/daily.pdf?lang=es','_blank')">view all</span>
+              </div>
+              <div class="v12-sched-list">
+                <div class="v12-sched-item">
+                  <div>
+                    <span class="v12-sched-badge">Voz Colombiana</span>
+                    <h6>Briefing Matutino</h6>
+                    <p>Resumen de 5 empresas</p>
+                  </div>
+                  <span style="font-size:9px;color:rgba(255,255,255,0.5)">08:00 AM</span>
+                </div>
+                <div class="v12-sched-item">
+                  <div>
+                    <span class="v12-sched-badge">CEDEXX · 1-Clic</span>
+                    <h6>Cierre Dr. Molina</h6>
+                    <p>Aprobación $12,400/mes</p>
+                  </div>
+                  <span style="font-size:9px;color:rgba(255,255,255,0.5)">11:00 AM</span>
+                </div>
+                <div class="v12-sched-item">
+                  <div>
+                    <span class="v12-sched-badge">PDF Diario</span>
+                    <h6>Hoja del Día Imprimible</h6>
+                    <p>Archivo inmutable mc.db</p>
+                  </div>
+                  <span style="font-size:9px;color:rgba(255,255,255,0.5)">05:30 PM</span>
+                </div>
+              </div>
+            </div>
+          </aside>
+
+        </div>
+
+        <!-- DASHBOARD 2: QUIXOTIC CLEAN WHITE & EMERALD GREEN FINTECH VIEW -->
+        <div class="v12-quixotic-stage" id="v12Dashboard2">
+          <div class="qx-topbar">
+            <div style="display:flex;align-items:center;gap:8px;font-weight:800;font-size:14px;color:#059669">
+              <span style="width:24px;height:24px;border-radius:50%;background:#10b981;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:12px">Q</span>
+              <span>La Jefatura · Quixotic Finanzas</span>
+            </div>
+            <div style="display:flex;gap:14px;font-size:11.5px;font-weight:600;color:#71717a">
+              <span style="background:#f4f4f5;color:#18181b;padding:4px 12px;border-radius:99px">Dashboard</span>
+              <span>Reportes</span>
+              <span>Documentos PDF</span>
+              <span>Historial</span>
+            </div>
+            <button onclick="window.open('/api/daily.pdf?lang=es','_blank')" style="background:#10b981;color:#fff;border:none;border-radius:99px;padding:6px 14px;font-size:11px;font-weight:700;cursor:pointer">+ Exportar PDF</button>
+          </div>
+
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:0 4px">
+            <h2 style="font-size:22px;font-weight:800;color:#18181b">Welcome Back, <span style="color:#71717a;font-weight:500">Jasmel</span></h2>
+            <span style="background:#fff;padding:6px 14px;border-radius:99px;font-size:11px;font-weight:600;color:#52525b">Octubre 2026 · 5 Empresas Activas</span>
+          </div>
+
+          <div class="qx-grid">
+            <div class="qx-card">
+              <div style="font-size:12px;font-weight:700">Portafolio Consolidado</div>
+              <div style="font-size:10px;color:#71717a">MBMB + CEDEXX + DLM</div>
+              <div class="qx-visa">
+                <div style="font-size:11px;font-weight:800;opacity:0.9">LA JEFATURA · MC.DB</div>
+                <div style="font-size:22px;font-weight:800;margin:10px 0">$ 48,200.00</div>
+                <div style="font-size:10px;opacity:0.8">VERIFICADO SQL · CERO ADIVINAR</div>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div><div style="font-size:10px;color:#71717a">Impacto Mensual ROI</div><div style="font-size:15px;font-weight:800">+$24,500 USD</div></div>
+                <span style="background:#10b981;color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:99px">+12.8%</span>
+              </div>
+            </div>
+
+            <div class="qx-card">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+                <span style="font-size:12.5px;font-weight:700">Engagement &amp; Conversión por Mes</span>
+                <span style="background:#10b981;color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:99px">Annually</span>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px;align-items:end;height:150px;padding:10px 8px 0">
+                <div style="text-align:center"><div style="height:55px;background:#a7f3d0;border-radius:99px"></div><span style="font-size:9px;color:#71717a">JAN</span></div>
+                <div style="text-align:center"><div style="height:95px;background:#a7f3d0;border-radius:99px"></div><span style="font-size:9px;color:#71717a">FEB</span></div>
+                <div style="text-align:center"><div style="height:72px;background:#a7f3d0;border-radius:99px"></div><span style="font-size:9px;color:#71717a">MAR</span></div>
+                <div style="text-align:center"><div style="height:125px;background:#059669;border-radius:99px"></div><span style="font-size:9px;font-weight:800;color:#059669">APR</span></div>
+                <div style="text-align:center"><div style="height:84px;background:#a7f3d0;border-radius:99px"></div><span style="font-size:9px;color:#71717a">MAY</span></div>
+                <div style="text-align:center"><div style="height:105px;background:#a7f3d0;border-radius:99px"></div><span style="font-size:9px;color:#71717a">JUN</span></div>
+              </div>
+            </div>
+
+            <div class="qx-card" style="display:flex;flex-direction:column;justify-content:space-between">
+              <div>
+                <div style="font-size:12px;font-weight:700">Pipeline Total Activo</div>
+                <div style="font-size:22px;font-weight:800;margin-top:8px">$214,500<span style="font-size:13px;color:#71717a">.00</span></div>
+              </div>
+              <div style="display:flex;gap:8px">
+                <button onclick="goSlide(1)" style="flex:1;background:#059669;color:#fff;border:none;border-radius:99px;padding:8px;font-size:11px;font-weight:700;cursor:pointer">Aprobar ↑</button>
+                <button onclick="window.open('/','_self')" style="flex:1;background:#f4f4f5;color:#18181b;border:none;border-radius:99px;padding:8px;font-size:11px;font-weight:700;cursor:pointer">Consola →</button>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- Right Column: 3D Spinning High-Definition Brain Video & Interactive Schematic -->
-        <div class="brain-stage-card" id="brainHeroStage">
-          <!-- True HD 1280x720 H.264 3D Spinning Brain Video Stream -->
+        <!-- BOTTOM FLOATING SWITCHER (SWITCH: Dashboard 1 | Dashboard 2 | Admin) -->
+        <div class="v12-bottom-switcher">
+          <span class="v12-switch-lbl">SWITCH</span>
+          <button class="v12-sw-btn active-d1" id="v12BtnD1" onclick="switchV12Dashboard('d1')">Dashboard 1</button>
+          <button class="v12-sw-btn" id="v12BtnD2" onclick="switchV12Dashboard('d2')">Dashboard 2</button>
+          <button class="v12-sw-btn" id="v12BtnAdmin" onclick="switchV12Dashboard('admin')">Admin · Cerebro 3D</button>
+        </div>
+
+      </div>
+
+      <!-- LOWER TRAY: MAC-OS JSX CODE WINDOW + 3D SPINNING BRAIN NETWORK (MATCHES SCREENSHOTS) -->
+      <div class="v12-lower-tray" id="v12LowerBrainTray">
+
+        <!-- Left: macOS Dark JSX Code Card + Quick Actions -->
+        <div class="v12-code-window">
+          <div>
+            <div class="v12-code-top">
+              <div class="v12-mac-dots">
+                <span style="background:#ff5f56"></span>
+                <span style="background:#ffbd2e"></span>
+                <span style="background:#27c93f"></span>
+              </div>
+              <span class="v12-jsx-badge">jsx</span>
+            </div>
+            <pre style="margin:0;overflow-x:auto;font-family:inherit;font-size:11.5px;color:#c9d1d9"><span style="color:#ff7b72">import</span> { <span style="color:#79c0ff">motion</span> } <span style="color:#ff7b72">from</span> <span style="color:#a5d6ff">'framer-motion'</span>;
+<span style="color:#ff7b72">import</span> { <span style="color:#79c0ff">ShoppingBag</span>, <span style="color:#79c0ff">Users</span>, <span style="color:#79c0ff">DollarSign</span>, <span style="color:#79c0ff">ArrowUpRight</span> } <span style="color:#ff7b72">from</span> <span style="color:#a5d6ff">'lucide-react'</span>;
+
+<span style="color:#ff7b72">const</span> <span style="color:#d2a8ff">StatsCard</span> = ({ <span style="color:#ffa657">title</span>, <span style="color:#ffa657">value</span>, <span style="color:#ffa657">change</span>, <span style="color:#ffa657">icon</span>: <span style="color:#79c0ff">Icon</span>, <span style="color:#ffa657">source</span> }) =&gt; {
+  <span style="color:#ff7b72">return</span> (
+    &lt;<span style="color:#7ee787">motion.div</span> <span style="color:#79c0ff">whileHover</span>={{ y: <span style="color:#79c0ff">-5</span> }} <span style="color:#79c0ff">className</span>=<span style="color:#a5d6ff">"glass-card p-6 rounded-2xl"</span>&gt;
+      &lt;<span style="color:#7ee787">div</span> <span style="color:#79c0ff">className</span>=<span style="color:#a5d6ff">"flex items-center justify-between"</span>&gt;
+        &lt;<span style="color:#7ee787">p</span> <span style="color:#79c0ff">className</span>=<span style="color:#a5d6ff">"text-sm text-white/60"</span>&gt;{title} · {source}&lt;/<span style="color:#7ee787">p</span>&gt;
+        &lt;<span style="color:#7ee787">h2</span> <span style="color:#79c0ff">className</span>=<span style="color:#a5d6ff">"text-2xl font-bold text-white"</span>&gt;{value}&lt;/<span style="color:#7ee787">h2</span>&gt;
+        &lt;<span style="color:#7ee787">p</span> <span style="color:#79c0ff">className</span>=<span style="color:#a5d6ff">"flex items-center gap-1 text-sm text-emerald-400"</span>&gt;
+          &lt;<span style="color:#7ee787">ArrowUpRight</span> <span style="color:#79c0ff">size</span>={<span style="color:#79c0ff">16</span>} /&gt; {change}% (Zero-Guess SQL)
+        &lt;/<span style="color:#7ee787">p</span>&gt;
+      &lt;/<span style="color:#7ee787">div</span>&gt;
+    &lt;/<span style="color:#7ee787">motion.div</span>&gt;
+  );
+};</pre>
+          </div>
+
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.08)">
+            <button class="btn-yellow" onclick="goSlide(1)">Deslizar a Vista iPhone y WebApp →</button>
+            <button class="btn-outline" onclick="speakHeroDemo()">Escuchar al Cerebro (Voz Colombiana)</button>
+            <a href="/" class="btn-outline">Abrir Centro de Mando</a>
+          </div>
+        </div>
+
+        <!-- Right: 3D Spinning High-Definition Brain Video & Interactive Schematic -->
+        <div class="brain-stage-card" id="brainHeroStage" style="min-height:340px">
           <video id="heroBrainVideo" src="/assets/hero-brain-3d.mp4" autoplay loop muted playsinline></video>
-          <!-- Live 60FPS Retina 3D Spinning Cortex Schematic + Callout Nodes -->
           <canvas id="brain3dCanvas"></canvas>
 
           <div class="brain-hud-top">
@@ -1066,7 +2281,9 @@
             <button class="btn-yellow" style="padding:5px 12px;font-size:11px" onclick="toggleBrainSpin(this)">Pausar Giro</button>
           </div>
         </div>
+
       </div>
+
     </div>
   </section>
 
@@ -2426,6 +3643,79 @@
       }
     })
     .catch(() => {});
+
+  /* =========================================================================
+     4. V12 SPATIAL GLASS CONTROLLER (TABS, DASHBOARD SWITCHER & STOPWATCH)
+     ========================================================================= */
+  function switchV12Tab(tabId, btnEl) {
+    document.querySelectorAll('#v12Dashboard1 .v12-pane').forEach(p => p.classList.remove('active'));
+    const target = document.getElementById('v12Pane-' + tabId);
+    if (target) target.classList.add('active');
+    document.querySelectorAll('.v12-sidebar .v12-nav-btn').forEach(b => {
+      b.classList.remove('active');
+      b.classList.remove('show-tip');
+    });
+    if (btnEl) {
+      btnEl.classList.add('active');
+      btnEl.classList.add('show-tip');
+    }
+  }
+
+  function switchV12Dashboard(mode) {
+    const d1 = document.getElementById('v12Dashboard1');
+    const d2 = document.getElementById('v12Dashboard2');
+    const b1 = document.getElementById('v12BtnD1');
+    const b2 = document.getElementById('v12BtnD2');
+    const bA = document.getElementById('v12BtnAdmin');
+    if (!d1 || !d2) return;
+    b1.className = 'v12-sw-btn';
+    b2.className = 'v12-sw-btn';
+    bA.className = 'v12-sw-btn';
+    if (mode === 'd2') {
+      d1.style.display = 'none';
+      d2.classList.add('active');
+      b2.classList.add('active-d2');
+    } else if (mode === 'admin') {
+      d1.style.display = 'grid';
+      d2.classList.remove('active');
+      bA.classList.add('active-admin');
+      const tray = document.getElementById('v12LowerBrainTray');
+      if (tray) tray.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else {
+      d1.style.display = 'grid';
+      d2.classList.remove('active');
+      b1.classList.add('active-d1');
+    }
+  }
+
+  let v12TimerSec = 45 * 60 + 20;
+  let v12TimerInt = null;
+  function renderV12Timer() {
+    const el = document.getElementById('v12TimerDisplay');
+    if (!el) return;
+    const m = String(Math.floor(v12TimerSec / 60)).padStart(2, '0');
+    const s = String(v12TimerSec % 60).padStart(2, '0');
+    el.textContent = m + ':' + s;
+  }
+  function toggleV12Timer(btn) {
+    if (v12TimerInt) {
+      clearInterval(v12TimerInt);
+      v12TimerInt = null;
+      if (btn) btn.textContent = 'Start Timer';
+    } else {
+      v12TimerInt = setInterval(() => {
+        if (v12TimerSec > 0) v12TimerSec--;
+        renderV12Timer();
+      }, 1000);
+      if (btn) btn.textContent = 'Pause Timer';
+    }
+  }
+  function resetV12Timer() {
+    if (v12TimerInt) { clearInterval(v12TimerInt); v12TimerInt = null; }
+    v12TimerSec = 45 * 60 + 20;
+    renderV12Timer();
+  }
+
 </script>
 </body>
 </html>

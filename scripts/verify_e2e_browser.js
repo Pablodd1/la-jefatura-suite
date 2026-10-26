@@ -247,6 +247,23 @@ const URL = 'http://localhost:8931/';
     JSON.stringify(brainCheck));
   await page.screenshot({ path: path.join(ASSETS_DIR, 'verified-10-website-3d-brain-hero.png'), fullPage: false });
 
+  // Verify V12 Spatial Glass Sidebar Tabs (Overview -> Stopwatch 45:20) & Bottom Switcher (Dashboard 1 <-> Dashboard 2)
+  await page.evaluate(() => switchV12Tab('stopwatch', document.querySelectorAll('.v12-sidebar .v12-nav-btn')[3]));
+  await page.waitForTimeout(250);
+  await page.screenshot({ path: path.join(ASSETS_DIR, 'verified-15-v12-stopwatch.png'), fullPage: false });
+  const timerTxt = await page.locator('#v12TimerDisplay').innerText();
+  await page.evaluate(() => switchV12Dashboard('d2'));
+  await page.waitForTimeout(250);
+  await page.screenshot({ path: path.join(ASSETS_DIR, 'verified-16-v12-dashboard2.png'), fullPage: false });
+  const d2Visible = await page.locator('#v12Dashboard2').isVisible();
+  await page.evaluate(() => {
+    switchV12Dashboard('d1');
+    switchV12Tab('overview', document.querySelectorAll('.v12-sidebar .v12-nav-btn')[0]);
+  });
+  check('22a1. V12 Spatial Glass Template (Overview, Stopwatch 45:20, and Dashboard 2 Quixotic Switcher)',
+    timerTxt === '45:20' && d2Visible,
+    `timer=${timerTxt}, d2Visible=${d2Visible}`);
+
   // 3 calmer alternative color themes (Pizarra / Salvia / Arena) + original Dorado
   const themeResults = [];
   for (const t of ['slate', 'sage', 'sand', 'gold']) {
