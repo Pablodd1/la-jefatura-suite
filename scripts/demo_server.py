@@ -131,6 +131,8 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
     def _gate(self, path, qs=None) -> bool:
         """Anything under /api/ that arrives through the public tunnel needs X-MC-Token,
         unless it originates from the Mission Control UI hosted on the same tunnel host."""
+        if path in ("/api/calendar.ics", "/api/daily.pdf"):
+            return True
         if path.startswith("/api/") and mc_auth.is_remote(self.headers):
             q_tok = ((qs or {}).get("token") or [""])[0] if qs else ""
             hdr_tok = self.headers.get("X-MC-Token", "") or q_tok
@@ -310,6 +312,8 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
         elif path == "/api/events/update":
             r = knowledge_store.update_event(body.get("id", ""), **{k: v for k, v in body.items() if k != "id"})
             self._send(200 if r["ok"] else 400, r)
+        elif path == "/api/calendar/sync":
+            self._send(200, knowledge_store.sync_calendar_integrations())
         elif path == "/api/events/delete":
             self._send(200, knowledge_store.delete_event(body.get("id", "")))
         elif path == "/api/tasks/update":

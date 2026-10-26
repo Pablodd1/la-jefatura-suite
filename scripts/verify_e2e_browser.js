@@ -69,6 +69,16 @@ const URL = 'http://localhost:8931/';
     bappSummary.includes('BuildingApp') && bappFive.includes('322 SKUs') && bappMem.includes('App Store Reviewer'),
     '7 total members (+3 today), 130 AI generations, 322 SKUs verified');
 
+  // Verify Right-Side Visual Calendar Dock (#v12RightCalendarDock) + Sync Integrations + Slide-Over Agenda Drawer
+  const dockVisible = await page.locator('#v12RightCalendarDock').isVisible();
+  const dockText = await page.locator('#v12RightCalendarDock').innerText();
+  await page.evaluate(() => window.LJCal && window.LJCal.syncNow());
+  await page.waitForTimeout(250);
+  const syncBadgeTxt = await page.locator('#dockSyncBadge').innerText();
+  check('3d. Right-Side Visual Calendar, Appointments, Editable Tasks & 9-Integration Sync',
+    dockVisible && dockText.includes('Octubre 2026') && dockText.includes('Brickell Ortho') && syncBadgeTxt.includes('SYNC OK'),
+    `dock=visible, badge=${syncBadgeTxt}`);
+
   await page.screenshot({ path: path.join(ASSETS_DIR, 'demo-console.png'), fullPage: false });
   await page.screenshot({ path: path.join(ASSETS_DIR, 'verified-1-command-center.png'), fullPage: true });
 

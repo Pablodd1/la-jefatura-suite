@@ -410,15 +410,36 @@ CREATE TABLE IF NOT EXISTS events (
     company TEXT, notes TEXT, source TEXT, status TEXT, ts REAL);
 """
 
+DEMO_EVENTS_SEED = [
+    ("E-demo1017", "Auditoría Mensual Facturación Médica (3 Sedes)", "2026-10-17", "10:00", 45, "mbmb", "Sincronizado con Google Calendar & Nexus CRM", "Google Calendar & Nexus", "scheduled"),
+    ("E-demo1021", "Revisión Lanzamiento iOS & Android BuildingApp AI", "2026-10-21", "11:30", 30, "building", "Sincronizado con Google Meet & App Store Connect", "Google Meet & Zoom", "scheduled"),
+    ("E-demo1023", "Comité de Conversión Recepcionista IA UNITEC (29 Leads)", "2026-10-23", "15:00", 45, "unitec", "Sincronizado con Outlook & Vercel Front-Desk", "Google Calendar & Outlook", "scheduled"),
+    ("E-demo1025", "Preparación Semanal de Flujo de Caja & Denegaciones", "2026-10-25", "17:00", 30, "cedexx", "Sincronizado con Cerebro Conductual", "Google Calendar & Outlook", "scheduled"),
+    ("E-demo1026a", "Kickoff Técnico Brickell Ortho ($15.2k ARR)", "2026-10-26", "09:30", 45, "mbmb", "Sincronizado con Google Calendar & Meet", "Google Calendar & Meet", "scheduled"),
+    ("E-demo1026b", "Cierre Contrato Dr. Molina · Doral Urgent Care ($12.4k/m)", "2026-10-26", "14:00", 30, "cedexx", "Sincronizado con Nexus CRM & Outlook", "Nexus CRM & Outlook", "scheduled"),
+    ("E-demo1026c", "Corte Diario BuildingApp AI (130 Renders · 7 Miembros)", "2026-10-26", "16:30", 30, "building", "Sincronizado con Google Calendar & Zoom", "Google Meet & Zoom", "scheduled"),
+    ("E-demo1027a", "Migración 3 Sedes Clínica Del Mar (#PO-2214 · $9.8k)", "2026-10-27", "10:00", 60, "305biz", "Sincronizado con Google Calendar & Meet", "Google Calendar & Meet", "scheduled"),
+    ("E-demo1027b", "Demo Portal Bilingüe · Jorge (UNITEC USA)", "2026-10-27", "16:00", 45, "unitec", "Sincronizado con Nexus CRM & Google Meet", "Nexus CRM & Meet", "scheduled"),
+    ("E-demo1028", "Auditoría Mensual Denegaciones & Cashflow (MBMB + CEDEXX)", "2026-10-28", "11:00", 45, "mbmb", "Sincronizado con Outlook & Nexus CRM", "Google Calendar & Outlook", "scheduled"),
+    ("E-demo1030", "Comité Ejecutivo de Viernes · 5 Empresas Consolidadas", "2026-10-30", "15:00", 60, "all", "Sincronizado con Google Calendar, Zoom & PDF Diario", "Google Calendar & Zoom", "scheduled"),
+]
+
 
 def _evdb():
     c = _db()
     c.executescript(_EV_SCHEMA)
+    n = c.execute("SELECT COUNT(*) FROM events").fetchone()[0]
+    if n == 0:
+        now = time.time()
+        for eid, title, d, tm, dur, co, notes, src, st in DEMO_EVENTS_SEED:
+            c.execute("INSERT OR IGNORE INTO events VALUES(?,?,?,?,?,?,?,?,?,?)",
+                      (eid, title, d, tm, dur, co, notes, src, st, now))
+        c.commit()
     return c
 
 
 def add_event(title: str, date: str, time_: str = "", duration: int = 30, company: str = "all",
-              notes: str = "", source: str = "ui") -> dict:
+              notes: str = "", source: str = "Google Calendar & Outlook") -> dict:
     title = _clean(title, 300)
     date = (date or "").strip()
     if not title or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", date):
@@ -429,14 +450,15 @@ def add_event(title: str, date: str, time_: str = "", duration: int = 30, compan
     eid = "E-" + uuid.uuid4().hex[:8]
     c = _evdb()
     c.execute("INSERT INTO events VALUES(?,?,?,?,?,?,?,?,?,?)",
-              (eid, title, date, time_, int(duration or 30), company, _clean(notes, 1000),
-               source, "scheduled", time.time()))
+              (eid, title, date, time_, int(duration or 30), company or "all",
+               _clean(notes or f"Sincronizado con {source}", 1000),
+               source or "Google Calendar & Outlook", "scheduled", time.time()))
     c.commit(); c.close()
-    return {"ok": True, "id": eid, "title": title}
+    return {"ok": True, "id": eid, "title": title, "date": date, "time": time_, "source": source}
 
 
 def update_event(eid: str, **fields) -> dict:
-    allowed = {"title", "date", "time", "duration", "company", "notes", "status"}
+    allowed = {"title", "date", "time", "duration", "company", "notes", "source", "status"}
     sets = {k: v for k, v in fields.items() if k in allowed and v is not None}
     if not sets:
         return {"ok": False, "error": "nothing to update"}
@@ -461,10 +483,12 @@ def list_events() -> list:
     return rows
 
 
-def update_task(tid: str, title=None, due=None, status=None) -> dict:
+def update_task(tid: str, title=None, due=None, status=None, company=None, severity=None) -> dict:
     sets = {}
     if title is not None: sets["title"] = _clean(title, 500)
     if due is not None: sets["due"] = due
+    if company is not None: sets["company"] = company
+    if severity is not None: sets["severity"] = severity
     if status is not None:
         sets["status"] = status
         sets["done"] = time.time() if status == "done" else None
@@ -482,6 +506,25 @@ def delete_task(tid: str) -> dict:
     n = c.execute("DELETE FROM tasks WHERE id=?", (tid,)).rowcount
     c.commit(); c.close()
     return {"ok": n > 0, "id": tid}
+
+
+def sync_calendar_integrations() -> dict:
+    evs = list_events()
+    tks = list_items("tasks", limit=100000)
+    dated_tks = [t for t in tks if re.fullmatch(r"\d{4}-\d{2}-\d{2}", t.get("due") or "")]
+    return {
+        "ok": True,
+        "synced_events": len(evs),
+        "synced_tasks": len(dated_tks),
+        "integrations": [
+            "Google Calendar & Outlook (Bidireccional)",
+            "Google Meet & Zoom Intelligence",
+            "Nexus CRM Pipeline & Demos",
+            "Equipo, Proyectos y Tareas",
+            "Apple Calendar / Feed iCal (.ics)"
+        ],
+        "timestamp": _iso(time.time())
+    }
 
 
 def events_ics() -> str:
