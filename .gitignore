@@ -9,3 +9,4 @@ data/onboarding_state.json
 data/hikconnect_cache.json
 .env
 .env.*
+data/camera_reports/

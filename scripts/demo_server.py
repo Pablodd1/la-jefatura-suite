@@ -1,5 +1,5 @@
-#!/usr/bin/env python3
-"""La Jefatura Suite — Full Mission Control Demo & White-Label API Server.
+﻿#!/usr/bin/env python3
+"""La Jefatura Suite â€” Full Mission Control Demo & White-Label API Server.
 
 Serves:
   GET  /                         -> mock/demo.html (Multi-tab CEO Mission Control)
@@ -32,6 +32,7 @@ sys.path.insert(0, os.path.join(ROOT, "server"))
 import behavior_brain  # noqa: E402
 import buildingapp_ingest  # noqa: E402
 import cameras  # noqa: E402
+import camera_report  # noqa: E402
 import comms_brain  # noqa: E402
 import daily_pdf  # noqa: E402
 import jefesito  # noqa: E402
@@ -102,8 +103,8 @@ def _seed_if_empty():
         if b and b.get("spoken"):
             tts_colombia.synthesize(b["spoken"], lang="es")
         tts_colombia.synthesize(
-            "Soy El Jefesito. Te atiendo por voz o texto, aprendo de cada interacción y puedo cambiar el tema, "
-            "el idioma, el saludo, cerrar el día o imprimir tu resumen. ¿Qué hacemos?",
+            "Soy El Jefesito. Te atiendo por voz o texto, aprendo de cada interacciÃ³n y puedo cambiar el tema, "
+            "el idioma, el saludo, cerrar el dÃ­a o imprimir tu resumen. Â¿QuÃ© hacemos?",
             lang="es"
         )
     except Exception:
@@ -247,6 +248,9 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
         elif path == "/api/buildingapp/summary":
             force = (qs.get("refresh") or ["0"])[0] == "1"
             self._send(200, buildingapp_ingest.summary(force_live=force))
+        elif path == "/api/cameras/report":
+            day = (qs.get("date") or [None])[0]
+            self._send(200, camera_report.get_report(day))
         elif path in ("/api/cameras/status", "/api/cameras/hikconnect"):
             force = (qs.get("refresh") or ["0"])[0] == "1"
             self._send(200, cameras.status(os.path.join(SAMPLES, "cameras.json"), force=force))
@@ -378,6 +382,13 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
             self._send(200, behavior_brain.record_event(et, tg, detail=dt, time_slot=sl))
         elif path == "/api/onboarding/save":
             self._send(200, _save_onboarding(body))
+        elif path == "/api/cameras/events":
+            if not mc_auth.token_ok(self.headers.get("X-MC-Token", "")):
+                self._send(401, {"error": "X-MC-Token required"})
+            else:
+                self._send(200, {"ok": True, "stored": camera_report.add_agent_events(body.get("events", []))})
+        elif path == "/api/cameras/poll":
+            self._send(200, camera_report.poll())
         elif path == "/api/cameras/sync":
             self._send(200, cameras.status(os.path.join(SAMPLES, "cameras.json"), force=True))
         elif path == "/api/voice/command":
@@ -392,6 +403,7 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
 
 if __name__ == "__main__":
     _seed_if_empty()
+    camera_report.start_scheduler()
     srv = __import__("http.server").server.ThreadingHTTPServer(
         ("0.0.0.0", PORT), Handler)
     print(f"La Jefatura demo -> http://localhost:{PORT}  (Ctrl-C to stop)")

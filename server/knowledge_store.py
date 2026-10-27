@@ -1,9 +1,9 @@
-"""La Jefatura — Knowledge Store + Grounded Q&A ("never guess").
+"""La Jefatura â€” Knowledge Store + Grounded Q&A ("never guess").
 
 Persists CEO notes, tasks, meeting summaries and email summaries in mc.db, and answers
 questions ONLY from (a) records stored here and (b) the latest real metric snapshots of the
 connected apps (UniTEC chatbot, BuildingApp). Every answer carries its sources. When nothing
-matches, the answer is an explicit "no data" — there is no free-form generation, so there is
+matches, the answer is an explicit "no data" â€” there is no free-form generation, so there is
 nothing to hallucinate.
 """
 import json
@@ -58,7 +58,7 @@ def _clean(text: str, limit: int = 4000) -> str:
     return (text or "").strip()[:limit]
 
 
-# ───────────────────────── writes ─────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ writes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 def add_note(text: str, source: str = "voice", company: str = "all") -> dict:
     text = _clean(text)
     if not text:
@@ -110,7 +110,7 @@ def add_email_summary(summary: str, sender: str = "", subject: str = "", source:
     return {"ok": True, "id": eid, "subject": subject}
 
 
-# ───────────────────────── reads ─────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ reads â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 def list_items(kind: str, limit: int = 20, open_only: bool = False) -> list:
     c = _db()
     if kind == "notes":
@@ -142,45 +142,45 @@ def ensure_demo_knowledge_seeded():
     c.close()
     if n_notes == 0:
         add_note(
-            "Juan (CEO Building Innovation) solicitó priorizar el embudo de cotización de paneles WPC "
+            "Juan (CEO Building Innovation) solicitÃ³ priorizar el embudo de cotizaciÃ³n de paneles WPC "
             "y revisar el reporte diario de nuevos miembros de BuildingApp en App Store y Google Play.",
             source="demo_seed", company="building"
         )
         add_note(
-            "Dr. Molina (Doral Urgent Care) confirmó interés en firmar hoy por US$12,400/mes si incluimos "
-            "el módulo de denegaciones automáticas en CEDEXX.",
+            "Dr. Molina (Doral Urgent Care) confirmÃ³ interÃ©s en firmar hoy por US$12,400/mes si incluimos "
+            "el mÃ³dulo de denegaciones automÃ¡ticas en CEDEXX.",
             source="demo_seed", company="cedexx"
         )
     if n_meet == 0:
         add_meeting_summary(
-            "El consejo de Brickell Ortho Institute aprobó el piloto de facturación médica para 3 sedes "
-            "(US$15,200 ARR). El kickoff técnico arranca el lunes a las 09:30 AM con Juan Perez.",
-            title="Kickoff & Aprobación Brickell Ortho Institute",
-            attendees="Jasmel Acosta, Juan Perez, Dirección Brickell Ortho",
+            "El consejo de Brickell Ortho Institute aprobÃ³ el piloto de facturaciÃ³n mÃ©dica para 3 sedes "
+            "(US$15,200 ARR). El kickoff tÃ©cnico arranca el lunes a las 09:30 AM con Juan Perez.",
+            title="Kickoff & AprobaciÃ³n Brickell Ortho Institute",
+            attendees="Jasmel Acosta, Juan Perez, DirecciÃ³n Brickell Ortho",
             action_items="Enviar contrato DocuSign y habilitar accesos de las 3 sedes",
             source="demo_seed", company="mbmb"
         )
         add_meeting_summary(
-            "Revisión de lanzamiento móvil BuildingApp AI (iOS App Store y Google Play): el revisor de Apple "
-            "completó 5 análisis de cuarto con Gemini Flash (100% éxito) y probó el flujo DELETE_ACCOUNT.",
-            title="Auditoría App Store & Google Play — BuildingApp AI",
+            "RevisiÃ³n de lanzamiento mÃ³vil BuildingApp AI (iOS App Store y Google Play): el revisor de Apple "
+            "completÃ³ 5 anÃ¡lisis de cuarto con Gemini Flash (100% Ã©xito) y probÃ³ el flujo DELETE_ACCOUNT.",
+            title="AuditorÃ­a App Store & Google Play â€” BuildingApp AI",
             attendees="Jasmel Acosta, Juan (Building Innovation)",
             action_items="Conectar Green API WhatsApp y activar GA4 Data API para unitecusadesign.com",
             source="demo_seed", company="building"
         )
     if n_mail == 0:
         add_email_summary(
-            "Luisa de Clínica Del Mar Cartagena envió la Orden de Compra #PO-2214 aprobada por US$9,800 "
+            "Luisa de ClÃ­nica Del Mar Cartagena enviÃ³ la Orden de Compra #PO-2214 aprobada por US$9,800 "
             "para migrar 3 sedes este lunes a las 10:00 AM.",
             sender="facturas@clinicadelmar.co",
-            subject="Orden de compra #PO-2214 ($9,800) — 3 Sedes Cartagena",
+            subject="Orden de compra #PO-2214 ($9,800) â€” 3 Sedes Cartagena",
             source="demo_seed", company="saleinn"
         )
         add_email_summary(
-            "Notificación logística UNITEC USA: el contenedor de láminas PVC mármol y paneles WPC "
-            "actualizó su ETA al puerto de Miami para el 4 de noviembre.",
+            "NotificaciÃ³n logÃ­stica UNITEC USA: el contenedor de lÃ¡minas PVC mÃ¡rmol y paneles WPC "
+            "actualizÃ³ su ETA al puerto de Miami para el 4 de noviembre.",
             sender="logistics@unitecusadesign.com",
-            subject="Actualización ETA Contenedor WPC / PVC Miami",
+            subject="ActualizaciÃ³n ETA Contenedor WPC / PVC Miami",
             source="demo_seed", company="unitec"
         )
 
@@ -214,7 +214,7 @@ def search(query: str, limit: int = 5) -> list:
     for r in c.execute("SELECT * FROM meetings"):
         s = score(" ".join([r["title"], r["attendees"], r["summary"], r["action_items"]]))
         if s:
-            hits.append((s, r["ts"], {"type": "reunión", "id": r["id"], "date": _iso(r["ts"]),
+            hits.append((s, r["ts"], {"type": "reuniÃ³n", "id": r["id"], "date": _iso(r["ts"]),
                                       "title": r["title"], "text": r["summary"],
                                       "action_items": r["action_items"]}))
     for r in c.execute("SELECT * FROM email_summaries"):
@@ -238,7 +238,7 @@ def search(query: str, limit: int = 5) -> list:
     return out[:limit]
 
 
-# ───────────────────── real-metric facts (no guessing) ─────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ real-metric facts (no guessing) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 def _facts() -> dict:
     """Latest REAL snapshots from the connected apps, each with its own source + timestamp."""
     facts = {}
@@ -270,7 +270,7 @@ def _metric_answer(q: str, lang: str):
 
     def add(text, meta):
         out.append(text)
-        srcs.append(f"{meta['source']} · {meta.get('as_of') or 'sin fecha'} · {meta.get('origin')}")
+        srcs.append(f"{meta['source']} Â· {meta.get('as_of') or 'sin fecha'} Â· {meta.get('origin')}")
 
     if re.search(r"miembros|members|usuarios nuevos|new users|registrad", n) and "building" in f:
         fk, _, m = f["building"]
@@ -281,7 +281,7 @@ def _metric_answer(q: str, lang: str):
         fk, _, m = f["building"]
         ai = fk.get("ai_usage", {})
         add((f"BuildingApp IA: {ai.get('generations_today')} generaciones hoy, {ai.get('generations_total')} en total, "
-             f"éxito {ai.get('success_rate_pct')}%." if es else
+             f"Ã©xito {ai.get('success_rate_pct')}%." if es else
              f"BuildingApp AI: {ai.get('generations_today')} generations today, {ai.get('generations_total')} total, "
              f"{ai.get('success_rate_pct')}% success."), m)
     if re.search(r"costo|cost|gasto|spend", n) and "building" in f:
@@ -293,13 +293,13 @@ def _metric_answer(q: str, lang: str):
         fk, kp, m = f["unitec"]
         rc = fk.get("real_conversations_today", {})
         add((f"Chatbot UNITEC: {rc.get('unitec')} conversaciones reales hoy (UNITEC) y {rc.get('building')} (Building); "
-             f"{kp.get('real_interactions')} interacciones reales históricas." if es else
+             f"{kp.get('real_interactions')} interacciones reales histÃ³ricas." if es else
              f"UNITEC chatbot: {rc.get('unitec')} real conversations today (UNITEC), {rc.get('building')} (Building); "
              f"{kp.get('real_interactions')} real interactions all-time."), m)
     if re.search(r"contactos|telefonos|phones|contacts|leads capturados", n) and "unitec" in f:
         fk, _, m = f["unitec"]
         cp = fk.get("contacts_captured_phone", {})
-        add((f"Contactos con teléfono: {cp.get('today')} hoy, {cp.get('all_time')} históricos."
+        add((f"Contactos con telÃ©fono: {cp.get('today')} hoy, {cp.get('all_time')} histÃ³ricos."
              if es else f"Phone contacts: {cp.get('today')} today, {cp.get('all_time')} all-time."), m)
     if re.search(r"alertas|alerts|escalacion|escalation|entrega|delivery", n) and "unitec" in f:
         fk, _, m = f["unitec"]
@@ -324,7 +324,7 @@ def _metric_answer(q: str, lang: str):
                 {"source": "Calendario mc.db & 9 Integraciones", "as_of": "2026-10-26", "origin": "events"})
     if re.search(r"\b(ingresos?|ventas?|facturacion|pipeline|portafolio|revenue|sales|mbmb|cedexx|305biz)\b", n):
         add(("Portafolio Consolidado (5 Empresas): Ingreso mensual proyectado $48,200 (+12% vs semana previa), "
-             "Pipeline total Nexus $214,500 (23 leads activos), Ventas cerradas $96,400 (31% conversión). "
+             "Pipeline total Nexus $214,500 (23 leads activos), Ventas cerradas $96,400 (31% conversiÃ³n). "
              "Desglose: MBMB $18,600/mes (pipe $84,200), CEDEXX $12,800/mes (pipe $62,400), "
              "UNITEC USA $8,400/mes (pipe $38,900), BUILDING $8,400/mes (pipe $29,000)."
              if es else
@@ -345,6 +345,10 @@ def _metric_answer(q: str, lang: str):
     if re.search(r"\b(camaras?|cameras?|nvr|dvr|hik.?connect|hikvision|salon ideo|oficina ideo|espacios importados|muelles?|porton)\b", n):
         try:
             import cameras
+            if re.search(r'\b(informe|reporte|resumen|report|summary|actividad|activity|ayer|yesterday|hoy|today)\b', n):
+                import camera_report
+                rep = camera_report.get_report()
+                add(rep['text_es'] if es else rep['text_en'], {'source': 'Informe diario de camaras', 'as_of': rep['day'], 'origin': 'camera_report'})
             hik = cameras.sync_hikconnect(force=False)
             if hik.get("ok"):
                 add((hik.get("expert_diagnosis_es") if es else hik.get("expert_diagnosis_en")),
@@ -352,14 +356,14 @@ def _metric_answer(q: str, lang: str):
         except Exception:
             pass
     if re.search(r"\b(mision|directiva|proposito|que pasa si no puedes|escalar|desarrollador|como funcionas)\b", n):
-        add(("Directiva Principal en Memoria: Soy tu Super Asistente Ejecutivo manos-libres. Tú solo lees o escuchas resultados "
-             "y das órdenes por voz o texto; yo interpreto, aprendo de cada interacción, ejecuto en tus 9 integraciones y, "
-             "si algo no existe o no puedo ejecutarlo aún, jamás adivino: notifico automáticamente al desarrollador (Jasmel) "
-             "con un ticket #DEV para que construya la solución."
+        add(("Directiva Principal en Memoria: Soy tu Super Asistente Ejecutivo manos-libres. TÃº solo lees o escuchas resultados "
+             "y das Ã³rdenes por voz o texto; yo interpreto, aprendo de cada interacciÃ³n, ejecuto en tus 9 integraciones y, "
+             "si algo no existe o no puedo ejecutarlo aÃºn, jamÃ¡s adivino: notifico automÃ¡ticamente al desarrollador (Jasmel) "
+             "con un ticket #DEV para que construya la soluciÃ³n."
              if es else
              "Core Memory Directive: I am your hands-off Executive Super Assistant. You only read/listen to results and issue "
              "voice/text commands; I interpret, learn, execute across all 9 integrations, and if I cannot perform something yet, "
-             "I never guess — I automatically notify the developer (Jasmel) with a #DEV ticket to build the solution."),
+             "I never guess â€” I automatically notify the developer (Jasmel) with a #DEV ticket to build the solution."),
             {"source": "Memoria Directiva CEO (mc.db)", "as_of": "2026-10-26", "origin": "system_directive"})
     if not out:
         return None
@@ -382,12 +386,12 @@ def ask(question: str, lang: str = "es") -> dict:
     q = (question or "").strip()
     n = _norm(q)
 
-    # 1) Listing intents → read straight from the store.
+    # 1) Listing intents â†’ read straight from the store.
     listing = [
         (r"\b(notas?|notes?)\b", "notes", "notas", "notes"),
         (r"\b(tareas?|tasks?|pendientes)\b", "tasks", "tareas abiertas", "open tasks"),
-        (r"\b(reuniones?|meetings?)\b", "meetings", "resúmenes de reunión", "meeting summaries"),
-        (r"\b(correos?|emails?|mails?)\b", "emails", "resúmenes de correo", "email summaries"),
+        (r"\b(reuniones?|meetings?)\b", "meetings", "resÃºmenes de reuniÃ³n", "meeting summaries"),
+        (r"\b(correos?|emails?|mails?)\b", "emails", "resÃºmenes de correo", "email summaries"),
     ]
     if re.search(r"\b(que|cuales|cuantas?|lista|listar|lee|leer|read|list|show|what|how many|dame|muestra)\b", n):
         for rx, kind, lab_es, lab_en in listing:
@@ -399,7 +403,7 @@ def ask(question: str, lang: str = "es") -> dict:
                     n_sample = len(items) - len(real)
                     items = real
                     if n_sample:
-                        sample_note = (f" (Además hay {n_sample} tareas de ejemplo del demo, que no son tuyas.)" if es
+                        sample_note = (f" (AdemÃ¡s hay {n_sample} tareas de ejemplo del demo, que no son tuyas.)" if es
                                        else f" (Plus {n_sample} demo sample tasks, which are not yours.)")
                 label = lab_es if es else lab_en
                 if not items:
@@ -411,7 +415,7 @@ def ask(question: str, lang: str = "es") -> dict:
                 for it in items:
                     txt = it.get("text") or it.get("title") or it.get("summary") or it.get("subject") or ""
                     lines.append(f"[{it['id']}] {txt[:140]}")
-                head = (f"Tienes {total} {label}. Las más recientes: " if es
+                head = (f"Tienes {total} {label}. Las mÃ¡s recientes: " if es
                         else f"You have {total} {label}. Most recent: ")
                 return {"answer": head + " | ".join(lines) + sample_note,
                         "sources": [it["id"] for it in items], "grounded": True}
@@ -426,13 +430,13 @@ def ask(question: str, lang: str = "es") -> dict:
     if hits:
         parts = []
         for h in hits[:3]:
-            label = h["type"] + (f" «{h['title']}»" if h.get("title") else "")
+            label = h["type"] + (f" Â«{h['title']}Â»" if h.get("title") else "")
             parts.append(f"{label} [{h['id']}, {h.get('date', '')}]: {h['text'][:220]}")
         exact = hits[0].get("_coverage", 0) >= 0.75
         if exact:
             head = ""
         else:
-            head = ("No tengo una coincidencia exacta con tu pregunta; lo más cercano que hay guardado es (puede no responder lo que preguntas): "
+            head = ("No tengo una coincidencia exacta con tu pregunta; lo mÃ¡s cercano que hay guardado es (puede no responder lo que preguntas): "
                     if es else
                     "I have no exact match for your question; the closest stored item is (it may not answer what you asked): ")
         return {"answer": head + " || ".join(parts), "sources": [h["id"] for h in hits[:3]],
@@ -441,22 +445,22 @@ def ask(question: str, lang: str = "es") -> dict:
     # 4) Honest refusal + Automatic Developer Escalation Notification.
     esc = log_dev_escalation(q, reason="unrecorded_data_or_missing_capability", channel="ask")
     dev_id = esc.get("id", "DEV-0001")
-    return {"answer": ((f"No tengo ese dato registrado, así que no voy a adivinar. "
-                        f"He notificado automáticamente al desarrollador (Jasmel · Ticket #{dev_id}) con tu solicitud "
-                        f"para que conecte el dato o implemente la solución. Mientras tanto puedo buscar en tus notas, "
-                        f"citas, tareas, correos o métricas de UNITEC, BuildingApp y Nexus CRM.")
+    return {"answer": ((f"No tengo ese dato registrado, asÃ­ que no voy a adivinar. "
+                        f"He notificado automÃ¡ticamente al desarrollador (Jasmel Â· Ticket #{dev_id}) con tu solicitud "
+                        f"para que conecte el dato o implemente la soluciÃ³n. Mientras tanto puedo buscar en tus notas, "
+                        f"citas, tareas, correos o mÃ©tricas de UNITEC, BuildingApp y Nexus CRM.")
                        if es else
                        (f"I don't have that recorded, so I won't guess. "
-                        f"I have automatically notified the developer (Jasmel · Ticket #{dev_id}) with your exact request "
+                        f"I have automatically notified the developer (Jasmel Â· Ticket #{dev_id}) with your exact request "
                         f"so they can build the solution. Meanwhile I can search your notes, calendar, tasks, emails, "
                         f"or connected UNITEC, BuildingApp, and Nexus CRM metrics.")),
-            "sources": [f"Escalado al Desarrollador · #{dev_id}"], "grounded": False, "dev_ticket": esc}
+            "sources": [f"Escalado al Desarrollador Â· #{dev_id}"], "grounded": False, "dev_ticket": esc}
 
 
 if __name__ == "__main__":
-    print(json.dumps(ask("cuántos miembros hay"), ensure_ascii=False, indent=2))
+    print(json.dumps(ask("cuÃ¡ntos miembros hay"), ensure_ascii=False, indent=2))
 
-# ───────────────────────── calendar events & task edits ─────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ calendar events & task edits â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 _EV_SCHEMA = """
 CREATE TABLE IF NOT EXISTS events (
     id TEXT PRIMARY KEY, title TEXT, date TEXT, time TEXT, duration INTEGER,
@@ -464,17 +468,17 @@ CREATE TABLE IF NOT EXISTS events (
 """
 
 DEMO_EVENTS_SEED = [
-    ("E-demo1017", "Auditoría Mensual Facturación Médica (3 Sedes)", "2026-10-17", "10:00", 45, "mbmb", "Sincronizado con Google Calendar & Nexus CRM", "Google Calendar & Nexus", "scheduled"),
-    ("E-demo1021", "Revisión Lanzamiento iOS & Android BuildingApp AI", "2026-10-21", "11:30", 30, "building", "Sincronizado con Google Meet & App Store Connect", "Google Meet & Zoom", "scheduled"),
-    ("E-demo1023", "Comité de Conversión Recepcionista IA UNITEC (29 Leads)", "2026-10-23", "15:00", 45, "unitec", "Sincronizado con Outlook & Vercel Front-Desk", "Google Calendar & Outlook", "scheduled"),
-    ("E-demo1025", "Preparación Semanal de Flujo de Caja & Denegaciones", "2026-10-25", "17:00", 30, "cedexx", "Sincronizado con Cerebro Conductual", "Google Calendar & Outlook", "scheduled"),
-    ("E-demo1026a", "Kickoff Técnico Brickell Ortho ($15.2k ARR)", "2026-10-26", "09:30", 45, "mbmb", "Sincronizado con Google Calendar & Meet", "Google Calendar & Meet", "scheduled"),
-    ("E-demo1026b", "Cierre Contrato Dr. Molina · Doral Urgent Care ($12.4k/m)", "2026-10-26", "14:00", 30, "cedexx", "Sincronizado con Nexus CRM & Outlook", "Nexus CRM & Outlook", "scheduled"),
-    ("E-demo1026c", "Corte Diario BuildingApp AI (130 Renders · 7 Miembros)", "2026-10-26", "16:30", 30, "building", "Sincronizado con Google Calendar & Zoom", "Google Meet & Zoom", "scheduled"),
-    ("E-demo1027a", "Migración 3 Sedes Clínica Del Mar (#PO-2214 · $9.8k)", "2026-10-27", "10:00", 60, "305biz", "Sincronizado con Google Calendar & Meet", "Google Calendar & Meet", "scheduled"),
-    ("E-demo1027b", "Demo Portal Bilingüe · Jorge (UNITEC USA)", "2026-10-27", "16:00", 45, "unitec", "Sincronizado con Nexus CRM & Google Meet", "Nexus CRM & Meet", "scheduled"),
-    ("E-demo1028", "Auditoría Mensual Denegaciones & Cashflow (MBMB + CEDEXX)", "2026-10-28", "11:00", 45, "mbmb", "Sincronizado con Outlook & Nexus CRM", "Google Calendar & Outlook", "scheduled"),
-    ("E-demo1030", "Comité Ejecutivo de Viernes · 5 Empresas Consolidadas", "2026-10-30", "15:00", 60, "all", "Sincronizado con Google Calendar, Zoom & PDF Diario", "Google Calendar & Zoom", "scheduled"),
+    ("E-demo1017", "AuditorÃ­a Mensual FacturaciÃ³n MÃ©dica (3 Sedes)", "2026-10-17", "10:00", 45, "mbmb", "Sincronizado con Google Calendar & Nexus CRM", "Google Calendar & Nexus", "scheduled"),
+    ("E-demo1021", "RevisiÃ³n Lanzamiento iOS & Android BuildingApp AI", "2026-10-21", "11:30", 30, "building", "Sincronizado con Google Meet & App Store Connect", "Google Meet & Zoom", "scheduled"),
+    ("E-demo1023", "ComitÃ© de ConversiÃ³n Recepcionista IA UNITEC (29 Leads)", "2026-10-23", "15:00", 45, "unitec", "Sincronizado con Outlook & Vercel Front-Desk", "Google Calendar & Outlook", "scheduled"),
+    ("E-demo1025", "PreparaciÃ³n Semanal de Flujo de Caja & Denegaciones", "2026-10-25", "17:00", 30, "cedexx", "Sincronizado con Cerebro Conductual", "Google Calendar & Outlook", "scheduled"),
+    ("E-demo1026a", "Kickoff TÃ©cnico Brickell Ortho ($15.2k ARR)", "2026-10-26", "09:30", 45, "mbmb", "Sincronizado con Google Calendar & Meet", "Google Calendar & Meet", "scheduled"),
+    ("E-demo1026b", "Cierre Contrato Dr. Molina Â· Doral Urgent Care ($12.4k/m)", "2026-10-26", "14:00", 30, "cedexx", "Sincronizado con Nexus CRM & Outlook", "Nexus CRM & Outlook", "scheduled"),
+    ("E-demo1026c", "Corte Diario BuildingApp AI (130 Renders Â· 7 Miembros)", "2026-10-26", "16:30", 30, "building", "Sincronizado con Google Calendar & Zoom", "Google Meet & Zoom", "scheduled"),
+    ("E-demo1027a", "MigraciÃ³n 3 Sedes ClÃ­nica Del Mar (#PO-2214 Â· $9.8k)", "2026-10-27", "10:00", 60, "305biz", "Sincronizado con Google Calendar & Meet", "Google Calendar & Meet", "scheduled"),
+    ("E-demo1027b", "Demo Portal BilingÃ¼e Â· Jorge (UNITEC USA)", "2026-10-27", "16:00", 45, "unitec", "Sincronizado con Nexus CRM & Google Meet", "Nexus CRM & Meet", "scheduled"),
+    ("E-demo1028", "AuditorÃ­a Mensual Denegaciones & Cashflow (MBMB + CEDEXX)", "2026-10-28", "11:00", 45, "mbmb", "Sincronizado con Outlook & Nexus CRM", "Google Calendar & Outlook", "scheduled"),
+    ("E-demo1030", "ComitÃ© Ejecutivo de Viernes Â· 5 Empresas Consolidadas", "2026-10-30", "15:00", 60, "all", "Sincronizado con Google Calendar, Zoom & PDF Diario", "Google Calendar & Zoom", "scheduled"),
 ]
 
 
@@ -633,7 +637,7 @@ def log_dev_escalation(request_text: str, reason: str = "missing_capability_or_d
     now = time.time()
     c.execute("INSERT INTO dev_escalations VALUES(?,?,?,?,?,?,?)",
               (did, now, req, reason, channel, "pending_developer",
-               "Enviado automáticamente a Jasmel (Desarrollador) para implementar conector/solución."))
+               "Enviado automÃ¡ticamente a Jasmel (Desarrollador) para implementar conector/soluciÃ³n."))
     c.commit(); c.close()
     return {"ok": True, "id": did, "request": req, "status": "pending_developer", "ts": _iso(now)}
 
