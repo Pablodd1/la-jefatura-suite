@@ -31,6 +31,7 @@ sys.path.insert(0, os.path.join(ROOT, "server"))
 
 import behavior_brain  # noqa: E402
 import buildingapp_ingest  # noqa: E402
+import cameras  # noqa: E402
 import comms_brain  # noqa: E402
 import daily_pdf  # noqa: E402
 import jefesito  # noqa: E402
@@ -246,6 +247,9 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
         elif path == "/api/buildingapp/summary":
             force = (qs.get("refresh") or ["0"])[0] == "1"
             self._send(200, buildingapp_ingest.summary(force_live=force))
+        elif path in ("/api/cameras/status", "/api/cameras/hikconnect"):
+            force = (qs.get("refresh") or ["0"])[0] == "1"
+            self._send(200, cameras.status(os.path.join(SAMPLES, "cameras.json"), force=force))
         elif path == "/api/comms/inbox":
             self._send(200, comms_brain.list_inbox_with_drafts())
         elif path == "/api/behavior/state":
@@ -374,6 +378,8 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
             self._send(200, behavior_brain.record_event(et, tg, detail=dt, time_slot=sl))
         elif path == "/api/onboarding/save":
             self._send(200, _save_onboarding(body))
+        elif path == "/api/cameras/sync":
+            self._send(200, cameras.status(os.path.join(SAMPLES, "cameras.json"), force=True))
         elif path == "/api/voice/command":
             cmd = body.get("command", "")
             lang = body.get("lang", "es")

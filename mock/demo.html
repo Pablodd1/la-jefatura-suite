@@ -697,9 +697,27 @@
 
     <!-- Cameras & Alerts -->
     <div class="card" style="grid-column:span 8" onmouseenter="trackBehavior('mouse_focus','cameras_security_grid')">
-      <h3><span class="lhs"><span class="dot" style="background:var(--crit)"></span><span data-i18n="cams">Cámaras — IA</span> <span class="muted" data-i18n="demo">(feed en vivo + resumen IA)</span></span></h3>
+      <h3>
+        <span class="lhs">
+          <span class="dot" style="background:var(--crit)"></span>
+          <span data-i18n="cams">Cámaras — IA</span>
+          <span class="tag ok" id="hikLiveBadge">HIK-CONNECT EN VIVO · 5 EQUIPOS · 53/55 CANALES ONLINE</span>
+        </span>
+        <div style="display:flex;gap:6px;align-items:center">
+          <select id="hikDeviceFilter" class="inp" style="padding:4px 8px;font-size:11px;width:auto" onchange="renderHikConnectCameras()">
+            <option value="ALL">Todos los Equipos Hik-Connect (55 Canales)</option>
+            <option value="GC5348382">NVR USA · DS-7608NI-Q2/8P (8 Canales PoE · ONLINE)</option>
+            <option value="AF5246237">DVR Planta Pick-In · iDS-7216HUHI-M2/S (16 Canales · ONLINE)</option>
+            <option value="L12154607">DVR ESPACIOS IMPORTADOS · iDS-7216HUHI-M2/S (29 Canales · ONLINE)</option>
+            <option value="IDEO">Cámaras Wi-Fi UNITECUSA · SALON &amp; OFICINA IDEO (2 IPC · OFFLINE)</option>
+          </select>
+          <button class="btn ghost sm" type="button" onclick="syncHikConnectLive(true)">Sincronizar Hik-Connect</button>
+        </div>
+      </h3>
+      <div id="hikDevicesSummaryStrip" style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:12px"></div>
       <div id="cams" style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px"></div>
-      <div class="narr" style="margin-top:14px" id="camNarr"></div>
+      <div id="hikChannelsTable" style="margin-top:12px;max-height:210px;overflow-y:auto;border:1px solid var(--hair);border-radius:10px;padding:8px 10px;background:rgba(7,11,20,.45)"></div>
+      <div class="narr" style="margin-top:12px" id="camNarr"></div>
     </div>
 
     <div class="card" style="grid-column:span 4">
@@ -931,6 +949,7 @@
       <button type="button" class="sa-chip" onclick="window.LJSuper.send('qué citas tengo hoy')">Citas y Agenda Hoy</button>
       <button type="button" class="sa-chip" onclick="window.LJSuper.send('cuál es el ingreso proyectado y pipeline de todas las empresas')">Ingresos y Pipeline (5 Empresas)</button>
       <button type="button" class="sa-chip" onclick="window.LJSuper.send('cuántos miembros nuevos hay en BuildingApp y conversaciones en UNITEC')">Métricas BuildingApp &amp; UNITEC</button>
+      <button type="button" class="sa-chip" onclick="window.LJSuper.send('cuál es el estado de las cámaras y NVR en Hik-Connect')">Cámaras y NVR Hik-Connect (55 Canales)</button>
       <button type="button" class="sa-chip" onclick="window.LJSuper.send('aprobar borrador')">Aprobar Borrador (1-Clic)</button>
       <button type="button" class="sa-chip" onclick="window.LJSuper.send('agendar cita: Comité Ejecutivo 2026-10-27 11:00')">Agendar Cita Mañana 11:00</button>
       <button type="button" class="sa-chip" onclick="window.LJSuper.send('crear tarea: Revisar contrato Doral Urgent Care')">Crear Tarea Rápida</button>
@@ -996,14 +1015,14 @@ const TASKS = [
 ];
 
 const CAMS = [
-  ["CAM-01 · Recepción MBMB"],
-  ["CAM-02 · Sala de juntas"],
-  ["CAM-03 · Bodega / Archivo"],
-  ["CAM-04 · Estacionamiento"]
+  ["GC5348382-CH01 · NVR USA · Camera 01 (GV5706652 · ONLINE)"],
+  ["AF5246237-CH01 · AREA DE PICK IN (Planta Pick-In · ONLINE)"],
+  ["L12154607-CH23 · MUELLE 1 (FZ5991538 · Espacios Imp. · ONLINE)"],
+  ["BF4860946-CH01 · SALON IDEO (Wi-Fi UNITECUSA · OFFLINE)"]
 ];
 
-const CAMNARR_ES = "Movimiento detectado en Bodega/Archivo ayer 21:47 (fuera de horario). Persona no identificada permaneció 45 segundos. Snapshot guardado y alerta enviada. Sin otros eventos fuera de horario en 12h.";
-const CAMNARR_EN = "Motion detected in Warehouse/Records yesterday 21:47 (after hours). Unidentified person stayed 45 seconds. Snapshot saved and alert sent. No other after-hours events in 12h.";
+const CAMNARR_ES = "Conexión en vivo activa con Hik-Connect Cloud (apiisa.hik-connect.com · cuenta il6usm): 5 equipos descubiertos y 55 canales en total (53 transmitiendo señal en vivo ahora mismo): 1) NVR «USA» (DS-7608NI-Q2/8P · Serial GC5348382 · Propietario · ONLINE en LAN 192.168.12.213 / WAN 172.58.135.61 · 8 cámaras IP PoE activas · Disco 2 TB · Sin cifrado); 2) DVR «iDS-7216HUHI-M2/S» (Serial AF5246237 · ONLINE en LAN 192.168.0.121 · 16 cámaras: AREA DE PICK IN, Portón Azul, Pasillos, Oficina, Carga, Portón Naranja · Disco 2 TB); 3) DVR «ESPACIOS IMPORTADOS» (iDS-7216HUHI-M2/S · Serial L12154607 · ONLINE en LAN 192.168.1.148 · 29 cámaras: Muelles 1-4, Despachos 1-2, Logística, Lockers, Kiosko, Perímetros 1-5 · 2x4 TB = 8 TB); 4) 2 Cámaras Wi-Fi «SALON IDEO» (BF4860946) y «OFICINA IDEO» (BF4862037) en red UNITECUSA (DS-2CV2Q21G1-IDW · microSD 64 GB), ambas OFFLINE desde el 2026-10-26 22:59.";
+const CAMNARR_EN = "Live Hik-Connect Cloud connection active (apiisa.hik-connect.com · user il6usm): 5 devices and 55 camera channels discovered (53 live online right now): 1) NVR 'USA' (DS-7608NI-Q2/8P · Serial GC5348382 · Owner · ONLINE at LAN 192.168.12.213 / WAN 172.58.135.61 · 8 PoE IP cameras · 2 TB HDD · Unencrypted); 2) DVR 'iDS-7216HUHI-M2/S' (Serial AF5246237 · ONLINE at LAN 192.168.0.121 · 16 cameras: Pick-In, Blue Gate, Aisles, Office, Loading, Orange Gate · 2 TB HDD); 3) DVR 'ESPACIOS IMPORTADOS' (iDS-7216HUHI-M2/S · Serial L12154607 · ONLINE at LAN 192.168.1.148 · 29 cameras: Docks 1-4, Dispatch 1-2, Logistics, Lockers, Kiosk, Perimeters 1-5 · 8 TB HDD); 4) 2 Wi-Fi IPCs 'SALON IDEO' (BF4860946) & 'OFICINA IDEO' (BF4862037) on SSID UNITECUSA, both OFFLINE since 2026-10-26 22:59.";
 
 const ALERTS = [
   ["08:14","info","Informe del Jefe enviado (texto + voz)."],
@@ -1084,7 +1103,7 @@ const INTEGRATIONS = [
   {id:"meetings", icon:"", name:"Google Meet & Zoom Intelligence", cat:"Reuniones y Minutas", connected:true, detail:"Resumen automático de acuerdos y tareas post-llamada"},
   {id:"nexus", icon:"", name:"Nexus CRM Global", cat:"Pipeline y Ventas", connected:true, detail:"Sincronización cada 5 min (USA, CO, MX, CL)"},
   {id:"tasks", icon:"", name:"Motor de Tareas y Escalaciones", cat:"Asignaciones de Equipo", connected:true, detail:"Recordatorio 24h al staff · Alerta 48h al CEO"},
-  {id:"cameras", icon:"", name:"Cámaras ONVIF / RTSP + Visión IA", cat:"Monitoreo de Sedes", connected:true, detail:"4 zonas en vivo + digest de eventos fuera de horario"},
+  {id:"cameras", icon:"", name:"Hik-Connect Cloud API v3 + ONVIF / RTSP", cat:"Monitoreo de Sedes", connected:true, detail:"5 equipos y 55 canales en vivo (NVR USA, Planta Pick-In, Espacios Importados, Salón/Oficina IDEO)"},
   {id:"people", icon:"", name:"Monitoreo de Personal y Productividad", cat:"Equipo y Vendedores", connected:true, detail:"Velocidad de respuesta, cierres y carga de trabajo"},
   {id:"clients", icon:"", name:"Radar de Salud de Clientes", cat:"Retención y Visitas", connected:true, detail:"Monitoreo de contratos, visitas y renovaciones"},
   {id:"grok", icon:"", name:"Grok 3.0 Voice & DOM Brain", cat:"Voz y Cerebro Conductual", connected:true, detail:"Control total por voz + aprendizaje Mañana/Tarde/Noche"}
@@ -1596,6 +1615,7 @@ function renderAll() {
   renderForeseenStrip();
   if (typeof renderUnitecPanel === 'function') renderUnitecPanel();
   if (typeof renderBuildingAppPanel === 'function') renderBuildingAppPanel();
+  if (typeof renderHikConnectCameras === 'function' && HIKCONNECT_DATA) renderHikConnectCameras();
   startFeeds();
 }
 
@@ -1763,7 +1783,7 @@ function renderOutcomesTab() {
     <div class="row"><div><b>MBMB Revenue Cycle Analytics</b><div class="t">41 denegaciones detectadas → plan de recuperación activo</div></div><span class="tag ok">$18.4k recuperables</span></div>
     <div class="row"><div><b>CEDEXX Health Tech SaaS</b><div class="t">Uptime 99.98% · 2 nuevos tenants en onboarding</div></div><span class="tag ok">+$28.0k ARR</span></div>
     <div class="row"><div><b>305 Business Group Deal Flow</b><div class="t">Auth nativa MC activa · leads sincronizados en tiempo real</div></div><span class="tag medium">14 leads calificados</span></div>
-    <div class="row"><div><b>Cámaras IA & Seguridad</b><div class="t">14 detecciones diurnas normales · 1 evento nocturno aislado</div></div><span class="tag high">99.2% precisión</span></div>
+    <div class="row"><div><b>Hik-Connect Cloud &amp; Cámaras IA (5 Equipos · 55 Canales)</b><div class="t">3 NVR/DVR ONLINE (53 canales en vivo: USA, Pick-In, Espacios Importados) · 2 IPC Wi-Fi OFFLINE (IDEO)</div></div><span class="tag ok">53/55 en línea</span></div>
   `;
   loadKnowledgeVault(false);
 }
@@ -2416,6 +2436,108 @@ function syncBuildingAppLive(force = false) {
     .catch(() => renderBuildingAppPanel());
 }
 
+/* ── HIK-CONNECT CLOUD LIVE INVENTORY (5 DEVICES · 55 CHANNELS) ── */
+let HIKCONNECT_DATA = null;
+
+function renderHikConnectCameras() {
+  const stripEl = document.getElementById('hikDevicesSummaryStrip');
+  const tblEl = document.getElementById('hikChannelsTable');
+  const badgeEl = document.getElementById('hikLiveBadge');
+  const filterEl = document.getElementById('hikDeviceFilter');
+  const selFilter = (filterEl && filterEl.value) || 'ALL';
+
+  if (!HIKCONNECT_DATA || !HIKCONNECT_DATA.ok) return;
+  const sum = HIKCONNECT_DATA.summary || {};
+  const devs = HIKCONNECT_DATA.devices || [];
+  const chs = HIKCONNECT_DATA.channels || [];
+
+  if (badgeEl) {
+    badgeEl.textContent = lang === 'es'
+      ? `HIK-CONNECT EN VIVO · ${sum.online_devices || 3}/${sum.total_devices || 5} EQUIPOS · ${sum.live_signal_channels || 53}/${sum.total_channels || 55} CANALES ONLINE`
+      : `HIK-CONNECT LIVE · ${sum.online_devices || 3}/${sum.total_devices || 5} DEVICES · ${sum.live_signal_channels || 53}/${sum.total_channels || 55} CHANNELS ONLINE`;
+  }
+
+  if (stripEl) {
+    stripEl.innerHTML = devs.map(d => `
+      <div style="background:rgba(7,11,20,.65);border:1px solid ${d.online ? 'rgba(16,185,129,.35)' : 'rgba(255,92,92,.35)'};padding:8px 10px;border-radius:10px;cursor:pointer" onclick="document.getElementById('hikDeviceFilter').value='${d.serial.startsWith('BF') ? 'IDEO' : d.serial}';renderHikConnectCameras()">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:4px">
+          <b style="font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${d.name}</b>
+          <span class="tag ${d.online ? 'ok' : 'critical'}" style="font-size:9px;padding:1px 5px">${d.online ? 'ONLINE' : 'OFFLINE'}</span>
+        </div>
+        <div class="muted" style="font-size:10px;margin-top:3px">${d.model} · ${d.serial}</div>
+        <div style="font-size:10.5px;margin-top:3px;color:var(--acc)"><b>${d.active_channels_count} cam</b> · LAN ${d.lan_ip || 'N/A'}</div>
+        <div class="muted" style="font-size:9.5px;margin-top:2px">HDD: ${d.disks_summary} · ${d.is_encrypted ? 'Cifrado ON' : 'Sin Cifrado'}</div>
+      </div>
+    `).join('');
+  }
+
+  let filteredChs = chs;
+  if (selFilter === 'IDEO') {
+    filteredChs = chs.filter(c => c.device_serial === 'BF4860946' || c.device_serial === 'BF4862037');
+  } else if (selFilter !== 'ALL') {
+    filteredChs = chs.filter(c => c.device_serial === selFilter);
+  }
+
+  // Update top 4 live canvas labels to match selected device/filter
+  const preview4 = filteredChs.slice(0, 4);
+  if (preview4.length) {
+    preview4.forEach((c, idx) => {
+      CAMS[idx] = [`${c.id} · ${c.name} (${c.device_name} · ${c.active ? 'ONLINE' : 'OFFLINE'})`];
+    });
+    const camsBox = document.getElementById('cams');
+    if (camsBox) {
+      camsBox.innerHTML = preview4.map((c, i) => `
+        <div class="cam"><canvas id="cv${i}" width="320" height="180"></canvas>
+          <span class="lbl">${c.id} · ${c.name} (${c.device_name})</span>
+          <span class="rec" style="background:${c.active ? '#10B981' : '#ff5c5c'}">${c.active ? 'LIVE OK' : 'OFFLINE'}</span>
+          <span class="stamp" id="st${i}"></span>
+        </div>
+      `).join('');
+      startFeeds();
+    }
+  }
+
+  if (tblEl) {
+    tblEl.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:11px">
+        <b>Inventario Real Hik-Connect (${filteredChs.length} canales mostrados · Cuenta ${HIKCONNECT_DATA.account ? HIKCONNECT_DATA.account.username : 'il6usm'} · ${HIKCONNECT_DATA.account ? HIKCONNECT_DATA.account.api_domain : 'apiisa.hik-connect.com'})</b>
+        <span class="muted">Sincronizado: ${HIKCONNECT_DATA.synced_at || 'Ahora'}</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px">
+        ${filteredChs.map(c => `
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 8px;border-radius:7px;background:rgba(255,255,255,.04);border:1px solid var(--hair);font-size:11px">
+            <div style="min-width:0;flex:1">
+              <b>${c.name}</b> <span class="muted">(${c.id})</span>
+              <div class="muted" style="font-size:9.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.device_name} · ${c.device_model} ${c.sub_serial ? '· S/N ' + c.sub_serial : ''} · ${c.vtm_relay}</div>
+            </div>
+            <span class="tag ${c.active ? 'ok' : 'critical'}" style="font-size:9.5px;margin-left:6px">${c.active ? 'SEÑAL OK' : 'OFFLINE'}</span>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  const narrEl = document.getElementById('camNarr');
+  if (narrEl) {
+    narrEl.textContent = lang === 'es'
+      ? (HIKCONNECT_DATA.expert_diagnosis_es || CAMNARR_ES)
+      : (HIKCONNECT_DATA.expert_diagnosis_en || CAMNARR_EN);
+  }
+}
+
+function syncHikConnectLive(force = false) {
+  fetch('/api/cameras/status' + (force ? '?refresh=1' : ''))
+    .then(r => r.json())
+    .then(d => {
+      if (d && d.hikconnect && d.hikconnect.ok) {
+        HIKCONNECT_DATA = d.hikconnect;
+        renderHikConnectCameras();
+        if (force) showToast('Hik-Connect Cloud sincronizado en vivo: 5 equipos y 55 canales verificados.');
+      }
+    })
+    .catch(() => {});
+}
+
 renderSeg();
 setRoutineSlot('morning');
 renderAll();
@@ -2423,6 +2545,7 @@ renderUnitecPanel();
 syncUnitecLive(false);
 renderBuildingAppPanel();
 syncBuildingAppLive(false);
+syncHikConnectLive(false);
 renderBlogs();
 
 /* ══ EL JEFESITO: themes, preferences, daily greeting, close day ══ */

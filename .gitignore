@@ -6,5 +6,6 @@ data/mc_token.secret
 data/mc.db
 data/cloudflared-mc.yml
 data/onboarding_state.json
+data/hikconnect_cache.json
 .env
 .env.*

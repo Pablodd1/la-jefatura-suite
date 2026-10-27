@@ -342,6 +342,15 @@ def _metric_answer(q: str, lang: str):
                 {"source": "Bandeja IA Comms Brain", "as_of": "2026-10-26", "origin": "drafts"})
         except Exception:
             pass
+    if re.search(r"\b(camaras?|cameras?|nvr|dvr|hik.?connect|hikvision|salon ideo|oficina ideo|espacios importados|muelles?|porton)\b", n):
+        try:
+            import cameras
+            hik = cameras.sync_hikconnect(force=False)
+            if hik.get("ok"):
+                add((hik.get("expert_diagnosis_es") if es else hik.get("expert_diagnosis_en")),
+                    {"source": "Hik-Connect Cloud API v3 (apiisa.hik-connect.com)", "as_of": hik.get("synced_at"), "origin": "hikconnect_live"})
+        except Exception:
+            pass
     if re.search(r"\b(mision|directiva|proposito|que pasa si no puedes|escalar|desarrollador|como funcionas)\b", n):
         add(("Directiva Principal en Memoria: Soy tu Super Asistente Ejecutivo manos-libres. Tú solo lees o escuchas resultados "
              "y das órdenes por voz o texto; yo interpreto, aprendo de cada interacción, ejecuto en tus 9 integraciones y, "
