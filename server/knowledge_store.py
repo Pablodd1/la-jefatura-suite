@@ -345,9 +345,10 @@ def _metric_answer(q: str, lang: str):
     if re.search(r"\b(camaras?|cameras?|nvr|dvr|hik.?connect|hikvision|salon ideo|oficina ideo|espacios importados|muelles?|porton)\b", n):
         try:
             import cameras
-            if re.search(r'\b(informe|reporte|resumen|report|summary|actividad|activity|ayer|yesterday|hoy|today)\b', n):
+            if re.search(r'\b(informe|reporte|resumen|report|summary|actividad|activity|ayer|yesterday|hoy|today|ejemplo|example)\b', n):
                 import camera_report
-                rep = camera_report.get_report()
+                mode = 'example' if re.search(r'\b(ejemplo|example|simulacion|completo)\b', n) else None
+                rep = camera_report.get_report(mode=mode)
                 add(rep['text_es'] if es else rep['text_en'], {'source': 'Informe diario de camaras', 'as_of': rep['day'], 'origin': 'camera_report'})
             hik = cameras.sync_hikconnect(force=False)
             if hik.get("ok"):

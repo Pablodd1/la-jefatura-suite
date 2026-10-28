@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 """La Jefatura Suite â€” Full Mission Control Demo & White-Label API Server.
 
 Serves:
@@ -250,7 +250,15 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
             self._send(200, buildingapp_ingest.summary(force_live=force))
         elif path == "/api/cameras/report":
             day = (qs.get("date") or [None])[0]
-            self._send(200, camera_report.get_report(day))
+            mode = (qs.get("mode") or qs.get("example") or [None])[0]
+            self._send(200, camera_report.get_report(day, mode=mode))
+        elif path == "/api/cameras/report.pdf":
+            day = (qs.get("date") or [None])[0]
+            mode = (qs.get("mode") or ["example"])[0]
+            lang_q = (qs.get("lang") or ["es"])[0]
+            pdf_bytes = camera_report.build_camera_pdf(day=day, mode=mode, lang=lang_q)
+            ctype = "application/pdf" if pdf_bytes[:4] == b"%PDF" else "text/markdown; charset=utf-8"
+            self._send(200, pdf_bytes, ctype)
         elif path in ("/api/cameras/status", "/api/cameras/hikconnect"):
             force = (qs.get("refresh") or ["0"])[0] == "1"
             self._send(200, cameras.status(os.path.join(SAMPLES, "cameras.json"), force=force))

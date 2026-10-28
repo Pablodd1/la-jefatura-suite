@@ -712,11 +712,14 @@
             <option value="IDEO">Cámaras Wi-Fi UNITECUSA · SALON &amp; OFICINA IDEO (2 IPC · OFFLINE)</option>
           </select>
           <button class="btn ghost sm" type="button" onclick="syncHikConnectLive(true)">Sincronizar Hik-Connect</button>
+          <button class="btn sm" type="button" onclick="toggleCameraReportDrawer()">Informe Diario CEO</button>
+          <button class="btn vio sm" type="button" onclick="window.open('/api/cameras/report.pdf?mode=example&lang=' + (typeof lang !== 'undefined' ? lang : 'es'), '_blank')">PDF Cámaras</button>
         </div>
       </h3>
       <div id="hikDevicesSummaryStrip" style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:12px"></div>
       <div id="cams" style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px"></div>
       <div id="hikChannelsTable" style="margin-top:12px;max-height:210px;overflow-y:auto;border:1px solid var(--hair);border-radius:10px;padding:8px 10px;background:rgba(7,11,20,.45)"></div>
+      <div id="hikDailyReportBox" style="margin-top:12px;border:1px solid rgba(35,217,176,.35);border-radius:11px;padding:12px 14px;background:rgba(7,11,20,.72)"></div>
       <div class="narr" style="margin-top:12px" id="camNarr"></div>
     </div>
 
@@ -2525,6 +2528,104 @@ function renderHikConnectCameras() {
   }
 }
 
+let CAMERA_REPORT_DATA = null;
+let camReportExpanded = true;
+
+function toggleCameraReportDrawer() {
+  camReportExpanded = !camReportExpanded;
+  renderCameraDailyReportBox();
+}
+
+function renderCameraDailyReportBox() {
+  const box = document.getElementById('hikDailyReportBox');
+  if (!box || !CAMERA_REPORT_DATA) return;
+  const ex = CAMERA_REPORT_DATA.example_report || CAMERA_REPORT_DATA;
+  const k = ex.kpis || {};
+  const sched = ex.site_schedule || [];
+  const docks = ex.docks_summary || [];
+  const ah = ex.after_hours || [];
+  const lp = ex.learned_patterns || [];
+  if (!camReportExpanded) {
+    box.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;font-size:11.5px">
+      <div><span class="tag ok">INFORME DIARIO DE CÁMARAS (${ex.day || 'HOY'})</span> <b style="margin-left:6px">53/55 Canales en Vivo (Real) · ${k.total_events_example || 412} Eventos / ${k.dock_operations_total || 60} Ops Muelles (Ejemplo)</b></div>
+      <button class="btn ghost sm" type="button" onclick="toggleCameraReportDrawer()">Expandir Informe →</button>
+    </div>`;
+    return;
+  }
+  box.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px">
+      <div>
+        <span class="tag ok">INFORME DIARIO EJECUTIVO DE CÁMARAS (${ex.day || 'HOY'})</span>
+        <span class="tag medium" style="margin-left:6px">SECCIÓN 1: 100% REAL MEDIDO · SECCIONES 2-5: EJEMPLO DE ACTIVIDAD</span>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="btn ghost sm" type="button" onclick="window.open('/api/cameras/report.pdf?mode=example&lang=' + (typeof lang !== 'undefined' ? lang : 'es'), '_blank')">Descargar PDF</button>
+        <button class="btn ghost sm" type="button" onclick="toggleCameraReportDrawer()">Ocultar</button>
+      </div>
+    </div>
+    <div class="muted" style="font-size:11px;margin-bottom:10px;line-height:1.4">${lang === 'es' ? (ex.provenance_notice_es || '') : (ex.provenance_notice_en || '')}</div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:10px">
+      <div style="background:rgba(255,255,255,.04);border:1px solid var(--hair);border-radius:8px;padding:7px 9px">
+        <div class="muted" style="font-size:9.5px">FLOTA EN VIVO (REAL)</div>
+        <div style="font-weight:800;font-size:14px;color:var(--ok)">${k.channels_online || 53}/${k.channels_total || 55} Canales (${k.channel_availability_pct || 96.4}%)</div>
+        <div class="muted" style="font-size:9.5px">3/5 Equipos · ${k.total_storage_tb || 12.92} TB HDD</div>
+      </div>
+      <div style="background:rgba(255,255,255,.04);border:1px solid var(--hair);border-radius:8px;padding:7px 9px">
+        <div class="muted" style="font-size:9.5px">TOTAL EVENTOS (EJEMPLO)</div>
+        <div style="font-weight:800;font-size:14px;color:var(--acc)">${k.total_events_example || 412} eventos</div>
+        <div class="muted" style="font-size:9.5px">${k.people_detections_example || 268} personas · ${k.vehicle_detections_example || 89} vehículos</div>
+      </div>
+      <div style="background:rgba(255,255,255,.04);border:1px solid var(--hair);border-radius:8px;padding:7px 9px">
+        <div class="muted" style="font-size:9.5px">MUELLES 1-4 Y DESPACHOS</div>
+        <div style="font-weight:800;font-size:14px;color:var(--acc2)">${k.dock_operations_total || 60} ops muelles</div>
+        <div class="muted" style="font-size:9.5px">${k.dispatch_batches_total || 52} despachos · ${k.pick_in_operations_total || 94} Pick-In</div>
+      </div>
+      <div style="background:rgba(255,255,255,.04);border:1px solid var(--hair);border-radius:8px;padding:7px 9px">
+        <div class="muted" style="font-size:9.5px">HORA PICO OPERATIVA</div>
+        <div style="font-weight:800;font-size:13px;color:var(--vio)">10:00–11:00 AM</div>
+        <div class="muted" style="font-size:9.5px">64 eventos · Apertura 06:48 AM</div>
+      </div>
+      <div style="background:rgba(255,255,255,.04);border:1px solid var(--hair);border-radius:8px;padding:7px 9px">
+        <div class="muted" style="font-size:9.5px">FUERA DE HORARIO (19h–06h)</div>
+        <div style="font-weight:800;font-size:14px;color:var(--warn)">${k.after_hours_events_example || 3} eventos</div>
+        <div class="muted" style="font-size:9.5px">1 Nivel-2 · 1 Nivel-1 (IDEO Real)</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;font-size:11px">
+      <div style="background:rgba(255,255,255,.03);border:1px solid var(--hair);border-radius:8px;padding:8px 10px">
+        <b style="color:var(--acc);display:block;margin-bottom:5px">Puntualidad de Apertura y Cierre por Sede</b>
+        ${sched.map(s => `<div style="padding:3px 0;border-bottom:1px solid var(--hair)">
+          <b>${s.site.split('·')[0]}</b>: <span style="color:${s.status==='ok'?'var(--ok)':'var(--crit)'}">${s.first_motion_time} → ${s.last_motion_time}</span>
+          <div class="muted" style="font-size:10px">${lang==='es'?s.punctuality_es:s.punctuality_en}</div>
+        </div>`).join('')}
+      </div>
+      <div style="background:rgba(255,255,255,.03);border:1px solid var(--hair);border-radius:8px;padding:8px 10px">
+        <b style="color:var(--acc2);display:block;margin-bottom:5px">Actividad en Muelles 1–4, Despachos y Pick-In</b>
+        ${docks.slice(0, 5).map(d => `<div style="padding:3px 0;border-bottom:1px solid var(--hair);display:flex;justify-content:space-between">
+          <span>${d.cam.split('·')[1] || d.cam}</span>
+          <b>${d.ops} ops · ${d.active_time} (${d.utilization_pct}%)</b>
+        </div>`).join('')}
+      </div>
+    </div>
+    <div style="margin-top:8px;display:grid;grid-template-columns:repeat(2,1fr);gap:10px;font-size:11px">
+      <div style="background:rgba(255,92,92,.05);border:1px solid rgba(255,92,92,.25);border-radius:8px;padding:8px 10px">
+        <b style="color:var(--crit);display:block;margin-bottom:5px">Auditoría Nocturna / Fuera de Horario (19:00–06:30)</b>
+        ${ah.map(a => `<div style="padding:3px 0;border-bottom:1px solid var(--hair)">
+          <b>${a.time}</b> · <span class="tag ${a.threat_level===2?'critical':(a.threat_level===1?'high':'ok')}" style="font-size:9px">${a.badge}</span>
+          <div class="muted" style="font-size:10px;margin-top:2px">${lang==='es'?a.detail_es:a.detail_en}</div>
+        </div>`).join('')}
+      </div>
+      <div style="background:rgba(35,217,176,.05);border:1px solid rgba(35,217,176,.25);border-radius:8px;padding:8px 10px">
+        <b style="color:var(--acc);display:block;margin-bottom:5px">Lo Aprendido por El Jefesito (Patrones y Recomendaciones)</b>
+        ${lp.map(p => `<div style="padding:3px 0;border-bottom:1px solid var(--hair)">
+          <b>${lang==='es'?p.title_es:p.title_en}</b>
+          <div class="muted" style="font-size:10px;margin-top:1px">${lang==='es'?p.detail_es:p.detail_en}</div>
+        </div>`).join('')}
+      </div>
+    </div>
+  `;
+}
+
 function syncHikConnectLive(force = false) {
   fetch('/api/cameras/status' + (force ? '?refresh=1' : ''))
     .then(r => r.json())
@@ -2533,6 +2634,15 @@ function syncHikConnectLive(force = false) {
         HIKCONNECT_DATA = d.hikconnect;
         renderHikConnectCameras();
         if (force) showToast('Hik-Connect Cloud sincronizado en vivo: 5 equipos y 55 canales verificados.');
+      }
+    })
+    .catch(() => {});
+  fetch('/api/cameras/report')
+    .then(r => r.json())
+    .then(rep => {
+      if (rep) {
+        CAMERA_REPORT_DATA = rep;
+        renderCameraDailyReportBox();
       }
     })
     .catch(() => {});
