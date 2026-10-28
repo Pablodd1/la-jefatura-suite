@@ -44,6 +44,7 @@ import cameras  # noqa: E402
 import camera_report  # noqa: E402
 import comms_brain  # noqa: E402
 import daily_pdf  # noqa: E402
+import google_workspace  # noqa: E402
 import jefesito  # noqa: E402
 import knowledge_store  # noqa: E402
 import mc_auth  # noqa: E402
@@ -279,6 +280,26 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
         elif path == "/api/whatsapp/webhook":
             code, challenge = meta_whatsapp.verify_webhook(qs)
             self._send(code, challenge.encode("utf-8"), "text/plain; charset=utf-8")
+        elif path == "/api/google/status":
+            self._send(200, google_workspace.get_status())
+        elif path == "/api/google/auth_url":
+            host = self.headers.get("Host", f"localhost:{PORT}")
+            proto = self.headers.get("X-Forwarded-Proto", "http")
+            redir = (qs.get("redirect_uri") or [f"{proto}://{host}/api/google/oauth2callback"])[0]
+            self._send(200, google_workspace.get_oauth_url(redir))
+        elif path == "/api/google/oauth2callback":
+            code_q = (qs.get("code") or [""])[0]
+            host = self.headers.get("Host", f"localhost:{PORT}")
+            proto = self.headers.get("X-Forwarded-Proto", "http")
+            redir = f"{proto}://{host}/api/google/oauth2callback"
+            res = google_workspace.exchange_oauth_code(code_q, redir)
+            html_msg = (
+                "<html><body style='font-family:sans-serif;background:#070B14;color:#F8FAFC;padding:40px;text-align:center'>"
+                f"<h2>{'Conectado: Cuenta Google de Juan' if res.get('ok') else 'Error de OAuth'}</h2>"
+                f"<p>{res.get('email') or res.get('error', '')}</p>"
+                "<p><a href='/' style='color:#10B981'>Volver a La Jefatura Mission Control</a></p></body></html>"
+            )
+            self._send(200 if res.get("ok") else 400, html_msg.encode("utf-8"), "text/html; charset=utf-8")
         elif path == "/api/behavior/state":
             slot = (qs.get("slot") or [None])[0]
             self._send(200, behavior_brain.get_state(slot=slot))
@@ -401,6 +422,11 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
             self._send(200, meta_whatsapp.delete_watchlist(body.get("chat_id", "")))
         elif path == "/api/whatsapp/config":
             self._send(200, meta_whatsapp.save_config(body))
+        elif path == "/api/google/config":
+            self._send(200, google_workspace.save_config(body))
+        elif path == "/api/google/sync":
+            self._send(200, google_workspace.sync_gmail_and_calendar(
+                max_emails=int(body.get("max_emails", 10))))
         elif path == "/api/comms/approve_send":
             did = int(body.get("draft_id", 0))
             behavior_brain.record_event("click", f"approve_send_draft_{did}", {"draft_id": did})

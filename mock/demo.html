@@ -792,7 +792,38 @@
         </select>
         <input class="inp" id="waSimGroupMsg" style="flex:1;min-width:260px" value="Jasmel, llegó el contenedor de Paneles WPC Roble Claro al Muelle 1. ¿Autorizas descargar hoy y enviar factura al cliente de Doral?">
         <button class="btn vio sm" type="button" onclick="simulateMetaWhatsAppGroupMsg()">Probar Mensaje Meta (Crear Borrador + Tarea)</button>
+        <button class="btn ghost sm" type="button" onclick="readAllPendingCommsAloud()">🔊 Leer Todos los Mensajes Pendientes</button>
       </div>
+      <details style="margin-top:12px;padding-top:10px;border-top:1px solid var(--hair)">
+        <summary style="cursor:pointer;font-size:12px;font-weight:700;color:var(--acc)">⚙️ Conectar Credenciales en Vivo: Meta WhatsApp Cloud API + Gmail y Google Calendar de Juan</summary>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:10px">
+          <div style="background:rgba(7,11,20,.65);border:1px solid var(--hair);border-radius:10px;padding:10px">
+            <div style="font-size:11.5px;font-weight:700;margin-bottom:6px">1) Meta WhatsApp Cloud API Oficial (Graph API v21.0)</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px">
+              <input class="inp" id="cfgMetaPhoneId" placeholder="Phone Number ID (ej. 10492819201)…">
+              <input class="inp" id="cfgMetaWabaId" placeholder="WhatsApp Business Account ID (WABA)…">
+            </div>
+            <div style="display:flex;gap:6px">
+              <input class="inp" id="cfgMetaToken" type="password" style="flex:1" placeholder="Permanent System User Access Token (EAAG…)">
+              <button class="btn sm" type="button" onclick="saveMetaCloudConfig()">Guardar Meta API</button>
+            </div>
+          </div>
+          <div style="background:rgba(7,11,20,.65);border:1px solid var(--hair);border-radius:10px;padding:10px" id="googleJuanConfigBox">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+              <span style="font-size:11.5px;font-weight:700">2) Gmail + Google Calendar de Juan (Monitoreo, Borradores y Agenda)</span>
+              <span class="tag low" id="juanGoogleBadge">LISTO PARA CONECTAR</span>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px">
+              <input class="inp" id="cfgJuanEmail" placeholder="Correo Gmail de Juan (ej. juan@gmail.com)…">
+              <input class="inp" id="cfgJuanAppPass" type="password" placeholder="Contraseña de Aplicación Google (16 letras)…">
+            </div>
+            <div style="display:flex;gap:6px">
+              <input class="inp" id="cfgJuanIcal" style="flex:1" placeholder="URL Secreta en formato iCal de Google Calendar (https://calendar.google.com/calendar/ical/…/basic.ics)">
+              <button class="btn sm" type="button" onclick="saveAndSyncJuanGoogle()">Guardar y Sincronizar Juan</button>
+            </div>
+          </div>
+        </div>
+      </details>
     </div>
   </div>
 </section>
@@ -1689,7 +1720,8 @@ function renderCommsTab() {
       <textarea class="draft-area" id="draft-txt-${d.draft_id}" ${d.status === 'SENT' ? 'readonly' : ''}>${d.body}</textarea>
       <div class="draft-actions">
         <span class="muted" style="font-size:11px">Huella aplicada: Saludo formal + «Cordialmente, Jasmel Acosta»</span>
-        <div style="display:flex;gap:8px">
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn ghost sm" type="button" onclick="readDraftAloud(${d.draft_id})">🔊 Leer Mensaje y Borrador</button>
           ${d.status !== 'SENT' ? `
             <button class="btn ghost sm" onclick="saveDraftEdit(${d.draft_id})">Guardar Edición (Entrenar Voz)</button>
             <button class="btn sm" id="approve-btn-${d.draft_id}" onclick="approveAndSendDraft(${d.draft_id})">Aprobar y Enviar Directo</button>
@@ -1745,6 +1777,95 @@ function approveAndSendDraft(draftId) {
   showToast(lang === 'es'
     ? `Borrador #${draftId} aprobado y enviado directamente a ${d.contact}.`
     : `Draft #${draftId} approved and sent directly to ${d.contact}.`);
+}
+
+let _commsTtsAudio = null;
+function playColombianTtsText(text) {
+  if (!text) return;
+  if (_commsTtsAudio) {
+    try { _commsTtsAudio.pause(); } catch (e) {}
+  }
+  fetch('/api/tts', {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({text, lang: lang || 'es', rate: '+18%'})
+  }).then(r => r.blob()).then(blob => {
+    const url = URL.createObjectURL(blob);
+    _commsTtsAudio = new Audio(url);
+    _commsTtsAudio.play().catch(() => {});
+  }).catch(() => {});
+}
+
+function readDraftAloud(draftId) {
+  const d = DRAFTS_QUEUE.find(x => x.draft_id === draftId);
+  if (!d) return;
+  const el = document.getElementById('draft-txt-' + draftId);
+  const currentBody = el ? el.value : d.body;
+  const speech = `Mensaje en ${d.channel} de ${d.contact}. Dice: ${d.incoming}. Borrador preparado para tu aprobación: ${currentBody}`;
+  showToast(`🔊 Leyendo mensaje y borrador #${draftId} (${d.contact})…`);
+  playColombianTtsText(speech);
+}
+
+function readAllPendingCommsAloud() {
+  const pending = DRAFTS_QUEUE.filter(d => d.status !== 'SENT');
+  if (!pending.length) {
+    showToast('No hay borradores pendientes por leer.');
+    return;
+  }
+  const summary = `Tienes ${pending.length} mensajes monitoreados con borrador listo. ` +
+    pending.slice(0, 4).map((d, i) => `Mensaje ${i + 1}, por ${d.channel}, de ${d.contact}: ${d.incoming}. Respuesta lista: ${d.body}`).join('. ');
+  showToast(`🔊 Leyendo ${pending.length} mensajes y borradores pendientes…`);
+  playColombianTtsText(summary);
+}
+
+function saveMetaCloudConfig() {
+  const phone_number_id = (document.getElementById('cfgMetaPhoneId').value || '').trim();
+  const waba_id = (document.getElementById('cfgMetaWabaId').value || '').trim();
+  const access_token = (document.getElementById('cfgMetaToken').value || '').trim();
+  fetch('/api/whatsapp/config', {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({phone_number_id, waba_id, access_token})
+  }).then(r => r.json()).then(d => {
+    loadMetaWhatsAppStatus(false);
+  if (typeof loadJuanGoogleStatus === 'function') loadJuanGoogleStatus();
+    showToast(d.configured
+      ? '✅ Meta WhatsApp Cloud API conectada en vivo con credenciales oficiales.'
+      : 'Configuración de Meta WhatsApp guardada.');
+  }).catch(() => {});
+}
+
+function loadJuanGoogleStatus() {
+  fetch('/api/google/status').then(r => r.json()).then(d => {
+    const b = document.getElementById('juanGoogleBadge');
+    if (!b || !d) return;
+    if (d.gmail_configured || d.calendar_configured) {
+      b.className = 'tag ok';
+      b.textContent = `CONECTADO · ${d.email || 'Juan Google'}`;
+    } else {
+      b.className = 'tag low';
+      b.textContent = 'ESPERANDO CREDENCIALES DE JUAN';
+    }
+  }).catch(() => {});
+}
+
+function saveAndSyncJuanGoogle() {
+  const email = (document.getElementById('cfgJuanEmail').value || '').trim();
+  const app_password = (document.getElementById('cfgJuanAppPass').value || '').trim();
+  const calendar_ical_url = (document.getElementById('cfgJuanIcal').value || '').trim();
+  fetch('/api/google/config', {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({email, app_password, calendar_ical_url, owner_name: 'Juan'})
+  }).then(r => r.json()).then(() => {
+    return fetch('/api/google/sync', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({max_emails: 10})
+    });
+  }).then(r => r.json()).then(syncRes => {
+    loadJuanGoogleStatus();
+    if (typeof loadKnowledgeVault === 'function') loadKnowledgeVault(false);
+    const gmCount = (syncRes.gmail && syncRes.gmail.ingested_count) || 0;
+    const calCount = (syncRes.calendar && syncRes.calendar.imported_events) || 0;
+    showToast(`Cuenta Google de Juan sincronizada (${gmCount} correos nuevos con borrador, ${calCount} eventos de Calendar).`);
+  }).catch(() => {});
 }
 
 let META_WA_STATE = null;

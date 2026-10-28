@@ -480,6 +480,15 @@ def send_draft(draft_id, tenant="default", channel_override=None, test_label=Tru
 
 def _send_brevo(to, subject, body):
     import urllib.request
+    try:
+        import google_workspace
+        gst = google_workspace.get_status()
+        if gst.get("gmail_configured"):
+            res = google_workspace.send_gmail_smtp(to, subject, body)
+            if res.get("ok"):
+                return res.get("provider_msg_id", "gmail-smtp-sent")
+    except Exception:
+        pass
     if not BREVO_API_KEY:
         return f"sandbox-brevo-{int(time.time()*1000)}"
     payload = json.dumps({
