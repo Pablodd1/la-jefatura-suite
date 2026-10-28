@@ -1,0 +1,11 @@
+services:
+  lajefatura:
+    build: .
+    container_name: la-jefatura-suite
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "127.0.0.1:8931:8931"
+    volumes:
+      - ./data:/app/data

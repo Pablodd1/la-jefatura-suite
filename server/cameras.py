@@ -121,7 +121,9 @@ def sync_hikconnect(force: bool = False) -> dict:
     if not force and _HIK_CACHE["data"] and (now - _HIK_CACHE["ts"] < 300):
         return _HIK_CACHE["data"]
 
-    if not os.path.isfile(SECRET_FILE):
+    env_account = os.environ.get("HIKCONNECT_ACCOUNT", "").strip()
+    env_password = os.environ.get("HIKCONNECT_PASSWORD", "")
+    if not os.path.isfile(SECRET_FILE) and not (env_account and env_password):
         if os.path.isfile(CACHE_FILE):
             try:
                 cached = json.load(open(CACHE_FILE, encoding="utf-8"))
@@ -130,12 +132,12 @@ def sync_hikconnect(force: bool = False) -> dict:
                 return cached
             except Exception:
                 pass
-        return {"ok": False, "error": "hikconnect.secret.json not found"}
+        return {"ok": False, "error": "hikconnect.secret.json or HIKCONNECT_ACCOUNT env not found"}
 
     try:
-        secret = json.load(open(SECRET_FILE, encoding="utf-8"))
-        account = secret.get("account", "").strip()
-        password = secret.get("password", "")
+        secret = json.load(open(SECRET_FILE, encoding="utf-8")) if os.path.isfile(SECRET_FILE) else {}
+        account = (secret.get("account") or env_account).strip()
+        password = secret.get("password") or env_password
         pwd_hash = hashlib.md5(password.encode("utf-8")).hexdigest()
 
         base_url = _HIK_CACHE.get("base_url") or "https://api.hik-connect.com"
