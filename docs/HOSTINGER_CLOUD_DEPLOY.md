@@ -39,11 +39,14 @@ When you deploy, all credentials live in a single git-ignored file `/opt/la-jefa
 | | `UNITEC_ADMIN_EMAIL` | `admin@unitecdesign.com` | Ready (Verified Live) |
 | | `UNITEC_ADMIN_PASSWORD` | Stored in `data/unitec_credentials.secret.json` / `.env` | Ready (Verified Live) |
 | | `FIREBASE_SA_PATH` | `/opt/la-jefatura-suite/data/chatbot-bi-front-desk-sa.json` | Ready (Service Account JSON) |
-| **5. Official Meta WhatsApp Cloud API** | `META_WA_VERIFY_TOKEN` | `lajefatura-meta-verify-2026` | Ready |
-| | `META_WA_PHONE_NUMBER_ID` | From Meta Developer Portal -> WhatsApp -> API Setup | Pending Client Meta Setup |
-| | `META_WA_WABA_ID` | From Meta Business Suite -> WhatsApp Accounts | Pending Client Meta Setup |
-| | `META_WA_ACCESS_TOKEN` | Permanent System User Token (`whatsapp_business_messaging`) | Pending Client Meta Setup |
-| **6. Email & Telegram Delivery** | `BREVO_API_KEY` | From Brevo SMTP & API settings | Optional / Pending |
+| **5. Official Meta WhatsApp Cloud API** | `META_WA_VERIFY_TOKEN` | `lajefatura_meta_verify_2026` | Ready |
+| | `META_WA_PHONE_NUMBER_ID` | Meta App Dashboard (`developers.facebook.com/apps`) -> Use cases -> Customize -> API Setup | Pending Client Meta Setup |
+| | `META_WA_WABA_ID` | Meta App Dashboard -> Use cases -> Customize -> API Setup (`WhatsApp Business Account ID`) | Pending Client Meta Setup |
+| | `META_WA_ACCESS_TOKEN` | Meta Business Settings (`business.facebook.com/settings/system-users`) -> Permanent System User Token (`whatsapp_business_messaging`, `whatsapp_business_management`) | Pending Client Meta Setup |
+| **6. Juan's Gmail & Google Calendar** | `JUAN_GMAIL_ADDRESS` | Juan's Gmail address (`server/google_workspace.py` / `/api/google/config`) | Pending Juan Setup |
+| | `JUAN_GMAIL_APP_PASSWORD` | 16-letter Google App Password (`https://myaccount.google.com/apppasswords`) | Pending Juan Setup |
+| | `JUAN_GCAL_ICAL_URL` | Google Calendar Secret iCal URL (`https://calendar.google.com/calendar/u/0/r/settings`) | Pending Juan Setup |
+| **7. Email & Telegram Delivery** | `BREVO_API_KEY` | From Brevo SMTP & API settings | Optional / Pending |
 | | `TG_BOT_TOKEN` | Telegram Bot Token from `@BotFather` | Optional / Pending |
 
 ---

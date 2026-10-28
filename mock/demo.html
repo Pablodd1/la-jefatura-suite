@@ -794,11 +794,18 @@
         <button class="btn vio sm" type="button" onclick="simulateMetaWhatsAppGroupMsg()">Probar Mensaje Meta (Crear Borrador + Tarea)</button>
         <button class="btn ghost sm" type="button" onclick="readAllPendingCommsAloud()">🔊 Leer Todos los Mensajes Pendientes</button>
       </div>
-      <details style="margin-top:12px;padding-top:10px;border-top:1px solid var(--hair)">
+      <details open style="margin-top:12px;padding-top:10px;border-top:1px solid var(--hair)">
         <summary style="cursor:pointer;font-size:12px;font-weight:700;color:var(--acc)">⚙️ Conectar Credenciales en Vivo: Meta WhatsApp Cloud API + Gmail y Google Calendar de Juan</summary>
         <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:10px">
           <div style="background:rgba(7,11,20,.65);border:1px solid var(--hair);border-radius:10px;padding:10px">
-            <div style="font-size:11.5px;font-weight:700;margin-bottom:6px">1) Meta WhatsApp Cloud API Oficial (Graph API v21.0)</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px;margin-bottom:6px">
+              <span style="font-size:11.5px;font-weight:700">1) Meta WhatsApp Cloud API Oficial (Flujo 2026 «Use Cases»)</span>
+              <div style="display:flex;gap:6px;font-size:10.5px">
+                <a href="https://developers.facebook.com/apps/" target="_blank" rel="noopener" style="color:var(--acc);text-decoration:underline">1. Crear App (Use Case WhatsApp)</a> ·
+                <a href="https://business.facebook.com/billing_hub/payment_methods" target="_blank" rel="noopener" style="color:var(--acc);text-decoration:underline">2. Pago Meta Billing</a> ·
+                <a href="https://business.facebook.com/settings/system-users" target="_blank" rel="noopener" style="color:var(--acc);text-decoration:underline">3. Token Permanente</a>
+              </div>
+            </div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px">
               <input class="inp" id="cfgMetaPhoneId" placeholder="Phone Number ID (ej. 10492819201)…">
               <input class="inp" id="cfgMetaWabaId" placeholder="WhatsApp Business Account ID (WABA)…">
@@ -810,7 +817,13 @@
           </div>
           <div style="background:rgba(7,11,20,.65);border:1px solid var(--hair);border-radius:10px;padding:10px" id="googleJuanConfigBox">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-              <span style="font-size:11.5px;font-weight:700">2) Gmail + Google Calendar de Juan (Monitoreo, Borradores y Agenda)</span>
+              <div>
+                <span style="font-size:11.5px;font-weight:700">2) Gmail + Google Calendar de Juan (Monitoreo, Borradores y Agenda)</span>
+                <div style="font-size:10.5px;margin-top:2px">
+                  <a href="https://myaccount.google.com/apppasswords" target="_blank" rel="noopener" style="color:var(--acc);text-decoration:underline">1. Crear App Password (16 letras)</a> ·
+                  <a href="https://calendar.google.com/calendar/u/0/r/settings" target="_blank" rel="noopener" style="color:var(--acc);text-decoration:underline">2. Copiar URL Secreta iCal</a>
+                </div>
+              </div>
               <span class="tag low" id="juanGoogleBadge">LISTO PARA CONECTAR</span>
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px">
@@ -951,6 +964,47 @@
         <span class="tag ok">9 / 9 CONECTADOS</span>
       </h3>
       <div id="integrationsGrid"></div>
+    </div>
+
+    <div class="card" style="grid-column:span 12;border-color:rgba(35,217,176,.4)" id="setupEnrollmentStepsCard">
+      <h3>
+        <span class="lhs">
+          <span class="dot" style="background:var(--ok)"></span>
+          <span>Guía Oficial Actualizada (2026): Inscripción y Pago en Meta WhatsApp Cloud API + Conexión Gmail y Google Calendar de Juan</span>
+          <span class="tag ok">PASOS Y ENLACES ACTUALIZADOS 2026</span>
+        </span>
+      </h3>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:10px;font-size:12px;line-height:1.5">
+        <div style="background:rgba(7,11,20,.65);border:1px solid var(--hair);border-radius:10px;padding:14px">
+          <div style="font-weight:800;font-size:13px;color:var(--acc);margin-bottom:8px">PARTE 1: Meta WhatsApp Cloud API Oficial (Nuevo Flujo 2026 «Casos de Uso / Use Cases» + Pago)</div>
+          <div class="muted" style="margin-bottom:8px">
+            <b>Costo en Meta:</b> Recibir/monitorear mensajes y responder dentro de 24h es <b>$0.00 USD (100% Gratis)</b>. Meta solo pide registrar tarjeta en Facturación para desbloquear el modo Producción.
+          </div>
+          <ol style="padding-left:18px;margin:0;display:flex;flex-direction:column;gap:6px">
+            <li><b>Crear App con Caso de Uso WhatsApp (2026):</b> Abre <a href="https://developers.facebook.com/apps/" target="_blank" rel="noopener" style="color:var(--acc);text-decoration:underline">developers.facebook.com/apps</a> → clic en <b>Create App (Crear app)</b> → escribe Nombre (<code>La Jefatura Suite</code>) y correo → en <b>Add use cases (Añadir casos de uso)</b> selecciona <b>«Connect with customers through WhatsApp» (Conectar con los clientes a través de WhatsApp)</b> → selecciona tu <b>Business Portfolio</b> → <b>Create App</b>.</li>
+            <li><b>Conectar Número y Copiar IDs:</b> En el menú izquierdo entra a <b>Use cases (Casos de uso) → Customize (Personalizar) → API Setup (Configuración de la API)</b> → baja al Paso 5 (<i>Add a phone number</i> o <i>Coexistencia QR con tu celular</i>) y copia arriba: <b>1) <code>Phone Number ID</code></b> y <b>2) <code>WhatsApp Business Account ID (WABA ID)</code></b>.</li>
+            <li><b>Registrar Método de Pago (Activar Producción):</b> Abre <a href="https://business.facebook.com/billing_hub/payment_methods" target="_blank" rel="noopener" style="color:var(--acc);text-decoration:underline">business.facebook.com/billing_hub/payment_methods</a> (o <a href="https://business.facebook.com/wa/manage/home/" target="_blank" rel="noopener" style="color:var(--acc);text-decoration:underline">WhatsApp Manager</a>) → agrega tu tarjeta corporativa y asígnala al WABA.</li>
+            <li><b>Generar Token Permanente (No caduca en 24h):</b> Abre <a href="https://business.facebook.com/settings/system-users" target="_blank" rel="noopener" style="color:var(--acc);text-decoration:underline">business.facebook.com/settings/system-users</a> → crea un usuario Administrador (<code>LaJefaturaBot</code>) → <b>Assign Assets</b> (asigna tu App y tu cuenta de WhatsApp con Control Total) → <b>Generate New Token</b> → Caducidad: <b>Never (Nunca)</b> → marca <code>whatsapp_business_messaging</code> y <code>whatsapp_business_management</code> → copia el <b>3) <code>Permanent Access Token (EAA...)</code></b>.</li>
+            <li><b>Conectar Webhook en Meta:</b> En <b>Use cases → Customize → Configuration (Configuración)</b> pega Callback URL: <code>https://networking-jumping-kit-sequence.trycloudflare.com/api/whatsapp/webhook</code> y Verify Token: <code>lajefatura_meta_verify_2026</code>, y suscribe el campo <code>messages</code>.</li>
+          </ol>
+        </div>
+        <div style="background:rgba(7,11,20,.65);border:1px solid var(--hair);border-radius:10px;padding:14px">
+          <div style="font-weight:800;font-size:13px;color:var(--acc2);margin-bottom:8px">PARTE 2: Instrucciones Paso a Paso para Juan (Gmail + Google Calendar en 3 Minutos)</div>
+          <div class="muted" style="margin-bottom:8px">
+            Para monitorear el Gmail de Juan, leer correos en voz alta, pre-redactar respuestas en su nombre y sincronizar su Google Calendar sin pedir su clave principal:
+          </div>
+          <ol style="padding-left:18px;margin:0;display:flex;flex-direction:column;gap:6px">
+            <li><b>Paso 1 — Contraseña de Aplicación de Google (16 letras):</b> Juan abre <a href="https://myaccount.google.com/apppasswords" target="_blank" rel="noopener" style="color:var(--acc);text-decoration:underline">myaccount.google.com/apppasswords</a> con su cuenta Gmail (si pide Verificación en 2 pasos, se activa en <a href="https://myaccount.google.com/signinoptions/two-step-verification" target="_blank" rel="noopener" style="color:var(--acc);text-decoration:underline">este enlace</a>). Escribe nombre: <code>La Jefatura</code> → clic en <b>Crear</b> → copia las <b>16 letras</b> generadas.</li>
+            <li><b>Paso 2 — Dirección Secreta iCal de Google Calendar:</b> Juan abre <a href="https://calendar.google.com/calendar/u/0/r/settings" target="_blank" rel="noopener" style="color:var(--acc);text-decoration:underline">calendar.google.com/calendar/u/0/r/settings</a> → en el menú izquierdo hace clic en su calendario principal → baja hasta <b>«Integrar el calendario» (Integrate calendar)</b> → copia el enlace <b>«Dirección secreta en formato iCal»</b> (termina en <code>/basic.ics</code>).</li>
+            <li><b>¿Qué debes enviarme o pegar en la pestaña Bandeja IA?</b>
+              <ul style="margin-top:4px;padding-left:16px">
+                <li><b>De Meta WhatsApp:</b> <code>Phone Number ID</code> + <code>WABA ID</code> + <code>Permanent Access Token (EAA...)</code></li>
+                <li><b>De Juan (Google):</b> <code>Correo Gmail de Juan</code> + <code>Contraseña de Aplicación (16 letras)</code> + <code>Enlace Secreto iCal (.ics)</code></li>
+              </ul>
+            </li>
+          </ol>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -1212,7 +1266,7 @@ const BLOGS_DATA = [
     summary_en:"The CEO only touches the system during initial onboarding to authorize accounts and set white-label branding. After that, it runs 100% autonomously.",
     steps_es:[
       "<b>Paso 1 (Personalización White-Label):</b> En la pestaña «Configuración», define el nombre de la empresa, nombre del CEO y el modo de operación (A, B o C).",
-      "<b>Paso 2 (Conexión de 9 Ecosistemas):</b> Activa los conectores de Google Calendar, Gmail/Brevo, Meet/Zoom, Nexus CRM, Tareas, Cámaras ONVIF, Personal y Clientes.",
+      "<b>Paso 2 (Conexión Oficial Meta WhatsApp 2026 + Google de Juan):</b> En Meta (<a href=\"https://developers.facebook.com/apps/\" target=\"_blank\" style=\"color:var(--acc)\">developers.facebook.com/apps</a>) usa el flujo 2026 <i>Create App → Use case: Connect with customers through WhatsApp</i>, agrega método de pago en <a href=\"https://business.facebook.com/billing_hub/payment_methods\" target=\"_blank\" style=\"color:var(--acc)\">Meta Billing Hub</a>, genera el Token Permanente en <a href=\"https://business.facebook.com/settings/system-users\" target=\"_blank\" style=\"color:var(--acc)\">System Users</a> y conecta el Gmail/Calendar de Juan con <a href=\"https://myaccount.google.com/apppasswords\" target=\"_blank\" style=\"color:var(--acc)\">Google App Passwords</a>.",
       "<b>Paso 3 (Operación Autónoma):</b> Los cron jobs sincronizan datos cada 5 minutos sin que el CEO tenga que abrir hojas de cálculo ni CRMs."
     ],
     steps_en:[
