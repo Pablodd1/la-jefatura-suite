@@ -27,6 +27,15 @@ import urllib.parse
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
+_ENV_FILE = os.path.join(ROOT, ".env")
+if os.path.isfile(_ENV_FILE):
+    with open(_ENV_FILE, encoding="utf-8") as _ef:
+        for _line in _ef:
+            _line = _line.strip()
+            if _line and not _line.startswith("#") and "=" in _line:
+                _k, _v = _line.split("=", 1)
+                os.environ.setdefault(_k.strip(), _v.strip().strip('"').strip("'"))
+
 sys.path.insert(0, os.path.join(ROOT, "server"))
 
 import behavior_brain  # noqa: E402
