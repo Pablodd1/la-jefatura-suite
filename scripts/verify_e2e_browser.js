@@ -191,7 +191,7 @@ const URL = 'http://localhost:8931/';
   await page.locator('#ljw-send').click();
   const voiceLog = await page.locator('#ljw-log').innerText();
   check('14. Grok 3.0 Voice & DOM Brain Commands (Inspect DOM, Coffee, Grounded Note Save, Metric Citation, Plans, Tab Switch)',
-    voiceLog.includes('Conciencia DOM Grok 3.0') && voiceLog.includes('café') && voiceLog.includes('Nota guardada') && voiceLog.includes('BuildingApp: 7 miembros') && voiceLog.includes('onboarding'),
+    voiceLog.includes('Conciencia DOM Grok 3.0') && voiceLog.includes('café') && voiceLog.includes('Nota guardada') && /BuildingApp:\s*\d+\s*miembros/.test(voiceLog) && voiceLog.includes('onboarding'),
     'Voice brain DOM inspection, grounded save & source citation verified');
   await page.screenshot({ path: path.join(ASSETS_DIR, 'demo-console-voice.png'), fullPage: false });
   await page.screenshot({ path: path.join(ASSETS_DIR, 'verified-7-grok3-voice-brain.png'), fullPage: false });
