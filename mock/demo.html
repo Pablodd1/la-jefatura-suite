@@ -1930,7 +1930,18 @@ function renderMetaWhatsAppBox() {
   if (!box || !META_WA_STATE) return;
   const wl = META_WA_STATE.watchlist || [];
   if (badge) {
-    badge.textContent = `META OFICIAL · ${META_WA_STATE.monitored_active || wl.filter(x=>x.enabled).length}/${wl.length} CHATS/GRUPOS ACTIVOS`;
+    const liveStr = META_WA_STATE.live_credentials_configured
+      ? `LIVE CONECTADO (Phone ID ${META_WA_STATE.phone_number_id})`
+      : 'MODO CONFIGURACIÓN';
+    badge.textContent = `META OFICIAL · ${liveStr} · ${META_WA_STATE.monitored_active || wl.filter(x=>x.enabled).length}/${wl.length} CHATS ACTIVOS`;
+  }
+  const phInp = document.getElementById('cfgMetaPhoneId');
+  const wbInp = document.getElementById('cfgMetaWabaId');
+  if (phInp && META_WA_STATE.phone_number_id && META_WA_STATE.phone_number_id !== 'PENDIENTE_CLIENTE' && !phInp.value) {
+    phInp.value = META_WA_STATE.phone_number_id;
+  }
+  if (wbInp && META_WA_STATE.waba_id && META_WA_STATE.waba_id !== 'PENDIENTE_CLIENTE' && !wbInp.value) {
+    wbInp.value = META_WA_STATE.waba_id;
   }
   box.innerHTML = wl.map((w, idx) => `
     <div style="background:rgba(7,11,20,.65);border:1px solid ${w.enabled ? 'rgba(16,185,129,.35)' : 'var(--hair)'};border-radius:10px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;gap:10px">

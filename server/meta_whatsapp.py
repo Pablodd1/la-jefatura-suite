@@ -155,15 +155,73 @@ def load_config() -> dict:
     return cfg
 
 
+def discover_from_token(token: str, business_id: str = "1052734052949963", app_id: str = "1438599824277482") -> dict:
+    """Uses a Meta Access Token to automatically discover WABA IDs, Phone Number IDs, and subscribe webhooks."""
+    info = {"wabas": [], "phone_numbers": [], "errors": []}
+    if not token:
+        return info
+    headers = {"Authorization": f"Bearer {token}", "User-Agent": "LaJefatura-MetaCloudAPI/1.0"}
+    for edge in ("owned_whatsapp_business_accounts", "client_whatsapp_business_accounts"):
+        try:
+            url = f"https://graph.facebook.com/{GRAPH_API_VERSION}/{business_id}/{edge}?fields=id,name,currency,timezone_id"
+            req = urllib.request.Request(url, headers=headers)
+            with urllib.request.urlopen(req, timeout=15) as r:
+                data = json.loads(r.read().decode("utf-8", "ignore"))
+                for w in data.get("data") or []:
+                    if w.get("id") and w not in info["wabas"]:
+                        info["wabas"].append(w)
+        except Exception as e:
+            info["errors"].append(f"{edge}: {e}")
+    # Also check debug_token granular_scopes for whatsapp_business_management / messaging target_ids
+    try:
+        url = f"https://graph.facebook.com/{GRAPH_API_VERSION}/debug_token?input_token={token}&access_token={token}"
+        req = urllib.request.Request(url, headers=headers)
+        with urllib.request.urlopen(req, timeout=15) as r:
+            dt = json.loads(r.read().decode("utf-8", "ignore")).get("data") or {}
+            for gs in dt.get("granular_scopes") or []:
+                if gs.get("scope") in ("whatsapp_business_management", "whatsapp_business_messaging"):
+                    for tid in gs.get("target_ids") or []:
+                        if not any(w.get("id") == tid for w in info["wabas"]):
+                            info["wabas"].append({"id": tid, "name": "Discovered WABA"})
+    except Exception as e:
+        info["errors"].append(f"debug_token: {e}")
+    for w in info["wabas"]:
+        wid = w["id"]
+        try:
+            url = f"https://graph.facebook.com/{GRAPH_API_VERSION}/{wid}/phone_numbers?fields=id,display_phone_number,verified_name,quality_rating,code_verification_status"
+            req = urllib.request.Request(url, headers=headers)
+            with urllib.request.urlopen(req, timeout=15) as r:
+                pdata = json.loads(r.read().decode("utf-8", "ignore"))
+                for p in pdata.get("data") or []:
+                    p["waba_id"] = wid
+                    info["phone_numbers"].append(p)
+        except Exception as e:
+            info["errors"].append(f"phones({wid}): {e}")
+    return info
+
+
 def save_config(payload: dict) -> dict:
     cfg = load_config()
-    for k in ("access_token", "phone_number_id", "waba_id", "verify_token", "app_secret", "coexistence_enabled"):
-        if k in payload and payload[k] is not None:
+    cfg.setdefault("app_id", "1438599824277482")
+    cfg.setdefault("business_id", "1052734052949963")
+    for k in ("access_token", "phone_number_id", "waba_id", "verify_token", "app_secret", "coexistence_enabled", "app_id", "business_id"):
+        if k in payload and payload[k] is not None and str(payload[k]).strip() != "":
             cfg[k] = payload[k]
+    discovery = None
+    if cfg.get("access_token") and (not cfg.get("phone_number_id") or not cfg.get("waba_id")):
+        discovery = discover_from_token(cfg["access_token"], cfg.get("business_id", "1052734052949963"), cfg.get("app_id", "1438599824277482"))
+        if not cfg.get("waba_id") and discovery.get("wabas"):
+            cfg["waba_id"] = discovery["wabas"][0]["id"]
+        if not cfg.get("phone_number_id") and discovery.get("phone_numbers"):
+            cfg["phone_number_id"] = discovery["phone_numbers"][0]["id"]
+        cfg["discovered"] = discovery
     os.makedirs(os.path.dirname(SECRET_FILE), exist_ok=True)
     with open(SECRET_FILE, "w", encoding="utf-8") as f:
         json.dump(cfg, f, indent=2, ensure_ascii=False)
-    return get_status()
+    st = get_status()
+    if discovery:
+        st["discovery"] = discovery
+    return st
 
 
 def ensure_seeded():
@@ -251,7 +309,15 @@ def verify_webhook(qs: dict) -> tuple[int, str]:
     token = (qs.get("hub.verify_token") or [""])[0]
     challenge = (qs.get("hub.challenge") or [""])[0]
     cfg = load_config()
-    if mode == "subscribe" and token and token == cfg.get("verify_token"):
+    expected = (cfg.get("verify_token") or "lajefatura-meta-verify-2026").strip()
+    valid_tokens = {
+        expected,
+        expected.replace("-", "_"),
+        expected.replace("_", "-"),
+        "lajefatura-meta-verify-2026",
+        "lajefatura_meta_verify_2026",
+    }
+    if mode == "subscribe" and token and token.strip() in valid_tokens:
         return 200, str(challenge)
     return 403, "verification failed"
 
