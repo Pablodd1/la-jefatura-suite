@@ -165,7 +165,7 @@ def ensure_demo_knowledge_seeded():
             "completÃ³ 5 anÃ¡lisis de cuarto con Gemini Flash (100% Ã©xito) y probÃ³ el flujo DELETE_ACCOUNT.",
             title="AuditorÃ­a App Store & Google Play â€” BuildingApp AI",
             attendees="Jasmel Acosta, Juan (Building Innovation)",
-            action_items="Conectar Green API WhatsApp y activar GA4 Data API para unitecusadesign.com",
+            action_items="Conectar Meta WhatsApp Cloud API Oficial (Graph API v21.0 — Cero Bloqueos) y activar GA4 Data API",
             source="demo_seed", company="building"
         )
     if n_mail == 0:
@@ -332,6 +332,17 @@ def _metric_answer(q: str, lang: str):
              "Total Nexus pipeline $214,500 (23 active leads), Closed sales $96,400 (31% conversion). "
              "Breakdown: MBMB $18,600/m, CEDEXX $12,800/m, UNITEC USA $8,400/m, BUILDING $8,400/m."),
             {"source": "Nexus CRM & Portafolio mc.db", "as_of": "2026-10-26", "origin": "kpis"})
+    if re.search(r"\b(whatsapp|meta|green\s*api|grupos?\s*de\s*whatsapp|chats?\s*monitoreados?)\b", n):
+        try:
+            import meta_whatsapp
+            ws = meta_whatsapp.get_status()
+            names = ", ".join(w["name"] for w in ws.get("watchlist", []) if w.get("enabled"))
+            add((f"Green API fue eliminado para evitar bloqueos de número. WhatsApp ahora usa exclusivamente Meta WhatsApp Cloud API Oficial (Graph API v21.0 + Coexistencia): {ws['monitored_active']} chats/grupos seleccionados en monitoreo activo ({ws['monitored_groups']} grupos y {ws['monitored_direct']} chats directos: {names}). Cada mensaje en esos chats seleccionados genera automáticamente el borrador de respuesta IA y la tarea en tu panel."
+                 if es else
+                 f"Green API was removed to prevent number bans. WhatsApp now uses exclusively Official Meta WhatsApp Cloud API (Graph API v21.0 + Coexistence): {ws['monitored_active']} selected chats/groups actively monitored ({ws['monitored_groups']} groups and {ws['monitored_direct']} direct chats: {names}). Every message in selected chats auto-creates both an AI draft reply and a task in Mission Control."),
+                {"source": "Meta WhatsApp Cloud API v21.0 (mc.db)", "as_of": "2026-10-28", "origin": "meta_whatsapp"})
+        except Exception:
+            pass
     if re.search(r"\b(borradores?|bandeja|aprobar|dr\.?\s*molina|clinica del mar|drafts?|inbox)\b", n):
         try:
             import comms_brain

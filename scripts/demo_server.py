@@ -38,6 +38,7 @@ import daily_pdf  # noqa: E402
 import jefesito  # noqa: E402
 import knowledge_store  # noqa: E402
 import mc_auth  # noqa: E402
+import meta_whatsapp  # noqa: E402
 import nexus_ingest  # noqa: E402
 import reports_pdf  # noqa: E402
 import tts_colombia  # noqa: E402
@@ -133,7 +134,7 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
     def _gate(self, path, qs=None) -> bool:
         """Anything under /api/ that arrives through the public tunnel needs X-MC-Token,
         unless it originates from the Mission Control UI hosted on the same tunnel host."""
-        if path in ("/api/calendar.ics", "/api/daily.pdf"):
+        if path in ("/api/calendar.ics", "/api/daily.pdf", "/api/cameras/report.pdf", "/api/whatsapp/webhook"):
             return True
         if path.startswith("/api/") and mc_auth.is_remote(self.headers):
             q_tok = ((qs or {}).get("token") or [""])[0] if qs else ""
@@ -264,6 +265,11 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
             self._send(200, cameras.status(os.path.join(SAMPLES, "cameras.json"), force=force))
         elif path == "/api/comms/inbox":
             self._send(200, comms_brain.list_inbox_with_drafts())
+        elif path == "/api/whatsapp/status":
+            self._send(200, meta_whatsapp.get_status())
+        elif path == "/api/whatsapp/webhook":
+            code, challenge = meta_whatsapp.verify_webhook(qs)
+            self._send(code, challenge.encode("utf-8"), "text/plain; charset=utf-8")
         elif path == "/api/behavior/state":
             slot = (qs.get("slot") or [None])[0]
             self._send(200, behavior_brain.get_state(slot=slot))
@@ -378,6 +384,14 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
             new_body = body.get("body", "")
             behavior_brain.record_event("typing", f"draft_edit_{did}", {"len": len(new_body)})
             self._send(200, comms_brain.revise(did, new_body, actor="jasmel", reason="owner_edit"))
+        elif path == "/api/whatsapp/webhook":
+            self._send(200, meta_whatsapp.handle_webhook_payload(body))
+        elif path == "/api/whatsapp/watchlist":
+            self._send(200, meta_whatsapp.upsert_watchlist(body))
+        elif path == "/api/whatsapp/watchlist/delete":
+            self._send(200, meta_whatsapp.delete_watchlist(body.get("chat_id", "")))
+        elif path == "/api/whatsapp/config":
+            self._send(200, meta_whatsapp.save_config(body))
         elif path == "/api/comms/approve_send":
             did = int(body.get("draft_id", 0))
             behavior_brain.record_event("click", f"approve_send_draft_{did}", {"draft_id": did})

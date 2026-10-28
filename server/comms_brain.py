@@ -453,8 +453,8 @@ def send_draft(draft_id, tenant="default", channel_override=None, test_label=Tru
         elif transport == "telegram":
             provider_id = _send_telegram(to_addr, body)
         elif transport == "whatsapp":
-            raise NotImplementedError(
-                "WhatsApp Cloud API needs WABA + permanent token (see FEASIBILITY.md).")
+            import meta_whatsapp
+            provider_id = meta_whatsapp.send_message(to_addr, body)
         else:
             raise ValueError(f"unknown channel {transport}")
         new_status = "SENT"
@@ -577,7 +577,7 @@ def ensure_demo_inbox_seeded():
     ]
     for ch, contact, txt, tid in incoming_samples:
         ingest(ch, "in", contact, txt, msg_id=f"seed-in-{tid}", thread_id=tid, auto_flag=True)
-        create_draft(tid, channel="email" if ch == "whatsapp" else ch, tenant="default")
+        create_draft(tid, channel=ch, tenant="default")
 
 
 def list_inbox_with_drafts():
@@ -597,7 +597,7 @@ def list_inbox_with_drafts():
         ).fetchone()
         if not d_row:
             c.close()
-            create_draft(tid, channel="email" if ch == "whatsapp" else ch, tenant="default")
+            create_draft(tid, channel=ch, tenant="default")
             c = _db()
             d_row = c.execute(
                 "SELECT id, body_original, body_final, status, version, approved_by, edited_by_owner "

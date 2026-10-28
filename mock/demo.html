@@ -757,6 +757,43 @@
         <button class="btn" onclick="simulateIncomingMsg()">Recibir y Pre-Redactar Borrador IA</button>
       </div>
     </div>
+
+    <div class="card" style="grid-column:span 12;border-color:rgba(35,217,176,.38)" id="metaWaWatchlistCard">
+      <h3>
+        <span class="lhs">
+          <span class="dot" style="background:var(--ok)"></span>
+          <span>Meta WhatsApp Cloud API Oficial (Graph API v21.0 · Coexistencia Activa · Green API Eliminado — Cero Riesgo de Bloqueo)</span>
+          <span class="tag ok" id="metaWaBadge">META OFICIAL · 5 CHATS/GRUPOS SELECCIONADOS</span>
+        </span>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span class="muted" style="font-size:11px">Webhook: /api/whatsapp/webhook · Auto-Borrador + Auto-Tarea</span>
+          <button class="btn ghost sm" type="button" onclick="loadMetaWhatsAppStatus(true)">Sincronizar Meta Cloud API</button>
+        </div>
+      </h3>
+      <p class="muted" style="margin-bottom:12px;font-size:12px">
+        Selecciona exactamente qué <b>Grupos de WhatsApp</b> o <b>Contactos Directos</b> deseas que El Jefesito monitoree. Cada mensaje en tus chats seleccionados genera automáticamente <b>1) un Borrador de Respuesta IA en tu voz</b> arriba en la Bandeja y <b>2) una Tarea Ejecutiva en tu control</b>, ignorando chats personales no seleccionados.
+      </p>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px">
+        <input class="inp" id="waNewName" placeholder="Nombre del Grupo o Contacto (ej. Grupo Socios Miami)…">
+        <input class="inp" id="waNewId" placeholder="ID Grupo o Teléfono (ej. wa-grp-socios o +1-305-555-0199)…">
+        <select class="inp" id="waNewKind">
+          <option value="group">Grupo de WhatsApp (Meta Groups / Coexistencia)</option>
+          <option value="direct">Chat Directo 1:1 (Meta Cloud API)</option>
+        </select>
+        <button class="btn sm" type="button" onclick="addMetaWaWatchItem()">+ Agregar a Monitoreo Selectivo</button>
+      </div>
+      <div id="metaWaWatchlistBox" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:12px"></div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding-top:10px;border-top:1px solid var(--hair)">
+        <select class="inp" id="waSimTargetChat" style="width:auto;min-width:260px">
+          <option value="wa-grp-unitec-logistica|Grupo Dirección & Logística — UNITEC / Building|group|unitec">Grupo Dirección & Logística — UNITEC / Building</option>
+          <option value="wa-grp-espacios-muelles|Grupo Muelles y Despachos — Espacios Importados|group|building">Grupo Muelles y Despachos — Espacios Importados</option>
+          <option value="wa-grp-mbmb-closers|Grupo Ventas & Closers — MBMB / CEDEXX|group|mbmb">Grupo Ventas & Closers — MBMB / CEDEXX</option>
+          <option value="+52-55-4190-8821|Jorge Ramírez · Farmacia La Esperanza|direct|saleinn">Jorge Ramírez · Farmacia La Esperanza (+52-55-4190-8821)</option>
+        </select>
+        <input class="inp" id="waSimGroupMsg" style="flex:1;min-width:260px" value="Jasmel, llegó el contenedor de Paneles WPC Roble Claro al Muelle 1. ¿Autorizas descargar hoy y enviar factura al cliente de Doral?">
+        <button class="btn vio sm" type="button" onclick="simulateMetaWhatsAppGroupMsg()">Probar Mensaje Meta (Crear Borrador + Tarea)</button>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -1710,6 +1747,133 @@ function approveAndSendDraft(draftId) {
     : `Draft #${draftId} approved and sent directly to ${d.contact}.`);
 }
 
+let META_WA_STATE = null;
+
+function renderMetaWhatsAppBox() {
+  const box = document.getElementById('metaWaWatchlistBox');
+  const badge = document.getElementById('metaWaBadge');
+  if (!box || !META_WA_STATE) return;
+  const wl = META_WA_STATE.watchlist || [];
+  if (badge) {
+    badge.textContent = `META OFICIAL · ${META_WA_STATE.monitored_active || wl.filter(x=>x.enabled).length}/${wl.length} CHATS/GRUPOS ACTIVOS`;
+  }
+  box.innerHTML = wl.map((w, idx) => `
+    <div style="background:rgba(7,11,20,.65);border:1px solid ${w.enabled ? 'rgba(16,185,129,.35)' : 'var(--hair)'};border-radius:10px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;gap:10px">
+      <div style="min-width:0;flex:1">
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          <span class="tag ${w.kind === 'group' ? 'medium' : 'low'}">${w.kind === 'group' ? 'GRUPO WA' : 'DIRECTO 1:1'}</span>
+          <b style="font-size:12px">${w.name}</b>
+        </div>
+        <div class="muted" style="font-size:10.5px;margin-top:3px">ID: ${w.chat_id} · Auto-Borrador: <b>${w.auto_draft ? 'ON' : 'OFF'}</b> · Auto-Tarea: <b>${w.auto_task ? 'ON' : 'OFF'}</b></div>
+        <div class="muted" style="font-size:10.5px;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Último: «${w.last_msg_preview || 'En espera de mensajes'}»</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="tag ${w.enabled ? 'ok' : 'critical'}">${w.enabled ? 'MONITOREANDO' : 'IGNORADO'}</span>
+        <label class="switch">
+          <input type="checkbox" ${w.enabled ? 'checked' : ''} onchange="toggleMetaWaWatch('${w.chat_id}', this.checked)">
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+  `).join('');
+}
+
+function loadMetaWhatsAppStatus(toast = false) {
+  fetch('/api/whatsapp/status')
+    .then(r => r.json())
+    .then(d => {
+      if (d && d.ok) {
+        META_WA_STATE = d;
+        renderMetaWhatsAppBox();
+        if (toast) showToast('Meta WhatsApp Cloud API v21.0 sincronizado (' + d.monitored_active + ' chats/grupos monitoreados).');
+      }
+    })
+    .catch(() => {});
+}
+
+function toggleMetaWaWatch(chatId, enabled) {
+  if (!META_WA_STATE) return;
+  const item = (META_WA_STATE.watchlist || []).find(x => x.chat_id === chatId);
+  if (!item) return;
+  item.enabled = enabled;
+  fetch('/api/whatsapp/watchlist', {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(item)
+  }).then(r => r.json()).then(d => {
+    if (d && d.watchlist) {
+      META_WA_STATE.watchlist = d.watchlist;
+      META_WA_STATE.monitored_active = d.watchlist.filter(x => x.enabled).length;
+      renderMetaWhatsAppBox();
+      showToast(`${item.name}: ${enabled ? 'Monitoreo Activo (Borrador + Tarea)' : 'Pausado'}`);
+    }
+  }).catch(() => {});
+}
+
+function addMetaWaWatchItem() {
+  const name = (document.getElementById('waNewName').value || '').trim();
+  const chat_id = (document.getElementById('waNewId').value || '').trim();
+  const kind = (document.getElementById('waNewKind').value || 'group');
+  if (!name || !chat_id) return;
+  fetch('/api/whatsapp/watchlist', {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({chat_id, name, kind, company: cur === 'all' ? 'unitec' : cur, enabled: true, auto_draft: true, auto_task: true})
+  }).then(r => r.json()).then(d => {
+    if (d && d.ok) {
+      document.getElementById('waNewName').value = '';
+      document.getElementById('waNewId').value = '';
+      loadMetaWhatsAppStatus(false);
+      showToast(`Agregado a monitoreo oficial de Meta WhatsApp: ${name}`);
+    }
+  }).catch(() => {});
+}
+
+function simulateMetaWhatsAppGroupMsg() {
+  const sel = (document.getElementById('waSimTargetChat').value || '').split('|');
+  const chat_id = sel[0] || 'wa-grp-unitec-logistica';
+  const sender = sel[1] || 'Grupo Dirección & Logística';
+  const kind = sel[2] || 'group';
+  const co = sel[3] || 'unitec';
+  const text = (document.getElementById('waSimGroupMsg').value || '').trim();
+  if (!text) return;
+  fetch('/api/whatsapp/webhook', {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({chat_id, sender, text, kind, company: co, force_monitor: true})
+  }).then(r => r.json()).then(d => {
+    const newId = DRAFTS_QUEUE.length + 1;
+    const draftBody = `Estimado equipo (${sender.split('—')[0].trim()}),
+
+Recibido por WhatsApp Oficial. Autorizado proceder hoy mismo; la tarea ya quedó registrada en el panel de control con seguimiento automático.
+
+Cordialmente,
+Jasmel Acosta`;
+    DRAFTS_QUEUE.unshift({
+      draft_id: (d.results && d.results[0] && d.results[0].draft_id) || newId,
+      thread_id: 'wa-' + chat_id,
+      channel: 'WhatsApp Meta (' + (kind === 'group' ? 'Grupo' : 'Directo') + ')',
+      contact: sender,
+      company: co,
+      age: 'ahora',
+      incoming: text,
+      body: draftBody,
+      version: 1,
+      status: 'PENDING_REVIEW'
+    });
+    TASKS.unshift({
+      id: (d.results && d.results[0] && d.results[0].task_id) || ('T-WA' + newId),
+      title: `[WA ${kind === 'group' ? 'Grupo' : 'Directo'}] ${sender.split('·')[0].trim()}: ${text.slice(0, 72)}…`,
+      sev: 'high',
+      status: 'due hoy',
+      meta: 'Meta Cloud API · Auto-Tarea + Borrador',
+      co: co
+    });
+    renderCommsTab();
+    renderAll();
+    loadMetaWhatsAppStatus(false);
+    if (typeof loadKnowledgeVault === 'function') loadKnowledgeVault(false);
+    showToast('Meta WhatsApp Cloud API: Borrador IA pre-redactado y Tarea creada automáticamente en tu panel.');
+  }).catch(() => {});
+}
+
 function simulateIncomingMsg() {
   const sender = ($('#simSender').value || 'cliente@empresa.com').trim();
   const txt = ($('#simText').value || '¿Me confirmas disponibilidad para llamada hoy?').trim();
@@ -2656,6 +2820,7 @@ syncUnitecLive(false);
 renderBuildingAppPanel();
 syncBuildingAppLive(false);
 syncHikConnectLive(false);
+loadMetaWhatsAppStatus(false);
 renderBlogs();
 
 /* ══ EL JEFESITO: themes, preferences, daily greeting, close day ══ */
