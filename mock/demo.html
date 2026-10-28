@@ -2557,11 +2557,11 @@ function renderBuildingAppPanel() {
 
   const memEl = document.getElementById('bappMembersBox');
   if (memEl) {
-    memEl.innerHTML = (m.latest_members || []).slice(0, 4).map(u => `
+    memEl.innerHTML = (m.latest_members || []).slice(0, 7).map(u => `
       <div class="row" style="padding:5px 0;font-size:12px">
         <div>
           <b>${u.name}</b> <span class="muted">(${u.email})</span>
-          <div class="t">Alta: ${u.created} · ${u.generations} renders/análisis</div>
+          <div class="t">Alta: ${u.created} · Créditos: ${u.generations}/${u.credit_limit || (u.tier==='LUXURY'?'∞':10)} · $${Number(u.api_cost_usd||0).toFixed(3)}</div>
         </div>
         <span class="tag ${u.tier === 'LUXURY' ? 'ok' : 'low'}">${u.tier}</span>
       </div>
