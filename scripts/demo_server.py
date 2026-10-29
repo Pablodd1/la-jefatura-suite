@@ -43,6 +43,7 @@ import buildingapp_ingest  # noqa: E402
 import cameras  # noqa: E402
 import camera_report  # noqa: E402
 import comms_brain  # noqa: E402
+import daily_brief_pusher  # noqa: E402
 import daily_pdf  # noqa: E402
 import google_workspace  # noqa: E402
 import jefesito  # noqa: E402
@@ -282,6 +283,10 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
             self._send(code, challenge.encode("utf-8"), "text/plain; charset=utf-8")
         elif path == "/api/google/status":
             self._send(200, google_workspace.get_status())
+        elif path == "/api/reports/daily_brief":
+            slot = (qs.get("slot") or ["morning"])[0]
+            force = (qs.get("refresh") or ["0"])[0] == "1"
+            self._send(200, daily_brief_pusher.build_brief(slot=slot, force_live=force))
         elif path == "/api/google/auth_url":
             host = self.headers.get("Host", f"localhost:{PORT}")
             proto = self.headers.get("X-Forwarded-Proto", "http")
@@ -427,6 +432,12 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
         elif path == "/api/google/sync":
             self._send(200, google_workspace.sync_gmail_and_calendar(
                 max_emails=int(body.get("max_emails", 10))))
+        elif path == "/api/reports/dispatch_daily":
+            self._send(200, daily_brief_pusher.dispatch_brief(
+                slot=body.get("slot", "morning"),
+                to_whatsapp=body.get("to_whatsapp", ""),
+                to_email=body.get("to_email", ""),
+            ))
         elif path == "/api/comms/approve_send":
             did = int(body.get("draft_id", 0))
             behavior_brain.record_event("click", f"approve_send_draft_{did}", {"draft_id": did})
@@ -461,6 +472,7 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
 if __name__ == "__main__":
     _seed_if_empty()
     camera_report.start_scheduler()
+    daily_brief_pusher.start_scheduler()
     srv = __import__("http.server").server.ThreadingHTTPServer(
         ("0.0.0.0", PORT), Handler)
     print(f"La Jefatura demo -> http://localhost:{PORT}  (Ctrl-C to stop)")

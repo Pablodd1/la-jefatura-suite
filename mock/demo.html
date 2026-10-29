@@ -559,9 +559,15 @@
     <div class="card" style="grid-column:span 5">
       <h3>
         <span class="lhs"><span class="dot" style="background:var(--acc)"></span><span data-i18n="exec_digest">Resumen Ejecutivo Diario (Todas las Apps Conectadas)</span></span>
-        <button class="btn ghost sm" onclick="window.LJ.execute(lang==='es'?'leer resumen':'read brief')">Escuchar Voz Grok 3.0</button>
+        <div style="display:flex;gap:5px;flex-wrap:wrap">
+          <button class="btn ghost sm" type="button" onclick="loadTwiceDailyPortalBrief('morning', true)">08:00 AM</button>
+          <button class="btn ghost sm" type="button" onclick="loadTwiceDailyPortalBrief('evening', true)">06:00 PM</button>
+          <button class="btn ghost sm" type="button" onclick="speakTwiceDailyPortalBrief()">🔊 Escuchar</button>
+          <button class="btn sm" type="button" onclick="dispatchTwiceDailyBriefNow()">Enviar Reporte</button>
+        </div>
       </h3>
       <div class="narr" id="execDigestNarr"></div>
+      <div id="twiceDailyPortalBox" style="margin-top:8px;padding:8px 10px;border-radius:8px;background:rgba(16,185,129,.07);border:1px solid rgba(16,185,129,.25);font-size:11px;line-height:1.45;display:none"></div>
       <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px" id="miniAppOutcomes"></div>
     </div>
 
@@ -1831,6 +1837,54 @@ function approveAndSendDraft(draftId) {
   showToast(lang === 'es'
     ? `Borrador #${draftId} aprobado y enviado directamente a ${d.contact}.`
     : `Draft #${draftId} approved and sent directly to ${d.contact}.`);
+}
+
+let _currentDailyBrief = null;
+function loadTwiceDailyPortalBrief(slot = 'morning', showBox = false) {
+  fetch('/api/reports/daily_brief?slot=' + encodeURIComponent(slot))
+    .then(r => r.json())
+    .then(d => {
+      if (!d || !d.ok) return;
+      _currentDailyBrief = d;
+      const box = document.getElementById('twiceDailyPortalBox');
+      if (box && showBox) {
+        box.style.display = 'block';
+        box.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+            <b style="color:var(--acc)">${d.slot_label} · Corte ${d.generated_at}</b>
+            <span class="tag ok">AUTO 2x/DÍA (08:00 & 18:00)</span>
+          </div>
+          <div style="white-space:pre-line">${(d.summary_text_es || '').replace(/\*/g, '')}</div>`;
+      }
+    }).catch(() => {});
+}
+
+function speakTwiceDailyPortalBrief() {
+  if (_currentDailyBrief && _currentDailyBrief.voice_script_es) {
+    showToast('🔊 Escuchando ' + _currentDailyBrief.slot_label + '…');
+    playColombianTtsText(_currentDailyBrief.voice_script_es);
+  } else {
+    fetch('/api/reports/daily_brief?slot=morning').then(r => r.json()).then(d => {
+      _currentDailyBrief = d;
+      if (d && d.voice_script_es) {
+        showToast('🔊 Escuchando ' + d.slot_label + '…');
+        playColombianTtsText(d.voice_script_es);
+      }
+    }).catch(() => {});
+  }
+}
+
+function dispatchTwiceDailyBriefNow() {
+  const slot = (_currentDailyBrief && _currentDailyBrief.slot) || 'morning';
+  fetch('/api/reports/dispatch_daily', {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({slot})
+  }).then(r => r.json()).then(d => {
+    if (d && d.ok) {
+      _currentDailyBrief = d;
+      loadTwiceDailyPortalBrief(slot, true);
+      showToast(`✅ ${d.slot_label} actualizado en el Portal y despachado (${(d.dispatched_channels || []).join(' + ')}).`);
+    }
+  }).catch(() => {});
 }
 
 let _commsTtsAudio = null;
