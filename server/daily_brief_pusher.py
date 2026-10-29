@@ -237,6 +237,7 @@ def start_scheduler():
     _scheduler_started = True
 
     def _loop():
+        time.sleep(5)
         # Ensure today's current slot report is immediately available in the portal on startup
         try:
             hr = time.localtime().tm_hour
