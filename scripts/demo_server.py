@@ -45,6 +45,7 @@ import camera_report  # noqa: E402
 import comms_brain  # noqa: E402
 import daily_brief_pusher  # noqa: E402
 import daily_pdf  # noqa: E402
+import ga4_ingest  # noqa: E402
 import google_workspace  # noqa: E402
 import jefesito  # noqa: E402
 import knowledge_store  # noqa: E402
@@ -283,6 +284,9 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
             self._send(code, challenge.encode("utf-8"), "text/plain; charset=utf-8")
         elif path == "/api/google/status":
             self._send(200, google_workspace.get_status())
+        elif path == "/api/ga4/summary":
+            pid = (qs.get("property_id") or [""])[0]
+            self._send(200, ga4_ingest.fetch_live_ga4(property_id_override=pid))
         elif path == "/api/reports/daily_brief":
             slot = (qs.get("slot") or ["morning"])[0]
             force = (qs.get("refresh") or ["0"])[0] == "1"
