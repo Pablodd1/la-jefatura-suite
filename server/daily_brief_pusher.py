@@ -70,7 +70,7 @@ def build_brief(slot: str = "morning", force_live: bool = False) -> dict:
     nex = nexus_ingest.summary()
     wa = meta_whatsapp.get_status()
     inbox = comms_brain.list_inbox_with_drafts()
-    kv = knowledge_store.list_all()
+    kv = knowledge_store.export_all()
 
     b_members = ((bapp.get("five_key_numbers") or {}).get("members") or {})
     b_ai = ((bapp.get("five_key_numbers") or {}).get("ai_usage") or {})
