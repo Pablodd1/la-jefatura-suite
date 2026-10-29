@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS daily_executive_briefs (
 
 
 def _db():
-    c = sqlite3.connect(DB)
+    c = sqlite3.connect(DB, timeout=15.0)
     c.executescript(SCHEMA)
     return c
 
@@ -149,23 +149,26 @@ def build_brief(slot: str = "morning", force_live: bool = False) -> dict:
     }
 
     brief_id = f"{day}-{slot}"
-    c = _db()
-    c.execute(
-        "INSERT OR REPLACE INTO daily_executive_briefs VALUES(?,?,?,?,?,?,?,?,?)",
-        (
-            brief_id,
-            day,
-            slot,
-            time.time(),
-            title_es,
-            summary_text_es,
-            voice_script_es,
-            json.dumps(metrics, ensure_ascii=False),
-            json.dumps(["portal"], ensure_ascii=False),
-        ),
-    )
-    c.commit()
-    c.close()
+    try:
+        c = _db()
+        c.execute(
+            "INSERT OR REPLACE INTO daily_executive_briefs VALUES(?,?,?,?,?,?,?,?,?)",
+            (
+                brief_id,
+                day,
+                slot,
+                time.time(),
+                title_es,
+                summary_text_es,
+                voice_script_es,
+                json.dumps(metrics, ensure_ascii=False),
+                json.dumps(["portal"], ensure_ascii=False),
+            ),
+        )
+        c.commit()
+        c.close()
+    except Exception:
+        pass
 
     return {
         "ok": True,
