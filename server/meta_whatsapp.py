@@ -550,7 +550,15 @@ def get_status() -> dict:
     ).fetchall()
     c.close()
     live_configured = bool(cfg.get("access_token") and cfg.get("phone_number_id"))
+    md_state = {}
+    md_file = os.path.join(ROOT, "data", "wa_multidevice_state.json")
+    if os.path.isfile(md_file):
+        try:
+            md_state = json.load(open(md_file, encoding="utf-8"))
+        except Exception:
+            pass
     return {
+        "multidevice_bridge": md_state,
         "ok": True,
         "provider": "Meta WhatsApp Cloud API Official (Graph API v21.0)",
         "green_api_removed": True,

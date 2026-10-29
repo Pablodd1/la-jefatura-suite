@@ -11,3 +11,9 @@ data/hikconnect_cache.json
 .env.*
 !.env.example
 data/camera_reports/
+
+node_modules/
+package.json
+package-lock.json
+data/wa_multidevice_auth/
+data/wa_multidevice_state.json

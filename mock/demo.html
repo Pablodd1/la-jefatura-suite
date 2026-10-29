@@ -788,6 +788,7 @@
         </select>
         <button class="btn sm" type="button" onclick="addMetaWaWatchItem()">+ Agregar a Monitoreo Selectivo</button>
       </div>
+      <div id="juanLivePairingBox" style="margin-bottom:12px"></div>
       <div id="metaWaWatchlistBox" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:12px"></div>
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding-top:10px;border-top:1px solid var(--hair)">
         <select class="inp" id="waSimTargetChat" style="width:auto;min-width:260px">
@@ -1988,6 +1989,34 @@ function renderMetaWhatsAppBox() {
       ? `LIVE CONECTADO (Phone ID ${META_WA_STATE.phone_number_id})`
       : 'MODO CONFIGURACIÓN';
     badge.textContent = `META OFICIAL · ${liveStr} · ${META_WA_STATE.monitored_active || wl.filter(x=>x.enabled).length}/${wl.length} CHATS ACTIVOS`;
+  }
+  const pairBox = document.getElementById('juanLivePairingBox');
+  const md = META_WA_STATE.multidevice_bridge || {};
+  if (pairBox && md.target_phone) {
+    if (md.connection === 'connected') {
+      pairBox.innerHTML = `<div style="background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.45);border-radius:10px;padding:12px;display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <span class="tag ok">CONECTADO EN VIVO</span>
+          <b style="margin-left:8px;font-size:13px">WhatsApp de Juan ${md.target_phone} vinculado (1:1 y Grupos Reales Activos)</b>
+        </div>
+        <span class="muted" style="font-size:11px">${(md.groups_discovered || []).length} grupos descubiertos</span>
+      </div>`;
+    } else {
+      pairBox.innerHTML = `<div style="background:rgba(7,11,20,.8);border:1px solid var(--acc);border-radius:10px;padding:12px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap">
+        <div style="flex:1;min-width:260px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+            <span class="tag high">VINCULAR WHATSAPP DE JUAN: ${md.target_phone}</span>
+            <span class="muted" style="font-size:11px">Sin desconectar su celular ni perder grupos (#2388103 Bypass)</span>
+          </div>
+          <div style="font-size:12px;line-height:1.45">
+            En el celular de Juan (<b>${md.target_phone}</b>): abre <b>WhatsApp → Dispositivos vinculados → Vincular un dispositivo</b>:<br>
+            • <b>Opción 1 (Por Código de 8 letras):</b> Toca <i>«Vincular con el número de teléfono»</i> e ingresa el código: <b style="font-size:15px;color:var(--acc);letter-spacing:1px;background:rgba(35,217,176,.12);padding:2px 8px;border-radius:6px">${md.pairing_code || 'Generando…'}</b><br>
+            • <b>Opción 2 (Escanear QR):</b> Escanea el código QR de la derecha desde el celular de Juan.
+          </div>
+        </div>
+        ${md.qr_data_url ? `<img src="${md.qr_data_url}" alt="QR WhatsApp Juan" style="width:115px;height:115px;border-radius:8px;border:2px solid var(--acc);background:#fff;padding:3px">` : ''}
+      </div>`;
+    }
   }
   const phInp = document.getElementById('cfgMetaPhoneId');
   const wbInp = document.getElementById('cfgMetaWabaId');
