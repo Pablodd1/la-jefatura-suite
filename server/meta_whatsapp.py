@@ -588,3 +588,34 @@ def get_status() -> dict:
             for r in recent_logs
         ],
     }
+
+
+def request_multidevice_pairing(phone: str = "17866575441") -> dict:
+    """Spawns scripts/wa_multidevice_bridge.js to generate a fresh 8-char Pairing Code & QR for Juan's phone."""
+    import subprocess
+    digits = re.sub(r"[^\d]", "", phone or "17866575441") or "17866575441"
+    env = os.environ.copy()
+    env["JUAN_WA_PHONE"] = digits
+    script = os.path.join(ROOT, "scripts", "wa_multidevice_bridge.js")
+    try:
+        subprocess.Popen(
+            ["node", script],
+            cwd=ROOT,
+            env=env,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+    except Exception as e:
+        return {"ok": False, "error": str(e)}
+    # Wait up to 6 seconds for wa_multidevice_state.json to update with new pairing_code
+    md_file = os.path.join(ROOT, "data", "wa_multidevice_state.json")
+    for _ in range(12):
+        time.sleep(0.5)
+        if os.path.isfile(md_file):
+            try:
+                st = json.load(open(md_file, encoding="utf-8"))
+                if st.get("pairing_code") or st.get("qr_data_url"):
+                    return {"ok": True, "multidevice_bridge": st}
+            except Exception:
+                pass
+    return get_status()

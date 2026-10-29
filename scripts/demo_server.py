@@ -427,6 +427,8 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
             self._send(200, meta_whatsapp.delete_watchlist(body.get("chat_id", "")))
         elif path == "/api/whatsapp/config":
             self._send(200, meta_whatsapp.save_config(body))
+        elif path == "/api/whatsapp/request_pairing":
+            self._send(200, meta_whatsapp.request_multidevice_pairing(body.get("phone", "17866575441")))
         elif path == "/api/google/config":
             self._send(200, google_workspace.save_config(body))
         elif path == "/api/google/sync":
