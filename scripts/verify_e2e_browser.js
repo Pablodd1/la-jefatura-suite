@@ -9,7 +9,7 @@ const pwPath = 'C:\\Users\\jasme\\AppData\\Local\\npm-cache\\_npx\\31e32ef8478fb
 const { chromium } = require(pwPath);
 
 const ASSETS_DIR = path.join(__dirname, '..', 'assets');
-const URL = 'http://localhost:8931/';
+const URL = 'http://localhost:8931/?lang=es';
 
 (async () => {
   const results = [];
@@ -232,10 +232,15 @@ const URL = 'http://localhost:8931/';
       const st = getComputedStyle(el);
       return st.display !== 'none' && st.visibility !== 'hidden' && el.offsetWidth > 0;
     }).length;
-    return { theme, acc, yellow, visibleThemePickers };
+    const hasWebSiteBtn = !!document.getElementById('webSiteBtn');
+    const fabBg = getComputedStyle(document.getElementById('ljw-fab')).backgroundColor;
+    const panelBg = getComputedStyle(document.getElementById('ljw-panel')).backgroundColor;
+    return { theme, acc, yellow, visibleThemePickers, hasWebSiteBtn, fabBg, panelBg };
   });
-  check('18. WebApp locked to Global ARENA (sand / #cdb68c) with 0 visible theme/color pickers',
-    webappArenaCheck.theme === 'sand' && webappArenaCheck.acc === '#cdb68c' && webappArenaCheck.yellow === '#cdb68c' && webappArenaCheck.visibleThemePickers === 0,
+  check('18. WebApp locked to Global ARENA (sand / #cdb68c), 0 theme pickers, no Website button, White Jefesito Widget',
+    webappArenaCheck.theme === 'sand' && webappArenaCheck.acc === '#cdb68c' && webappArenaCheck.yellow === '#cdb68c' &&
+    webappArenaCheck.visibleThemePickers === 0 && webappArenaCheck.hasWebSiteBtn === false &&
+    webappArenaCheck.fabBg === 'rgb(255, 255, 255)' && webappArenaCheck.panelBg === 'rgb(255, 255, 255)',
     JSON.stringify(webappArenaCheck));
   await page.screenshot({ path: path.join(ASSETS_DIR, 'verified-8-theme-yellow-black.png'), fullPage: false });
 

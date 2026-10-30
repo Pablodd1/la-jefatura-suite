@@ -409,35 +409,36 @@
     const css = `
 .lj-voice-touch{outline:2px solid #cdb68c !important;box-shadow:0 0 0 6px rgba(205,182,140,.35) !important;transition:box-shadow .25s ease !important}
 #ljw{position:fixed;${CFG.position.includes("left") ? "left:20px" : "right:20px"};bottom:20px;z-index:9999;font-family:-apple-system,'SF Pro Display',Inter,Segoe UI,sans-serif}
-#ljw .fab{padding:0 18px;height:44px;border-radius:999px;border:1px solid rgba(205,182,140,.38);cursor:pointer;background:#12100d;color:#f5f2eb;font-size:11.5px;font-weight:800;letter-spacing:.08em;box-shadow:0 10px 28px rgba(0,0,0,.65);transition:.2s;display:flex;align-items:center;justify-content:center;gap:8px;position:relative}
-#ljw .fab::before{content:"";width:7px;height:7px;border-radius:50%;background:#cdb68c;box-shadow:0 0 8px #cdb68c}
-#ljw .fab:hover{transform:translateY(-1px);border-color:#dccaa6}
+#ljw .fab{padding:0 18px;height:44px;border-radius:999px;border:1px solid #cdb68c;cursor:pointer;background:#ffffff;color:#12100d;font-size:11.5px;font-weight:800;letter-spacing:.08em;box-shadow:0 10px 28px rgba(0,0,0,.35);transition:.2s;display:flex;align-items:center;justify-content:center;gap:8px;position:relative}
+#ljw .fab::before{content:"";width:7px;height:7px;border-radius:50%;background:#8e734b;box-shadow:0 0 8px rgba(142,115,75,.6)}
+#ljw .fab:hover{transform:translateY(-1px);background:#faf8f5;border-color:#8e734b}
 #ljw .fab.on,#ljw.speaking .fab{animation:ljpulse 1.4s infinite}
 #ljw .fab-badge{display:none}
-@keyframes ljpulse{50%{box-shadow:0 0 0 14px rgba(205,182,140,.22)}}
-#ljw .panel{position:absolute;bottom:72px;${CFG.position.includes("left") ? "left:0" : "right:0"};width:370px;max-height:520px;background:rgba(18,16,13,.97);backdrop-filter:blur(18px);border:1px solid rgba(205,182,140,.32);border-radius:18px;box-shadow:0 22px 60px rgba(0,0,0,.65);display:none;flex-direction:column;overflow:hidden}
+@keyframes ljpulse{50%{box-shadow:0 0 0 14px rgba(255,255,255,.35)}}
+#ljw .panel{position:absolute;bottom:72px;${CFG.position.includes("left") ? "left:0" : "right:0"};width:370px;max-height:520px;background:#ffffff;color:#18181b;border:1px solid #e5d8c0;border-radius:18px;box-shadow:0 22px 60px rgba(0,0,0,.45);display:none;flex-direction:column;overflow:hidden}
 #ljw .panel.open{display:flex}
-#ljw .head{padding:13px 16px;background:linear-gradient(90deg,rgba(205,182,140,.16),rgba(181,155,109,.08));border-bottom:1px solid rgba(205,182,140,.14);display:flex;justify-content:space-between;align-items:center}
-#ljw .head-title{color:#f5f2eb;font-size:11.5px;font-weight:800;letter-spacing:.8px}
-#ljw .head-sub{color:#cdb68c;font-size:10px;margin-top:2px;display:flex;align-items:center;gap:5px}
+#ljw .head{padding:13px 16px;background:#faf8f5;border-bottom:1px solid #ece7df;display:flex;justify-content:space-between;align-items:center}
+#ljw .head-title{color:#12100d;font-size:11.5px;font-weight:800;letter-spacing:.8px}
+#ljw .head-sub{color:#8e734b;font-size:10px;margin-top:2px;display:flex;align-items:center;gap:5px;font-weight:600}
 #ljw .wave{display:flex;gap:3px;align-items:center;height:16px}
-#ljw .wave span{width:3px;height:6px;background:#cdb68c;border-radius:2px;transition:.2s}
+#ljw .wave span{width:3px;height:6px;background:#8e734b;border-radius:2px;transition:.2s}
 #ljw.speaking .wave span,#ljw .fab.on ~ .panel .wave span{animation:ljwave .7s infinite ease-in-out}
 #ljw .wave span:nth-child(2){animation-delay:.1s}
 #ljw .wave span:nth-child(3){animation-delay:.2s}
 #ljw .wave span:nth-child(4){animation-delay:.3s}
 #ljw .wave span:nth-child(5){animation-delay:.15s}
 @keyframes ljwave{0%,100%{height:5px}50%{height:16px}}
-#ljw .chips{display:flex;flex-wrap:wrap;gap:5px;padding:9px 12px;border-bottom:1px solid rgba(205,182,140,.1);background:rgba(11,10,8,.65)}
-#ljw .chip{background:rgba(255,255,255,.05);border:1px solid rgba(205,182,140,.16);color:#dcd5c7;font-size:11px;padding:4px 9px;border-radius:14px;cursor:pointer;transition:.15s}
-#ljw .chip:hover{background:rgba(205,182,140,.2);border-color:#cdb68c;color:#fff}
-#ljw .log{flex:1;overflow-y:auto;padding:12px 14px;font-size:12.5px;min-height:170px;max-height:250px}
+#ljw .chips{display:flex;flex-wrap:wrap;gap:5px;padding:9px 12px;border-bottom:1px solid #ece7df;background:#f8f6f2}
+#ljw .chip{background:#ffffff;border:1px solid #dcd5c7;color:#27272a;font-size:11px;font-weight:600;padding:4px 9px;border-radius:14px;cursor:pointer;transition:.15s}
+#ljw .chip:hover{background:#f5efe4;border-color:#8e734b;color:#12100d}
+#ljw .log{flex:1;overflow-y:auto;padding:12px 14px;font-size:12.5px;min-height:170px;max-height:250px;background:#ffffff;color:#18181b}
 #ljw .msg{margin-bottom:9px;line-height:1.45;padding:7px 10px;border-radius:10px}
-#ljw .msg.user{background:rgba(205,182,140,.16);color:#dccaa6;margin-left:28px;text-align:right}
-#ljw .msg.lj{background:rgba(255,255,255,.05);color:#f5f2eb;margin-right:18px;border-left:2px solid #cdb68c}
-#ljw .input{display:flex;border-top:1px solid rgba(205,182,140,.14);background:#0b0a08}
-#ljw .input input{flex:1;background:none;border:0;color:#f5f2eb;padding:12px 14px;font-size:12.5px;outline:none}
-#ljw .input button{background:none;border:0;color:#cdb68c;font-size:17px;cursor:pointer;padding:0 12px;font-weight:700}`;
+#ljw .msg.user{background:#f5efe4;color:#12100d;border:1px solid #e5d8c0;margin-left:28px;text-align:right;font-weight:500}
+#ljw .msg.lj{background:#f8f6f2;color:#18181b;margin-right:18px;border-left:3px solid #8e734b}
+#ljw .input{display:flex;border-top:1px solid #ece7df;background:#ffffff}
+#ljw .input input{flex:1;background:none;border:0;color:#18181b;padding:12px 14px;font-size:12.5px;outline:none}
+#ljw .input input::placeholder{color:#71717a}
+#ljw .input button{background:none;border:0;color:#8e734b;font-size:17px;cursor:pointer;padding:0 12px;font-weight:800}`;
 
     const style = document.createElement("style");
     style.textContent = css;

@@ -157,8 +157,6 @@
   .nav-bar{background:var(--nav)!important}
   .btn,.seg button.on{color:var(--onacc)!important}
   .btn.ghost{background:var(--panel2)!important;color:var(--txt)!important;border:1px solid var(--hair)!important}
-  #ljw .msg.user{background:var(--inset)!important;color:var(--txt)!important;border-right:3px solid var(--acc)}
-  #ljw .input button{color:var(--acc)!important}
   .seg button{color:var(--dim)}
   .seg button.on{color:var(--onacc)!important}
   .toast{background:var(--panel)!important;color:var(--txt)!important}
@@ -167,13 +165,6 @@
   .blog-steps li,.f-card,.draft-card{background:var(--inset)!important}
   [style*="rgba(7,11,20"]{background:var(--inset)!important}
   [style*="#cfd8ea"]{color:var(--txt2)!important}
-  #ljw .panel{background:var(--panel)!important;border-color:var(--acc)!important}
-  #ljw .head,#ljw .input{background:var(--panel2)!important}
-  #ljw .chips{background:var(--inset)!important}
-  #ljw .chip{background:var(--inset)!important;color:var(--txt)!important;border-color:var(--hair)!important}
-  #ljw .msg.lj{background:var(--inset)!important;color:var(--txt)!important}
-  #ljw .head-title,#ljw .input input{color:var(--txt)!important}
-  #ljw .fab{color:var(--onacc)!important}
   #jfGreeting{display:none;max-width:1520px;margin:14px auto 0;padding:0 22px}
   .jf-card{background:var(--panel);border:1px solid var(--acc);border-radius:14px;padding:16px 18px}
   .jf-card .jf-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
@@ -392,7 +383,6 @@
   <div class="pill" id="clock"></div>
   <div class="pill" id="jfGreetPill" style="cursor:pointer" title="Saludo al abrir la app: activar / detener" onclick="toggleGreeting()"><span id="jfGreetLbl">Saludo: ON</span></div>
   <button class="btn ghost" id="langBtn" style="font-weight:800;border-color:var(--acc);color:var(--acc)">ES / EN</button>
-  <a class="btn ghost" href="/website" style="text-decoration:none" id="webSiteBtn">Web & Vista iPhone</a>
   <button class="btn" id="pdfBtn">Informe PDF</button>
 </header>
 
@@ -2484,9 +2474,16 @@ $('#langBtn').onclick = () => {
   const qEn = /[?&]lang=en\b/i.test(location.search);
   const qEs = /[?&]lang=es\b/i.test(location.search);
   const saved = (function(){ try { return localStorage.getItem('lj_lang'); } catch(e) { return null; } })();
-  if (qEn || (!qEs && saved === 'en')) {
+  if (qEs) {
+    lang = 'es';
+    document.documentElement.lang = 'es';
+    try { localStorage.setItem('lj_lang', 'es'); } catch(e) {}
+    if (window.LJ_WIDGET) window.LJ_WIDGET.lang = 'es';
+    if (window.LJ && window.LJ.setLang) window.LJ.setLang('es');
+  } else if (qEn || saved === 'en') {
     lang = 'en';
     document.documentElement.lang = 'en';
+    try { localStorage.setItem('lj_lang', 'en'); } catch(e) {}
     if (window.LJ_WIDGET) window.LJ_WIDGET.lang = 'en';
     if (window.LJ && window.LJ.setLang) window.LJ.setLang('en');
   }
