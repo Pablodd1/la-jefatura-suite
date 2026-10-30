@@ -55,10 +55,21 @@ _DAYS_ES = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "do
 _DAYS_EN = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
 
+_SCHEMA_DONE = False
+
+
 def _con():
-    c = sqlite3.connect(DB)
+    global _SCHEMA_DONE
+    c = sqlite3.connect(DB, timeout=30.0)
     c.row_factory = sqlite3.Row
-    c.executescript(SCHEMA)
+    c.execute("PRAGMA busy_timeout=30000")
+    if not _SCHEMA_DONE:
+        try:
+            c.execute("PRAGMA journal_mode=WAL")
+        except Exception:
+            pass
+        c.executescript(SCHEMA)
+        _SCHEMA_DONE = True
     return c
 
 

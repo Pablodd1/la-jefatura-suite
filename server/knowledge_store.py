@@ -38,10 +38,23 @@ CREATE TABLE IF NOT EXISTS tasks (
 """
 
 
+_SCHEMA_DONE = False
+_EV_DONE = False
+_DEV_DONE = False
+
+
 def _db():
-    c = sqlite3.connect(DB)
+    global _SCHEMA_DONE
+    c = sqlite3.connect(DB, timeout=30.0)
     c.row_factory = sqlite3.Row
-    c.executescript(SCHEMA)
+    c.execute("PRAGMA busy_timeout=30000")
+    if not _SCHEMA_DONE:
+        try:
+            c.execute("PRAGMA journal_mode=WAL")
+        except Exception:
+            pass
+        c.executescript(SCHEMA)
+        _SCHEMA_DONE = True
     return c
 
 
@@ -264,7 +277,8 @@ def _facts() -> dict:
 def _metric_answer(q: str, lang: str):
     """Deterministic metric lookup. Returns (reply, sources) or None when no metric matched."""
     n = _norm(q)
-    f = _facts()
+    need_facts = bool(re.search(r"miembros|members|usuarios nuevos|new users|registrad|generaciones|renders|analisis ia|ai usage|generations|costo|cost|gasto|spend|conversacion|conversations|chatbot|recepcion|front.?desk|contactos|telefonos|phones|contacts|leads capturados|alertas|alerts|escalacion|escalation|entrega|delivery|abandono|abandon", n))
+    f = _facts() if need_facts else {}
     es = lang != "en"
     out, srcs = [], []
 
@@ -495,15 +509,18 @@ DEMO_EVENTS_SEED = [
 
 
 def _evdb():
+    global _EV_DONE
     c = _db()
-    c.executescript(_EV_SCHEMA)
-    n = c.execute("SELECT COUNT(*) FROM events").fetchone()[0]
-    if n == 0:
-        now = time.time()
-        for eid, title, d, tm, dur, co, notes, src, st in DEMO_EVENTS_SEED:
-            c.execute("INSERT OR IGNORE INTO events VALUES(?,?,?,?,?,?,?,?,?,?)",
-                      (eid, title, d, tm, dur, co, notes, src, st, now))
-        c.commit()
+    if not _EV_DONE:
+        c.executescript(_EV_SCHEMA)
+        n = c.execute("SELECT COUNT(*) FROM events").fetchone()[0]
+        if n == 0:
+            now = time.time()
+            for eid, title, d, tm, dur, co, notes, src, st in DEMO_EVENTS_SEED:
+                c.execute("INSERT OR IGNORE INTO events VALUES(?,?,?,?,?,?,?,?,?,?)",
+                          (eid, title, d, tm, dur, co, notes, src, st, now))
+            c.commit()
+        _EV_DONE = True
     return c
 
 
@@ -627,8 +644,11 @@ CREATE TABLE IF NOT EXISTS dev_escalations (
 
 
 def _devdb():
+    global _DEV_DONE
     c = _db()
-    c.executescript(_DEV_SCHEMA)
+    if not _DEV_DONE:
+        c.executescript(_DEV_SCHEMA)
+        _DEV_DONE = True
     return c
 
 

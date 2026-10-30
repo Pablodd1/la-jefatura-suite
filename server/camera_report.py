@@ -52,11 +52,15 @@ CREATE TABLE IF NOT EXISTS cam_event_dedupe (k TEXT PRIMARY KEY);
 """
 
 _lock = threading.Lock()
+_SCHEMA_DONE = False
 
 
 def _db():
+    global _SCHEMA_DONE
     c = cameras.db()
-    c.executescript(SCHEMA)
+    if not _SCHEMA_DONE:
+        c.executescript(SCHEMA)
+        _SCHEMA_DONE = True
     return c
 
 
@@ -76,6 +80,7 @@ def poll() -> dict:
         day = _day(now)
         c = _db()
         transitions = 0
+        pending_events = []
         for d in hik["devices"]:
             prev = c.execute(
                 "SELECT online,wan_ip,lan_ip,firmware,disks FROM cam_device_log "
@@ -87,18 +92,18 @@ def poll() -> dict:
                        d.get("lan_ip", ""), d.get("firmware", ""), disks, int(d.get("is_encrypted", False))))
             if prev is not None:
                 if prev[0] != int(d["online"]):
-                    cameras.log_event(d["serial"], "online" if d["online"] else "offline", d["name"], 1.0,
-                                      None, f"{d['name']} ({d['model']}) pasó a {'ONLINE' if d['online'] else 'OFFLINE'}")
+                    pending_events.append((d["serial"], "online" if d["online"] else "offline", d["name"], 1.0,
+                                           None, f"{d['name']} ({d['model']}) pasó a {'ONLINE' if d['online'] else 'OFFLINE'}"))
                     transitions += 1
                 if prev[1] and prev[1] != d.get("wan_ip"):
-                    cameras.log_event(d["serial"], "wan_change", d["name"], 1.0, None,
-                                      f"IP pública cambió {prev[1]} -> {d.get('wan_ip')}")
+                    pending_events.append((d["serial"], "wan_change", d["name"], 1.0, None,
+                                           f"IP pública cambió {prev[1]} -> {d.get('wan_ip')}"))
                 if prev[3] and prev[3] != d.get("firmware"):
-                    cameras.log_event(d["serial"], "firmware", d["name"], 1.0, None,
-                                      f"Firmware {prev[3]} -> {d.get('firmware')}")
+                    pending_events.append((d["serial"], "firmware", d["name"], 1.0, None,
+                                           f"Firmware {prev[3]} -> {d.get('firmware')}"))
                 if prev[4] and prev[4] != disks:
-                    cameras.log_event(d["serial"], "disk_change", d["name"], 1.0, None,
-                                      f"Discos {prev[4]} -> {disks}")
+                    pending_events.append((d["serial"], "disk_change", d["name"], 1.0, None,
+                                           f"Discos {prev[4]} -> {disks}"))
             for ch in d["channels"]:
                 p = c.execute("SELECT signal_ok FROM cam_status_log WHERE serial=? AND channel=? "
                               "ORDER BY ts DESC LIMIT 1", (d["serial"], ch["channel_no"])).fetchone()
@@ -107,12 +112,14 @@ def poll() -> dict:
                           "VALUES(?,?,?,?,?,?,?)",
                           (now, day, d["serial"], ch["channel_no"], ch["name"], int(d["online"]), ok))
                 if p is not None and p[0] != ok and d["online"]:
-                    cameras.log_event(f"{d['serial']}-CH{ch['channel_no']:02d}",
-                                      "signal_restored" if ok else "signal_lost", ch["name"], 1.0, None,
-                                      f"Canal {ch['channel_no']} «{ch['name']}» {'recuperó' if ok else 'perdió'} señal")
+                    pending_events.append((f"{d['serial']}-CH{ch['channel_no']:02d}",
+                                           "signal_restored" if ok else "signal_lost", ch["name"], 1.0, None,
+                                           f"Canal {ch['channel_no']} «{ch['name']}» {'recuperó' if ok else 'perdió'} señal"))
                     transitions += 1
         c.commit()
         c.close()
+        for ev in pending_events:
+            cameras.log_event(*ev)
     alarms = ingest_cloud_alarms(hik)
     return {"ok": True, "devices": len(hik["devices"]), "channels": len(hik["channels"]),
             "transitions": transitions, "cloud_alarms_new": alarms, "ts": now}
@@ -124,41 +131,54 @@ def ingest_cloud_alarms(hik: dict) -> int:
     base = cameras._HIK_CACHE.get("base_url")
     if not sid or not base:
         return 0
-    new = 0
-    c = _db()
+    fetched_alarms = []
     for d in hik.get("devices", []):
         try:
             res = cameras._http_req(
                 f"{base}/v3/alarms/v2/advanced?deviceSerials={d['serial']}&queryType=-1&limit=50&stype=-1",
                 headers={"sessionId": sid})
+            for a in res.get("alarms") or []:
+                fetched_alarms.append((d, a))
         except Exception:
             continue
-        for a in res.get("alarms") or []:
-            key = d["serial"] + "|" + json.dumps(a, sort_keys=True)[:300]
-            if c.execute("SELECT 1 FROM cam_event_dedupe WHERE k=?", (key,)).fetchone():
-                continue
-            c.execute("INSERT INTO cam_event_dedupe(k) VALUES(?)", (key,))
-            ts = None
-            for k in ("alarmStartTime", "alarmTime", "time", "startTime"):
-                v = a.get(k)
-                if v:
+    if not fetched_alarms:
+        return 0
+    new = 0
+    pending_events = []
+    c = _db()
+    for d, a in fetched_alarms:
+        key = d["serial"] + "|" + json.dumps(a, sort_keys=True)[:300]
+        if c.execute("SELECT 1 FROM cam_event_dedupe WHERE k=?", (key,)).fetchone():
+            continue
+        c.execute("INSERT INTO cam_event_dedupe(k) VALUES(?)", (key,))
+        ts = None
+        for k in ("alarmStartTime", "alarmTime", "time", "startTime"):
+            v = a.get(k)
+            if v:
+                try:
+                    ts = float(v) / (1000.0 if float(v) > 1e11 else 1.0)
+                except (TypeError, ValueError):
                     try:
-                        ts = float(v) / (1000.0 if float(v) > 1e11 else 1.0)
-                    except (TypeError, ValueError):
-                        try:
-                            ts = time.mktime(time.strptime(str(v)[:19], "%Y-%m-%d %H:%M:%S"))
-                        except Exception:
-                            pass
-                    break
-            ch = a.get("channelNo") or a.get("channel") or ""
-            cameras.log_event(f"{d['serial']}-CH{int(ch):02d}" if str(ch).isdigit() else d["serial"],
-                              "cloud_alarm", str(a.get("alarmType", a.get("type", ""))), 1.0,
-                              a.get("alarmPicUrl") or a.get("picUrl"), json.dumps(a, ensure_ascii=False)[:500])
-            if ts:
-                c.execute("UPDATE cam_events SET ts=? WHERE id=(SELECT MAX(id) FROM cam_events)", (ts,))
-            new += 1
+                        ts = time.mktime(time.strptime(str(v)[:19], "%Y-%m-%d %H:%M:%S"))
+                    except Exception:
+                        pass
+                break
+        ch = a.get("channelNo") or a.get("channel") or ""
+        pending_events.append((
+            f"{d['serial']}-CH{int(ch):02d}" if str(ch).isdigit() else d["serial"],
+            "cloud_alarm", str(a.get("alarmType", a.get("type", ""))), 1.0,
+            a.get("alarmPicUrl") or a.get("picUrl"), json.dumps(a, ensure_ascii=False)[:500], ts
+        ))
+        new += 1
     c.commit()
     c.close()
+    for cam_id, kind, zona, conf, snap, nota, ts in pending_events:
+        cameras.log_event(cam_id, kind, zona, conf, snap, nota)
+        if ts:
+            c2 = _db()
+            c2.execute("UPDATE cam_events SET ts=? WHERE id=(SELECT MAX(id) FROM cam_events)", (ts,))
+            c2.commit()
+            c2.close()
     return new
 
 
@@ -773,6 +793,7 @@ def add_agent_events(events: list) -> int:
 # ───────────────────────────── scheduler ─────────────────────────────
 
 def _loop():
+    time.sleep(25)
     last_report_day = None
     while True:
         try:

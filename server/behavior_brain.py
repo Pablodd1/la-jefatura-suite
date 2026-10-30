@@ -200,9 +200,21 @@ DEFAULT_PROFILE = {
 }
 
 
+_SCHEMA_DONE = False
+_SEED_DONE = False
+
+
 def _db():
-    c = sqlite3.connect(DB)
-    c.executescript(SCHEMA)
+    global _SCHEMA_DONE
+    c = sqlite3.connect(DB, timeout=30.0)
+    c.execute("PRAGMA busy_timeout=30000")
+    if not _SCHEMA_DONE:
+        try:
+            c.execute("PRAGMA journal_mode=WAL")
+        except Exception:
+            pass
+        c.executescript(SCHEMA)
+        _SCHEMA_DONE = True
     return c
 
 
@@ -216,6 +228,9 @@ def current_time_slot() -> str:
 
 
 def ensure_seeded():
+    global _SEED_DONE
+    if _SEED_DONE:
+        return
     c = _db()
     row = c.execute("SELECT profile_json FROM ceo_profile WHERE owner='jasmel'").fetchone()
     if not row:
@@ -241,6 +256,7 @@ def ensure_seeded():
         )
         c.commit()
     c.close()
+    _SEED_DONE = True
 
 
 def record_event(event_type: str, target: str, detail: dict | None = None,

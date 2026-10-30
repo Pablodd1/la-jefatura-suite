@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS nexus_sync_log (
 
 
 def db():
-    c = sqlite3.connect(DB)
+    c = sqlite3.connect(DB, timeout=30.0)
     c.executescript(SCHEMA)
     return c
 

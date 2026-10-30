@@ -49,9 +49,20 @@ CREATE TABLE IF NOT EXISTS daily_executive_briefs (
 """
 
 
+_SCHEMA_DONE = False
+
+
 def _db():
-    c = sqlite3.connect(DB, timeout=15.0)
-    c.executescript(SCHEMA)
+    global _SCHEMA_DONE
+    c = sqlite3.connect(DB, timeout=30.0)
+    c.execute("PRAGMA busy_timeout=30000")
+    if not _SCHEMA_DONE:
+        try:
+            c.execute("PRAGMA journal_mode=WAL")
+        except Exception:
+            pass
+        c.executescript(SCHEMA)
+        _SCHEMA_DONE = True
     return c
 
 
@@ -237,7 +248,7 @@ def start_scheduler():
     _scheduler_started = True
 
     def _loop():
-        time.sleep(5)
+        time.sleep(25)
         # Ensure today's current slot report is immediately available in the portal on startup
         try:
             hr = time.localtime().tm_hour

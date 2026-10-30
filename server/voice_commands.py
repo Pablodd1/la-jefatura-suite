@@ -31,7 +31,7 @@ if HERE not in sys.path:
 
 
 def _ensure_tasks_table():
-    c = sqlite3.connect(DB)
+    c = sqlite3.connect(DB, timeout=30.0)
     c.execute("""
         CREATE TABLE IF NOT EXISTS tasks (
             id TEXT PRIMARY KEY,
@@ -216,7 +216,7 @@ def parse(command: str, lang: str = "es") -> dict:
 
 def _complete_task(fragment: str) -> tuple[bool, str]:
     _ensure_tasks_table()
-    c = sqlite3.connect(DB)
+    c = sqlite3.connect(DB, timeout=30.0)
     rows = c.execute("SELECT id, title FROM tasks WHERE status != 'done'").fetchall()
     hit = None
     frag = fragment.lower().rstrip(".")
@@ -292,7 +292,7 @@ def execute(command: str, lang: str = "es", samples_dir: str | None = None) -> d
                                 tasks_j["resumen"], nexus["pipeline_por_etapa"], lang=lang)
         reply = ("(Datos de ejemplo del demo, no reales) " if lang != "en" else "(Demo sample data, not real) ") + brief
     elif action == "status_digest":
-        c = sqlite3.connect(DB)
+        c = sqlite3.connect(DB, timeout=30.0)
         t = c.execute("SELECT COUNT(*) FROM tasks WHERE status != 'done'").fetchone()[0]
         try:
             import comms_brain
@@ -327,7 +327,7 @@ def execute(command: str, lang: str = "es", samples_dir: str | None = None) -> d
     elif action == "approve_draft":
         import comms_brain
         comms_brain.ensure_demo_inbox_seeded()
-        c = sqlite3.connect(DB)
+        c = sqlite3.connect(DB, timeout=30.0)
         row = c.execute(
             "SELECT id FROM drafts WHERE status IN ('PENDING_REVIEW','pending_approval','edited','READY_TO_SEND') "
             "ORDER BY id DESC LIMIT 1"
@@ -415,14 +415,14 @@ def execute(command: str, lang: str = "es", samples_dir: str | None = None) -> d
         import knowledge_store as ks
         a = ks.ask(p.get("text", command), lang=lang)
         return {"ok": True, "action": action, "parsed": p, "reply": a["answer"],
-                "sources": a["sources"], "grounded": a["grounded"]}
+                "sources": a["sources"], "grounded": a["grounded"], "dev_ticket": a.get("dev_ticket")}
     elif action != "unknown":
         reply = _reply(action, lang=lang)
     else:
         import knowledge_store as ks
         a = ks.ask(command, lang=lang)
         return {"ok": a["grounded"], "action": "ask", "parsed": p, "reply": a["answer"],
-                "sources": a["sources"], "grounded": a["grounded"]}
+                "sources": a["sources"], "grounded": a["grounded"], "dev_ticket": a.get("dev_ticket")}
     return {"ok": ok, "action": action, "parsed": p, "reply": reply}
 
 
@@ -432,7 +432,7 @@ if __name__ == "__main__":
                 "abrir blogs", "preparar café", "aprobar borrador", "fruta voladora"]:
         r = execute(cmd)
         print(f"  «{cmd}» -> {r['action']}: {r['reply'][:90]}")
-    c = sqlite3.connect(DB)
+    c = sqlite3.connect(DB, timeout=30.0)
     open_tasks = c.execute("SELECT id FROM tasks ORDER BY rowid LIMIT 1").fetchone()
     if open_tasks:
         c.execute("UPDATE tasks SET status='pending' WHERE id=? AND status='done'", (open_tasks[0],))

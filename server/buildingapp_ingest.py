@@ -150,9 +150,20 @@ BASELINE_SNAPSHOT = {
 }
 
 
+_SCHEMA_DONE = False
+
+
 def _db():
-    c = sqlite3.connect(DB)
-    c.executescript(SCHEMA)
+    global _SCHEMA_DONE
+    c = sqlite3.connect(DB, timeout=30.0)
+    c.execute("PRAGMA busy_timeout=30000")
+    if not _SCHEMA_DONE:
+        try:
+            c.execute("PRAGMA journal_mode=WAL")
+        except Exception:
+            pass
+        c.executescript(SCHEMA)
+        _SCHEMA_DONE = True
     return c
 
 

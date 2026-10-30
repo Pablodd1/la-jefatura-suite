@@ -75,10 +75,21 @@ TERMINAL_OK = {"SENT"}
 TERMINAL_BAD = {"FAILED", "REJECTED", "EXPIRED", "CANCELLED"}
 
 
+_SCHEMA_DONE = False
+
+
 def _db():
-    c = sqlite3.connect(DB)
-    c.executescript(SCHEMA_V1 + SCHEMA_V2)
-    _migrate(c)
+    global _SCHEMA_DONE
+    c = sqlite3.connect(DB, timeout=30.0)
+    c.execute("PRAGMA busy_timeout=30000")
+    if not _SCHEMA_DONE:
+        try:
+            c.execute("PRAGMA journal_mode=WAL")
+        except Exception:
+            pass
+        c.executescript(SCHEMA_V1 + SCHEMA_V2)
+        _migrate(c)
+        _SCHEMA_DONE = True
     return c
 
 
