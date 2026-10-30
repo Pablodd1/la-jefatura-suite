@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es">
+<html lang="es" data-theme="sand">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -8,63 +8,39 @@
 <title>La Jefatura & El Jefesito — El Cerebro de la Empresa · Asistente para Tomar Mejores Decisiones</title>
 <style>
   /* =====================================================================
-     APPLE-STYLE MINIMALIST YELLOW & PURE BLACK · HORIZONTAL SLIDE WEBSITE
+     GLOBAL ARENA (SAND #cdb68c) THEME · HORIZONTAL SLIDE WEBSITE
      ===================================================================== */
-  :root {
-    --bg: #050506;
-    --ar: 255, 107, 43;
-    --vid-filter: hue-rotate(0deg);
-    --surface: #141210;
-    --surface2: #1c1917;
-    --surface-glass: rgba(34, 30, 27, 0.84);
-    --yellow: #ff6b2b;
-    --yellow-bright: #ff854d;
+  :root,
+  :root[data-theme="sand"],
+  :root[data-theme="gold"],
+  :root[data-theme="slate"],
+  :root[data-theme="sage"] {
+    --bg: #0b0a08;
+    --ar: 205, 182, 140;
+    --vid-filter: hue-rotate(-8deg) saturate(0.45);
+    --surface: #12100d;
+    --surface2: #1a1713;
+    --surface-glass: rgba(26, 23, 19, 0.88);
+    --yellow: #cdb68c;
+    --yellow-bright: #dccaa6;
     --yellow-soft: rgba(var(--ar), 0.14);
     --yellow-border: rgba(var(--ar), 0.32);
     --txt: #ffffff;
-    --txt-sub: #d6d3d1;
-    --muted: #a8a29e;
-    --hair: rgba(255, 255, 255, 0.12);
+    --txt-sub: #c4bcae;
+    --muted: #8b8478;
+    --hair: rgba(205, 182, 140, 0.16);
     --ok: #10b981;
     --danger: #ff453a;
     --radius-xl: 26px;
     --radius-lg: 18px;
   }
 
-
-  /* ── 3 calmer alternative themes (original Dorado stays the default) ── */
-  :root[data-theme="slate"] {
-    --bg: #07090c; --surface: #0c1015; --surface2: #131820;
-    --yellow: #8fb4d9; --yellow-bright: #aecbe6; --ar: 143, 180, 217;
-    --txt-sub: #b6bfca; --muted: #7d8793; --vid-filter: hue-rotate(160deg) saturate(0.55);
+  .theme-dots,
+  #themeDots,
+  .v12-theme-pill,
+  .v12-bottom-switcher {
+    display: none !important;
   }
-  :root[data-theme="sage"] {
-    --bg: #080b09; --surface: #0d120f; --surface2: #141b16;
-    --yellow: #9bbf9e; --yellow-bright: #b5d3b8; --ar: 155, 191, 158;
-    --txt-sub: #b8c4ba; --muted: #7f8c82; --vid-filter: hue-rotate(78deg) saturate(0.5);
-  }
-  :root[data-theme="sand"] {
-    --bg: #0b0a08; --surface: #12100d; --surface2: #1a1713;
-    --yellow: #cdb68c; --yellow-bright: #dccaa6; --ar: 205, 182, 140;
-    --txt-sub: #c4bcae; --muted: #8b8478; --vid-filter: hue-rotate(-8deg) saturate(0.45);
-  }
-  .theme-dots {
-    display: inline-flex; align-items: center; gap: 7px;
-    padding: 5px 9px; border: 1px solid var(--yellow-border); border-radius: 980px;
-    background: rgba(255,255,255,0.03);
-  }
-  .theme-dots .lbl { font-size: 10px; font-weight: 800; color: var(--muted); letter-spacing: .6px; text-transform: uppercase; }
-  .theme-dot {
-    width: 16px; height: 16px; border-radius: 50%; cursor: pointer; padding: 0;
-    border: 2px solid transparent; outline: 1px solid rgba(255,255,255,0.18); outline-offset: 1px;
-    transition: transform .15s ease;
-  }
-  .theme-dot:hover { transform: scale(1.18); }
-  .theme-dot.active { border-color: #fff; }
-  .theme-dot[data-theme="gold"]  { background: #ff6b2b; }
-  .theme-dot[data-theme="slate"] { background: #8fb4d9; }
-  .theme-dot[data-theme="sage"]  { background: #9bbf9e; }
-  .theme-dot[data-theme="sand"]  { background: #cdb68c; }
   body, .h-slide, .apple-nav { transition: background-color .3s ease; }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1027,7 +1003,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #ff6b2b;
+    color: #cdb68c;
   }
   .v12-nav-col {
     display: flex;
@@ -1054,9 +1030,9 @@
     background: rgba(255, 255, 255, 0.10);
   }
   .v12-nav-btn.active {
-    background: linear-gradient(135deg, #ff783c, #f05216);
-    color: #ffffff;
-    box-shadow: 0 6px 16px rgba(240, 82, 22, 0.5);
+    background: linear-gradient(135deg, #dccaa6, #b59b6d);
+    color: #0b0a08;
+    box-shadow: 0 6px 16px rgba(205, 182, 140, 0.45);
   }
   .v12-nav-tooltip {
     position: absolute;
@@ -1082,25 +1058,18 @@
     opacity: 1;
   }
   .v12-theme-pill {
-    background: rgba(24, 22, 20, 0.72);
-    border-radius: 999px;
-    padding: 4px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    align-items: center;
-    border: 1px solid rgba(255,255,255,0.08);
+    display: none !important;
   }
   .v12-sun-dot {
     width: 24px;
     height: 24px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #ff783c, #f05216);
-    color: #fff;
+    background: linear-gradient(135deg, #dccaa6, #b59b6d);
+    color: #0b0a08;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 8px rgba(240, 82, 22, 0.6);
+    box-shadow: 0 2px 8px rgba(205, 182, 140, 0.5);
   }
   .v12-moon-dot {
     width: 24px;
@@ -1187,7 +1156,7 @@
     width: 7px;
     height: 7px;
     border-radius: 50%;
-    background: #ff453a;
+    background: #cdb68c;
   }
 
   /* Subview Containers inside Main Glass */
@@ -1309,7 +1278,7 @@
     color: #fff;
   }
 
-  /* Row 3: Diet / Executive Decision Plan Cards (White + Sunset Orange Active + White) */
+  /* Row 3: Diet / Executive Decision Plan Cards (White + Arena Gold Active + White) */
   .v12-section-bar {
     display: flex;
     align-items: center;
@@ -1329,7 +1298,7 @@
     width: 3px;
     height: 13px;
     border-radius: 4px;
-    background: #ff6b2b;
+    background: #cdb68c;
     display: inline-block;
   }
   .v12-plan-row {
@@ -1352,9 +1321,9 @@
   }
   .v12-plan-card:hover { transform: translateY(-2px); }
   .v12-plan-card.orange {
-    background: linear-gradient(135deg, #ff7a3d 0%, #f05216 100%);
-    color: #ffffff;
-    box-shadow: 0 12px 26px rgba(240, 82, 22, 0.42);
+    background: linear-gradient(135deg, #cdb68c 0%, #9b8054 100%);
+    color: #0b0a08;
+    box-shadow: 0 12px 26px rgba(205, 182, 140, 0.38);
   }
   .v12-plan-card h5 {
     font-size: 12.5px;
@@ -1368,7 +1337,7 @@
     margin-bottom: 8px;
   }
   .v12-plan-card.orange p {
-    color: rgba(255, 255, 255, 0.86);
+    color: rgba(11, 10, 8, 0.82);
   }
   .v12-day-pill {
     display: inline-block;
@@ -1380,8 +1349,8 @@
     color: #3f3f46;
   }
   .v12-plan-card.orange .v12-day-pill {
-    background: #ffffff;
-    color: #f05216;
+    background: #0b0a08;
+    color: #cdb68c;
   }
   .v12-plan-Ring {
     width: 44px;
@@ -1398,9 +1367,9 @@
     border: 3px solid #e4e4e7;
   }
   .v12-plan-card.orange .v12-plan-Ring {
-    background: rgba(0, 0, 0, 0.22);
-    color: #ffffff;
-    border-color: rgba(255, 255, 255, 0.45);
+    background: rgba(11, 10, 8, 0.18);
+    color: #0b0a08;
+    border-color: rgba(11, 10, 8, 0.35);
   }
 
   /* Right Spatial Glass Profile & Calendar Inspector */
@@ -1426,8 +1395,8 @@
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #ff7a3d, #f05216);
-    color: #fff;
+    background: linear-gradient(135deg, #dccaa6, #b59b6d);
+    color: #0b0a08;
     font-weight: 800;
     font-size: 13px;
     display: flex;
@@ -1493,8 +1462,8 @@
     font-weight: 800;
   }
   .v12-cal-grid .cal-orange {
-    background: #ff6b2b;
-    color: #fff;
+    background: #cdb68c;
+    color: #0b0a08;
     font-weight: 800;
   }
   .v12-cal-grid .cal-pink {
@@ -1537,22 +1506,9 @@
     color: rgba(255, 255, 255, 0.52);
   }
 
-  /* Bottom Floating Switcher (SWITCH: Dashboard 1 | Dashboard 2 | Admin) */
+  /* Bottom Floating Switcher hidden in production */
   .v12-bottom-switcher {
-    position: absolute;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 25;
-    background: rgba(24, 24, 28, 0.92);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    border-radius: 999px;
-    padding: 5px 8px 5px 14px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.65);
+    display: none !important;
   }
   .v12-switch-lbl {
     font-size: 9.5px;
@@ -1576,9 +1532,9 @@
     transition: all 0.18s ease;
   }
   .v12-sw-btn.active-d1 {
-    background: linear-gradient(135deg, #ff783c, #f05216);
-    color: #ffffff;
-    box-shadow: 0 4px 14px rgba(240, 82, 22, 0.5);
+    background: linear-gradient(135deg, #dccaa6, #b59b6d);
+    color: #0b0a08;
+    box-shadow: 0 4px 14px rgba(205, 182, 140, 0.45);
   }
   .v12-sw-btn.active-d2 {
     background: linear-gradient(135deg, #10b981, #059669);
@@ -1685,9 +1641,9 @@
 
 <!-- ==================== TOP STICKY BAR & HORIZONTAL PROGRESS ==================== -->
 <nav class="apple-nav">
-  <a onclick="goSlide(0)" class="brand">
+  <a onclick="goSlide(0)" class="brand" id="navBrandTitle">
     <span class="brand-dot"></span>
-    LA JEFATURA <span>· EL CEREBRO DEL CEO</span>
+    LA JEFATURA <span id="navBrandSub">· EL CEREBRO DEL CEO</span>
   </a>
   <ul class="nav-links" id="topNavLinks">
     <li><a class="active" onclick="goSlide(0)">01 · Cerebro 3D</a></li>
@@ -1699,15 +1655,9 @@
     <li><a onclick="goSlide(6)">07 · Video Conclusión</a></li>
   </ul>
   <div class="nav-actions">
-    <div class="theme-dots" id="themeDots" role="group" aria-label="Tema de color">
-      <span class="lbl">Tema</span>
-      <button class="theme-dot active" data-theme="gold" title="Dorado (original)" aria-label="Tema Dorado"></button>
-      <button class="theme-dot" data-theme="slate" title="Pizarra · azul grisáceo sobrio" aria-label="Tema Pizarra"></button>
-      <button class="theme-dot" data-theme="sage" title="Salvia · verde suave" aria-label="Tema Salvia"></button>
-      <button class="theme-dot" data-theme="sand" title="Arena · beige cálido" aria-label="Tema Arena"></button>
-    </div>
-    <a href="/api/daily.pdf?lang=es" target="_blank" class="btn-outline">PDF</a>
-    <a href="/" class="btn-yellow">Consola →</a>
+    <button class="btn-outline" id="siteLangBtn" onclick="toggleSiteLang()" style="font-weight:800;border-color:var(--yellow);color:var(--yellow)">ES / EN</button>
+    <a href="/api/daily.pdf?lang=es" target="_blank" class="btn-outline" id="navPdfBtn">PDF</a>
+    <a href="/" class="btn-yellow" id="navConsoleBtn">Consola →</a>
   </div>
 </nav>
 
@@ -1760,28 +1710,19 @@
                 <span class="v12-nav-tooltip">Integración</span>
               </button>
             </div>
-
-            <div class="v12-theme-pill">
-              <div class="v12-sun-dot">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="5"/></svg>
-              </div>
-              <div class="v12-moon-dot">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-              </div>
-            </div>
           </aside>
 
           <!-- Center Main Spatial Glass Window -->
           <div class="v12-main-glass">
             <div class="v12-header">
               <div class="v12-greeting">
-                <h1>Good Morning, <strong>Jasmel</strong></h1>
-                <p>El Jefesito · 5 empresas auditadas hoy sin adivinar jamás</p>
+                <h1 id="v12GreetTitle">Good Morning, <strong>Jasmel</strong></h1>
+                <p id="v12GreetSub">El Jefesito · 5 empresas auditadas hoy sin adivinar jamás</p>
               </div>
               <div class="v12-search-row">
                 <div class="v12-search-box">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                  <input type="text" placeholder="Search or ask El Jefesito (mc.db)..." onkeydown="if(event.key==='Enter'){goSlide(1);askIphone(this.value);}">
+                  <input type="text" id="v12SearchInput" placeholder="Search or ask El Jefesito (mc.db)..." onkeydown="if(event.key==='Enter'){goSlide(1);askIphone(this.value);}">
                 </div>
                 <button class="v12-bell-btn" onclick="speakHeroDemo()" title="Escuchar Resumen con Voz Colombiana">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
@@ -1793,30 +1734,30 @@
             <!-- PANE 1: OVERVIEW (Default) -->
             <div class="v12-pane active" id="v12Pane-overview">
               <div class="v12-kpi-row">
-                <!-- Card 1: Ingresos (Orange Bars) -->
+                <!-- Card 1: Ingresos (Arena Bars) -->
                 <div class="v12-wcard">
                   <div class="v12-wcard-top">
-                    <span>Ingresos Mes</span>
-                    <span class="v12-mini-ico" style="background:#fff0e8;color:#ff6b2b">
+                    <span id="v12Kpi1Title">Ingresos Mes</span>
+                    <span class="v12-mini-ico" style="background:#f5efe4;color:#8e734b">
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
                     </span>
                   </div>
                   <div class="v12-bars-viz">
-                    <span style="height:10px;background:#fed7aa"></span>
-                    <span style="height:18px;background:#ff6b2b"></span>
-                    <span style="height:14px;background:#fed7aa"></span>
-                    <span style="height:24px;background:#ff6b2b"></span>
-                    <span style="height:16px;background:#ff6b2b"></span>
-                    <span style="height:12px;background:#fed7aa"></span>
-                    <span style="height:22px;background:#ff6b2b"></span>
+                    <span style="height:10px;background:#e5d8c0"></span>
+                    <span style="height:18px;background:#b59b6d"></span>
+                    <span style="height:14px;background:#e5d8c0"></span>
+                    <span style="height:24px;background:#8e734b"></span>
+                    <span style="height:16px;background:#b59b6d"></span>
+                    <span style="height:12px;background:#e5d8c0"></span>
+                    <span style="height:22px;background:#8e734b"></span>
                   </div>
-                  <div class="v12-wcard-val" style="color:#f05216">$48,200<small>USD/m</small></div>
+                  <div class="v12-wcard-val" style="color:#8e734b">$48,200<small>USD/m</small></div>
                 </div>
 
                 <!-- Card 2: Pipeline (Pink ECG Wave) -->
                 <div class="v12-wcard">
                   <div class="v12-wcard-top">
-                    <span>Pipeline Activo</span>
+                    <span id="v12Kpi2Title">Pipeline Activo</span>
                     <span class="v12-mini-ico" style="background:#ffe4e6;color:#e11d48">
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
                     </span>
@@ -1832,7 +1773,7 @@
                 <!-- Card 3: UNITEC USA (Emerald Arc Gauge) -->
                 <div class="v12-wcard">
                   <div class="v12-wcard-top">
-                    <span>UNITEC Leads</span>
+                    <span id="v12Kpi3Title">UNITEC Leads</span>
                     <span class="v12-mini-ico" style="background:#d1fae5;color:#10b981">
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="8"/></svg>
                     </span>
@@ -1849,7 +1790,7 @@
                 <!-- Card 4: BuildingApp.us (Blue Bars) -->
                 <div class="v12-wcard">
                   <div class="v12-wcard-top">
-                    <span>BuildingApp IA</span>
+                    <span id="v12Kpi4Title">BuildingApp IA</span>
                     <span class="v12-mini-ico" style="background:#dbeafe;color:#2563eb">
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
                     </span>
@@ -1871,15 +1812,15 @@
               <div class="v12-mid-row">
                 <div class="v12-chart-card">
                   <div class="v12-chart-head">
-                    <h3>Activity Tracking · Velocidad de Decisiones</h3>
+                    <h3 id="v12ChartTitle">Activity Tracking · Velocidad de Decisiones</h3>
                     <span class="v12-pill-select">Weekly ▾</span>
                   </div>
                   <div style="margin-top:6px">
                     <svg width="100%" height="126" viewBox="0 0 420 126" fill="none">
                       <defs>
                         <linearGradient id="v12OrangeFill" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stop-color="#ff6b2b" stop-opacity="0.34"/>
-                          <stop offset="100%" stop-color="#ff6b2b" stop-opacity="0.0"/>
+                          <stop offset="0%" stop-color="#cdb68c" stop-opacity="0.40"/>
+                          <stop offset="100%" stop-color="#cdb68c" stop-opacity="0.0"/>
                         </linearGradient>
                       </defs>
                       <line x1="34" y1="24" x2="405" y2="24" stroke="#f4f4f5" stroke-width="1"/>
@@ -1892,12 +1833,12 @@
                       <text x="8" y="109" fill="#a1a1aa" font-size="8.5">20%</text>
 
                       <path d="M40 102 C72 98, 95 72, 130 82 C162 90, 180 68, 212 76 C236 82, 248 36, 266 36 C286 36, 304 68, 336 70 C364 72, 382 54, 404 60 L404 108 L40 108 Z" fill="url(#v12OrangeFill)"/>
-                      <path d="M40 102 C72 98, 95 72, 130 82 C162 90, 180 68, 212 76 C236 82, 248 36, 266 36 C286 36, 304 68, 336 70 C364 72, 382 54, 404 60" stroke="#f05216" stroke-width="2.6" stroke-linecap="round"/>
+                      <path d="M40 102 C72 98, 95 72, 130 82 C162 90, 180 68, 212 76 C236 82, 248 36, 266 36 C286 36, 304 68, 336 70 C364 72, 382 54, 404 60" stroke="#8e734b" stroke-width="2.6" stroke-linecap="round"/>
 
-                      <line x1="266" y1="36" x2="266" y2="108" stroke="#f05216" stroke-width="1" stroke-dasharray="3 3"/>
-                      <circle cx="266" cy="36" r="4.5" fill="#fff" stroke="#f05216" stroke-width="2.5"/>
-                      <rect x="234" y="10" width="64" height="18" rx="9" fill="#fff" stroke="#fdba74" stroke-width="1.2"/>
-                      <text x="266" y="22" text-anchor="middle" fill="#ea580c" font-size="8.5" font-weight="700">$48.2k/m</text>
+                      <line x1="266" y1="36" x2="266" y2="108" stroke="#8e734b" stroke-width="1" stroke-dasharray="3 3"/>
+                      <circle cx="266" cy="36" r="4.5" fill="#fff" stroke="#8e734b" stroke-width="2.5"/>
+                      <rect x="234" y="10" width="64" height="18" rx="9" fill="#fff" stroke="#cdb68c" stroke-width="1.2"/>
+                      <text x="266" y="22" text-anchor="middle" fill="#8e734b" font-size="8.5" font-weight="700">$48.2k/m</text>
 
                       <text x="40" y="121" fill="#a1a1aa" font-size="8">Jan</text>
                       <text x="80" y="121" fill="#a1a1aa" font-size="8">Feb</text>
@@ -1916,33 +1857,33 @@
                 <div class="v12-split-card">
                   <div style="display:flex;flex-direction:column;justify-content:space-between">
                     <div>
-                      <h4 style="font-size:12.5px;font-weight:800;line-height:1.25;color:#18181b">Cerebro 3D &amp; Cierre Dr. Molina</h4>
+                      <h4 id="v12SplitTitle" style="font-size:12.5px;font-weight:800;line-height:1.25;color:#18181b">Cerebro 3D &amp; Cierre Dr. Molina</h4>
                     </div>
                     <div>
                       <div style="font-size:15px;font-weight:800;color:#18181b">$12.4k <span style="font-size:10px;font-weight:600;color:#71717a">/ mes</span></div>
-                      <div style="font-size:9.5px;color:#71717a;margin-bottom:8px">Cotización hoy (CEDEXX)</div>
+                      <div id="v12SplitSub1" style="font-size:9.5px;color:#71717a;margin-bottom:8px">Cotización hoy (CEDEXX)</div>
                       <div style="font-size:15px;font-weight:800;color:#18181b">11.4 hrs</div>
-                      <div style="font-size:9.5px;color:#71717a">Ahorradas por semana</div>
+                      <div id="v12SplitSub2" style="font-size:9.5px;color:#71717a">Ahorradas por semana</div>
                     </div>
                   </div>
                   <div class="v12-split-visual" style="background:url('/assets/brain-reference-hd.jpg') center/cover no-repeat">
-                    <span style="background:rgba(0,0,0,0.72);padding:3px 8px;border-radius:99px;font-size:9px;font-weight:700;border:1px solid rgba(255,212,0,0.4)">5 EMPRESAS EN VIVO</span>
-                    <button onclick="goSlide(1)" style="width:100%;background:linear-gradient(135deg,#ff783c,#f05216);color:#fff;border:none;border-radius:99px;padding:6px 10px;font-size:10px;font-weight:800;cursor:pointer">Aprobar 1-Clic →</button>
+                    <span id="v12SplitBadge" style="background:rgba(0,0,0,0.72);padding:3px 8px;border-radius:99px;font-size:9px;font-weight:700;border:1px solid rgba(205,182,140,0.45)">5 EMPRESAS EN VIVO</span>
+                    <button id="v12SplitBtn" onclick="goSlide(1)" style="width:100%;background:linear-gradient(135deg,#dccaa6,#b59b6d);color:#0b0a08;border:none;border-radius:99px;padding:6px 10px;font-size:10px;font-weight:800;cursor:pointer">Aprobar 1-Clic →</button>
                   </div>
                 </div>
               </div>
 
-              <!-- Row 3: Diet / Decision Plan (3 Horizontal Cards with Sunset Orange Middle Card) -->
+              <!-- Row 3: Diet / Decision Plan (3 Horizontal Cards with Arena Gold Middle Card) -->
               <div class="v12-section-bar">
-                <h4>Decision Plan · Prioridades del CEO</h4>
+                <h4 id="v12PlanBarTitle">Decision Plan · Prioridades del CEO</h4>
                 <span style="font-size:10.5px;color:rgba(255,255,255,0.65);cursor:pointer" onclick="goSlide(1)">view all</span>
               </div>
               <div class="v12-plan-row">
                 <div class="v12-plan-card" onclick="goSlide(1)">
                   <div>
                     <h5>MBMB · Clínica del Mar</h5>
-                    <p>Orden PO-2214 ($9,800) verificada en mc.db lista para iniciar.</p>
-                    <span class="v12-day-pill">Prioridad 1</span>
+                    <p id="v12Plan1Desc">Orden PO-2214 ($9,800) verificada en mc.db lista para iniciar.</p>
+                    <span class="v12-day-pill" id="v12Plan1Pill">Prioridad 1</span>
                   </div>
                   <div class="v12-plan-Ring">$9.8k</div>
                 </div>
@@ -1950,8 +1891,8 @@
                 <div class="v12-plan-card orange" onclick="goSlide(1)">
                   <div>
                     <h5>CEDEXX · Dr. Molina</h5>
-                    <p>Borrador listo en tu voz · Aprobar y enviar con 1 toque.</p>
-                    <span class="v12-day-pill">Prioridad 2 · Hoy</span>
+                    <p id="v12Plan2Desc">Borrador listo en tu voz · Aprobar y enviar con 1 toque.</p>
+                    <span class="v12-day-pill" id="v12Plan2Pill">Prioridad 2 · Hoy</span>
                   </div>
                   <div class="v12-plan-Ring">$12.4k</div>
                 </div>
@@ -1959,8 +1900,8 @@
                 <div class="v12-plan-card" onclick="goSlide(2)">
                   <div>
                     <h5>UNITEC &amp; BuildingApp</h5>
-                    <p>29 leads capturados y 7 miembros VIP con 100% éxito IA.</p>
-                    <span class="v12-day-pill">Prioridad 3</span>
+                    <p id="v12Plan3Desc">29 leads capturados y 7 miembros VIP con 100% éxito IA.</p>
+                    <span class="v12-day-pill" id="v12Plan3Pill">Prioridad 3</span>
                   </div>
                   <div class="v12-plan-Ring">100%</div>
                 </div>
@@ -1972,7 +1913,7 @@
               <div class="v12-kpi-row">
                 <div class="v12-wcard">
                   <div class="v12-wcard-top"><span>Impacto Mensual</span></div>
-                  <div class="v12-wcard-val" style="color:#f05216;font-size:20px;margin:8px 0">$24,500 <small>USD</small></div>
+                  <div class="v12-wcard-val" style="color:#8e734b;font-size:20px;margin:8px 0">$24,500 <small>USD</small></div>
                   <div style="font-size:10px;color:#10b981;font-weight:700">+12% vs mes previo</div>
                 </div>
                 <div class="v12-wcard">
@@ -1997,8 +1938,8 @@
                 <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
                   <div style="background:#f8fafc;border-radius:14px;padding:12px">
                     <div style="font-size:10.5px;color:#71717a">MBMB Medical Billing</div>
-                    <div style="font-size:18px;font-weight:800;color:#f05216;margin:4px 0 8px">38%</div>
-                    <div style="height:4px;background:#e4e4e7;border-radius:4px"><div style="width:76%;height:100%;background:#f05216;border-radius:4px"></div></div>
+                    <div style="font-size:18px;font-weight:800;color:#8e734b;margin:4px 0 8px">38%</div>
+                    <div style="height:4px;background:#e4e4e7;border-radius:4px"><div style="width:76%;height:100%;background:#b59b6d;border-radius:4px"></div></div>
                   </div>
                   <div style="background:#f8fafc;border-radius:14px;padding:12px">
                     <div style="font-size:10.5px;color:#71717a">DLM &amp; CEDEXX</div>
@@ -2026,7 +1967,7 @@
                   <div style="font-size:14px;font-weight:800;color:#18181b">Plan Ejecutivo de Decisiones Semanales</div>
                   <div style="font-size:10.5px;color:#71717a">Sincronizado con tu Hoja del Día Imprimible en PDF</div>
                 </div>
-                <button onclick="window.open('/api/daily.pdf?lang=es','_blank')" style="background:linear-gradient(135deg,#ff783c,#f05216);color:#fff;border:none;border-radius:999px;padding:7px 14px;font-size:11px;font-weight:700;cursor:pointer">+ Hoja PDF</button>
+                <button onclick="window.open('/api/daily.pdf?lang=es','_blank')" style="background:linear-gradient(135deg,#dccaa6,#b59b6d);color:#0b0a08;border:none;border-radius:999px;padding:7px 14px;font-size:11px;font-weight:700;cursor:pointer">+ Hoja PDF</button>
               </div>
               <div class="v12-wcard" style="min-height:auto;flex-direction:row;align-items:center;padding:11px 18px">
                 <div><div style="font-size:9px;font-weight:800;color:#10b981">LUNES</div><div style="font-size:12.5px;font-weight:700">Auditoría Consolidada MBMB ($18.6k/m) &amp; DLM ($16.8k/m)</div></div>
@@ -2037,8 +1978,8 @@
                 <span style="font-size:10.5px;font-weight:700;color:#10b981">Completed</span>
               </div>
               <div class="v12-wcard" style="min-height:auto;flex-direction:row;align-items:center;padding:11px 18px">
-                <div><div style="font-size:9px;font-weight:800;color:#f05216">MIÉRCOLES</div><div style="font-size:12.5px;font-weight:700">Aprobar Cotización Dr. Molina ($12,400/m · Doral Urgent Care)</div></div>
-                <span style="font-size:10.5px;font-weight:700;color:#f05216">In Progress</span>
+                <div><div style="font-size:9px;font-weight:800;color:#8e734b">MIÉRCOLES</div><div style="font-size:12.5px;font-weight:700">Aprobar Cotización Dr. Molina ($12,400/m · Doral Urgent Care)</div></div>
+                <span style="font-size:10.5px;font-weight:700;color:#8e734b">In Progress</span>
               </div>
               <div class="v12-wcard" style="min-height:auto;flex-direction:row;align-items:center;padding:11px 18px">
                 <div><div style="font-size:9px;font-weight:800;color:#2563eb">JUEVES</div><div style="font-size:12.5px;font-weight:700">Optimización Recepcionista IA UNITEC USA (29 teléfonos)</div></div>
@@ -2046,14 +1987,14 @@
               </div>
             </div>
 
-            <!-- PANE 4: STOPWATCH (Matches 2nd uploaded screenshot media_1793028144228_69b75431.png) -->
+            <!-- PANE 4: STOPWATCH -->
             <div class="v12-pane" id="v12Pane-stopwatch">
               <div class="v12-wcard" style="align-items:center;text-align:center;padding:24px 20px">
                 <div style="font-size:10px;font-weight:800;letter-spacing:0.08em;color:#71717a">EXECUTIVE 60-SECOND DECISION SPRINT SESSION</div>
-                <div id="v12TimerDisplay" style="font-size:46px;font-weight:800;color:#f05216;letter-spacing:-1px;margin:8px 0">45:20</div>
+                <div id="v12TimerDisplay" style="font-size:46px;font-weight:800;color:#8e734b;letter-spacing:-1px;margin:8px 0">45:20</div>
                 <div style="font-size:11px;color:#52525b;margin-bottom:14px">Decisión <strong>4 de 8</strong> (Aprobación 1-Clic: 45s / Auditoría SQL: 15s)</div>
                 <div style="display:flex;gap:10px;justify-content:center">
-                  <button onclick="toggleV12Timer(this)" style="background:linear-gradient(135deg,#ff783c,#f05216);color:#fff;border:none;border-radius:999px;padding:8px 18px;font-size:11.5px;font-weight:700;cursor:pointer">Start Timer</button>
+                  <button onclick="toggleV12Timer(this)" style="background:linear-gradient(135deg,#dccaa6,#b59b6d);color:#0b0a08;border:none;border-radius:999px;padding:8px 18px;font-size:11.5px;font-weight:700;cursor:pointer">Start Timer</button>
                   <button onclick="resetV12Timer()" style="background:#f4f4f5;color:#3f3f46;border:none;border-radius:999px;padding:8px 16px;font-size:11.5px;font-weight:700;cursor:pointer">Reset</button>
                   <button onclick="goSlide(1)" style="background:#f4f4f5;color:#3f3f46;border:none;border-radius:999px;padding:8px 16px;font-size:11.5px;font-weight:700;cursor:pointer">Lap Split (iPhone)</button>
                 </div>
@@ -2067,7 +2008,7 @@
                 </div>
                 <div style="display:flex;justify-content:space-between;font-size:11.5px;padding:6px 0">
                   <span style="color:#52525b">Lap 2: Orden PO-2214 Clínica del Mar ($9,800 · MBMB)</span>
-                  <strong style="color:#f05216">01:18.9</strong>
+                  <strong style="color:#8e734b">01:18.9</strong>
                 </div>
               </div>
             </div>
@@ -2397,7 +2338,7 @@
                 <span class="bento-tag">CENTRO DE DECISIONES MULTIMARCA (WEBAPP + CELULAR)</span>
                 <h3 style="font-size:18px;font-weight:800">Así transforma datos dispersos en decisiones rentables</h3>
               </div>
-              <span class="badge-yes">3 Temas Minimalistas · Voz Colombiana</span>
+              <span class="badge-yes">Diseño Arena Ejecutivo · Voz Colombiana</span>
             </div>
 
             <div class="webapp-grid">
@@ -2770,21 +2711,16 @@
 </div>
 
 <!-- Embed El Jefesito Live Voice & Text Brain on the Website Too -->
-<script>window.LJ_WIDGET = { lang: "es", accent: "#ffd400" };</script>
+<script>window.LJ_WIDGET = { lang: "es", accent: "#cdb68c" };</script>
 <script src="/widgets/lajefatura-widget.js"></script>
 <script>
-  /* THEMES: gold (original) + 3 calmer options. Persisted in localStorage. */
+  /* GLOBAL ARENA (SAND) THEME — LOCKED FOR PRODUCTION */
   function setTheme(name, silent) {
-    const valid = ['gold', 'slate', 'sage', 'sand'];
-    if (!valid.includes(name)) name = 'gold';
-    if (name === 'gold') document.documentElement.removeAttribute('data-theme');
-    else document.documentElement.setAttribute('data-theme', name);
-    try { localStorage.setItem('lj_site_theme', name); } catch (e) {}
-    document.querySelectorAll('#themeDots .theme-dot').forEach(b => b.classList.toggle('active', b.dataset.theme === name));
+    document.documentElement.setAttribute('data-theme', 'sand');
+    try { localStorage.setItem('lj_site_theme', 'sand'); } catch (e) {}
     if (!silent) window.dispatchEvent(new Event('themechange'));
   }
-  document.querySelectorAll('#themeDots .theme-dot').forEach(b => b.addEventListener('click', () => setTheme(b.dataset.theme)));
-  try { setTheme(localStorage.getItem('lj_site_theme') || 'gold', true); } catch (e) { setTheme('gold', true); }
+  setTheme('sand', true);
 
   /* =========================================================================
      1. HORIZONTAL SCROLL ("SCROLL TO THE SIDE") CONTROLLER
@@ -3562,9 +3498,19 @@
     }
   }
 
+  let SITE_LANG = 'es';
+  try {
+    const qLang = new URLSearchParams(window.location.search).get('lang');
+    const savedLang = localStorage.getItem('lj_lang');
+    if (qLang === 'en' || qLang === 'es') SITE_LANG = qLang;
+    else if (savedLang === 'en' || savedLang === 'es') SITE_LANG = savedLang;
+  } catch (e) {}
+
   function approveFromIphone() {
     const btn = document.getElementById('iosApproveBtn');
-    btn.textContent = 'APROBADO Y ENVIADO AL DR. MOLINA ($12.4K)';
+    btn.textContent = SITE_LANG === 'en'
+      ? 'APPROVED & SENT TO DR. MOLINA ($12.4K)'
+      : 'APROBADO Y ENVIADO AL DR. MOLINA ($12.4K)';
     btn.style.background = '#32d74b';
     btn.style.color = '#000';
     fetch('/api/comms/approve_send', {
@@ -3573,7 +3519,12 @@
       body: JSON.stringify({ draft_id: 1 })
     }).catch(() => {});
     if (window.LJ && typeof window.LJ.speak === 'function') {
-      window.LJ.speak('Decisión ejecutada desde tu iPhone. Borrador aprobado y enviado directamente al doctor Molina.', false);
+      window.LJ.speak(
+        SITE_LANG === 'en'
+          ? 'Decision executed from your iPhone. Draft approved and sent directly to Dr. Molina.'
+          : 'Decisión ejecutada desde tu iPhone. Borrador aprobado y enviado directamente al doctor Molina.',
+        false
+      );
     }
   }
 
@@ -3581,22 +3532,27 @@
     const clean = (q || '').trim();
     if (!clean) return;
     const box = document.getElementById('iosReplyBox');
-    box.textContent = 'Consultando base de datos verificada (mc.db)…';
+    box.textContent = SITE_LANG === 'en'
+      ? 'Querying verified SQLite database (mc.db)…'
+      : 'Consultando base de datos verificada (mc.db)…';
     fetch('/api/voice/command', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ command: clean, lang: 'es', channel: 'text' })
+      body: JSON.stringify({ command: clean, lang: SITE_LANG, channel: 'text' })
     })
       .then(r => r.json())
       .then(d => {
-        const src = (d.sources && d.sources.length && d.grounded) ? (' · Fuente: ' + d.sources.slice(0, 2).join('; ')) : '';
+        const srcLbl = SITE_LANG === 'en' ? ' · Source: ' : ' · Fuente: ';
+        const src = (d.sources && d.sources.length && d.grounded) ? (srcLbl + d.sources.slice(0, 2).join('; ')) : '';
         box.textContent = (d.reply || '') + src;
         if (window.LJ && typeof window.LJ.speak === 'function') {
           window.LJ.speak(d.reply || '', false);
         }
       })
       .catch(() => {
-        box.textContent = 'No pude conectar con el servidor; jamás invento una respuesta.';
+        box.textContent = SITE_LANG === 'en'
+          ? 'Could not reach server; I never guess an answer.'
+          : 'No pude conectar con el servidor; jamás invento una respuesta.';
       });
   }
 
@@ -3618,7 +3574,11 @@
     const cos = Number(document.getElementById('rngCos').value);
     const rate = Number(document.getElementById('rngRate').value);
     const pipe = Number(document.getElementById('rngPipe').value);
-    document.getElementById('lblCos').textContent = cos + (cos === 1 ? ' empresa' : ' empresas');
+    const unitWord = SITE_LANG === 'en'
+      ? (cos === 1 ? ' company' : ' companies')
+      : (cos === 1 ? ' empresa' : ' empresas');
+    const perMo = SITE_LANG === 'en' ? ' / mo' : ' / mes';
+    document.getElementById('lblCos').textContent = cos + unitWord;
     document.getElementById('lblRate').textContent = '$' + rate.toLocaleString('en-US') + ' / h';
     document.getElementById('lblPipe').textContent = '$' + pipe.toLocaleString('en-US');
 
@@ -3627,22 +3587,190 @@
     const extraRevUsd = Math.round(pipe * 0.08);
     const totalUsd = timeSavedUsd + extraRevUsd;
 
-    document.getElementById('outHours').textContent = hoursMonth + ' h / mes';
-    document.getElementById('outTimeUsd').textContent = '$' + timeSavedUsd.toLocaleString('en-US') + ' / mes';
-    document.getElementById('outRevUsd').textContent = '+$' + extraRevUsd.toLocaleString('en-US') + ' / mes';
-    document.getElementById('outTotalUsd').textContent = '$' + totalUsd.toLocaleString('en-US') + ' / mes';
+    document.getElementById('outHours').textContent = hoursMonth + ' h' + perMo;
+    document.getElementById('outTimeUsd').textContent = '$' + timeSavedUsd.toLocaleString('en-US') + perMo;
+    document.getElementById('outRevUsd').textContent = '+$' + extraRevUsd.toLocaleString('en-US') + perMo;
+    document.getElementById('outTotalUsd').textContent = '$' + totalUsd.toLocaleString('en-US') + perMo;
   }
-  calcRoi();
 
-  // Pull live brief text into the iPhone screen on load
-  fetch('/api/jefesito/brief?lang=es')
-    .then(r => r.json())
-    .then(b => {
-      if (b && b.spoken) {
-        document.getElementById('iosBriefText').textContent = b.spoken.slice(0, 260);
-      }
-    })
-    .catch(() => {});
+  function loadLiveIphoneBrief(lang) {
+    fetch('/api/jefesito/brief?lang=' + encodeURIComponent(lang))
+      .then(r => r.json())
+      .then(b => {
+        if (b && b.spoken) {
+          document.getElementById('iosBriefText').textContent = b.spoken.slice(0, 260);
+        }
+      })
+      .catch(() => {});
+  }
+
+  const SITE_I18N = {
+    es: {
+      brandSub: '· EL CEREBRO DEL CEO',
+      nav: ['01 · Cerebro 3D', '02 · iPhone & WebApp', '03 · Cero Adivinanzas', '04 · Integración', '05 · Comparativa', '06 · Ahorro y Dinero', '07 · Video Conclusión'],
+      dock: ['01 · Cerebro 3D', '02 · iPhone & WebApp', '03 · Decisiones', '04 · Integración', '05 · Comparativa', '06 · ROI & Dinero', '07 · Conclusión'],
+      prev: '← Anterior',
+      next: 'Siguiente →',
+      consoleBtn: 'Consola →',
+      v12GreetSub: 'El Jefesito · 5 empresas auditadas hoy sin adivinar jamás',
+      v12SearchPlaceholder: 'Buscar o preguntar a El Jefesito (mc.db)...',
+      v12Kpi1: 'Ingresos Mes',
+      v12Kpi2: 'Pipeline Activo',
+      v12ChartTitle: 'Activity Tracking · Velocidad de Decisiones',
+      v12SplitTitle: 'Cerebro 3D & Cierre Dr. Molina',
+      v12SplitSub1: 'Cotización hoy (CEDEXX)',
+      v12SplitSub2: 'Ahorradas por semana',
+      v12SplitBadge: '5 EMPRESAS EN VIVO',
+      v12SplitBtn: 'Aprobar 1-Clic →',
+      v12PlanBarTitle: 'Decision Plan · Prioridades del CEO',
+      v12Plan1Desc: 'Orden PO-2214 ($9,800) verificada en mc.db lista para iniciar.',
+      v12Plan2Desc: 'Borrador listo en tu voz · Aprobar y enviar con 1 toque.',
+      v12Plan3Desc: '29 leads capturados y 7 miembros VIP con 100% éxito IA.',
+      s2Eyebrow: 'SLIDE 02 · REFERENCIA INTERACTIVA EN VIVO · CELULAR APPLE iPHONE & WEBAPP',
+      s2Title: 'Toma decisiones desde tu <span>Apple iPhone</span> o desde la <span>WebApp Ejecutiva</span>',
+      s3Eyebrow: 'Slide 03 · El Corazón del Sistema',
+      s3Title: 'Diseñado para una sola misión:<br><span>que el CEO tome mejores decisiones sin adivinar jamás.</span>',
+      s4Eyebrow: 'Slide 04 · Integración en 15 Minutos · 1 Sola Vez',
+      s4Title: '¿Qué necesita aportar la empresa del CEO<br><span>para conectar su Cerebro Ejecutivo hoy mismo?</span>',
+      s5Eyebrow: 'Slide 05 · Comparativa Ejecutiva',
+      s5Title: 'Por qué <span>La Jefatura + El Jefesito</span> supera<br>a los chatbots genéricos, dashboards y asistentes tradicionales.',
+      s6Eyebrow: 'Slide 06 · Impacto Directo en el Estado de Resultados',
+      s6Title: 'Cómo te ahorra tiempo, reduce costos<br><span>y te hace ganar más dinero cada mes.</span>',
+      s7Eyebrow: 'Slide 07 · Conclusión Ejecutiva · Video Generado con Google Gemini',
+      s7Title: 'El Futuro del CEO: <span>Un Solo Cerebro. Mejores Decisiones. Cero Adivinanzas.</span>',
+      iosTag: 'DÍA ABIERTO',
+      iosDecHeader: 'DECISIÓN DE INGRESO INMEDIATO',
+      iosApproveBtn: 'Aprobar Decisión y Enviar Borrador (1-Toque)',
+      iosReplyBox: 'Toca un botón arriba o escribe abajo para probar la respuesta verificada con fuente real.',
+      iosInputPlaceholder: 'Pregunta o da una orden en el iPhone…'
+    },
+    en: {
+      brandSub: '· THE CEO BRAIN',
+      nav: ['01 · 3D Brain', '02 · iPhone & WebApp', '03 · Zero-Guessing', '04 · Integration', '05 · Comparison', '06 · Time & ROI', '07 · Conclusion Video'],
+      dock: ['01 · 3D Brain', '02 · iPhone & WebApp', '03 · Decisions', '04 · Integration', '05 · Comparison', '06 · ROI & Revenue', '07 · Conclusion'],
+      prev: '← Previous',
+      next: 'Next →',
+      consoleBtn: 'Console →',
+      v12GreetSub: 'El Jefesito · 5 companies audited today with zero guessing',
+      v12SearchPlaceholder: 'Search or ask El Jefesito (mc.db)...',
+      v12Kpi1: 'Monthly Revenue',
+      v12Kpi2: 'Active Pipeline',
+      v12ChartTitle: 'Activity Tracking · Executive Decision Velocity',
+      v12SplitTitle: '3D Brain & Dr. Molina Close',
+      v12SplitSub1: 'Quote ready today (CEDEXX)',
+      v12SplitSub2: 'Saved per week',
+      v12SplitBadge: '5 LIVE COMPANIES',
+      v12SplitBtn: '1-Click Approve →',
+      v12PlanBarTitle: 'Decision Plan · CEO Priorities',
+      v12Plan1Desc: 'Order PO-2214 ($9,800) verified in mc.db ready to start.',
+      v12Plan2Desc: 'Draft ready in your voice · Approve & send with 1 tap.',
+      v12Plan3Desc: '29 leads captured & 7 VIP members with 100% AI success.',
+      s2Eyebrow: 'SLIDE 02 · LIVE INTERACTIVE REFERENCE · APPLE iPHONE & EXECUTIVE WEBAPP',
+      s2Title: 'Execute decisions from your <span>Apple iPhone</span> or the <span>Executive WebApp</span>',
+      s3Eyebrow: 'Slide 03 · Core Architecture',
+      s3Title: 'Built for one mission:<br><span>empowering the CEO to make better decisions with zero guessing.</span>',
+      s4Eyebrow: 'Slide 04 · 15-Minute One-Time Integration',
+      s4Title: 'What does the CEO’s company need<br><span>to connect its Executive Brain today?</span>',
+      s5Eyebrow: 'Slide 05 · Executive Comparison',
+      s5Title: 'Why <span>La Jefatura + El Jefesito</span> outperforms<br>generic chatbots, BI dashboards, and traditional assistants.',
+      s6Eyebrow: 'Slide 06 · Direct P&L Impact',
+      s6Title: 'How it saves time, cuts overhead<br><span>and drives more revenue every month.</span>',
+      s7Eyebrow: 'Slide 07 · Executive Conclusion · Google Gemini Video',
+      s7Title: 'The Future of the CEO: <span>One Brain. Better Decisions. Zero Guessing.</span>',
+      iosTag: 'OPEN DAY',
+      iosDecHeader: 'IMMEDIATE REVENUE DECISION',
+      iosApproveBtn: 'Approve Decision & Send Draft (1-Tap)',
+      iosReplyBox: 'Tap a prompt above or type below to test a verified SQL-grounded response.',
+      iosInputPlaceholder: 'Ask or give a command on iPhone…'
+    }
+  };
+
+  function setSiteLang(lang) {
+    SITE_LANG = (lang === 'en') ? 'en' : 'es';
+    document.documentElement.lang = SITE_LANG;
+    try { localStorage.setItem('lj_lang', SITE_LANG); } catch (e) {}
+    if (window.LJ && typeof window.LJ.setLang === 'function') {
+      window.LJ.setLang(SITE_LANG);
+    }
+    const t = SITE_I18N[SITE_LANG];
+    const langBtn = document.getElementById('siteLangBtn');
+    if (langBtn) langBtn.textContent = SITE_LANG === 'en' ? 'EN · ES' : 'ES · EN';
+
+    const brandSub = document.getElementById('navBrandSub');
+    if (brandSub) brandSub.textContent = t.brandSub;
+    const consoleBtn = document.getElementById('navConsoleBtn');
+    if (consoleBtn) {
+      consoleBtn.textContent = t.consoleBtn;
+      consoleBtn.href = '/?lang=' + SITE_LANG;
+    }
+    const pdfBtn = document.getElementById('navPdfBtn');
+    if (pdfBtn) pdfBtn.href = '/api/daily.pdf?lang=' + SITE_LANG;
+
+    document.querySelectorAll('#topNavLinks a').forEach((a, i) => { if (t.nav[i]) a.textContent = t.nav[i]; });
+    document.querySelectorAll('#dockPills .dock-pill').forEach((p, i) => { if (t.dock[i]) p.textContent = t.dock[i]; });
+    const prevB = document.getElementById('btnPrevSlide');
+    const nextB = document.getElementById('btnNextSlide');
+    if (prevB) prevB.textContent = t.prev;
+    if (nextB) nextB.textContent = t.next;
+
+    const setTxt = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+    setTxt('v12GreetSub', t.v12GreetSub);
+    setTxt('v12Kpi1Title', t.v12Kpi1);
+    setTxt('v12Kpi2Title', t.v12Kpi2);
+    setTxt('v12ChartTitle', t.v12ChartTitle);
+    setTxt('v12SplitTitle', t.v12SplitTitle);
+    setTxt('v12SplitSub1', t.v12SplitSub1);
+    setTxt('v12SplitSub2', t.v12SplitSub2);
+    setTxt('v12SplitBadge', t.v12SplitBadge);
+    setTxt('v12SplitBtn', t.v12SplitBtn);
+    setTxt('v12PlanBarTitle', t.v12PlanBarTitle);
+    setTxt('v12Plan1Desc', t.v12Plan1Desc);
+    setTxt('v12Plan2Desc', t.v12Plan2Desc);
+    setTxt('v12Plan3Desc', t.v12Plan3Desc);
+
+    const sInput = document.getElementById('v12SearchInput');
+    if (sInput) sInput.placeholder = t.v12SearchPlaceholder;
+
+    // Slide headers
+    const s2 = document.querySelector('#iphone-webapp .showcase-bar');
+    if (s2) {
+      const sp = s2.querySelector('span');
+      const h2 = s2.querySelector('h2');
+      if (sp) sp.textContent = t.s2Eyebrow;
+      if (h2) h2.innerHTML = t.s2Title;
+    }
+    const setSlideHead = (sel, eye, ttl) => {
+      const sec = document.querySelector(sel);
+      if (!sec) return;
+      const eEl = sec.querySelector('.eyebrow');
+      const tEl = sec.querySelector('.sec-title');
+      if (eEl) eEl.textContent = eye;
+      if (tEl) tEl.innerHTML = ttl;
+    };
+    setSlideHead('#decisiones', t.s3Eyebrow, t.s3Title);
+    setSlideHead('#integracion', t.s4Eyebrow, t.s4Title);
+    setSlideHead('#comparativa', t.s5Eyebrow, t.s5Title);
+    setSlideHead('#roi', t.s6Eyebrow, t.s6Title);
+    setSlideHead('#conclusion', t.s7Eyebrow, t.s7Title);
+
+    const iosTag = document.querySelector('.ios-tag');
+    if (iosTag) iosTag.textContent = t.iosTag;
+    const iosApprove = document.getElementById('iosApproveBtn');
+    if (iosApprove && !iosApprove.textContent.includes('$12.4K')) iosApprove.textContent = t.iosApproveBtn;
+    const iosReply = document.getElementById('iosReplyBox');
+    if (iosReply) iosReply.textContent = t.iosReplyBox;
+    const iosInp = document.getElementById('iosInput');
+    if (iosInp) iosInp.placeholder = t.iosInputPlaceholder;
+
+    calcRoi();
+    loadLiveIphoneBrief(SITE_LANG);
+  }
+
+  function toggleSiteLang() {
+    setSiteLang(SITE_LANG === 'es' ? 'en' : 'es');
+  }
+
+  setSiteLang(SITE_LANG);
 
   /* =========================================================================
      4. V12 SPATIAL GLASS CONTROLLER (TABS, DASHBOARD SWITCHER & STOPWATCH)

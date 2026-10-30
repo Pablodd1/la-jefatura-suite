@@ -202,7 +202,7 @@ const URL = 'http://localhost:8931/';
   check('15. Bilingual Switcher (ES <-> EN)', navTextEn.includes('Command Center') && navTextEn.includes('Function Blogs'), 'Translated to English');
   await page.locator('#langBtn').click(); // back to ES
 
-  // 8b. El Jefesito: day greeting on open, 3 themes, control by text, daily PDF
+  // 8b. El Jefesito: day greeting on open, locked ARENA (sand) global palette, zero theme pickers, daily PDF
   await page.reload({ waitUntil: 'networkidle' });
   await page.waitForTimeout(600);
   const greet = await page.locator('#jfGreeting').innerText();
@@ -210,30 +210,21 @@ const URL = 'http://localhost:8931/';
     /El Jefesito/i.test(greet) && /BuildingApp/i.test(greet) && /miembros/i.test(greet) && /interacciones/i.test(greet),
     greet.replace(/\s+/g, ' ').slice(0, 120));
 
-  const themeSeen = [];
-  for (const t of ['light', 'yellow', 'graphite']) {
-    await page.locator(`#themeSeg button[data-theme="${t}"]`).click();
-    themeSeen.push(await page.evaluate(() => document.documentElement.dataset.theme));
-  }
-  check('18. Three themes switch from the header (light, yellow/black, graphite)',
-    themeSeen.join(',') === 'light,yellow,graphite', themeSeen.join(','));
-
-  await page.locator('#ljw-fab').click();
-  await page.locator('#ljw-in').fill('cambia el tema a amarillo');
-  await page.locator('#ljw-send').click();
-  await page.waitForTimeout(600);
-  const themeByText = await page.evaluate(() => document.documentElement.dataset.theme);
-  const yellowBg = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+  const webappArenaCheck = await page.evaluate(() => {
+    const theme = document.documentElement.dataset.theme;
+    const acc = getComputedStyle(document.documentElement).getPropertyValue('--acc').trim().toLowerCase();
+    const yellow = getComputedStyle(document.documentElement).getPropertyValue('--yellow').trim().toLowerCase();
+    const visibleThemePickers = Array.from(document.querySelectorAll('#themeSeg, .v12-app-switcher, .v12-theme-pill, [data-theme]')).filter(el => {
+      if (el === document.documentElement) return false;
+      const st = getComputedStyle(el);
+      return st.display !== 'none' && st.visibility !== 'hidden' && el.offsetWidth > 0;
+    }).length;
+    return { theme, acc, yellow, visibleThemePickers };
+  });
+  check('18. WebApp locked to Global ARENA (sand / #cdb68c) with 0 visible theme/color pickers',
+    webappArenaCheck.theme === 'sand' && webappArenaCheck.acc === '#cdb68c' && webappArenaCheck.yellow === '#cdb68c' && webappArenaCheck.visibleThemePickers === 0,
+    JSON.stringify(webappArenaCheck));
   await page.screenshot({ path: path.join(ASSETS_DIR, 'verified-8-theme-yellow-black.png'), fullPage: false });
-  await page.locator('#ljw-in').fill('tema claro');
-  await page.locator('#ljw-send').click();
-  await page.waitForTimeout(500);
-  await page.screenshot({ path: path.join(ASSETS_DIR, 'verified-9-theme-light.png'), fullPage: false });
-  await page.locator('#ljw-in').fill('tema grafito');
-  await page.locator('#ljw-send').click();
-  await page.waitForTimeout(500);
-  check('19. Jefesito changes the theme by text request (yellow/black = pure black bg), persisted',
-    themeByText === 'yellow' && yellowBg === 'rgb(0, 0, 0)', `${themeByText} ${yellowBg}`);
 
   const pdfRes = await page.evaluate(async () => {
     const r = await fetch('/api/daily.pdf?lang=es');
@@ -278,44 +269,44 @@ const URL = 'http://localhost:8931/';
     JSON.stringify(brainCheck));
   await page.screenshot({ path: path.join(ASSETS_DIR, 'verified-10-website-3d-brain-hero.png'), fullPage: false });
 
-  // Verify V12 Spatial Glass Sidebar Tabs (Overview -> Stopwatch 45:20) & Bottom Switcher (Dashboard 1 <-> Dashboard 2)
+  // Verify V12 Spatial Glass Sidebar Tabs (Overview -> Stopwatch 45:20), locked ARENA palette, 0 theme pickers, and Bilingual ES <-> EN toggle on /website
   await page.evaluate(() => switchV12Tab('stopwatch', document.querySelectorAll('.v12-sidebar .v12-nav-btn')[3]));
   await page.waitForTimeout(250);
   await page.screenshot({ path: path.join(ASSETS_DIR, 'verified-15-v12-stopwatch.png'), fullPage: false });
   const timerTxt = await page.locator('#v12TimerDisplay').innerText();
-  await page.evaluate(() => switchV12Dashboard('d2'));
-  await page.waitForTimeout(250);
-  await page.screenshot({ path: path.join(ASSETS_DIR, 'verified-16-v12-dashboard2.png'), fullPage: false });
-  const d2Visible = await page.locator('#v12Dashboard2').isVisible();
-  await page.evaluate(() => {
-    switchV12Dashboard('d1');
-    switchV12Tab('overview', document.querySelectorAll('.v12-sidebar .v12-nav-btn')[0]);
-  });
-  check('22a1. V12 Spatial Glass Template (Overview, Stopwatch 45:20, and Dashboard 2 Quixotic Switcher)',
-    timerTxt === '45:20' && d2Visible,
-    `timer=${timerTxt}, d2Visible=${d2Visible}`);
+  await page.evaluate(() => switchV12Tab('overview', document.querySelectorAll('.v12-sidebar .v12-nav-btn')[0]));
+  check('22a1. V12 Spatial Glass Template (Overview & Stopwatch 45:20)',
+    timerTxt === '45:20',
+    `timer=${timerTxt}`);
 
-  // 3 calmer alternative color themes (Pizarra / Salvia / Arena) + original Dorado
-  const themeResults = [];
-  for (const t of ['slate', 'sage', 'sand', 'gold']) {
-    await page.locator(`#themeDots .theme-dot[data-theme="${t}"]`).click();
-    await page.waitForTimeout(350);
-    themeResults.push(await page.evaluate(() => ({
-      theme: document.documentElement.getAttribute('data-theme') || 'gold',
-      accent: getComputedStyle(document.documentElement).getPropertyValue('--yellow').trim(),
-      saved: localStorage.getItem('lj_site_theme')
-    })));
-    if (t !== 'gold') await page.screenshot({ path: path.join(ASSETS_DIR, `verified-12-website-theme-${t}.png`), fullPage: false });
-  }
-  const accents = themeResults.map(r => r.accent);
-  check('22a2. Three calmer alternative color themes (Pizarra, Salvia, Arena) + original Dorado, persisted',
-    themeResults.map(r => r.theme).join(',') === 'slate,sage,sand,gold' && new Set(accents).size === 4 && themeResults[3].saved === 'gold',
-    accents.join(' | '));
-  await page.locator('#themeDots .theme-dot[data-theme="slate"]').click(); // leave the hero in a calm theme for the Slide-1 hi-res shot
-  await page.waitForTimeout(500);
+  const websiteArenaCheck = await page.evaluate(() => {
+    const theme = document.documentElement.getAttribute('data-theme');
+    const accent = getComputedStyle(document.documentElement).getPropertyValue('--yellow').trim().toLowerCase();
+    const visibleThemePickers = Array.from(document.querySelectorAll('#themeDots, .theme-dot, .v12-theme-pill, .v12-bottom-switcher')).filter(el => {
+      const st = getComputedStyle(el);
+      return st.display !== 'none' && st.visibility !== 'hidden' && el.offsetWidth > 0;
+    }).length;
+    return { theme, accent, visibleThemePickers };
+  });
+  check('22a2. Website locked to Global ARENA (sand / #cdb68c) with 0 visible theme/color pickers',
+    websiteArenaCheck.theme === 'sand' && websiteArenaCheck.accent === '#cdb68c' && websiteArenaCheck.visibleThemePickers === 0,
+    JSON.stringify(websiteArenaCheck));
+  await page.screenshot({ path: path.join(ASSETS_DIR, 'verified-12-website-theme-sand.png'), fullPage: false });
   await page.locator('#brain3dCanvas').screenshot({ path: path.join(ASSETS_DIR, 'verified-12-brain-hq-canvas.png') });
-  await page.locator('#themeDots .theme-dot[data-theme="gold"]').click();
+
+  // Test Website Bilingual Toggle (ES -> EN -> ES) via #siteLangBtn
+  await page.locator('#siteLangBtn').click();
   await page.waitForTimeout(300);
+  const siteEnCheck = await page.evaluate(() => ({
+    lang: document.documentElement.lang,
+    btnText: document.getElementById('siteLangBtn').innerText,
+    bodyText: document.body.innerText
+  }));
+  check('22a3. Website Bilingual Switcher (#siteLangBtn: ES <-> EN)',
+    siteEnCheck.lang === 'en' && siteEnCheck.bodyText.includes('01 · 3D Brain') && siteEnCheck.bodyText.includes('5 companies audited today with zero guessing'),
+    `lang=${siteEnCheck.lang}, btn=${siteEnCheck.btnText}`);
+  await page.locator('#siteLangBtn').click(); // back to ES for remaining ES assertions
+  await page.waitForTimeout(250);
 
   // Scroll horizontally ("to the side") to Slide 02 (iPhone 16 Pro + WebApp)
   await page.locator('#btnNextSlide').click();

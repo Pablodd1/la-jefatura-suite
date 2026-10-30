@@ -14,7 +14,7 @@
       api: "",
       lang: (document.documentElement.lang || "es").startsWith("es") ? "es" : "en",
       tenant: "default",
-      accent: "#23d9b0",
+      accent: "#cdb68c",
       position: "bottom-right",
     }, window.LJ_WIDGET || {});
 
