@@ -103,7 +103,9 @@ def build_brief(slot: str = "morning", force_live: bool = False) -> dict:
     nex_kpis = nex.get("kpis") or {}
 
     slot_label = "REPORTE MATUTINO (08:00 AM)" if slot == "morning" else "REPORTE DE CIERRE VESPERTINO (06:00 PM)"
+    slot_label_en = "MORNING EXECUTIVE BRIEF (08:00 AM)" if slot == "morning" else "EVENING CLOSING BRIEF (06:00 PM)"
     title_es = f"📊 {slot_label} — La Jefatura Portal ({day})"
+    title_en = f"📊 {slot_label_en} — La Jefatura Portal ({day})"
 
     summary_lines = [
         f"*{title_es}*",
@@ -117,6 +119,18 @@ def build_brief(slot: str = "morning", force_live: bool = False) -> dict:
     ]
     summary_text_es = "\n".join(summary_lines)
 
+    summary_lines_en = [
+        f"*{title_en}*",
+        f"Audited cutoff: {now_str} · 5 live ecosystems connected.",
+        "",
+        f"1️⃣ *BuildingApp AI (buildingapp.us):* {b_members.get('total', 12)} registered members (+{b_members.get('new_today', 2)} today · {b_members.get('new_7d', 4)} in 7d). {b_ai.get('generations_today', 14)} AI generations today ({b_ai.get('generations_total', 132)} all-time · {b_ai.get('success_rate_pct', 100)}% success). Total API spend: ${b_cost.get('cost_total_usd', 2.402):.3f} USD (0 users out of credits).",
+        f"2️⃣ *AI Front-Desk Receptionist (chatbuildinginnovation.us / Unitec):* {u_kpis.get('total_sessions', 4676)} total sessions, {u_kpis.get('real_interactions', 193)} real conversations ({u_today} today), {u_phones} phone leads captured, and {u_esc}% Telegram alert delivery.",
+        f"3️⃣ *Hik-Connect Cameras ({cam_devs} Recorders / {cam_total} Channels):* {cam_live}/{cam_total} cameras streaming live (USA NVR 8/8, Pick-In Plant 16/16, Espacios Importados 29/29 · 12.92 TB HDD). Active alert: {cam_off} Wi-Fi cameras at Salon/Oficina IDEO OFFLINE since 2026-10-26 22:59:32.",
+        f"4️⃣ *AI Comms Inbox & Official Meta WhatsApp:* App Ceojefejuan ({wa.get('phone_number_id', '1388834954318845')}) active with {wa.get('monitored_active', 5)} monitored groups/chats and {len(pending_drafts)} pre-drafted replies ready for 1-click approval.",
+        f"5️⃣ *Nexus Commercial Pipeline & Tasks:* ${nex_kpis.get('pipeline_total_estimado_usd', 104600):,.0f} USD active pipeline ({nex_kpis.get('leads_activos', 12)} leads), ${nex_kpis.get('ventas_cerradas_total_usd', 28000):,.0f} USD closed revenue, and {len(open_tasks)} open operational tasks for team follow-up.",
+    ]
+    summary_text_en = "\n".join(summary_lines_en)
+
     voice_script_es = (
         f"Resumen ejecutivo de La Jefatura, corte { 'de las ocho de la mañana' if slot == 'morning' else 'de cierre de las seis de la tarde' } del {day}. "
         f"Primero, en BuildingApp punto U S tenemos {b_members.get('total', 12)} usuarios registrados, con {b_members.get('new_today', 2)} nuevos hoy, "
@@ -124,6 +138,15 @@ def build_brief(slot: str = "morning", force_live: bool = False) -> dict:
         f"Segundo, en el recepcionista de Unitec y Building Innovation van {u_kpis.get('total_sessions', 4676)} sesiones, {u_today} conversaciones reales hoy y {u_phones} teléfonos capturados. "
         f"Tercero, en las cámaras Hik-Connect están activos {cam_live} de {cam_total} canales en vivo con doce punto noventa y dos terabytes de almacenamiento; siguen sin conexión las dos cámaras Wi-Fi de Salón y Oficina IDEO. "
         f"Cuarto, tienes {len(pending_drafts)} borradores de respuesta listos en tu bandeja y {len(open_tasks)} tareas abiertas en el portal."
+    )
+
+    voice_script_en = (
+        f"La Jefatura Executive Briefing, {'eight A M morning' if slot == 'morning' else 'six P M closing'} cutoff for {day}. "
+        f"First, on BuildingApp dot U S we have {b_members.get('total', 12)} registered members, with {b_members.get('new_today', 2)} new today, "
+        f"{b_ai.get('generations_today', 14)} AI generations today and {b_ai.get('generations_total', 132)} all-time at one hundred percent success, with a total API spend of {b_cost.get('cost_total_usd', 2.40):.2f} dollars. "
+        f"Second, on the Unitec and Building Innovation AI receptionist there are {u_kpis.get('total_sessions', 4676)} sessions, {u_today} real conversations today, and {u_phones} phone numbers captured. "
+        f"Third, on Hik-Connect cameras, {cam_live} of {cam_total} channels are live with twelve point nine two terabytes of storage; the two Wi-Fi cameras at Salon and Oficina IDEO remain offline. "
+        f"Fourth, you have {len(pending_drafts)} pre-drafted replies ready in your inbox and {len(open_tasks)} open tasks in the portal."
     )
 
     metrics = {
@@ -187,15 +210,22 @@ def build_brief(slot: str = "morning", force_live: bool = False) -> dict:
         "day": day,
         "slot": slot,
         "slot_label": slot_label,
+        "slot_label_en": slot_label_en,
         "schedule": ["08:00 AM (Apertura)", "06:00 PM (Cierre)"],
+        "schedule_en": ["08:00 AM (Morning Opening)", "06:00 PM (Evening Closing)"],
         "generated_at": now_str,
         "title_es": title_es,
+        "title_en": title_en,
         "summary_text_es": summary_text_es,
+        "summary_text_en": summary_text_en,
         "voice_script_es": voice_script_es,
+        "voice_script_en": voice_script_en,
         "metrics": metrics,
         "pdf_links": {
             "executive_pdf": "/api/report.pdf?company=UNITEC%20USA&lang=es",
+            "executive_pdf_en": "/api/report.pdf?company=UNITEC%20USA&lang=en",
             "camera_pdf": "/api/cameras/report.pdf?mode=example&lang=es",
+            "camera_pdf_en": "/api/cameras/report.pdf?mode=example&lang=en",
         },
     }
 

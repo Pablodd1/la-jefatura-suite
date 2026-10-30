@@ -1849,32 +1849,41 @@ function loadTwiceDailyPortalBrief(slot = 'morning', showBox = false) {
       _currentDailyBrief = d;
       const box = document.getElementById('twiceDailyPortalBox');
       if (box && showBox) {
+        const isEn = (typeof lang !== 'undefined' && lang === 'en');
+        const lbl = isEn ? (d.slot_label_en || d.slot_label) : d.slot_label;
+        const txt = isEn ? (d.summary_text_en || d.summary_text_es || '') : (d.summary_text_es || '');
         box.style.display = 'block';
         box.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-            <b style="color:var(--acc)">${d.slot_label} · Corte ${d.generated_at}</b>
-            <span class="tag ok">AUTO 2x/DÍA (08:00 & 18:00)</span>
+            <b style="color:var(--acc)">${lbl} · ${isEn ? 'Cutoff' : 'Corte'} ${d.generated_at}</b>
+            <span class="tag ok">${isEn ? 'AUTO 2x/DAY (08:00 & 18:00)' : 'AUTO 2x/DÍA (08:00 & 18:00)'}</span>
           </div>
-          <div style="white-space:pre-line">${(d.summary_text_es || '').replace(/\*/g, '')}</div>`;
+          <div style="white-space:pre-line">${txt.replace(/\*/g, '')}</div>`;
       }
     }).catch(() => {});
 }
 
 function speakTwiceDailyPortalBrief() {
-  if (_currentDailyBrief && _currentDailyBrief.voice_script_es) {
-    showToast('🔊 Escuchando ' + _currentDailyBrief.slot_label + '…');
-    playColombianTtsText(_currentDailyBrief.voice_script_es);
+  const isEn = (typeof lang !== 'undefined' && lang === 'en');
+  if (_currentDailyBrief && (_currentDailyBrief.voice_script_es || _currentDailyBrief.voice_script_en)) {
+    const lbl = isEn ? (_currentDailyBrief.slot_label_en || _currentDailyBrief.slot_label) : _currentDailyBrief.slot_label;
+    const script = isEn ? (_currentDailyBrief.voice_script_en || _currentDailyBrief.voice_script_es) : _currentDailyBrief.voice_script_es;
+    showToast((isEn ? '🔊 Listening to ' : '🔊 Escuchando ') + lbl + '…');
+    playColombianTtsText(script);
   } else {
     fetch('/api/reports/daily_brief?slot=morning').then(r => r.json()).then(d => {
       _currentDailyBrief = d;
-      if (d && d.voice_script_es) {
-        showToast('🔊 Escuchando ' + d.slot_label + '…');
-        playColombianTtsText(d.voice_script_es);
+      if (d && (d.voice_script_es || d.voice_script_en)) {
+        const lbl = isEn ? (d.slot_label_en || d.slot_label) : d.slot_label;
+        const script = isEn ? (d.voice_script_en || d.voice_script_es) : d.voice_script_es;
+        showToast((isEn ? '🔊 Listening to ' : '🔊 Escuchando ') + lbl + '…');
+        playColombianTtsText(script);
       }
     }).catch(() => {});
   }
 }
 
 function dispatchTwiceDailyBriefNow() {
+  const isEn = (typeof lang !== 'undefined' && lang === 'en');
   const slot = (_currentDailyBrief && _currentDailyBrief.slot) || 'morning';
   fetch('/api/reports/dispatch_daily', {
     method: 'POST', headers: {'Content-Type': 'application/json'},
@@ -1883,7 +1892,10 @@ function dispatchTwiceDailyBriefNow() {
     if (d && d.ok) {
       _currentDailyBrief = d;
       loadTwiceDailyPortalBrief(slot, true);
-      showToast(`✅ ${d.slot_label} actualizado en el Portal y despachado (${(d.dispatched_channels || []).join(' + ')}).`);
+      const lbl = isEn ? (d.slot_label_en || d.slot_label) : d.slot_label;
+      showToast(isEn
+        ? `✅ ${lbl} updated in Portal & dispatched (${(d.dispatched_channels || []).join(' + ')}).`
+        : `✅ ${lbl} actualizado en el Portal y despachado (${(d.dispatched_channels || []).join(' + ')}).`);
     }
   }).catch(() => {});
 }
@@ -2513,14 +2525,24 @@ $('#pdfBtn').onclick = () => {
 
 $('#langBtn').onclick = () => {
   lang = lang === 'es' ? 'en' : 'es';
+  if (window.LJ_WIDGET) window.LJ_WIDGET.lang = lang;
   setRoutineSlot(activeSlot);
   renderAll();
+  renderUnitecPanel();
+  renderBuildingAppPanel();
+  renderHikConnectCameras();
+  renderCameraDailyReportBox();
+  if (_currentDailyBrief) loadTwiceDailyPortalBrief(_currentDailyBrief.slot || 'morning', true);
+  if (typeof renderGreeting === 'function') renderGreeting(false);
   if (activeTab === 'comms') renderCommsTab();
   if (activeTab === 'outcomes') renderOutcomesTab();
   if (activeTab === 'behavior') renderBehaviorTab();
   if (activeTab === 'setup') renderSetupTab();
   if (activeTab === 'blogs') renderBlogs();
 };
+if (/[?&]lang=en\b/i.test(location.search)) {
+  setTimeout(() => { if (lang !== 'en') $('#langBtn').click(); }, 120);
+}
 
 /* ── Register Grok 3.0 Voice & DOM Actions ── */
 window.LJ_WIDGET = {lang: 'es'};
