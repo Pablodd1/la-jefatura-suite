@@ -3494,7 +3494,7 @@
   function speakHeroDemo() {
     const txt = document.getElementById('iosBriefText').innerText;
     if (window.LJ && typeof window.LJ.speak === 'function') {
-      window.LJ.speak(txt, false);
+      window.LJ.speak(txt, false, SITE_LANG);
     }
   }
 
@@ -3523,7 +3523,8 @@
         SITE_LANG === 'en'
           ? 'Decision executed from your iPhone. Draft approved and sent directly to Dr. Molina.'
           : 'Decisión ejecutada desde tu iPhone. Borrador aprobado y enviado directamente al doctor Molina.',
-        false
+        false,
+        SITE_LANG
       );
     }
   }
@@ -3546,7 +3547,7 @@
         const src = (d.sources && d.sources.length && d.grounded) ? (srcLbl + d.sources.slice(0, 2).join('; ')) : '';
         box.textContent = (d.reply || '') + src;
         if (window.LJ && typeof window.LJ.speak === 'function') {
-          window.LJ.speak(d.reply || '', false);
+          window.LJ.speak(d.reply || '', false, SITE_LANG);
         }
       })
       .catch(() => {
@@ -3689,12 +3690,32 @@
     SITE_LANG = (lang === 'en') ? 'en' : 'es';
     document.documentElement.lang = SITE_LANG;
     try { localStorage.setItem('lj_lang', SITE_LANG); } catch (e) {}
+    if (window.LJ_WIDGET) window.LJ_WIDGET.lang = SITE_LANG;
+    if (window.LJ && typeof window.LJ.stopAudio === 'function') {
+      window.LJ.stopAudio();
+    }
     if (window.LJ && typeof window.LJ.setLang === 'function') {
       window.LJ.setLang(SITE_LANG);
     }
     const t = SITE_I18N[SITE_LANG];
     const langBtn = document.getElementById('siteLangBtn');
     if (langBtn) langBtn.textContent = SITE_LANG === 'en' ? 'EN · ES' : 'ES · EN';
+
+    const iosBriefEl = document.getElementById('iosBriefText');
+    if (iosBriefEl) {
+      iosBriefEl.innerHTML = SITE_LANG === 'en'
+        ? 'Good morning, Jasmel. BuildingApp has <b>7 members (+3 today)</b> and 130 AI renders (100% success). UNITEC logged <b>29 phones</b> and 98.7% alerts delivered.'
+        : 'Buenos días, Jasmel. BuildingApp suma <b>7 miembros (+3 hoy)</b> y 130 renders IA (100% éxito). UNITEC registra <b>29 teléfonos</b> y 98.7% de alertas entregadas.';
+    }
+    const iosCardH4Spans = document.querySelectorAll('.ios-card h4 span');
+    if (iosCardH4Spans.length >= 2) {
+      iosCardH4Spans[0].textContent = SITE_LANG === 'en' ? 'Daily Brief & Sheet' : 'Saludo y Hoja del Día';
+      iosCardH4Spans[1].textContent = SITE_LANG === 'en' ? 'Listen' : 'Escuchar';
+    }
+    const dynIsl = document.querySelector('.dynamic-island span:last-child');
+    if (dynIsl) dynIsl.textContent = SITE_LANG === 'en' ? 'JEFESITO VOICE' : 'JEFESITO VOZ';
+    const bellBtn = document.querySelector('.v12-bell-btn');
+    if (bellBtn) bellBtn.title = SITE_LANG === 'en' ? 'Listen to Summary with English Neural Voice' : 'Escuchar Resumen con Voz Colombiana';
 
     const brandSub = document.getElementById('navBrandSub');
     if (brandSub) brandSub.textContent = t.brandSub;

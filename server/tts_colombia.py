@@ -1,10 +1,10 @@
-"""El Jefesito — Neural Colombian Voice TTS Engine (`server/tts_colombia.py`).
+"""El Jefesito — Neural Colombian & US English Voice TTS Engine (`server/tts_colombia.py`).
 
 Provides natural, fast, human-sounding Colombian Spanish (`es-CO-SalomeNeural` /
-`es-CO-GonzaloNeural`) and English (`en-US-AvaMultilingualNeural`) audio synthesis via
+`es-CO-GonzaloNeural`) and US English (`en-US-AriaNeural`) audio synthesis via
 Microsoft Edge Neural TTS (`edge-tts`) with local disk caching for instant playback.
 
-Default speed: `+22%` (fast, crisp executive pace, natural Colombian prosody).
+Default speed: `+22%` (fast, crisp executive pace).
 """
 import asyncio
 import hashlib
@@ -20,7 +20,7 @@ os.makedirs(CACHE_DIR, exist_ok=True)
 VOICES = {
     "es": "es-CO-SalomeNeural",
     "es_male": "es-CO-GonzaloNeural",
-    "en": "en-US-AvaMultilingualNeural",
+    "en": "en-US-AriaNeural",
 }
 
 DEFAULT_RATE = "+22%"
@@ -40,11 +40,12 @@ async def _gen(text: str, voice: str, rate: str, out_path: str):
 
 
 def synthesize(text: str, lang: str = "es", voice: str | None = None, rate: str = DEFAULT_RATE) -> bytes:
-    """Return MP3 bytes for `text` using Colombian Spanish neural voice (`es-CO-SalomeNeural` by default)."""
+    """Return MP3 bytes for `text` using Colombian Spanish (`es-CO-SalomeNeural`) or US English (`en-US-AriaNeural`)."""
     cleaned = _clean_for_speech(text)
     if not cleaned:
         return b""
-    v = voice or (VOICES["en"] if lang == "en" else VOICES["es"])
+    is_en = str(lang or "").strip().lower().startswith("en")
+    v = voice or (VOICES["en"] if is_en else VOICES["es"])
     key = hashlib.sha256(f"{v}|{rate}|{cleaned}".encode("utf-8")).hexdigest()[:24]
     path = os.path.join(CACHE_DIR, f"{key}.mp3")
     if not os.path.isfile(path) or os.path.getsize(path) < 100:

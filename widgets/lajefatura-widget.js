@@ -12,7 +12,7 @@
   function boot() {
     const CFG = Object.assign({
       api: "",
-      lang: (document.documentElement.lang || "es").startsWith("es") ? "es" : "en",
+      lang: (document.documentElement.lang || "es").toLowerCase().startsWith("en") ? "en" : "es",
       tenant: "default",
       accent: "#cdb68c",
       position: "bottom-right",
@@ -27,7 +27,11 @@
         help: "Comandos Grok 3.0: cambiar a «empresa» · abrir «pestaña» (mando, bandeja, resultados, cerebro, setup, blogs) · aprobar borrador · redactar respuesta · completar tarea «n» · preparar café · explicar planes · qué hay en pantalla · descargar informe.",
         unknown: "Analicé la pantalla pero no encontré esa acción exacta. Prueba: «abrir blogs», «aprobar borrador», «cambiar a CEDEXX» o «leer resumen».",
         offline: "Modo local activo.",
-        open: "Soy El Jefesito. Te atiendo por voz o texto, aprendo de cada interacción y puedo cambiar el tema, el idioma, el saludo, cerrar el día o imprimir tu resumen. ¿Qué hacemos?",
+        open: "Soy El Jefesito. Te atiendo por voz o texto, aprendo de cada interacción y puedo cambiar el idioma, el saludo, cerrar el día o imprimir tu resumen. ¿Qué hacemos?",
+        sendBtn: "ENVIAR",
+        micBtn: "VOZ",
+        stopBtn: "PARAR",
+        fabBtn: "JEFESITO · VOZ",
         chips: [
           ["Leer Resumen", "leer resumen"],
           ["Aprobar Borrador", "aprobar borrador"],
@@ -40,13 +44,17 @@
       },
       en: {
         title: "EL JEFESITO · VOICE & TEXT",
-        sub: "Fast Neural Voice (Colombian ES / EN) · Self-Learning",
+        sub: "Fast Neural English Voice (en-US · AriaNeural) · Self-Learning",
         placeholder: "Speak or type (e.g. 'open blogs', 'approve draft', 'order coffee')…",
         listening: "Grok 3.0 listening…",
         help: "Grok 3.0 Commands: switch to «company» · open «tab» (overview, comms, outcomes, brain, setup, blogs) · approve draft · draft reply · complete task «n» · order coffee · explain plans · what is on screen · download report.",
         unknown: "I scanned the page but couldn't match that exact command. Try: 'open blogs', 'approve draft', 'switch to CEDEXX', or 'read brief'.",
         offline: "Local brain mode active.",
-        open: "I'm El Jefesito. I take voice or text, learn from every interaction, and can change the theme, language, greeting, close the day or print your summary. What should we do?",
+        open: "I'm El Jefesito. I take voice or text in English, learn from every interaction, and can switch language, toggle the greeting, close the day, or print your daily summary. What should we do?",
+        sendBtn: "SEND",
+        micBtn: "VOICE",
+        stopBtn: "STOP",
+        fabBtn: "JEFESITO · VOICE",
         chips: [
           ["Read Brief", "read brief"],
           ["Approve Draft", "approve draft"],
@@ -65,12 +73,40 @@
     window.LJ.register = (name, fn) => { actions[name] = fn; };
     window.LJ.execute = execute;
     window.LJ.inspectDOM = inspectDOM;
-    window.LJ.setLang = (l) => { CFG.lang = l === "en" ? "en" : "es"; renderPanelLocale(); };
-    window.LJ.speak = (t) => speak(t);
+
+    function getLang() {
+      const dLang = (document.documentElement.lang || "").toLowerCase();
+      if (dLang.startsWith("en")) { CFG.lang = "en"; return "en"; }
+      if (dLang.startsWith("es")) { CFG.lang = "es"; return "es"; }
+      const wLang = (window.LJ_WIDGET && window.LJ_WIDGET.lang || "").toLowerCase();
+      if (wLang.startsWith("en")) { CFG.lang = "en"; return "en"; }
+      if (wLang.startsWith("es")) { CFG.lang = "es"; return "es"; }
+      return CFG.lang === "en" ? "en" : "es";
+    }
 
     function getT() {
-      return COPY[CFG.lang] || COPY.es;
+      return COPY[getLang()] || COPY.es;
     }
+
+    window.LJ.setLang = (l) => {
+      const nextLang = (l && String(l).toLowerCase().startsWith("en")) ? "en" : "es";
+      CFG.lang = nextLang;
+      if (window.LJ_WIDGET) window.LJ_WIDGET.lang = nextLang;
+      document.documentElement.lang = nextLang;
+      stopAudio();
+      // Translate the initial opening message in the log if present
+      state.log.forEach(entry => {
+        if (entry.who === "lj" && (entry.text === COPY.es.open || entry.text === COPY.en.open)) {
+          entry.text = COPY[nextLang].open;
+        }
+      });
+      renderPanelLocale();
+      renderLog();
+      if (state.open) {
+        speak(COPY[nextLang].open, false, nextLang);
+      }
+    };
+    window.LJ.speak = (t, logIt = false, langOverride = null) => speak(t, logIt, langOverride);
 
     /* ── Visual DOM Touch Highlight ── */
     function highlightElement(el) {
@@ -106,9 +142,7 @@
       const t = text.trim();
       const low = t.toLowerCase();
 
-      // 0. Knowledge intents (save note/task/meeting/email, list, search, metric questions) are
-      //    answered ONLY by the server from stored data — checked first so words inside the
-      //    note («mañana», «café»…) cannot trigger other commands.
+      // 0. Knowledge intents
       if (/^(guardar|guarda|anotar|anota|agregar|agrega|a[ñn]adir|agendar|agenda|programar|programa|notificar|notifica|escalar|escala|save|add|take|create|crear|crea|schedule|book|notify|escalate|new|nota|note|recu[eé]rdame|remind me)\b/i.test(t) &&
           /(nota|note|tarea|task|cita|evento|appointment|reuni[oó]n|meeting|correo|email|desarrollador|developer|jasmel|recu[eé]rdame|remind me)/i.test(low)) {
         return { action: "server_cmd", arg: t };
@@ -125,8 +159,7 @@
         return { action: "server_cmd", arg: t };
       }
 
-      // 0b. Jefesito control requests (theme, language, greeting, close day, print, profile, name)
-      //     are executed by the server so they persist and are learned.
+      // 0b. Jefesito control requests
       if (/\b(tema|temas|theme|themes|saludo|greeting|idioma|language|perfil|profile|aprendido|learned)\b/i.test(low) ||
           /(cierra|cerrar|close)\b.*\b(d[ií]a|day)\b/i.test(low) ||
           /resumen (del d[ií]a|diario)|daily (summary|brief)|imprim|\bprint\b/i.test(low) ||
@@ -204,7 +237,7 @@
       if (/\b(actualizar|recargar|refresh|reload)\b/i.test(low)) return { action: "refresh", arg: "" };
       if (/\b(ayuda|help|comandos|commands)\b/i.test(low)) return { action: "help", arg: "" };
 
-      // 9. Direct DOM button/link click by label ("click X" / "tocar X" / "pulsar X")
+      // 9. Direct DOM button/link click by label
       const clickMatch = t.match(/^(?:click|clic|tocar|toca|pulsar|pulsa|presionar|press|touch)\s+(.+)$/i);
       if (clickMatch) {
         return { action: "click_dom", arg: clickMatch[1].trim() };
@@ -228,17 +261,25 @@
     }
     window.LJ.stopAudio = stopAudio;
 
-    function _browserFallbackSpeak(text) {
+    function _browserFallbackSpeak(text, langCode) {
       if (!("speechSynthesis" in window)) return;
       try {
+        const curLang = (langCode || getLang()) === "en" ? "en" : "es";
         const u = new SpeechSynthesisUtterance(text);
-        u.lang = CFG.lang === "es" ? "es-CO" : "en-US";
-        u.rate = 1.24;
+        u.lang = curLang === "en" ? "en-US" : "es-CO";
+        u.rate = 1.22;
         const voices = window.speechSynthesis.getVoices() || [];
-        const coVoice = voices.find(v => /es[-_]CO/i.test(v.lang)) ||
-                        voices.find(v => /Salome|Gonzalo|Colomb/i.test(v.name)) ||
-                        voices.find(v => /^es/i.test(v.lang) && /Natural|Neural|Online/i.test(v.name));
-        if (CFG.lang === "es" && coVoice) u.voice = coVoice;
+        if (curLang === "en") {
+          const enVoice = voices.find(v => /^en[-_]US/i.test(v.lang) && /Aria|Jenny|Guy|Samantha|Natural|Neural|Online/i.test(v.name)) ||
+                          voices.find(v => /^en[-_](US|GB)/i.test(v.lang)) ||
+                          voices.find(v => /^en/i.test(v.lang));
+          if (enVoice) u.voice = enVoice;
+        } else {
+          const coVoice = voices.find(v => /es[-_]CO/i.test(v.lang)) ||
+                          voices.find(v => /Salome|Gonzalo|Colomb/i.test(v.name)) ||
+                          voices.find(v => /^es/i.test(v.lang) && /Natural|Neural|Online/i.test(v.name));
+          if (coVoice) u.voice = coVoice;
+        }
         u.onstart = () => { state.speaking = true; root.classList.add("speaking"); };
         u.onend = () => { state.speaking = false; root.classList.remove("speaking"); };
         window.speechSynthesis.cancel();
@@ -246,13 +287,14 @@
       } catch (_) {}
     }
 
-    function speak(text, logIt = true) {
+    function speak(text, logIt = true, langOverride = null) {
+      const curLang = (langOverride || getLang()) === "en" ? "en" : "es";
       if (logIt) {
         state.log.push({ who: "lj", text });
         renderLog();
       }
       stopAudio();
-      const url = (CFG.api || "") + "/api/tts?lang=" + encodeURIComponent(CFG.lang) +
+      const url = (CFG.api || "") + "/api/tts?lang=" + encodeURIComponent(curLang) +
                   "&rate=" + encodeURIComponent("+22%") +
                   "&text=" + encodeURIComponent((text || "").slice(0, 850));
       try {
@@ -260,35 +302,34 @@
         currentAudio = a;
         a.onplay = () => { state.speaking = true; root.classList.add("speaking"); };
         a.onended = () => { state.speaking = false; root.classList.remove("speaking"); currentAudio = null; };
-        a.onerror = () => { currentAudio = null; _browserFallbackSpeak(text); };
+        a.onerror = () => { currentAudio = null; _browserFallbackSpeak(text, curLang); };
         const p = a.play();
         if (p && typeof p.catch === "function") {
-          p.catch(() => { currentAudio = null; _browserFallbackSpeak(text); });
+          p.catch(() => { currentAudio = null; _browserFallbackSpeak(text, curLang); });
         }
       } catch (_) {
-        _browserFallbackSpeak(text);
+        _browserFallbackSpeak(text, curLang);
       }
     }
-    window.LJ.speak = (t, logIt = false) => speak(t, logIt);
 
-    // Every locally-handled interaction is recorded so El Jefesito can learn the user's profile.
     function learn(text, action) {
+      const curLang = getLang();
       try {
         fetch((CFG.api || "") + "/api/jefesito/learn", {
           method: "POST",
           headers: Object.assign({ "Content-Type": "application/json" }, CFG.token ? { "X-MC-Token": CFG.token } : {}),
-          body: JSON.stringify({ text, action, channel: state.channel, lang: CFG.lang }),
+          body: JSON.stringify({ text, action, channel: state.channel, lang: curLang }),
         }).catch(() => {});
       } catch (_) {}
     }
 
     function execute(text) {
+      const curLang = getLang();
       const T = getT();
       const { action, arg } = parse(text);
       state.log.push({ who: "user", text });
       renderLog();
 
-      // Log voice interaction into Behavioral Brain
       if (window.LJ_BEHAVIOR && typeof window.LJ_BEHAVIOR.track === "function") {
         window.LJ_BEHAVIOR.track("voice_query", action || "natural_query", { text, action, arg });
       }
@@ -299,27 +340,28 @@
         fetch((CFG.api || "") + "/api/voice/command", {
           method: "POST",
           headers: Object.assign({ "Content-Type": "application/json" }, CFG.token ? { "X-MC-Token": CFG.token } : {}),
-          body: JSON.stringify({ command: text, tenant: CFG.tenant, lang: CFG.lang, channel: state.channel }),
+          body: JSON.stringify({ command: text, tenant: CFG.tenant, lang: curLang, channel: state.channel }),
         })
           .then(r => r.ok ? r.json() : Promise.reject(r.status))
           .then(d => {
-            speak((d.reply || T.unknown) + (d.sources && d.sources.length && d.grounded
-              ? (CFG.lang === "es" ? " Fuente: " : " Source: ") + d.sources.slice(0, 2).join("; ") : ""));
+            const replyLang = (d.ui && d.ui.set_lang) ? d.ui.set_lang : getLang();
             if (d.ui && typeof window.LJ_applyUi === "function") window.LJ_applyUi(d.ui);
+            speak((d.reply || T.unknown) + (d.sources && d.sources.length && d.grounded
+              ? (replyLang === "es" ? " Fuente: " : " Source: ") + d.sources.slice(0, 2).join("; ") : ""), true, replyLang);
             if (typeof window.loadKnowledgeVault === "function") window.loadKnowledgeVault(false);
           })
-          .catch(() => speak(CFG.lang === "es"
+          .catch(() => speak(curLang === "es"
               ? "No pude consultar el servidor, así que no voy a inventar una respuesta."
-              : "I couldn't reach the server, so I won't make up an answer."));
+              : "I couldn't reach the server, so I won't make up an answer.", true, curLang));
         return { ok: true, action, delegated: true };
       }
 
       if (action === "inspect_page") {
         const dom = inspectDOM();
-        const msg = CFG.lang === "es"
+        const msg = curLang === "es"
           ? `Conciencia DOM Grok 3.0: Estás en la pestaña «${dom.activeTab}», filtrando empresa «${dom.activeCompany}». Veo ${dom.interactiveCount} controles interactivos y KPIs activos: ${dom.kpis.slice(0, 2).join(" | ")}.`
           : `Grok 3.0 DOM Awareness: You are viewing tab "${dom.activeTab}", filtering company "${dom.activeCompany}". I see ${dom.interactiveCount} interactive controls and active KPIs: ${dom.kpis.slice(0, 2).join(" | ")}.`;
-        speak(msg);
+        speak(msg, true, curLang);
         return { ok: true, action, dom };
       }
 
@@ -329,75 +371,73 @@
         if (target && target.el) {
           highlightElement(target.el);
           target.el.click();
-          const msg = CFG.lang === "es" ? `Tocando botón «${target.text}».` : `Touching control "${target.text}".`;
-          speak(msg);
+          const msg = curLang === "es" ? `Tocando botón «${target.text}».` : `Touching control "${target.text}".`;
+          speak(msg, true, curLang);
           return { ok: true, action, target: target.text };
         }
       }
 
       if (action && actions[action]) {
         const r = actions[action](arg) ?? "";
-        if (typeof r === "string" && r) speak(r);
+        if (typeof r === "string" && r) speak(r, true, curLang);
         return { ok: true, action, arg, reply: r };
       }
 
-      // Fallback: Try matching any visible button/tab on screen by text
       const dom = inspectDOM();
       const matchedBtn = dom.buttons.find(b => b.text.length > 2 && text.toLowerCase().includes(b.text.toLowerCase()));
       if (matchedBtn && matchedBtn.el) {
         highlightElement(matchedBtn.el);
         matchedBtn.el.click();
-        const msg = CFG.lang === "es" ? `Ejecutando «${matchedBtn.text}» en pantalla.` : `Triggering "${matchedBtn.text}" on screen.`;
-        speak(msg);
+        const msg = curLang === "es" ? `Ejecutando «${matchedBtn.text}» en pantalla.` : `Triggering "${matchedBtn.text}" on screen.`;
+        speak(msg, true, curLang);
         return { ok: true, action: "dom_match", target: matchedBtn.text };
       }
 
-      // Server fallback (grounded: answers from stored data or says it has no data)
       fetch((CFG.api || "") + "/api/voice/command", {
         method: "POST",
         headers: Object.assign({ "Content-Type": "application/json" }, CFG.token ? { "X-MC-Token": CFG.token } : {}),
-        body: JSON.stringify({ command: text, tenant: CFG.tenant, lang: CFG.lang, channel: state.channel }),
+        body: JSON.stringify({ command: text, tenant: CFG.tenant, lang: curLang, channel: state.channel }),
       })
         .then(r => r.json())
-        .then(d => speak(d.reply || T.unknown))
-        .catch(() => speak(T.unknown));
+        .then(d => speak(d.reply || T.unknown, true, getLang()))
+        .catch(() => speak(T.unknown, true, curLang));
 
       return { ok: Boolean(action), action, arg, delegated: true };
     }
 
     /* ── Widget Styles & DOM ── */
     const css = `
-.lj-voice-touch{outline:2px solid #23d9b0 !important;box-shadow:0 0 0 6px rgba(35,217,176,.35) !important;transition:box-shadow .25s ease !important}
+.lj-voice-touch{outline:2px solid #cdb68c !important;box-shadow:0 0 0 6px rgba(205,182,140,.35) !important;transition:box-shadow .25s ease !important}
 #ljw{position:fixed;${CFG.position.includes("left") ? "left:20px" : "right:20px"};bottom:20px;z-index:9999;font-family:-apple-system,'SF Pro Display',Inter,Segoe UI,sans-serif}
-#ljw .fab{padding:0 18px;height:44px;border-radius:999px;border:1px solid rgba(255,255,255,.22);cursor:pointer;background:#111318;color:#f5f5f7;font-size:11.5px;font-weight:800;letter-spacing:.08em;box-shadow:0 10px 28px rgba(0,0,0,.55);transition:.2s;display:flex;align-items:center;justify-content:center;gap:8px;position:relative}
-#ljw .fab::before{content:"";width:7px;height:7px;border-radius:50%;background:#ffd400;box-shadow:0 0 8px #ffd400}
-#ljw .fab:hover{transform:translateY(-1px);border-color:#ffd400}
+#ljw .fab{padding:0 18px;height:44px;border-radius:999px;border:1px solid rgba(205,182,140,.38);cursor:pointer;background:#12100d;color:#f5f2eb;font-size:11.5px;font-weight:800;letter-spacing:.08em;box-shadow:0 10px 28px rgba(0,0,0,.65);transition:.2s;display:flex;align-items:center;justify-content:center;gap:8px;position:relative}
+#ljw .fab::before{content:"";width:7px;height:7px;border-radius:50%;background:#cdb68c;box-shadow:0 0 8px #cdb68c}
+#ljw .fab:hover{transform:translateY(-1px);border-color:#dccaa6}
 #ljw .fab.on,#ljw.speaking .fab{animation:ljpulse 1.4s infinite}
 #ljw .fab-badge{display:none}
-@keyframes ljpulse{50%{box-shadow:0 0 0 14px rgba(35,217,176,.18)}}
-#ljw .panel{position:absolute;bottom:72px;${CFG.position.includes("left") ? "left:0" : "right:0"};width:370px;max-height:520px;background:rgba(13,19,34,.97);backdrop-filter:blur(18px);border:1px solid rgba(35,217,176,.28);border-radius:18px;box-shadow:0 22px 60px rgba(0,0,0,.65);display:none;flex-direction:column;overflow:hidden}
+@keyframes ljpulse{50%{box-shadow:0 0 0 14px rgba(205,182,140,.22)}}
+#ljw .panel{position:absolute;bottom:72px;${CFG.position.includes("left") ? "left:0" : "right:0"};width:370px;max-height:520px;background:rgba(18,16,13,.97);backdrop-filter:blur(18px);border:1px solid rgba(205,182,140,.32);border-radius:18px;box-shadow:0 22px 60px rgba(0,0,0,.65);display:none;flex-direction:column;overflow:hidden}
 #ljw .panel.open{display:flex}
-#ljw .head{padding:13px 16px;background:linear-gradient(90deg,rgba(35,217,176,.12),rgba(124,108,255,.12));border-bottom:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-between;align-items:center}
-#ljw .head-title{color:#e8edf7;font-size:11.5px;font-weight:800;letter-spacing:.8px}
-#ljw .head-sub{color:#23d9b0;font-size:10px;margin-top:2px;display:flex;align-items:center;gap:5px}
+#ljw .head{padding:13px 16px;background:linear-gradient(90deg,rgba(205,182,140,.16),rgba(181,155,109,.08));border-bottom:1px solid rgba(205,182,140,.14);display:flex;justify-content:space-between;align-items:center}
+#ljw .head-title{color:#f5f2eb;font-size:11.5px;font-weight:800;letter-spacing:.8px}
+#ljw .head-sub{color:#cdb68c;font-size:10px;margin-top:2px;display:flex;align-items:center;gap:5px}
 #ljw .wave{display:flex;gap:3px;align-items:center;height:16px}
-#ljw .wave span{width:3px;height:6px;background:#23d9b0;border-radius:2px;transition:.2s}
+#ljw .wave span{width:3px;height:6px;background:#cdb68c;border-radius:2px;transition:.2s}
 #ljw.speaking .wave span,#ljw .fab.on ~ .panel .wave span{animation:ljwave .7s infinite ease-in-out}
 #ljw .wave span:nth-child(2){animation-delay:.1s}
 #ljw .wave span:nth-child(3){animation-delay:.2s}
 #ljw .wave span:nth-child(4){animation-delay:.3s}
 #ljw .wave span:nth-child(5){animation-delay:.15s}
 @keyframes ljwave{0%,100%{height:5px}50%{height:16px}}
-#ljw .chips{display:flex;flex-wrap:wrap;gap:5px;padding:9px 12px;border-bottom:1px solid rgba(255,255,255,.06);background:rgba(7,11,20,.55)}
-#ljw .chip{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);color:#cfd8ea;font-size:11px;padding:4px 9px;border-radius:14px;cursor:pointer;transition:.15s}
-#ljw .chip:hover{background:rgba(35,217,176,.18);border-color:#23d9b0;color:#fff}
+#ljw .chips{display:flex;flex-wrap:wrap;gap:5px;padding:9px 12px;border-bottom:1px solid rgba(205,182,140,.1);background:rgba(11,10,8,.65)}
+#ljw .chip{background:rgba(255,255,255,.05);border:1px solid rgba(205,182,140,.16);color:#dcd5c7;font-size:11px;padding:4px 9px;border-radius:14px;cursor:pointer;transition:.15s}
+#ljw .chip:hover{background:rgba(205,182,140,.2);border-color:#cdb68c;color:#fff}
 #ljw .log{flex:1;overflow-y:auto;padding:12px 14px;font-size:12.5px;min-height:170px;max-height:250px}
 #ljw .msg{margin-bottom:9px;line-height:1.45;padding:7px 10px;border-radius:10px}
-#ljw .msg.user{background:rgba(35,217,176,.14);color:#23d9b0;margin-left:28px;text-align:right}
-#ljw .msg.lj{background:rgba(255,255,255,.05);color:#e8edf7;margin-right:18px;border-left:2px solid #23d9b0}
-#ljw .input{display:flex;border-top:1px solid rgba(255,255,255,.08);background:#080d18}
-#ljw .input input{flex:1;background:none;border:0;color:#e8edf7;padding:12px 14px;font-size:12.5px;outline:none}
-#ljw .input button{background:none;border:0;color:#23d9b0;font-size:17px;cursor:pointer;padding:0 12px;font-weight:700}`;
+#ljw .msg.user{background:rgba(205,182,140,.16);color:#dccaa6;margin-left:28px;text-align:right}
+#ljw .msg.lj{background:rgba(255,255,255,.05);color:#f5f2eb;margin-right:18px;border-left:2px solid #cdb68c}
+#ljw .input{display:flex;border-top:1px solid rgba(205,182,140,.14);background:#0b0a08}
+#ljw .input input{flex:1;background:none;border:0;color:#f5f2eb;padding:12px 14px;font-size:12.5px;outline:none}
+#ljw .input button{background:none;border:0;color:#cdb68c;font-size:17px;cursor:pointer;padding:0 12px;font-weight:700}`;
 
     const style = document.createElement("style");
     style.textContent = css;
@@ -410,7 +450,7 @@
         <div class="head">
           <div>
             <div class="head-title" id="ljw-title"></div>
-            <div class="head-sub"><span style="width:6px;height:6px;border-radius:50%;background:#23d9b0;display:inline-block"></span><span id="ljw-sub"></span></div>
+            <div class="head-sub"><span style="width:6px;height:6px;border-radius:50%;background:#cdb68c;display:inline-block"></span><span id="ljw-sub"></span></div>
           </div>
           <div class="wave" title="Grok 3.0 Audio Engine"><span></span><span></span><span></span><span></span><span></span></div>
         </div>
@@ -433,6 +473,9 @@
       $("#ljw-title").textContent = T.title;
       $("#ljw-sub").textContent = T.sub;
       input.placeholder = T.placeholder;
+      $("#ljw-send").textContent = T.sendBtn;
+      $("#ljw-mic").textContent = state.listening ? T.stopBtn : T.micBtn;
+      fab.textContent = T.fabBtn;
       chips.innerHTML = T.chips.map(([label, cmd]) =>
         `<button class="chip" data-cmd="${cmd}">${label}</button>`
       ).join("");
@@ -453,7 +496,7 @@
       panel.classList.toggle("open", state.open);
       if (state.open && !state._greeted) {
         state._greeted = true;
-        speak(getT().open);
+        speak(getT().open, true, getLang());
       }
       if (state.open) input.focus();
     };
@@ -474,23 +517,24 @@
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     let rec = null;
     function startMic() {
+      const curLang = getLang();
       const T = getT();
       if (!SR) { execute("help"); return; }
       if (state.listening && rec) { rec.stop(); return; }
       rec = new SR();
-      rec.lang = CFG.lang === "es" ? "es-CO" : "en-US";
+      rec.lang = curLang === "en" ? "en-US" : "es-CO";
       rec.interimResults = false;
       rec.onstart = () => {
         state.listening = true;
         fab.classList.add("on");
-        $("#ljw-mic").textContent = "PARAR";
+        $("#ljw-mic").textContent = T.stopBtn;
         input.placeholder = T.listening;
       };
       rec.onend = () => {
         state.listening = false;
         fab.classList.remove("on");
-        $("#ljw-mic").textContent = "VOZ";
-        input.placeholder = T.placeholder;
+        $("#ljw-mic").textContent = getT().micBtn;
+        input.placeholder = getT().placeholder;
       };
       rec.onerror = () => { state.listening = false; };
       rec.onresult = (e) => {

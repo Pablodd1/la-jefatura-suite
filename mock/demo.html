@@ -1064,7 +1064,9 @@ let DRAFTS_QUEUE = [
     company: "cedexx",
     age: "2h",
     incoming: "RE: Propuesta CEDEXX ($12,400) — Hola Jasmel, revisé con el CFO la propuesta. ¿Podemos incluir el módulo de denegaciones automáticas sin subir el fee mensual para firmar hoy?",
+    incoming_en: "RE: CEDEXX Proposal ($12,400) — Hi Jasmel, I reviewed the proposal with our CFO. Can we include the automated denials module without increasing the monthly fee so we can sign today?",
     body: "Estimado Dr. Molina,\n\nGracias por tu mensaje. Confirmamos la inclusión del módulo de denegaciones automáticas dentro del fee mensual de US$12,400 si cerramos firma hoy mismo. Te envío el anexo actualizado.\n\nCordialmente,\nJasmel Acosta",
+    body_en: "Dear Dr. Molina,\n\nThank you for your message. We confirm the inclusion of the automated denials module within the $12,400 monthly fee if we sign today. I am sending the updated addendum now.\n\nSincerely,\nJasmel Acosta",
     version: 1,
     status: "PENDING_REVIEW"
   },
@@ -1076,7 +1078,9 @@ let DRAFTS_QUEUE = [
     company: "saleinn",
     age: "5h",
     incoming: "Orden de compra #PO-2214 ($9,800) — Adjunto la orden de compra aprobada para las 3 sedes en Cartagena. ¿Nos confirmas fecha de inicio?",
+    incoming_en: "Purchase Order #PO-2214 ($9,800) — Attached is the approved purchase order for all 3 Cartagena locations. Can you confirm the kickoff date?",
     body: "Estimada Luisa,\n\nOrden de compra #PO-2214 recibida. Nuestro equipo inicia el onboarding técnico de las 3 sedes este lunes a las 10:00 AM.\n\nCordialmente,\nJasmel Acosta",
+    body_en: "Dear Luisa,\n\nPurchase Order #PO-2214 received. Our team will begin technical onboarding for all 3 locations this Monday at 10:00 AM.\n\nSincerely,\nJasmel Acosta",
     version: 1,
     status: "PENDING_REVIEW"
   },
@@ -1088,7 +1092,9 @@ let DRAFTS_QUEUE = [
     company: "mbmb",
     age: "3h",
     incoming: "Jasmel, el Dr. Omar Khalil de Sunshine Dental Tampa ($6,700) pide confirmar si hacemos el assessment de billing este jueves a las 11am. ¿Lo apruebo?",
+    incoming_en: "Jasmel, Dr. Omar Khalil from Sunshine Dental Tampa ($6,700) is asking to confirm the billing assessment for this Thursday at 11:00 AM. Shall I approve?",
     body: "Estimado Juan,\n\nAprobado. Confirma al Dr. Khalil para el jueves a las 11:00 AM y prepara la comparativa de recuperación de denegaciones.\n\nCordialmente,\nJasmel Acosta",
+    body_en: "Dear Juan,\n\nApproved. Confirm Dr. Khalil for Thursday at 11:00 AM and prepare the denials recovery comparison.\n\nSincerely,\nJasmel Acosta",
     version: 1,
     status: "PENDING_REVIEW"
   },
@@ -1100,7 +1106,9 @@ let DRAFTS_QUEUE = [
     company: "saleinn",
     age: "6h",
     incoming: "Buen día Jasmel, soy Jorge Ramírez. Ya resolvimos el corte de red. ¿Podemos reagendar la demo del portal bilingüe para mañana a las 4 PM?",
+    incoming_en: "Good morning Jasmel, this is Jorge Ramirez. We resolved the network outage. Can we reschedule the bilingual portal demo for tomorrow at 4:00 PM?",
     body: "Estimado Jorge,\n\nCon gusto. Queda agendada la demostración del portal bilingüe para mañana a las 16:00 hrs. Ya envié la invitación de calendario.\n\nCordialmente,\nJasmel Acosta",
+    body_en: "Dear Jorge,\n\nGladly. The bilingual portal demo is scheduled for tomorrow at 4:00 PM. I have sent the calendar invitation.\n\nSincerely,\nJasmel Acosta",
     version: 1,
     status: "PENDING_REVIEW"
   }
@@ -1659,8 +1667,12 @@ function completeTaskById(tid) {
 
 /* ── TAB 2: COMMS & 1-CLICK APPROVAL LOGIC ── */
 function renderCommsTab() {
+  const isEn = (typeof lang !== 'undefined' && lang === 'en');
   $('#pendingDraftsBadge').textContent = DRAFTS_QUEUE.filter(d => d.status !== 'SENT').length;
-  $('#commsDraftList').innerHTML = DRAFTS_QUEUE.map(d => `
+  $('#commsDraftList').innerHTML = DRAFTS_QUEUE.map(d => {
+    const incTxt = isEn ? (d.incoming_en || d.incoming) : d.incoming;
+    const bodyTxt = isEn ? (d.body_en || d.body) : d.body;
+    return `
     <div class="draft-card ${d.status === 'SENT' ? 'sent' : ''}" id="draft-card-${d.draft_id}">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
         <div>
@@ -1669,27 +1681,35 @@ function renderCommsTab() {
           <span class="muted" style="margin-left:8px">${d.age}</span>
         </div>
         <div style="display:flex;gap:6px;align-items:center">
-          <span class="tag low">Versión v${d.version}</span>
-          <span class="tag ${d.status === 'SENT' ? 'ok' : 'high'}">${d.status === 'SENT' ? (lang==='es'?'APROBADO Y ENVIADO':'APPROVED & SENT') : d.status}</span>
+          <span class="tag low">${isEn ? 'Version' : 'Versión'} v${d.version}</span>
+          <span class="tag ${d.status === 'SENT' ? 'ok' : 'high'}">${d.status === 'SENT' ? (isEn?'APPROVED & SENT':'APROBADO Y ENVIADO') : d.status}</span>
         </div>
       </div>
-      <div class="draft-in"><b>Mensaje recibido:</b> ${d.incoming}</div>
-      <label class="muted" style="font-size:11px">Borrador preparado en tu voz (editable — cada cambio entrena tu perfil):</label>
-      <textarea class="draft-area" id="draft-txt-${d.draft_id}" ${d.status === 'SENT' ? 'readonly' : ''}>${d.body}</textarea>
+      <div class="draft-in"><b>${isEn ? 'Incoming message:' : 'Mensaje recibido:'}</b> ${incTxt}</div>
+      <label class="muted" style="font-size:11px">${isEn ? 'Draft prepared in your voice (editable — every change trains your profile):' : 'Borrador preparado en tu voz (editable — cada cambio entrena tu perfil):'}</label>
+      <textarea class="draft-area" id="draft-txt-${d.draft_id}" ${d.status === 'SENT' ? 'readonly' : ''}>${bodyTxt}</textarea>
       <div class="draft-actions">
-        <span class="muted" style="font-size:11px">Huella aplicada: Saludo formal + «Cordialmente, Jasmel Acosta»</span>
+        <span class="muted" style="font-size:11px">${isEn ? 'Signature applied: Formal greeting + "Sincerely, Jasmel Acosta"' : 'Huella aplicada: Saludo formal + «Cordialmente, Jasmel Acosta»'}</span>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button class="btn ghost sm" type="button" onclick="readDraftAloud(${d.draft_id})">🔊 Leer Mensaje y Borrador</button>
+          <button class="btn ghost sm" type="button" onclick="readDraftAloud(${d.draft_id})">${isEn ? '🔊 Read Message & Draft' : '🔊 Leer Mensaje y Borrador'}</button>
           ${d.status !== 'SENT' ? `
-            <button class="btn ghost sm" onclick="saveDraftEdit(${d.draft_id})">Guardar Edición (Entrenar Voz)</button>
-            <button class="btn sm" id="approve-btn-${d.draft_id}" onclick="approveAndSendDraft(${d.draft_id})">Aprobar y Enviar Directo</button>
-          ` : `<span class="tag ok">Despachado con autorización del CEO</span>`}
+            <button class="btn ghost sm" onclick="saveDraftEdit(${d.draft_id})">${isEn ? 'Save Edit (Train Voice)' : 'Guardar Edición (Entrenar Voz)'}</button>
+            <button class="btn sm" id="approve-btn-${d.draft_id}" onclick="approveAndSendDraft(${d.draft_id})">${isEn ? 'Approve & Send Directly' : 'Aprobar y Enviar Directo'}</button>
+          ` : `<span class="tag ok">${isEn ? 'Dispatched with CEO authorization' : 'Despachado con autorización del CEO'}</span>`}
         </div>
       </div>
     </div>
-  `).join('');
+  `}).join('');
 
-  $('#voiceProfileBox').innerHTML = `
+  $('#voiceProfileBox').innerHTML = isEn ? `
+    <div class="row"><span>Profile Owner</span><b>Jasmel Acosta (CEO)</b></div>
+    <div class="row"><span>Learned Greeting</span><b>"Dear …,"</b></div>
+    <div class="row"><span>Sign-off / Signature</span><b>"Sincerely, Jasmel Acosta"</b></div>
+    <div class="row"><span>Formality Index</span><b style="color:var(--acc)">100% (Concise Executive)</b></div>
+    <div class="row"><span>Preferred Length</span><b>34 – 42 words</b></div>
+    <div class="row"><span>Active Voice Engine</span><b>English Neural (en-US-AriaNeural)</b></div>
+    <div class="row"><span>Safety Rule (§7)</span><b style="color:var(--ok)">0 Auto-Sends without Approval</b></div>
+  ` : `
     <div class="row"><span>Propietario del Perfil</span><b>Jasmel Acosta (CEO)</b></div>
     <div class="row"><span>Saludo Aprendido</span><b>«Estimado/a …,»</b></div>
     <div class="row"><span>Despedida / Firma</span><b>«Cordialmente, Jasmel Acosta»</b></div>
@@ -1800,12 +1820,17 @@ function dispatchTwiceDailyBriefNow() {
 let _commsTtsAudio = null;
 function playColombianTtsText(text) {
   if (!text) return;
+  const curLang = (typeof lang !== 'undefined' && lang === 'en') ? 'en' : 'es';
   if (_commsTtsAudio) {
-    try { _commsTtsAudio.pause(); } catch (e) {}
+    try { _commsTtsAudio.pause(); _commsTtsAudio = null; } catch (e) {}
+  }
+  if (window.LJ && typeof window.LJ.speak === 'function') {
+    window.LJ.speak(text, false, curLang);
+    return;
   }
   fetch('/api/tts', {
     method: 'POST', headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({text, lang: lang || 'es', rate: '+18%'})
+    body: JSON.stringify({text, lang: curLang, rate: '+18%'})
   }).then(r => r.blob()).then(blob => {
     const url = URL.createObjectURL(blob);
     _commsTtsAudio = new Audio(url);
@@ -1816,22 +1841,30 @@ function playColombianTtsText(text) {
 function readDraftAloud(draftId) {
   const d = DRAFTS_QUEUE.find(x => x.draft_id === draftId);
   if (!d) return;
+  const isEn = (typeof lang !== 'undefined' && lang === 'en');
   const el = document.getElementById('draft-txt-' + draftId);
-  const currentBody = el ? el.value : d.body;
-  const speech = `Mensaje en ${d.channel} de ${d.contact}. Dice: ${d.incoming}. Borrador preparado para tu aprobación: ${currentBody}`;
-  showToast(`🔊 Leyendo mensaje y borrador #${draftId} (${d.contact})…`);
+  const currentBody = el ? el.value : (isEn ? (d.body_en || d.body) : d.body);
+  const inc = isEn ? (d.incoming_en || d.incoming) : d.incoming;
+  const speech = isEn
+    ? `Message on ${d.channel} from ${d.contact}. It says: ${inc}. Draft prepared for your approval: ${currentBody}`
+    : `Mensaje en ${d.channel} de ${d.contact}. Dice: ${inc}. Borrador preparado para tu aprobación: ${currentBody}`;
+  showToast(isEn ? `🔊 Reading message & draft #${draftId} (${d.contact})…` : `🔊 Leyendo mensaje y borrador #${draftId} (${d.contact})…`);
   playColombianTtsText(speech);
 }
 
 function readAllPendingCommsAloud() {
+  const isEn = (typeof lang !== 'undefined' && lang === 'en');
   const pending = DRAFTS_QUEUE.filter(d => d.status !== 'SENT');
   if (!pending.length) {
-    showToast('No hay borradores pendientes por leer.');
+    showToast(isEn ? 'No pending drafts to read.' : 'No hay borradores pendientes por leer.');
     return;
   }
-  const summary = `Tienes ${pending.length} mensajes monitoreados con borrador listo. ` +
-    pending.slice(0, 4).map((d, i) => `Mensaje ${i + 1}, por ${d.channel}, de ${d.contact}: ${d.incoming}. Respuesta lista: ${d.body}`).join('. ');
-  showToast(`🔊 Leyendo ${pending.length} mensajes y borradores pendientes…`);
+  const summary = isEn
+    ? `You have ${pending.length} monitored messages with ready drafts. ` +
+      pending.slice(0, 4).map((d, i) => `Message ${i + 1}, on ${d.channel}, from ${d.contact}: ${d.incoming_en || d.incoming}. Draft ready: ${d.body_en || d.body}`).join('. ')
+    : `Tienes ${pending.length} mensajes monitoreados con borrador listo. ` +
+      pending.slice(0, 4).map((d, i) => `Mensaje ${i + 1}, por ${d.channel}, de ${d.contact}: ${d.incoming}. Respuesta lista: ${d.body}`).join('. ');
+  showToast(isEn ? `🔊 Reading ${pending.length} pending messages & drafts…` : `🔊 Leyendo ${pending.length} mensajes y borradores pendientes…`);
   playColombianTtsText(summary);
 }
 
@@ -2422,8 +2455,16 @@ $('#pdfBtn').onclick = () => {
 
 $('#langBtn').onclick = () => {
   lang = lang === 'es' ? 'en' : 'es';
+  document.documentElement.lang = lang;
   try { localStorage.setItem('lj_lang', lang); } catch(e) {}
+  if (_commsTtsAudio) { try { _commsTtsAudio.pause(); _commsTtsAudio = null; } catch(e) {} }
+  if (window.LJ && window.LJ.stopAudio) window.LJ.stopAudio();
+  try { if ('speechSynthesis' in window) speechSynthesis.cancel(); } catch(e) {}
+  if (typeof jfPendingSpeech !== 'undefined') jfPendingSpeech = null;
   if (window.LJ_WIDGET) window.LJ_WIDGET.lang = lang;
+  if (window.LJ && window.LJ.setLang) window.LJ.setLang(lang);
+  if (typeof savePrefs === 'function') savePrefs({lang});
+  if (typeof syncGreetPill === 'function') syncGreetPill();
   setRoutineSlot(activeSlot);
   renderAll();
   renderUnitecPanel();
@@ -2431,7 +2472,8 @@ $('#langBtn').onclick = () => {
   renderHikConnectCameras();
   renderCameraDailyReportBox();
   if (_currentDailyBrief) loadTwiceDailyPortalBrief(_currentDailyBrief.slot || 'morning', true);
-  if (typeof renderGreeting === 'function') renderGreeting(false);
+  if (typeof renderGreeting === 'function') renderGreeting(typeof PREFS !== 'undefined' ? !!PREFS.greeting_enabled : false);
+  if (window.LJSuper && typeof window.LJSuper.onLangChange === 'function') window.LJSuper.onLangChange(lang);
   if (activeTab === 'comms') renderCommsTab();
   if (activeTab === 'outcomes') renderOutcomesTab();
   if (activeTab === 'behavior') renderBehaviorTab();
@@ -2439,9 +2481,14 @@ $('#langBtn').onclick = () => {
   if (activeTab === 'blogs') renderBlogs();
 };
 (function initWebAppLang() {
+  const qEn = /[?&]lang=en\b/i.test(location.search);
+  const qEs = /[?&]lang=es\b/i.test(location.search);
   const saved = (function(){ try { return localStorage.getItem('lj_lang'); } catch(e) { return null; } })();
-  if (/[?&]lang=en\b/i.test(location.search) || saved === 'en') {
-    setTimeout(() => { if (lang !== 'en') $('#langBtn').click(); }, 100);
+  if (qEn || (!qEs && saved === 'en')) {
+    lang = 'en';
+    document.documentElement.lang = 'en';
+    if (window.LJ_WIDGET) window.LJ_WIDGET.lang = 'en';
+    if (window.LJ && window.LJ.setLang) window.LJ.setLang('en');
   }
 })();
 
@@ -3049,14 +3096,15 @@ function syncGreetPill() {
 function jfSpeak(text) {
   if (!text) return;
   jfPendingSpeech = text;
+  const curLang = (typeof lang !== 'undefined' && lang === 'en') ? 'en' : 'es';
   if (window.LJ && typeof window.LJ.speak === 'function') {
-    window.LJ.speak(text, false);
+    window.LJ.speak(text, false, curLang);
     return;
   }
   if ('speechSynthesis' in window) {
     try {
       const u = new SpeechSynthesisUtterance(text);
-      u.lang = lang === 'es' ? 'es-CO' : 'en-US'; u.rate = 1.24;
+      u.lang = curLang === 'en' ? 'en-US' : 'es-CO'; u.rate = 1.24;
       u.onstart = () => { jfPendingSpeech = null; };
       speechSynthesis.cancel(); speechSynthesis.speak(u);
     } catch (e) {}
@@ -3064,7 +3112,7 @@ function jfSpeak(text) {
 }
 /* Browsers may block speech before the first click: speak the pending greeting on the first gesture. */
 document.addEventListener('pointerdown', e => {
-  if (jfPendingSpeech && PREFS.greeting_enabled && !e.target.closest('#jfGreeting,#ljw,#jfGreetPill')) {
+  if (jfPendingSpeech && PREFS.greeting_enabled && !e.target.closest('#jfGreeting,#ljw,#jfGreetPill,#langBtn')) {
     const t = jfPendingSpeech; jfPendingSpeech = null; jfSpeak(t); jfPendingSpeech = null;
   }
 }, {capture: true, once: true});
@@ -3120,11 +3168,12 @@ function closeDay() {
     });
 }
 function jfReadBrief() {
-  fetch('/api/jefesito/brief?lang=' + lang).then(r => r.json()).then(b => {
+  const curLang = (typeof lang !== 'undefined' && lang === 'en') ? 'en' : 'es';
+  fetch('/api/jefesito/brief?lang=' + curLang).then(r => r.json()).then(b => {
     JF_BRIEF = b;
-    window.LJ.speak(b.spoken + (b.sources && b.sources.length ? (lang === 'es' ? ' Fuente: ' : ' Source: ') + b.sources.join('; ') : ''));
+    window.LJ.speak(b.spoken + (b.sources && b.sources.length ? (curLang === 'es' ? ' Fuente: ' : ' Source: ') + b.sources.join('; ') : ''), false, curLang);
     renderGreeting(false);
-  }).catch(() => window.LJ.speak(lang === 'es' ? 'No pude leer el resumen del servidor, no voy a inventarlo.' : "I couldn't read the summary from the server, so I won't make it up."));
+  }).catch(() => window.LJ.speak(curLang === 'es' ? 'No pude leer el resumen del servidor, no voy a inventarlo.' : "I couldn't read the summary from the server, so I won't make it up.", false, curLang));
 }
 /* UI directives returned by the server when the user asks (by text or voice) to change something. */
 window.LJ_applyUi = function (ui) {
@@ -3144,9 +3193,18 @@ window.LJ_applyUi = function (ui) {
   if (ui.open_tab) switchTab(ui.open_tab);
 };
 (async function initJefesito() {
+  const hasExplicitLang = /[?&]lang=(en|es)\b/i.test(location.search) || !!(function(){ try { return localStorage.getItem('lj_lang'); } catch(e) { return null; } })();
   try { Object.assign(PREFS, await (await fetch('/api/prefs')).json()); } catch (e) {}
   applyTheme(PREFS.theme);
-  if (PREFS.lang && PREFS.lang !== lang) document.getElementById('langBtn').click();
+  if (hasExplicitLang) {
+    PREFS.lang = lang;
+    savePrefs({lang});
+  } else if (PREFS.lang && PREFS.lang !== lang) {
+    lang = PREFS.lang;
+    document.documentElement.lang = lang;
+    if (window.LJ && window.LJ.setLang) window.LJ.setLang(lang);
+    renderAll();
+  }
   syncGreetPill();
   if (PREFS.greeting_enabled) renderGreeting(true);
 })();
@@ -3655,25 +3713,27 @@ window.LJ_applyUi = function (ui) {
       if (m.role === 'user') {
         return `<div class="sa-msg user"><div>${esc(m.text)}</div><div class="sa-msg-meta" style="color:rgba(255,255,255,.78);justify-content:flex-end"><span>CEO · ${esc(m.ts)}</span></div></div>`;
       }
+      const isEn = (typeof lang !== 'undefined' && lang === 'en');
       const badge = m.meta.devTicket
-        ? `<span class="sa-badge dev">ESCALADO AL DESARROLLADOR (JASMEL) · #${esc(m.meta.devTicket.id)}</span>`
-        : `<span class="sa-badge ok">${esc(m.meta.badge || 'EJECUTADO / GROUNDED SQL')}</span>`;
+        ? `<span class="sa-badge dev">${isEn ? 'ESCALATED TO DEVELOPER (JASMEL)' : 'ESCALADO AL DESARROLLADOR (JASMEL)'} · #${esc(m.meta.devTicket.id)}</span>`
+        : `<span class="sa-badge ok">${esc(m.meta.badge || (isEn ? 'EXECUTED / GROUNDED SQL' : 'EJECUTADO / GROUNDED SQL'))}</span>`;
       const src = m.meta.sources && m.meta.sources.length
-        ? `<span>Fuente: ${esc(m.meta.sources.join(' · '))}</span>`
+        ? `<span>${isEn ? 'Source' : 'Fuente'}: ${esc(m.meta.sources.join(' · '))}</span>`
         : '';
       return `<div class="sa-msg assistant">
         <div>${esc(m.text)}</div>
         <div class="sa-msg-meta">
           ${badge}
           ${src}
-          <button type="button" class="sa-speak-btn" data-sa-speak="${idx}">Escuchar Voz</button>
+          <button type="button" class="sa-speak-btn" data-sa-speak="${idx}">${isEn ? 'Listen Voice' : 'Escuchar Voz'}</button>
         </div>
       </div>`;
     }).join('');
     box.querySelectorAll('[data-sa-speak]').forEach(btn => {
       btn.onclick = () => {
         const m = messages[+btn.dataset.saSpeak];
-        if (m && window.LJ && window.LJ.speak) window.LJ.speak(m.text, false);
+        const curL = (typeof lang !== 'undefined' && lang === 'en') ? 'en' : 'es';
+        if (m && window.LJ && window.LJ.speak) window.LJ.speak(m.text, false, curL);
       };
     });
     box.scrollTop = box.scrollHeight;
@@ -3744,16 +3804,18 @@ window.LJ_applyUi = function (ui) {
       if (typeof window.loadKnowledgeVault === 'function') window.loadKnowledgeVault(false);
       await loadDevEscalations();
 
+      const isEn = (typeof lang !== 'undefined' && lang === 'en');
       addMsg('assistant', reply, {
-        badge: d.dev_ticket ? null : (d.action && d.action !== 'ask' ? 'ORDEN EJECUTADA · ' + d.action.toUpperCase() : 'DATOS REALES · MC.DB'),
+        badge: d.dev_ticket ? null : (d.action && d.action !== 'ask' ? (isEn ? 'COMMAND EXECUTED · ' : 'ORDEN EJECUTADA · ') + d.action.toUpperCase() : (isEn ? 'VERIFIED DATA · MC.DB' : 'DATOS REALES · MC.DB')),
         sources: d.sources || [],
         devTicket: d.dev_ticket || null
       });
       if (autoSpeak && window.LJ && typeof window.LJ.speak === 'function') {
-        window.LJ.speak(reply, false);
+        window.LJ.speak(reply, false, isEn ? 'en' : 'es');
       }
     } catch (e) {
-      addMsg('assistant', 'No pude conectar con el servidor; jamás invento una respuesta.', { badge: 'MODO SEGURO' });
+      const isEn = (typeof lang !== 'undefined' && lang === 'en');
+      addMsg('assistant', isEn ? 'Could not connect to server; I never guess an answer.' : 'No pude conectar con el servidor; jamás invento una respuesta.', { badge: isEn ? 'SAFE MODE' : 'MODO SEGURO' });
     }
   }
 
@@ -3808,7 +3870,7 @@ window.LJ_applyUi = function (ui) {
       listening = true;
       if (g('saOrb')) g('saOrb').classList.add('listening');
       if (g('saMicBtn')) g('saMicBtn').classList.add('active');
-      if (g('saMicLabel')) g('saMicLabel').textContent = 'ESCUCHANDO…';
+      if (g('saMicLabel')) g('saMicLabel').textContent = (typeof lang !== 'undefined' && lang === 'en') ? 'LISTENING…' : 'ESCUCHANDO…';
     };
     recog.onresult = (ev) => {
       const transcript = ev.results[0][0].transcript;
@@ -3818,22 +3880,58 @@ window.LJ_applyUi = function (ui) {
       listening = false;
       if (g('saOrb')) g('saOrb').classList.remove('listening');
       if (g('saMicBtn')) g('saMicBtn').classList.remove('active');
-      if (g('saMicLabel')) g('saMicLabel').textContent = 'VOZ';
+      if (g('saMicLabel')) g('saMicLabel').textContent = (typeof lang !== 'undefined' && lang === 'en') ? 'VOICE' : 'VOZ';
     };
     recog.start();
   }
 
+  function getWelcomeMsg(l) {
+    const isEn = (l === 'en');
+    return {
+      text: isEn
+        ? 'Hello Jasmel. You are in the Minimalist Super Assistant (Voice & Text Only). I am connected to your 5 companies ($48,200/mo projected · $214,500 pipeline), your 11 calendar appointments, your AI Inbox drafts, and live metrics from BuildingApp and UNITEC. Tell me what result to read or what command to execute; if something does not exist yet, I never guess and automatically send a ticket to the developer.'
+        : 'Hola Jasmel. Estás en el Super Asistente Minimalista (Solo Voz y Texto). Estoy conectado a tus 5 empresas ($48,200/mes proyectados · $214,500 en pipeline), tus 11 citas de calendario, tus borradores de Bandeja IA y las métricas en vivo de BuildingApp y UNITEC. Dime qué resultado quieres leer o qué orden ejecuto; si algo no existe todavía, jamás adivino y le envío un ticket automático al desarrollador.',
+      meta: {
+        badge: isEn ? 'ACTIVE MEMORY · 9/9 INTEGRATIONS' : 'MEMORIA ACTIVA · 9/9 INTEGRACIONES',
+        sources: isEn ? ['mc.db', 'Calendar', 'AI Inbox', 'Escalation #DEV'] : ['mc.db', 'Calendario', 'Bandeja IA', 'Escalación #DEV'],
+        isWelcome: true
+      }
+    };
+  }
+
+  function onLangChange(newLang) {
+    const isEn = (newLang === 'en');
+    if (g('saVoiceToggleBtn')) {
+      g('saVoiceToggleBtn').textContent = (isEn ? 'Voice Reply: ' : 'Voz Respuesta: ') + (autoSpeak ? 'ON' : 'OFF');
+    }
+    if (g('saMicLabel') && !listening) {
+      g('saMicLabel').textContent = isEn ? 'VOICE' : 'VOZ';
+    }
+    if (g('saSendBtn')) {
+      g('saSendBtn').textContent = isEn ? 'EXECUTE' : 'EJECUTAR';
+    }
+    if (g('saInput')) {
+      g('saInput').placeholder = isEn
+        ? 'Speak or type a command (e.g. Read today\'s summary, Schedule appointment tomorrow at 10am, Approve draft)…'
+        : 'Habla o escribe una orden (ej. Léeme los resultados de hoy, Agendar cita mañana 10am, Aprobar borrador)…';
+    }
+    if (messages.length && messages[0].meta && messages[0].meta.isWelcome) {
+      const w = getWelcomeMsg(newLang);
+      messages[0].text = w.text;
+      messages[0].meta = w.meta;
+    }
+    renderMessages();
+  }
+
   function onOpen() {
     loadDevEscalations();
+    const curL = (typeof lang !== 'undefined' && lang === 'en') ? 'en' : 'es';
     if (!booted) {
       booted = true;
-      addMsg('assistant',
-        'Hola Jasmel. Estás en el Super Asistente Minimalista (Solo Voz y Texto). ' +
-        'Estoy conectado a tus 5 empresas ($48,200/mes proyectados · $214,500 en pipeline), tus 11 citas de calendario, ' +
-        'tus borradores de Bandeja IA y las métricas en vivo de BuildingApp y UNITEC. ' +
-        'Dime qué resultado quieres leer o qué orden ejecuto; si algo no existe todavía, jamás adivino y le envío un ticket automático al desarrollador.',
-        { badge: 'MEMORIA ACTIVA · 9/9 INTEGRACIONES', sources: ['mc.db', 'Calendario', 'Bandeja IA', 'Escalación #DEV'] }
-      );
+      const w = getWelcomeMsg(curL);
+      addMsg('assistant', w.text, w.meta);
+    } else {
+      onLangChange(curL);
     }
   }
 
@@ -3845,7 +3943,8 @@ window.LJ_applyUi = function (ui) {
     promptManualEscalation,
     toggleMic,
     loadDevEscalations,
-    onOpen
+    onOpen,
+    onLangChange
   };
 
   // Auto-open Minimalist Super Assistant if URL is /assistant or ?view=assistant

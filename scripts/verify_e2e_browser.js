@@ -196,11 +196,24 @@ const URL = 'http://localhost:8931/';
   await page.screenshot({ path: path.join(ASSETS_DIR, 'demo-console-voice.png'), fullPage: false });
   await page.screenshot({ path: path.join(ASSETS_DIR, 'verified-7-grok3-voice-brain.png'), fullPage: false });
 
-  // 8. Verify Bilingual Switcher (ES -> EN)
+  // 8. Verify Bilingual Switcher (ES -> EN) & English Voice Switching
   await page.locator('#langBtn').click();
+  await page.waitForTimeout(350);
   const navTextEn = await page.locator('#mainNav').innerText();
-  check('15. Bilingual Switcher (ES <-> EN)', navTextEn.includes('Command Center') && navTextEn.includes('Function Blogs'), 'Translated to English');
+  const enVoiceState = await page.evaluate(async () => {
+    const htmlLang = document.documentElement.lang;
+    const widgetLang = window.LJ_WIDGET ? window.LJ_WIDGET.lang : '';
+    const greetTxt = document.getElementById('jfGreeting') ? document.getElementById('jfGreeting').innerText : '';
+    const b = await (await fetch('/api/jefesito/brief?lang=en')).json();
+    return { htmlLang, widgetLang, greetTxt, briefSpoken: b.spoken || '' };
+  });
+  check('15. Bilingual Switcher (ES <-> EN) & English Voice Sync',
+    navTextEn.includes('Command Center') && navTextEn.includes('Function Blogs') &&
+    enVoiceState.htmlLang === 'en' && enVoiceState.widgetLang === 'en' &&
+    /Good (morning|afternoon|evening), Jasmel/i.test(enVoiceState.briefSpoken),
+    `htmlLang=${enVoiceState.htmlLang}, widgetLang=${enVoiceState.widgetLang}, brief="${enVoiceState.briefSpoken.slice(0, 60)}..."`);
   await page.locator('#langBtn').click(); // back to ES
+  await page.waitForTimeout(250);
 
   // 8b. El Jefesito: day greeting on open, locked ARENA (sand) global palette, zero theme pickers, daily PDF
   await page.reload({ waitUntil: 'networkidle' });
@@ -241,6 +254,15 @@ const URL = 'http://localhost:8931/';
   check('20b. Fast Colombian Neural Voice TTS (/api/tts · es-CO-SalomeNeural @ +22%)',
     ttsRes.status === 200 && ttsRes.ctype === 'audio/mpeg' && ttsRes.size > 2000,
     JSON.stringify(ttsRes));
+
+  const ttsEnRes = await page.evaluate(async () => {
+    const r = await fetch('/api/tts?lang=en&text=Good%20morning%20Jasmel.%20Here%20is%20your%20executive%20summary.');
+    const b = new Uint8Array(await r.arrayBuffer());
+    return { status: r.status, ctype: r.headers.get('content-type'), size: b.length };
+  });
+  check('20c. Native US English Neural Voice TTS (/api/tts?lang=en · en-US-AriaNeural @ +15%)',
+    ttsEnRes.status === 200 && ttsEnRes.ctype === 'audio/mpeg' && ttsEnRes.size > 2000,
+    JSON.stringify(ttsEnRes));
 
   const learned = await page.evaluate(async () => (await (await fetch('/api/jefesito/profile')).json()).interactions);
   check('21. Every interaction is being recorded for self-learning', learned >= 4, `${learned} interactions`);
@@ -296,15 +318,20 @@ const URL = 'http://localhost:8931/';
 
   // Test Website Bilingual Toggle (ES -> EN -> ES) via #siteLangBtn
   await page.locator('#siteLangBtn').click();
-  await page.waitForTimeout(300);
+  await page.waitForTimeout(350);
   const siteEnCheck = await page.evaluate(() => ({
     lang: document.documentElement.lang,
+    widgetLang: window.LJ_WIDGET ? window.LJ_WIDGET.lang : '',
     btnText: document.getElementById('siteLangBtn').innerText,
+    iosBrief: document.getElementById('iosBriefText') ? document.getElementById('iosBriefText').innerText : '',
     bodyText: document.body.innerText
   }));
-  check('22a3. Website Bilingual Switcher (#siteLangBtn: ES <-> EN)',
-    siteEnCheck.lang === 'en' && siteEnCheck.bodyText.includes('01 · 3D Brain') && siteEnCheck.bodyText.includes('5 companies audited today with zero guessing'),
-    `lang=${siteEnCheck.lang}, btn=${siteEnCheck.btnText}`);
+  check('22a3. Website Bilingual + English Voice Switcher (#siteLangBtn: ES <-> EN)',
+    siteEnCheck.lang === 'en' && siteEnCheck.widgetLang === 'en' &&
+    siteEnCheck.bodyText.includes('01 · 3D Brain') &&
+    siteEnCheck.bodyText.includes('5 companies audited today with zero guessing') &&
+    /Good (morning|afternoon|evening), Jasmel/i.test(siteEnCheck.iosBrief),
+    `lang=${siteEnCheck.lang}, widgetLang=${siteEnCheck.widgetLang}, btn=${siteEnCheck.btnText}`);
   await page.locator('#siteLangBtn').click(); // back to ES for remaining ES assertions
   await page.waitForTimeout(250);
 
