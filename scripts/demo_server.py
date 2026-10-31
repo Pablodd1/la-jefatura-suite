@@ -241,6 +241,7 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
                     ".jpg": "image/jpeg",
                     ".jpeg": "image/jpeg",
                     ".svg": "image/svg+xml",
+                    ".pdf": "application/pdf",
                 }.get(ext, "application/octet-stream")
                 self._send(200, open(fpath, "rb").read(), mime)
             else:
