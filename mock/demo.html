@@ -935,11 +935,26 @@
       </div>
       <div class="sa-actions">
         <button type="button" class="btn ghost sm" id="saVoiceToggleBtn" onclick="window.LJSuper && window.LJSuper.toggleAutoSpeak()">Voz Respuesta: ON</button>
+        <button type="button" class="btn ghost sm" id="saWatchdogBtn" onclick="window.LJSuper && window.LJSuper.toggleWatchdogDrawer()">
+          🛡️ Radar &amp; Alarmas <span class="cnt" id="saWatchdogBadge" style="margin-left:5px;background:rgba(16,185,129,.22);color:#34D399">5</span>
+        </button>
         <button type="button" class="btn ghost sm" id="saDevBtn" onclick="window.LJSuper && window.LJSuper.toggleDevDrawer()">
           Escalaciones al Desarrollador <span class="cnt" id="saDevBadge" style="margin-left:5px;background:rgba(255,107,43,.22);color:#FF783C">0</span>
         </button>
         <button type="button" class="btn sm" onclick="switchTab('overview')">Volver al Panel Completo</button>
       </div>
+    </div>
+
+    <!-- Collapsible Proactive CEO Watchdog & Active Alarms Drawer -->
+    <div class="sa-dev-drawer" id="saWatchdogDrawer" style="display:none;border-color:rgba(16,185,129,.4);background:rgba(16,185,129,.07)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:8px;flex-wrap:wrap">
+        <div>
+          <strong style="font-size:12.5px;color:#34D399">🛡️ Watchdog Ejecutivo Autónomo &amp; Alarmas Activas (UNITEC · BuildingApp · MBMB · CEDEXX · 305BIZ)</strong>
+          <div class="muted" style="font-size:11px">Monitoreo proactivo de tráfico GA4, reclamos vencidos, leads de alto valor y alarmas activas en <code>mc.db</code> con ejecución en 1 clic.</div>
+        </div>
+        <button type="button" class="btn ghost sm" onclick="window.LJSuper && window.LJSuper.loadWatchdogs()">↻ Actualizar Radar</button>
+      </div>
+      <div id="saWatchdogList" style="display:flex;flex-direction:column;gap:6px;max-height:190px;overflow-y:auto"></div>
     </div>
 
     <!-- Collapsible Developer Escalation Queue (Shows requests auto-forwarded to Jasmel) -->
@@ -959,6 +974,7 @@
 
     <!-- Minimalist 1-Click Command & Question Starters -->
     <div class="sa-chips" id="saQuickChips">
+      <button type="button" class="sa-chip warn" onclick="window.LJSuper.send('Schedule a call with Dr. Molina tomorrow at 3pm, draft him a confirmation WhatsApp, and remind me at 2pm to check his Medicaid report')">⚡ Orden Compuesta 3-en-1 (Dr. Molina)</button>
       <button type="button" class="sa-chip" onclick="window.LJSuper.send('leer resumen del día')">Resumen Ejecutivo Hoy</button>
       <button type="button" class="sa-chip" onclick="window.LJSuper.send('qué citas tengo hoy')">Citas y Agenda Hoy</button>
       <button type="button" class="sa-chip" onclick="window.LJSuper.send('cuál es el ingreso proyectado y pipeline de todas las empresas')">Ingresos y Pipeline (5 Empresas)</button>
@@ -3687,6 +3703,47 @@ window.LJ_applyUi = function (ui) {
     color: #0b0a08; font-weight: 800; font-size: 12px; letter-spacing: 0.06em; cursor: pointer;
     box-shadow: 0 6px 18px rgba(205, 182, 140, 0.3);
   }
+  .sa-inline-cards {
+    display: flex; flex-direction: column; gap: 10px; margin-top: 12px;
+  }
+  .sa-icard {
+    padding: 12px 14px; border-radius: 12px;
+    background: rgba(11, 10, 8, 0.05);
+    border: 1px solid rgba(180, 148, 92, 0.35);
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .sa-icard-head {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  }
+  .sa-icard-title {
+    font-weight: 800; font-size: 12.5px; color: var(--fg);
+  }
+  .sa-icard-sub {
+    font-size: 11px; color: var(--muted); font-family: var(--mono);
+  }
+  .sa-icard-body {
+    font-size: 12px; padding: 8px 10px; border-radius: 8px;
+    background: rgba(255, 255, 255, 0.55); color: #1c1915;
+    border-left: 3px solid #cdb68c; white-space: pre-wrap;
+  }
+  .sa-icard-actions {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 4px;
+  }
+  .sa-icard-btn {
+    border: 1px solid rgba(180, 148, 92, 0.45);
+    background: rgba(205, 182, 140, 0.22);
+    color: var(--fg); border-radius: 999px;
+    padding: 5px 12px; font-size: 11px; font-weight: 800;
+    cursor: pointer; transition: all 0.16s ease;
+  }
+  .sa-icard-btn.primary {
+    background: linear-gradient(135deg, #27AE60, #1e874b);
+    color: #fff; border-color: transparent;
+  }
+  .sa-icard-btn:hover { transform: translateY(-1px); }
+  .sa-icard-status {
+    font-size: 11px; font-weight: 800; color: #27AE60; letter-spacing: 0.04em;
+  }
 </style>
 <script>
 (function(){
@@ -3703,6 +3760,52 @@ window.LJ_applyUi = function (ui) {
     renderMessages();
   }
 
+  function buildInlineCardsHTML(cards, msgIdx) {
+    if (!cards || !cards.length) return '';
+    return `<div class="sa-inline-cards">` + cards.map((c, cIdx) => {
+      const done = c._resolvedStatus ? `<span class="sa-icard-status">✓ ${esc(c._resolvedStatus)}</span>` : (
+        (c.buttons || []).map(b => {
+          const isPrimary = b.action === 'approve_send' || b.action === 'complete_task';
+          return `<button type="button" class="sa-icard-btn ${isPrimary ? 'primary' : ''}" data-icard-msg="${msgIdx}" data-icard-idx="${cIdx}" data-icard-act="${esc(b.action)}" data-icard-target="${esc(c.target_id || '')}">${esc(b.label)}</button>`;
+        }).join('')
+      );
+      return `<div class="sa-icard">
+        <div class="sa-icard-head">
+          <span class="sa-icard-title">${esc(c.title || 'Action')}</span>
+          <span class="sa-badge ok">${esc(c.badge || c.card_type || 'ACTION')}</span>
+        </div>
+        ${c.subtitle ? `<div class="sa-icard-sub">${esc(c.subtitle)}</div>` : ''}
+        ${c.body ? `<div class="sa-icard-body">${esc(c.body)}</div>` : ''}
+        <div class="sa-icard-actions">${done}</div>
+      </div>`;
+    }).join('') + `</div>`;
+  }
+
+  async function handleInlineCardAction(msgIdx, cardIdx, action, targetId) {
+    const m = messages[msgIdx];
+    if (!m || !m.meta || !m.meta.inlineCards || !m.meta.inlineCards[cardIdx]) return;
+    const card = m.meta.inlineCards[cardIdx];
+    try {
+      const r = await fetch('/api/ceo/approve_inline', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ card_action: action, target_id: targetId, card_type: card.card_type })
+      });
+      const d = await r.json();
+      if (d.ok) {
+        card._resolvedStatus = d.message || 'EJECUTADO (MODO C)';
+        renderMessages();
+        loadWatchdogs();
+        if (window.LJCal) window.LJCal.load();
+        if (typeof showToast === 'function') showToast(d.message || 'Acción ejecutada');
+      } else {
+        if (typeof showToast === 'function') showToast(d.error || 'No se pudo procesar la acción');
+      }
+    } catch (e) {
+      if (typeof showToast === 'function') showToast('Error de conexión con servidor local');
+    }
+  }
+
   function renderMessages() {
     const box = g('saChatLog');
     if (!box) return;
@@ -3717,8 +3820,10 @@ window.LJ_applyUi = function (ui) {
       const src = m.meta.sources && m.meta.sources.length
         ? `<span>${isEn ? 'Source' : 'Fuente'}: ${esc(m.meta.sources.join(' · '))}</span>`
         : '';
+      const cardsHtml = buildInlineCardsHTML(m.meta.inlineCards || [], idx);
       return `<div class="sa-msg assistant">
-        <div>${esc(m.text)}</div>
+        <div style="white-space:pre-wrap">${esc(m.text)}</div>
+        ${cardsHtml}
         <div class="sa-msg-meta">
           ${badge}
           ${src}
@@ -3733,7 +3838,62 @@ window.LJ_applyUi = function (ui) {
         if (m && window.LJ && window.LJ.speak) window.LJ.speak(m.text, false, curL);
       };
     });
+    box.querySelectorAll('[data-icard-act]').forEach(btn => {
+      btn.onclick = () => {
+        handleInlineCardAction(
+          +btn.dataset.icardMsg,
+          +btn.dataset.icardIdx,
+          btn.dataset.icardAct,
+          btn.dataset.icardTarget
+        );
+      };
+    });
     box.scrollTop = box.scrollHeight;
+  }
+
+  async function loadWatchdogs() {
+    try {
+      const d = await (await fetch('/api/ceo/watchdog')).json();
+      const list = d.watchdogs || d.alerts || [];
+      const isEn = (typeof lang !== 'undefined' && lang === 'en');
+      if (g('saWatchdogBadge')) g('saWatchdogBadge').textContent = String(d.total || list.length || 0);
+      const box = g('saWatchdogList');
+      if (!box) return;
+      if (!list.length) {
+        box.innerHTML = '<div class="muted" style="font-size:11.5px">Sin alertas críticas en las 5 empresas.</div>';
+        return;
+      }
+      box.innerHTML = list.map(a => {
+        const sev = String(a.severity || 'HIGH').toUpperCase();
+        const col = sev === 'CRITICAL' ? '#EB5757' : (sev === 'HIGH' ? '#F2994A' : '#27AE60');
+        const title = (isEn ? a.title_en : a.title_es) || a.title || '';
+        const detail = a.metric || a.detail || '';
+        const cmd = (isEn ? a.quick_command_en : a.quick_command_es) || a.suggested_command || '';
+        const actLabel = a.action_label || (isEn ? 'Execute 1-Click' : 'Ejecutar 1-Clic');
+        return `<div class="sa-dev-item">
+          <div style="max-width:74%">
+            <span style="display:inline-block;padding:2px 7px;border-radius:999px;font-size:9.5px;font-weight:800;background:${col}22;color:${col};border:1px solid ${col}66">${esc(sev)} · ${esc(a.company_label)}</span>
+            <b style="margin-left:6px">${esc(title)}</b>
+            <div class="muted" style="font-size:11px;margin-top:3px">${esc(detail)}</div>
+          </div>
+          <button type="button" class="btn ghost sm" data-wd-cmd="${esc(cmd)}">${esc(actLabel)}</button>
+        </div>`;
+      }).join('');
+      box.querySelectorAll('[data-wd-cmd]').forEach(b => {
+        b.onclick = () => {
+          const cmd = b.dataset.wdCmd;
+          if (cmd) send(cmd, 'text');
+        };
+      });
+    } catch (e) {}
+  }
+
+  function toggleWatchdogDrawer() {
+    const dr = g('saWatchdogDrawer');
+    if (!dr) return;
+    const show = dr.style.display === 'none';
+    dr.style.display = show ? 'block' : 'none';
+    if (show) loadWatchdogs();
   }
 
   async function loadDevEscalations() {
@@ -3795,17 +3955,22 @@ window.LJ_applyUi = function (ui) {
       const d = await r.json();
       const reply = d.reply || 'Orden procesada.';
       if (d.ui && typeof window.LJ_applyUi === 'function') window.LJ_applyUi(d.ui);
-      if (window.LJCal && (d.action === 'schedule_event' || d.action === 'sync_integrations' || d.action === 'save_task' || d.action === 'complete_task')) {
+      if (window.LJCal && (d.action === 'schedule_event' || d.action === 'sync_integrations' || d.action === 'save_task' || d.action === 'complete_task' || d.compound)) {
         window.LJCal.load();
       }
       if (typeof window.loadKnowledgeVault === 'function') window.loadKnowledgeVault(false);
       await loadDevEscalations();
+      await loadWatchdogs();
 
       const isEn = (typeof lang !== 'undefined' && lang === 'en');
+      const badgeLabel = d.compound
+        ? `${isEn ? 'COMPOUND EXECUTION' : 'ORDEN COMPUESTA'} (${d.steps_executed || (d.inline_cards || []).length || 2} ${isEn ? 'ACTIONS' : 'ACCIONES'})`
+        : (d.dev_ticket ? null : (d.action && d.action !== 'ask' ? (isEn ? 'COMMAND EXECUTED · ' : 'ORDEN EJECUTADA · ') + d.action.toUpperCase() : (isEn ? 'VERIFIED DATA · MC.DB' : 'DATOS REALES · MC.DB')));
       addMsg('assistant', reply, {
-        badge: d.dev_ticket ? null : (d.action && d.action !== 'ask' ? (isEn ? 'COMMAND EXECUTED · ' : 'ORDEN EJECUTADA · ') + d.action.toUpperCase() : (isEn ? 'VERIFIED DATA · MC.DB' : 'DATOS REALES · MC.DB')),
-        sources: d.sources || [],
-        devTicket: d.dev_ticket || null
+        badge: badgeLabel,
+        sources: d.sources || (d.compound ? ['ceo_action_brain', 'mc.db', 'Mode C HITL'] : []),
+        devTicket: d.dev_ticket || null,
+        inlineCards: d.inline_cards || []
       });
       if (autoSpeak && window.LJ && typeof window.LJ.speak === 'function') {
         window.LJ.speak(reply, false, isEn ? 'en' : 'es');
@@ -3886,11 +4051,11 @@ window.LJ_applyUi = function (ui) {
     const isEn = (l === 'en');
     return {
       text: isEn
-        ? 'Hello Jasmel. You are in the Minimalist Super Assistant (Voice & Text Only). I am connected to your 5 companies ($48,200/mo projected · $214,500 pipeline), your 11 calendar appointments, your AI Inbox drafts, and live metrics from BuildingApp and UNITEC. Tell me what result to read or what command to execute; if something does not exist yet, I never guess and automatically send a ticket to the developer.'
-        : 'Hola Jasmel. Estás en el Super Asistente Minimalista (Solo Voz y Texto). Estoy conectado a tus 5 empresas ($48,200/mes proyectados · $214,500 en pipeline), tus 11 citas de calendario, tus borradores de Bandeja IA y las métricas en vivo de BuildingApp y UNITEC. Dime qué resultado quieres leer o qué orden ejecuto; si algo no existe todavía, jamás adivino y le envío un ticket automático al desarrollador.',
+        ? 'Hello Jasmel. You are in the Minimalist Super Assistant (Voice & Text Only). I am connected to your 5 companies ($48,200/mo projected · $214,500 pipeline), your calendar appointments, your Mode C AI Inbox drafts, live Watchdog alerts, and live GA4 metrics. You can speak or type single or compound 3-in-1 orders; if something does not exist yet, I never guess and automatically send a ticket to the developer.'
+        : 'Hola Jasmel. Estás en el Super Asistente Minimalista (Solo Voz y Texto). Estoy conectado a tus 5 empresas ($48,200/mes proyectados · $214,500 en pipeline), tus citas de calendario, tus borradores Mode C de Bandeja IA, el Watchdog Ejecutivo y Google Analytics 4 en vivo. Puedes dictar órdenes simples o compuestas 3-en-1; si algo no existe todavía, jamás adivino y le envío un ticket automático al desarrollador.',
       meta: {
-        badge: isEn ? 'ACTIVE MEMORY · 9/9 INTEGRATIONS' : 'MEMORIA ACTIVA · 9/9 INTEGRACIONES',
-        sources: isEn ? ['mc.db', 'Calendar', 'AI Inbox', 'Escalation #DEV'] : ['mc.db', 'Calendario', 'Bandeja IA', 'Escalación #DEV'],
+        badge: isEn ? 'ACTIVE MEMORY · MULTI-INTENT + MODE C' : 'MEMORIA ACTIVA · MULTI-INTENT + MODO C',
+        sources: isEn ? ['mc.db', 'Calendar', 'Mode C HITL', 'Watchdog', 'GA4 Live'] : ['mc.db', 'Calendario', 'Modo C HITL', 'Watchdog', 'GA4 En Vivo'],
         isWelcome: true
       }
     };
@@ -3909,8 +4074,8 @@ window.LJ_applyUi = function (ui) {
     }
     if (g('saInput')) {
       g('saInput').placeholder = isEn
-        ? 'Speak or type a command (e.g. Read today\'s summary, Schedule appointment tomorrow at 10am, Approve draft)…'
-        : 'Habla o escribe una orden (ej. Léeme los resultados de hoy, Agendar cita mañana 10am, Aprobar borrador)…';
+        ? 'Speak or type a single or 3-in-1 command (e.g. Schedule call with Dr. Molina tomorrow at 3pm, draft him a WhatsApp, and remind me at 2pm)…'
+        : 'Habla o escribe una orden simple o compuesta 3-en-1 (ej. Agenda llamada con Dr. Molina mañana 3pm, redáctale WhatsApp y recuérdame a las 2pm)…';
     }
     if (messages.length && messages[0].meta && messages[0].meta.isWelcome) {
       const w = getWelcomeMsg(newLang);
@@ -3922,6 +4087,7 @@ window.LJ_applyUi = function (ui) {
 
   function onOpen() {
     loadDevEscalations();
+    loadWatchdogs();
     const curL = (typeof lang !== 'undefined' && lang === 'en') ? 'en' : 'es';
     if (!booted) {
       booted = true;
@@ -3937,18 +4103,31 @@ window.LJ_applyUi = function (ui) {
     submitInput,
     toggleAutoSpeak,
     toggleDevDrawer,
+    toggleWatchdogDrawer,
     promptManualEscalation,
     toggleMic,
     loadDevEscalations,
+    loadWatchdogs,
+    handleInlineCardAction,
     onOpen,
     onLangChange
   };
+
+  // Global keyboard shortcut: Ctrl+K / Cmd+K jumps straight to Super Asistente input
+  document.addEventListener('keydown', (ev) => {
+    if ((ev.ctrlKey || ev.metaKey) && ev.key.toLowerCase() === 'k') {
+      ev.preventDefault();
+      if (typeof switchTab === 'function') switchTab('assistant');
+      setTimeout(() => { if (g('saInput')) g('saInput').focus(); }, 60);
+    }
+  });
 
   // Auto-open Minimalist Super Assistant if URL is /assistant or ?view=assistant
   if (location.pathname === '/assistant' || location.pathname === '/chat' || /[?&]view=assistant/.test(location.search)) {
     setTimeout(() => switchTab('assistant'), 50);
   } else {
     loadDevEscalations();
+    loadWatchdogs();
   }
 })();
 </script>

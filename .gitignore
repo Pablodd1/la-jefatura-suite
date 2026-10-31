@@ -17,3 +17,4 @@ package.json
 package-lock.json
 data/wa_multidevice_auth/
 data/wa_multidevice_state.json
+data/ga4_cache.json

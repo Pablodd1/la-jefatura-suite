@@ -56,6 +56,8 @@ import reports_pdf  # noqa: E402
 import tts_colombia  # noqa: E402
 import unitec_ingest  # noqa: E402
 import voice_commands  # noqa: E402
+import ceo_action_brain  # noqa: E402
+import text_messaging  # noqa: E402
 
 PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 8931
 SAMPLES = os.path.join(ROOT, "data", "samples")
@@ -285,7 +287,16 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
             self._send(code, challenge.encode("utf-8"), "text/plain; charset=utf-8")
         elif path == "/api/google/status":
             self._send(200, google_workspace.get_status())
-        elif path == "/api/ga4/summary":
+        elif path == "/api/ceo/reminders":
+            self._send(200, {"reminders": ceo_action_brain.list_reminders()})
+        elif path == "/api/ceo/ideas":
+            self._send(200, {"ideas": ceo_action_brain.list_ideas()})
+        elif path == "/api/ceo/followups":
+            self._send(200, {"followups": ceo_action_brain.list_followups()})
+        elif path == "/api/ceo/watchdog":
+            co = (qs.get("company") or ["all"])[0]
+            self._send(200, ceo_action_brain.get_executive_watchdog_alerts(company=co))
+        elif path in ("/api/ga4/summary", "/api/ga4/live"):
             pid = (qs.get("property_id") or [""])[0]
             self._send(200, ga4_ingest.fetch_live_ga4(property_id_override=pid))
         elif path == "/api/reports/daily_brief":
@@ -457,6 +468,54 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
             self._send(200, behavior_brain.record_event(et, tg, detail=dt, time_slot=sl))
         elif path == "/api/onboarding/save":
             self._send(200, _save_onboarding(body))
+        elif path == "/api/ceo/chat":
+            msg = body.get("message", "")
+            co = body.get("company", "all")
+            lng = body.get("lang", "es")
+            self._send(200, ceo_action_brain.execute_ceo_chat(msg, company=co, lang=lng))
+        elif path == "/api/ceo/reminders":
+            self._send(200, ceo_action_brain.set_reminder(
+                title=body.get("title", ""),
+                trigger_time=body.get("trigger_time", ""),
+                category=body.get("category", "general"),
+                company=body.get("company", "all"),
+                recurrence=body.get("recurrence", "once"),
+            ))
+        elif path == "/api/ceo/reminders/dismiss":
+            self._send(200, ceo_action_brain.dismiss_reminder(body.get("id", "")))
+        elif path == "/api/ceo/reminders/snooze":
+            self._send(200, ceo_action_brain.snooze_reminder(body.get("id", ""), int(body.get("minutes", 15))))
+        elif path == "/api/ceo/ideas":
+            self._send(200, ceo_action_brain.save_idea(
+                title=body.get("title", ""),
+                description=body.get("description", ""),
+                company=body.get("company", "all"),
+                potential=body.get("potential", "high"),
+                tags=body.get("tags", ""),
+            ))
+        elif path == "/api/ceo/followups":
+            self._send(200, ceo_action_brain.add_followup(
+                who=body.get("who", ""),
+                what=body.get("what", ""),
+                deadline=body.get("deadline", ""),
+                company=body.get("company", "all"),
+                notes=body.get("notes", ""),
+            ))
+        elif path == "/api/ceo/followups/resolve":
+            self._send(200, ceo_action_brain.resolve_followup(body.get("id", "")))
+        elif path == "/api/ceo/approve_inline":
+            self._send(200, ceo_action_brain.approve_inline_action(
+                card_type=body.get("card_type", ""),
+                item_id=body.get("id", ""),
+                edited_text=body.get("edited_text", ""),
+                action=body.get("action", "approve"),
+            ))
+        elif path == "/api/ceo/brainstorm":
+            self._send(200, ceo_action_brain.run_brainstorming_session(
+                topic=body.get("topic", ""),
+                company=body.get("company", "all"),
+                goal=body.get("goal", ""),
+            ))
         elif path == "/api/cameras/events":
             if not mc_auth.token_ok(self.headers.get("X-MC-Token", "")):
                 self._send(401, {"error": "X-MC-Token required"})
@@ -469,7 +528,32 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
         elif path == "/api/voice/command":
             cmd = body.get("command", "")
             lang = body.get("lang", "es")
-            res = voice_commands.execute(cmd, lang=lang, samples_dir=SAMPLES)
+            action_res = ceo_action_brain.execute_ceo_chat(cmd, lang=lang)
+            if action_res.get("is_compound") or (action_res.get("intent") and action_res.get("intent") != "general_chat"):
+                intents_lbl = ", ".join(action_res.get("compound_intents") or [action_res.get("intent", "action")])
+                res = {
+                    "ok": True,
+                    "action": "compound_execution" if action_res.get("is_compound") else action_res.get("intent"),
+                    "is_compound": bool(action_res.get("is_compound")),
+                    "compound_intents": action_res.get("compound_intents", []),
+                    "company": action_res.get("company", "all"),
+                    "reply": action_res.get("reply", "Acción ejecutada correctamente."),
+                    "action_result": action_res.get("action_result"),
+                    "actions_executed": action_res.get("actions_executed", []),
+                    "inline_cards": action_res.get("inline_cards", []),
+                    "sources": [f"mc.db ({intents_lbl})"],
+                }
+            else:
+                v_res = voice_commands.execute(cmd, lang=lang, samples_dir=SAMPLES)
+                if v_res.get("action") not in ("unknown", "switch_slot") or "mañana" not in cmd.lower():
+                    res = v_res
+                else:
+                    res = {
+                        "ok": True,
+                        "action": "chat",
+                        "reply": action_res.get("reply") or v_res.get("reply"),
+                        "sources": ["mc.db"],
+                    }
             jefesito.record(cmd, body.get("channel", "text"), res.get("action"), lang)
             self._send(200, res)
         else:

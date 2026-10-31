@@ -1,9 +1,9 @@
 # Guía Paso a Paso de Activación Total para Juan (CEO) — La Jefatura (El Jefesito)
 
 **Fecha de Auditoría:** 31 de Octubre de 2026  
-**Portal Ejecutivo en Vivo (Español):** https://sanyo-confident-appearance-welfare.trycloudflare.com/?lang=es  
-**Portal Ejecutivo en Vivo (English):** https://sanyo-confident-appearance-welfare.trycloudflare.com/?lang=en  
-**Sitio Web / Presentación Interactiva:** https://sanyo-confident-appearance-welfare.trycloudflare.com/website  
+**Portal Ejecutivo en Vivo (Español):** https://tension-maine-rebel-explains.trycloudflare.com/?lang=es  
+**Portal Ejecutivo en Vivo (English):** https://tension-maine-rebel-explains.trycloudflare.com/?lang=en  
+**Sitio Web / Presentación Interactiva:** https://tension-maine-rebel-explains.trycloudflare.com/website  
 
 ---
 
@@ -19,7 +19,9 @@ En este momento, **La Jefatura (El Jefesito)** ya está leyendo y reportando en 
    - **4,665 sesiones auditadas** en Firestore y Vercel.
    - **29 teléfonos de clientes reales capturados** y **55 asignaciones a asesores humanos**.
    - **300 escalaciones medidas** con **98.3% de entrega exitosa** por Telegram.
-3. **Flota de Cámaras de Seguridad (Hik-Connect Cloud — Espacios Importados):**
+3. **Google Analytics 4 (`Building Innovation` — `properties/543661675`):**
+   - **100% CONECTADO EN VIVO** a las APIs oficiales `analyticsadmin.googleapis.com` y `analyticsdata.googleapis.com` (`G-4TYC7224J7` / `Chatbotfrintdesk`), listo para mostrar visitas, sesiones y conversiones en tiempo real.
+4. **Flota de Cámaras de Seguridad (Hik-Connect Cloud — Espacios Importados):**
    - **5 grabadores (NVR/DVR)** y **55 canales de cámara en total** (**53 cámaras con señal en vivo**, 2 desconectadas, **12.92 TB** de discos duros monitoreados cada 5 minutos).
 
 ---
