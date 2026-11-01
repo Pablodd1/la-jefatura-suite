@@ -733,6 +733,61 @@
 <!-- ==================== TAB 3: OUTCOMES, GRAPHICS & MONITORING ==================== -->
 <section class="tab-pane" id="pane-outcomes">
   <div class="grid">
+    <!-- INDIVIDUAL DAILY CTO & CFO REPORTS PER COMPANY (EMAIL + TELEGRAM + PORTAL) -->
+    <div class="card" style="grid-column:span 12;border-color:rgba(205,182,140,.55)" id="dailyCompanyReportsCard">
+      <h3>
+        <span class="lhs">
+          <span class="dot" style="background:var(--ok)"></span>
+          <span>Informes Ejecutivos Diarios Individuales por Empresa (Visión CTO + CFO · Email HTML + Gráficas + PDF + Telegram)</span>
+          <span class="tag ok" id="dailyCoRepBadge">2 INFORMES INDIVIDUALES · ENVÍO DIARIO 08:00 AM</span>
+        </span>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <button class="btn ghost sm" type="button" onclick="window.open('/api/reports/company_daily/html?company=building&lang=es', '_blank')">👁️ Vista Previa Email Building Innovation</button>
+          <button class="btn ghost sm" type="button" onclick="window.open('/api/reports/company_daily/html?company=unitec&lang=es', '_blank')">👁️ Vista Previa Email UNITEC USA</button>
+          <button class="btn sm" type="button" onclick="sendCompanyDailyReportNow(['building','unitec'])">📤 Enviar Ambos Informes Ahora (Email + Telegram)</button>
+        </div>
+      </h3>
+      <div style="font-size:12px;margin-bottom:12px;padding:10px 14px;border-radius:10px;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.3);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+        <div>
+          <b>Destinatarios Diarios Configurados (Juan David García Montoya + CTO/CFO):</b><br>
+          📧 <b>Correos:</b> <code>juangerenciagarcia@gmail.com</code> · <code>ceo@espaciosimportados.com.co</code> · <code>jasmelacosta@gmail.com</code><br>
+          📲 <b>Telegram:</b> <code>@Pegantebot</code> (Chat <code>8897658040</code> · UNITEC USA DESIGN) · <code>@ceojefesitobot</code> (Chat <code>7838956683</code> · Jasmel) · Contacto Juan: <code>VIDAL Juan Diaz (+1 786 657 5441)</code> <span id="juanTgDetectedStatus" class="tag low">Compartir contacto o grupo a @ceojefesitobot</span>
+        </div>
+        <button class="btn ghost sm" type="button" onclick="discoverJuanTelegramNow()">🔍 Detectar Chat ID de Juan en Telegram</button>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px">
+        <div style="padding:14px;border-radius:12px;border:1px solid var(--hair);background:rgba(255,255,255,.45)">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <b style="font-size:14px">🏢 Reporte #1: BUILDING INNOVATION (CTO &amp; CFO)</b>
+            <span class="tag ok">BUILDINGAPP.US + GA4 #543661675</span>
+          </div>
+          <p class="muted" style="font-size:11.5px;line-height:1.45;margin-bottom:10px">
+            Incluye: Crecimiento de miembros (12 totales · +2 hoy · 6 Luxury/VIP), Uso y Latencia de IA (132 renders · 14 hoy · 8 análisis de espacio · 100% éxito), Costo API exacto ($2.40 USD · ~$0.018/render), Catálogo de 322 SKUs y Tráfico en vivo GA4 (Stream <code>G-4TYC7224J7</code>) + Gráfica PNG y PDF adjunto.
+          </p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn sm" type="button" onclick="sendCompanyDailyReportNow(['building'])">📧📲 Enviar Informe Building Innovation</button>
+            <button class="btn ghost sm" type="button" onclick="window.open('/api/reports/company_daily/html?company=building&lang=es', '_blank')">Ver Informe con Gráficas</button>
+            <button class="btn ghost sm" type="button" onclick="window.open('/api/report.pdf?company=Building%20Innovation&lang=es', '_blank')">Descargar PDF</button>
+          </div>
+        </div>
+        <div style="padding:14px;border-radius:12px;border:1px solid var(--hair);background:rgba(255,255,255,.45)">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <b style="font-size:14px">🏛️ Reporte #2: UNITEC USA &amp; ESPACIOS IMPORTADOS (CTO &amp; CFO)</b>
+            <span class="tag ok">CHATBOT IA + 55 CÁMARAS + NEXUS</span>
+          </div>
+          <p class="muted" style="font-size:11.5px;line-height:1.45;margin-bottom:10px">
+            Incluye: Recepcionista IA (4,665 sesiones · 193 conversaciones reales · 29 teléfonos capturados · 55 asignaciones a asesor · 98.3% entrega Telegram), Flota de 55 Cámaras Hik-Connect (53/55 en vivo · 12.92 TB HDD · Alerta 2 cámaras Wi-Fi IDEO) y Pipeline Comercial Nexus ($104,600 USD) + Gráfica PNG y PDF adjunto.
+          </p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn sm" type="button" onclick="sendCompanyDailyReportNow(['unitec'])">📧📲 Enviar Informe UNITEC USA</button>
+            <button class="btn ghost sm" type="button" onclick="window.open('/api/reports/company_daily/html?company=unitec&lang=es', '_blank')">Ver Informe con Gráficas</button>
+            <button class="btn ghost sm" type="button" onclick="window.open('/api/cameras/report.pdf?mode=example&lang=es', '_blank')">Descargar PDF Cámaras</button>
+          </div>
+        </div>
+      </div>
+      <div id="companyDailyDeliveryLog" style="margin-top:10px;font-size:11.5px"></div>
+    </div>
+
     <div class="card" style="grid-column:span 6">
       <h3><span class="lhs"><span class="dot" style="background:var(--acc)"></span><span data-i18n="people_mon">Monitoreo de Personal y Asignaciones (Productividad)</span></span></h3>
       <div id="staffStudyBox"></div>
@@ -1807,18 +1862,48 @@ function speakTwiceDailyPortalBrief() {
 
 function dispatchTwiceDailyBriefNow() {
   const isEn = (typeof lang !== 'undefined' && lang === 'en');
-  const slot = (_currentDailyBrief && _currentDailyBrief.slot) || 'morning';
-  fetch('/api/reports/dispatch_daily', {
-    method: 'POST', headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({slot})
+  sendCompanyDailyReportNow(['building', 'unitec']);
+}
+
+function sendCompanyDailyReportNow(companies = ['building', 'unitec']) {
+  const isEn = (typeof lang !== 'undefined' && lang === 'en');
+  showToast(isEn ? '📤 Generating & dispatching CTO/CFO Reports (Email + Charts + PDF + Telegram)…' : '📤 Generando y enviando Informes CTO/CFO (Email + Gráficas + PDF + Telegram)…');
+  fetch('/api/reports/company_daily/send', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({companies, send_email: true, send_telegram: true})
   }).then(r => r.json()).then(d => {
     if (d && d.ok) {
-      _currentDailyBrief = d;
-      loadTwiceDailyPortalBrief(slot, true);
-      const lbl = isEn ? (d.slot_label_en || d.slot_label) : d.slot_label;
+      const reps = d.reports_dispatched || [];
+      const logBox = document.getElementById('companyDailyDeliveryLog');
+      if (logBox) {
+        logBox.innerHTML = `<div style="padding:8px 12px;border-radius:8px;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.35)">
+          <b>✅ Despacho Completado (${new Date().toLocaleTimeString()}):</b> ` +
+          reps.map(r => `${r.company_name} → Email (${((r.delivery.email && r.delivery.email.sent_to) || []).join(', ') || 'OK'}) + Telegram (${(r.delivery.telegram || []).filter(t=>t.msg_ok).length} chats + PDF)`).join(' | ') +
+        `</div>`;
+      }
       showToast(isEn
-        ? `✅ ${lbl} updated in Portal & dispatched (${(d.dispatched_channels || []).join(' + ')}).`
-        : `✅ ${lbl} actualizado en el Portal y despachado (${(d.dispatched_channels || []).join(' + ')}).`);
+        ? `✅ Dispatched ${reps.length} CTO/CFO Reports to Juan's Emails & Telegram!`
+        : `✅ Enviados ${reps.length} Informes CTO/CFO a los correos de Juan y Telegram con gráficas y PDF!`);
+    }
+  }).catch(() => {});
+}
+
+function discoverJuanTelegramNow() {
+  fetch('/api/reports/company_daily/recipients', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({discover_telegram: true})
+  }).then(r => r.json()).then(d => {
+    const badge = document.getElementById('juanTgDetectedStatus');
+    if (d && d.juan_telegram_chat_id) {
+      if (badge) {
+        badge.className = 'tag ok';
+        badge.textContent = `CONECTADO · Chat ID ${d.juan_telegram_chat_id}`;
+      }
+      showToast(`✅ Chat ID de Juan detectado en Telegram: ${d.juan_telegram_chat_id}`);
+    } else {
+      showToast('Para vincular el chat directo de VIDAL Juan Diaz (+1 786 657 5441), toca "Share this contact" hacia @ceojefesitobot o agrégalo a un grupo con @ceojefesitobot.');
     }
   }).catch(() => {});
 }

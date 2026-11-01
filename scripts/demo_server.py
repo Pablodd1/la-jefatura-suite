@@ -44,6 +44,7 @@ import cameras  # noqa: E402
 import camera_report  # noqa: E402
 import comms_brain  # noqa: E402
 import daily_brief_pusher  # noqa: E402
+import daily_company_reports  # noqa: E402
 import daily_pdf  # noqa: E402
 import ga4_ingest  # noqa: E402
 import google_workspace  # noqa: E402
@@ -148,7 +149,7 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
     def _gate(self, path, qs=None) -> bool:
         """Anything under /api/ that arrives through the public tunnel needs X-MC-Token,
         unless it originates from the Mission Control UI hosted on the same tunnel host."""
-        if path in ("/api/calendar.ics", "/api/daily.pdf", "/api/cameras/report.pdf", "/api/whatsapp/webhook"):
+        if path in ("/api/calendar.ics", "/api/daily.pdf", "/api/cameras/report.pdf", "/api/whatsapp/webhook", "/api/reports/company_daily/html"):
             return True
         if path.startswith("/api/") and mc_auth.is_remote(self.headers):
             q_tok = ((qs or {}).get("token") or [""])[0] if qs else ""
@@ -303,6 +304,18 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
             slot = (qs.get("slot") or ["morning"])[0]
             force = (qs.get("refresh") or ["0"])[0] == "1"
             self._send(200, daily_brief_pusher.build_brief(slot=slot, force_live=force))
+        elif path == "/api/reports/company_daily":
+            co = (qs.get("company") or [""])[0]
+            if co:
+                rep = daily_company_reports.build_company_report(company_slug=co, lang=lang_q)
+                rep.pop("chart_bytes", None)
+                self._send(200, rep)
+            else:
+                self._send(200, daily_company_reports.list_archived_reports())
+        elif path == "/api/reports/company_daily/html":
+            co = (qs.get("company") or ["building"])[0]
+            rep = daily_company_reports.build_company_report(company_slug=co, lang=lang_q)
+            self._send(200, rep["html_preview_es"].encode("utf-8"), "text/html; charset=utf-8")
         elif path == "/api/google/auth_url":
             host = self.headers.get("Host", f"localhost:{PORT}")
             proto = self.headers.get("X-Forwarded-Proto", "http")
@@ -525,6 +538,19 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
             self._send(200, camera_report.poll())
         elif path == "/api/cameras/sync":
             self._send(200, cameras.status(os.path.join(SAMPLES, "cameras.json"), force=True))
+        elif path == "/api/reports/company_daily/send":
+            companies = body.get("companies") or (["building", "unitec"] if not body.get("company") else [body.get("company")])
+            self._send(200, daily_company_reports.dispatch_company_reports(
+                companies=companies,
+                to_emails_override=body.get("emails"),
+                send_email=bool(body.get("send_email", True)),
+                send_telegram=bool(body.get("send_telegram", True)),
+            ))
+        elif path == "/api/reports/company_daily/recipients":
+            if body.get("discover_telegram"):
+                self._send(200, daily_company_reports.discover_juan_telegram_chat_id())
+            else:
+                self._send(200, daily_company_reports.save_recipients_config(body))
         elif path == "/api/voice/command":
             cmd = body.get("command", "")
             lang = body.get("lang", "es")
@@ -564,6 +590,7 @@ if __name__ == "__main__":
     _seed_if_empty()
     camera_report.start_scheduler()
     daily_brief_pusher.start_scheduler()
+    daily_company_reports.start_daily_company_scheduler()
     srv = __import__("http.server").server.ThreadingHTTPServer(
         ("0.0.0.0", PORT), Handler)
     print(f"La Jefatura demo -> http://localhost:{PORT}  (Ctrl-C to stop)")
