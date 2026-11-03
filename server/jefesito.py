@@ -457,12 +457,12 @@ def get_day(day=None, lang="es", today=None) -> dict:
     row = _row(day.isoformat())
     if day > t:
         kind, payload = "preview", _build_payload(day, t, "preview")
-    elif day == t and not (row and row["closed"]):
+    elif day == t:
         kind, payload = "day", _build_payload(day, t, "day")
         c = _con()
         c.execute("INSERT INTO jf_days(day,closed,payload_json,updated) VALUES(?,0,?,?) "
                   "ON CONFLICT(day) DO UPDATE SET payload_json=excluded.payload_json, updated=excluded.updated "
-                  "WHERE closed=0", (day.isoformat(), json.dumps(payload, ensure_ascii=False), time.time()))
+                  "", (day.isoformat(), json.dumps(payload, ensure_ascii=False), time.time()))
         c.commit()
         c.close()
     elif row:
