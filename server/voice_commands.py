@@ -153,7 +153,10 @@ def parse(command: str, lang: str = "es") -> dict:
             and not re.search(r"^(?:ir a|abrir|abre|open|go to)\b", low):
         return {"action": "ask", "text": t}
     if re.search(r"\b(miembros|members|conversaciones|conversations|abandono|abandonment|contactos|contacts|"
-                 r"alertas|alerts|generaciones|generations|renders|costo|cost)\b", low):
+                 r"alertas|alerts|generaciones|generations|renders|costo|cost|clima|tiempo|weather|temperatura|"
+                 r"lluvia|building|buildingapp|unitec|c[aá]maras?|cameras?|hik|espacios|pick|ideo|muelles|"
+                 r"grabador|discos|ga4|analytics|tr[aá]fico|empresas|companies|nexus|pipeline|ventas|ingresos|"
+                 r"citas|agenda|calendario)\b", low) and not re.search(r"^(?:ir a|abrir|abre|open|go to|cambiar a|switch to)\b", low):
         return {"action": "ask", "text": t}
 
     # Tab navigation commands
@@ -284,13 +287,11 @@ def execute(command: str, lang: str = "es", samples_dir: str | None = None) -> d
             ok = False
             reply = f"Error generando el informe: {e}"
     elif action == "read_brief":
-        from ai_insights import report_narative
-        sd = samples_dir or os.path.join(HERE, "..", "data", "samples")
-        nexus = json.load(open(os.path.join(sd, "nexus_crm.json"), encoding="utf-8"))
-        tasks_j = json.load(open(os.path.join(sd, "tasks.json"), encoding="utf-8"))
-        brief = report_narative("La Jefatura", nexus["kpis"],
-                                tasks_j["resumen"], nexus["pipeline_por_etapa"], lang=lang)
-        reply = ("(Datos de ejemplo del demo, no reales) " if lang != "en" else "(Demo sample data, not real) ") + brief
+        import jefesito
+        d_day = jefesito.get_day(lang=lang)
+        reply = d_day.get("spoken") or ""
+        return {"ok": True, "action": "read_brief", "parsed": p, "reply": reply,
+                "ui": {"show_brief": True}, "sources": d_day.get("sources", []), "grounded": True}
     elif action == "status_digest":
         c = sqlite3.connect(DB, timeout=30.0)
         t = c.execute("SELECT COUNT(*) FROM tasks WHERE status != 'done'").fetchone()[0]

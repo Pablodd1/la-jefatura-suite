@@ -381,10 +381,18 @@
   <div class="sp"></div>
   <div class="pill" id="slotPill" style="cursor:pointer" title="Click to cycle Morning / Afternoon / Evening"><span id="slotLabel">Rutina Mañana</span></div>
   <div class="pill" id="clock"></div>
-  <div class="pill" id="jfGreetPill" style="cursor:pointer" title="Saludo al abrir la app: activar / detener" onclick="toggleGreeting()"><span id="jfGreetLbl">Saludo: ON</span></div>
+  <button type="button" class="btn sm lj-stop-voice-btn" id="headerStopVoiceBtn" onclick="window.stopAllBotVoice && window.stopAllBotVoice()" style="background:#EB5757;color:#fff;border:1px solid #ff7b7b;font-weight:900;letter-spacing:.04em;padding:7px 13px;border-radius:999px;box-shadow:0 4px 14px rgba(235,87,87,.35)" title="Callar la voz inmediatamente (Tecla ESC)">🛑 CALLAR VOZ (ESC)</button>
+  <button type="button" class="btn ghost sm" id="headerPlayBriefBtn" onclick="window._ljUserStoppedSpeech=false; renderGreeting(true)" title="Leer el Resumen del Día + Clima en Vivo">🔊 Resumen + Clima</button>
+  <div class="pill" id="jfGreetPill" style="cursor:pointer" title="Saludo automático al entrar: activar / desactivar" onclick="toggleGreeting()"><span id="jfGreetLbl">Saludo: ON</span></div>
   <button class="btn ghost" id="langBtn" style="font-weight:800;border-color:var(--acc);color:var(--acc)">ES / EN</button>
   <button class="btn" id="pdfBtn">Informe PDF</button>
 </header>
+
+<!-- Floating Instant Voice Stop Bar (Visible automatically whenever bot is talking) -->
+<div id="ljGlobalStopBar" style="display:none;position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:10001;background:linear-gradient(135deg,#b91c1c,#ef4444);color:#ffffff;padding:10px 20px;border-radius:999px;box-shadow:0 14px 36px rgba(185,28,28,.55);border:2px solid #fecaca;align-items:center;gap:14px;font-weight:800;font-size:13px;">
+  <span>🔊 El Jefesito está hablando (Resumen Diario + Clima)…</span>
+  <button type="button" onclick="window.stopAllBotVoice && window.stopAllBotVoice()" style="background:#ffffff;color:#991b1b;border:0;padding:6px 16px;border-radius:999px;font-weight:900;font-size:12.5px;cursor:pointer;letter-spacing:.04em;box-shadow:0 2px 8px rgba(0,0,0,.2)">🛑 CALLAR AHORA (ESC)</button>
+</div>
 
 <!-- Navigation Tabs -->
 <nav class="nav-bar" id="mainNav">
@@ -989,6 +997,7 @@
         </div>
       </div>
       <div class="sa-actions">
+        <button type="button" class="btn sm lj-stop-voice-btn" onclick="window.stopAllBotVoice && window.stopAllBotVoice()" style="background:#EB5757;color:#fff;font-weight:900;border:0">🛑 CALLAR VOZ (ESC)</button>
         <button type="button" class="btn ghost sm" id="saVoiceToggleBtn" onclick="window.LJSuper && window.LJSuper.toggleAutoSpeak()">Voz Respuesta: ON</button>
         <button type="button" class="btn ghost sm" id="saWatchdogBtn" onclick="window.LJSuper && window.LJSuper.toggleWatchdogDrawer()">
           🛡️ Radar &amp; Alarmas <span class="cnt" id="saWatchdogBadge" style="margin-left:5px;background:rgba(16,185,129,.22);color:#34D399">5</span>
@@ -1029,8 +1038,10 @@
 
     <!-- Minimalist 1-Click Command & Question Starters -->
     <div class="sa-chips" id="saQuickChips">
+      <button type="button" class="sa-chip" style="border-color:#EB5757;color:#EB5757;font-weight:900" onclick="window.stopAllBotVoice && window.stopAllBotVoice()">🛑 Callar Voz Ahora</button>
+      <button type="button" class="sa-chip" onclick="window.LJSuper.send('leer resumen del día')">🔊 Resumen del Día + Clima</button>
+      <button type="button" class="sa-chip" onclick="window.LJSuper.send('cómo está el clima hoy en Miami y Colombia')">🌤️ Clima en Vivo (Miami &amp; Colombia)</button>
       <button type="button" class="sa-chip warn" onclick="window.LJSuper.send('Schedule a call with Dr. Molina tomorrow at 3pm, draft him a confirmation WhatsApp, and remind me at 2pm to check his Medicaid report')">⚡ Orden Compuesta 3-en-1 (Dr. Molina)</button>
-      <button type="button" class="sa-chip" onclick="window.LJSuper.send('leer resumen del día')">Resumen Ejecutivo Hoy</button>
       <button type="button" class="sa-chip" onclick="window.LJSuper.send('qué citas tengo hoy')">Citas y Agenda Hoy</button>
       <button type="button" class="sa-chip" onclick="window.LJSuper.send('cuál es el ingreso proyectado y pipeline de todas las empresas')">Ingresos y Pipeline (5 Empresas)</button>
       <button type="button" class="sa-chip" onclick="window.LJSuper.send('cuántos miembros nuevos hay en BuildingApp y conversaciones en UNITEC')">Métricas BuildingApp &amp; UNITEC</button>
@@ -1044,10 +1055,13 @@
 
     <!-- Single Minimalist Voice + Text Input Bar -->
     <form class="sa-input-bar" id="saForm" onsubmit="event.preventDefault(); window.LJSuper && window.LJSuper.submitInput()">
-      <button type="button" class="sa-mic-btn" id="saMicBtn" onclick="window.LJSuper && window.LJSuper.toggleMic()" title="Dictar orden o pregunta por voz">
-        <span id="saMicLabel">VOZ</span>
+      <button type="button" class="sa-mic-btn" id="saMicBtn" onclick="window.stopAllBotVoice && window.stopAllBotVoice(); window.LJSuper && window.LJSuper.toggleMic()" title="Dictar orden o pregunta por voz (silencia la voz actual automáticamente)">
+        <span id="saMicLabel">🎤 VOZ</span>
       </button>
-      <input id="saInput" class="sa-input" autocomplete="off" placeholder="Habla o escribe cualquier orden o pregunta (ej. «qué citas tengo hoy», «aprobar borrador», «agendar cita mañana 11:00»)…" />
+      <button type="button" class="sa-mic-btn" onclick="window.stopAllBotVoice && window.stopAllBotVoice()" title="Callar voz inmediatamente (ESC)" style="background:#EB5757;color:#fff;border-color:#EB5757;font-weight:900">
+        🛑 PARAR VOZ
+      </button>
+      <input id="saInput" class="sa-input" autocomplete="off" placeholder="Pregunta o pide lo que quieras por voz o texto sobre cualquiera de las empresas, clima, cámaras, renders o tareas…" />
       <button type="submit" class="sa-send-btn" id="saSendBtn">EJECUTAR</button>
     </form>
   </div>
@@ -3193,6 +3207,7 @@ function syncGreetPill() {
 }
 function jfSpeak(text) {
   if (!text) return;
+  window._ljUserStoppedSpeech = false;
   jfPendingSpeech = text;
   const curLang = (typeof lang !== 'undefined' && lang === 'en') ? 'en' : 'es';
   if (window.LJ && typeof window.LJ.speak === 'function') {
@@ -3208,9 +3223,14 @@ function jfSpeak(text) {
     } catch (e) {}
   }
 }
-/* Browsers may block speech before the first click: speak the pending greeting on the first gesture. */
+/* Browsers may block speech before the first click: speak the pending greeting on the first gesture ONLY if user hasn't clicked Stop. */
 document.addEventListener('pointerdown', e => {
-  if (jfPendingSpeech && PREFS.greeting_enabled && !e.target.closest('#jfGreeting,#ljw,#jfGreetPill,#langBtn')) {
+  if (e.target.closest('#headerStopVoiceBtn,#ljGlobalStopBar,.lj-stop-voice-btn,#saMicBtn,#ljw-mic,#ljw-stop-voice,#ljw-quiet')) {
+    window._ljUserStoppedSpeech = true;
+    jfPendingSpeech = null;
+    return;
+  }
+  if (!window._ljUserStoppedSpeech && jfPendingSpeech && PREFS.greeting_enabled && !e.target.closest('#jfGreeting,#ljw,#jfGreetPill,#langBtn')) {
     const t = jfPendingSpeech; jfPendingSpeech = null; jfSpeak(t); jfPendingSpeech = null;
   }
 }, {capture: true, once: true});
@@ -3229,32 +3249,32 @@ async function renderGreeting(doSpeak) {
     box.innerHTML = `<div class="jf-card">
       <div class="jf-head">
         <div>
-          <div class="jf-title">El Jefesito — ${b.greeting}</div>
-          <div class="muted" style="margin-top:3px">${b.label} · ${b.closed ? (es ? 'DÍA CERRADO ' : 'DAY CLOSED ') : (es ? 'DÍA ABIERTO' : 'DAY OPEN')} · ${es ? 'Aprendiendo de ti' : 'Learning about you'}: ${p.interactions} ${es ? 'interacciones' : 'interactions'}</div>
+          <div class="jf-title">🎙️ El Jefesito — ${b.greeting}</div>
+          <div class="muted" style="margin-top:3px">${b.label} · ${es ? 'Incluye Clima en Vivo (Miami & Colombia) + 5 Empresas + 55 Cámaras' : 'Includes Live Weather (Miami & Colombia) + 5 Companies + 55 Cameras'}</div>
         </div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap">
-          <button class="btn ghost sm" onclick="jfSpeak(JF_BRIEF && JF_BRIEF.spoken)">${es ? 'Repetir' : 'Repeat'}</button>
-          <button class="btn ghost sm" onclick="toggleGreeting()">${es ? 'Detener saludo' : 'Stop greeting'}</button>
-          <button class="btn ghost sm" onclick="closeDay()">${es ? 'Cerrar el día' : 'Close the day'}</button>
-          <button class="btn sm" onclick="window.open('/api/daily.pdf?lang=' + lang, '_blank')">${es ? 'PDF del día' : 'Daily PDF'}</button>
-          <button class="btn ghost sm" onclick="document.getElementById('jfGreeting').style.display='none'"></button>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+          <button type="button" class="btn sm lj-stop-voice-btn" style="background:#EB5757;color:#fff;border:0;font-weight:900;padding:6px 14px" onclick="window.stopAllBotVoice && window.stopAllBotVoice(); showToast(lang==='es'?'Voz detenida.':'Voice stopped.')">🛑 ${es ? 'CALLAR VOZ (ESC)' : 'STOP VOICE (ESC)'}</button>
+          <button type="button" class="btn ghost sm" onclick="window._ljUserStoppedSpeech=false; jfSpeak(JF_BRIEF && JF_BRIEF.spoken)">🔊 ${es ? 'Escuchar Resumen + Clima' : 'Listen Summary + Weather'}</button>
+          <button type="button" class="btn ghost sm" onclick="switchTab('assistant'); setTimeout(()=>{const el=document.getElementById('saInput'); if(el) el.focus();},120)">💬 ${es ? 'Preguntar por Voz / Chat' : 'Ask by Voice / Chat'}</button>
+          <button type="button" class="btn ghost sm" onclick="toggleGreeting()">${es ? (PREFS.greeting_enabled ? 'Auto-Saludo: ON' : 'Auto-Saludo: OFF') : (PREFS.greeting_enabled ? 'Auto-Greet: ON' : 'Auto-Greet: OFF')}</button>
+          <button type="button" class="btn sm" onclick="window.open('/api/daily.pdf?lang=' + lang, '_blank')">${es ? 'PDF del día' : 'Daily PDF'}</button>
+          <button type="button" class="btn ghost sm" onclick="window.stopAllBotVoice && window.stopAllBotVoice(); document.getElementById('jfGreeting').style.display='none'">✕</button>
         </div>
       </div>
       <div class="jf-grid">${secs}</div>
     </div>`;
-    if (doSpeak) jfSpeak(b.spoken);
+    if (doSpeak && !window._ljUserStoppedSpeech) jfSpeak(b.spoken);
   } catch (e) { box.style.display = 'none'; }
 }
 function toggleGreeting() {
   const on = !PREFS.greeting_enabled;
   savePrefs({greeting_enabled: on});
   syncGreetPill();
-  if (on) { renderGreeting(true); showToast(lang === 'es' ? 'Saludo activado.' : 'Greeting enabled.'); }
+  if (on) { window._ljUserStoppedSpeech = false; renderGreeting(true); showToast(lang === 'es' ? 'Saludo automático activado al entrar.' : 'Auto-greeting on entry enabled.'); }
   else {
-    try { if (window.LJ && window.LJ.stopAudio) window.LJ.stopAudio(); else speechSynthesis.cancel(); } catch (e) {}
+    if (window.stopAllBotVoice) window.stopAllBotVoice();
     jfPendingSpeech = null;
-    document.getElementById('jfGreeting').style.display = 'none';
-    showToast(lang === 'es' ? 'Saludo detenido.' : 'Greeting stopped.');
+    showToast(lang === 'es' ? 'Voz detenida y saludo automático desactivado.' : 'Voice stopped and auto-greeting disabled.');
   }
 }
 function closeDay() {
@@ -3276,6 +3296,7 @@ function jfReadBrief() {
 /* UI directives returned by the server when the user asks (by text or voice) to change something. */
 window.LJ_applyUi = function (ui) {
   if (!ui) return;
+  if (ui.stop_audio_now) { if (window.stopAllBotVoice) window.stopAllBotVoice(); }
   if (ui.set_theme) { applyTheme(ui.set_theme); PREFS.theme = ui.set_theme; }
   if (ui.set_lang && ui.set_lang !== lang) { PREFS.lang = ui.set_lang; document.getElementById('langBtn').click(); syncGreetPill(); }
   if (ui.set_greeting !== undefined) {
@@ -3303,8 +3324,11 @@ window.LJ_applyUi = function (ui) {
     if (window.LJ && window.LJ.setLang) window.LJ.setLang(lang);
     renderAll();
   }
+  if (PREFS.greeting_enabled === undefined || PREFS.greeting_enabled === null) {
+    PREFS.greeting_enabled = true;
+  }
   syncGreetPill();
-  if (PREFS.greeting_enabled) renderGreeting(true);
+  renderGreeting(PREFS.greeting_enabled !== false);
 })();
 </script>
 
@@ -4057,7 +4081,7 @@ window.LJ_applyUi = function (ui) {
         devTicket: d.dev_ticket || null,
         inlineCards: d.inline_cards || []
       });
-      if (autoSpeak && window.LJ && typeof window.LJ.speak === 'function') {
+      if (autoSpeak && !(d.ui && d.ui.stop_audio_now) && window.LJ && typeof window.LJ.speak === 'function') {
         window.LJ.speak(reply, false, isEn ? 'en' : 'es');
       }
     } catch (e) {

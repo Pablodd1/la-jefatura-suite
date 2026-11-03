@@ -155,7 +155,7 @@
           (/\b(notas?|notes?|tareas?|tasks?|reuniones?|meetings?)\b/i.test(low) &&
            /\b(qu[eé]|cu[aá]les|cu[aá]ntas?|lista|listar|lee|leer|read|list|show|what|how many|dame|muestra)\b/i.test(low) &&
            !/^(ir a|abrir|abre|open|go to)\b/i.test(low)) ||
-          /\b(miembros|members|conversaciones|conversations|abandono|abandonment|contactos|contacts|alertas|alerts|generaciones|generations|renders|costo|cost)\b/i.test(low)) {
+          /\b(miembros|members|conversaciones|conversations|abandono|abandonment|contactos|contacts|alertas|alerts|generaciones|generations|renders|costo|cost|clima|tiempo|weather|temperatura|lluvia|building|buildingapp|unitec|c[aá]maras?|cameras?|hik|espacios|pick|ideo|muelles|grabador|discos|ga4|analytics|tr[aá]fico|empresas|companies|nexus|pipeline|ventas|ingresos|juan)\b/i.test(low)) {
         return { action: "server_cmd", arg: t };
       }
 
@@ -247,22 +247,53 @@
     }
 
     let currentAudio = null;
+    let speakSeq = 0;
+    let manuallyStopped = false;
+
+    function _setSpeakingUI(isSpeaking) {
+      state.speaking = isSpeaking;
+      if (root) root.classList.toggle("speaking", isSpeaking);
+      const bar = document.getElementById("ljGlobalStopBar");
+      if (bar) bar.style.display = isSpeaking ? "flex" : "none";
+      const stopBtns = document.querySelectorAll(".lj-stop-voice-btn");
+      stopBtns.forEach(b => {
+        b.style.opacity = isSpeaking ? "1" : "0.85";
+        b.classList.toggle("is-speaking", isSpeaking);
+      });
+    }
+
     function stopAudio() {
+      speakSeq++;
+      manuallyStopped = true;
+      window._ljUserStoppedSpeech = true;
+      try { window.jfPendingSpeech = null; } catch (_) {}
       try {
         if (currentAudio) {
+          currentAudio.onplay = null;
+          currentAudio.onended = null;
+          currentAudio.onerror = null;
           currentAudio.pause();
           currentAudio.currentTime = 0;
           currentAudio = null;
         }
+      } catch (_) {}
+      try {
+        if (window._commsTtsAudio) {
+          window._commsTtsAudio.pause();
+          window._commsTtsAudio = null;
+        }
+      } catch (_) {}
+      try {
         if ("speechSynthesis" in window) window.speechSynthesis.cancel();
       } catch (_) {}
-      state.speaking = false;
-      root.classList.remove("speaking");
+      _setSpeakingUI(false);
     }
     window.LJ.stopAudio = stopAudio;
+    window.stopAllBotVoice = stopAudio;
 
-    function _browserFallbackSpeak(text, langCode) {
-      if (!("speechSynthesis" in window)) return;
+    function _browserFallbackSpeak(text, langCode, mySeq) {
+      if (manuallyStopped || mySeq !== speakSeq) return;
+      if (!("speechSynthesis" in window)) { _setSpeakingUI(false); return; }
       try {
         const curLang = (langCode || getLang()) === "en" ? "en" : "es";
         const u = new SpeechSynthesisUtterance(text);
@@ -280,35 +311,69 @@
                           voices.find(v => /^es/i.test(v.lang) && /Natural|Neural|Online/i.test(v.name));
           if (coVoice) u.voice = coVoice;
         }
-        u.onstart = () => { state.speaking = true; root.classList.add("speaking"); };
-        u.onend = () => { state.speaking = false; root.classList.remove("speaking"); };
+        u.onstart = () => { if (!manuallyStopped && mySeq === speakSeq) _setSpeakingUI(true); else window.speechSynthesis.cancel(); };
+        u.onend = () => { if (mySeq === speakSeq) _setSpeakingUI(false); };
+        u.onerror = () => { if (mySeq === speakSeq) _setSpeakingUI(false); };
         window.speechSynthesis.cancel();
         window.speechSynthesis.speak(u);
-      } catch (_) {}
+      } catch (_) {
+        _setSpeakingUI(false);
+      }
     }
 
     function speak(text, logIt = true, langOverride = null) {
+      if (!text) return;
       const curLang = (langOverride || getLang()) === "en" ? "en" : "es";
       if (logIt) {
         state.log.push({ who: "lj", text });
         renderLog();
       }
-      stopAudio();
+      // Cancel any previous speech without marking user-stopped for this new speech
+      try {
+        if (currentAudio) {
+          currentAudio.onplay = null;
+          currentAudio.onended = null;
+          currentAudio.onerror = null;
+          currentAudio.pause();
+          currentAudio = null;
+        }
+        if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+      } catch (_) {}
+
+      const mySeq = ++speakSeq;
+      manuallyStopped = false;
+      _setSpeakingUI(true);
+
       const url = (CFG.api || "") + "/api/tts?lang=" + encodeURIComponent(curLang) +
                   "&rate=" + encodeURIComponent("+22%") +
                   "&text=" + encodeURIComponent((text || "").slice(0, 850));
       try {
         const a = new Audio(url);
         currentAudio = a;
-        a.onplay = () => { state.speaking = true; root.classList.add("speaking"); };
-        a.onended = () => { state.speaking = false; root.classList.remove("speaking"); currentAudio = null; };
-        a.onerror = () => { currentAudio = null; _browserFallbackSpeak(text, curLang); };
+        a.onplay = () => {
+          if (manuallyStopped || mySeq !== speakSeq) { a.pause(); return; }
+          _setSpeakingUI(true);
+        };
+        a.onended = () => {
+          if (mySeq === speakSeq) { _setSpeakingUI(false); currentAudio = null; }
+        };
+        a.onerror = () => {
+          if (manuallyStopped || mySeq !== speakSeq) return;
+          currentAudio = null;
+          _browserFallbackSpeak(text, curLang, mySeq);
+        };
         const p = a.play();
         if (p && typeof p.catch === "function") {
-          p.catch(() => { currentAudio = null; _browserFallbackSpeak(text, curLang); });
+          p.catch(() => {
+            if (manuallyStopped || mySeq !== speakSeq) return;
+            currentAudio = null;
+            _browserFallbackSpeak(text, curLang, mySeq);
+          });
         }
       } catch (_) {
-        _browserFallbackSpeak(text, curLang);
+        if (!manuallyStopped && mySeq === speakSeq) {
+          _browserFallbackSpeak(text, curLang, mySeq);
+        }
       }
     }
 
@@ -453,7 +518,10 @@
             <div class="head-title" id="ljw-title"></div>
             <div class="head-sub"><span style="width:6px;height:6px;border-radius:50%;background:#cdb68c;display:inline-block"></span><span id="ljw-sub"></span></div>
           </div>
-          <div class="wave" title="Grok 3.0 Audio Engine"><span></span><span></span><span></span><span></span><span></span></div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <button type="button" id="ljw-stop-voice" class="lj-stop-voice-btn" title="Callar voz inmediatamente (Esc)" style="background:#EB5757;color:#fff;border:0;border-radius:999px;padding:4px 10px;font-size:10.5px;font-weight:900;cursor:pointer;letter-spacing:.04em">🛑 CALLAR</button>
+            <div class="wave" title="Grok 3.0 Audio Engine"><span></span><span></span><span></span><span></span><span></span></div>
+          </div>
         </div>
         <div class="chips" id="ljw-chips"></div>
         <div class="log" id="ljw-log"></div>
@@ -461,6 +529,7 @@
           <input id="ljw-in" autocomplete="off">
           <button id="ljw-send" title="Send" style="font-size:12px">ENVIAR</button>
           <button id="ljw-mic" title="Voice Input" style="font-size:11px">VOZ</button>
+          <button type="button" id="ljw-quiet" title="Detener voz" style="font-size:11px;color:#EB5757;font-weight:900">🛑</button>
         </div>
       </div>
       <button class="fab" id="ljw-fab" title="El Jefesito · Voz y Texto">JEFESITO · VOZ</button>`;
@@ -545,8 +614,14 @@
       };
       rec.start();
     }
-    $("#ljw-mic").onclick = startMic;
-    fab.addEventListener("contextmenu", (e) => { e.preventDefault(); startMic(); });
+    // Stop voice first whenever user clicks Mic so they can interrupt her immediately
+    $("#ljw-mic").onclick = () => { stopAudio(); startMic(); };
+    if ($("#ljw-stop-voice")) $("#ljw-stop-voice").onclick = (e) => { e.stopPropagation(); stopAudio(); };
+    if ($("#ljw-quiet")) $("#ljw-quiet").onclick = (e) => { e.stopPropagation(); stopAudio(); };
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") stopAudio();
+    });
+    fab.addEventListener("contextmenu", (e) => { e.preventDefault(); stopAudio(); startMic(); });
 
     renderPanelLocale();
   }

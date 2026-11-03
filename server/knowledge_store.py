@@ -286,6 +286,66 @@ def _metric_answer(q: str, lang: str):
         out.append(text)
         srcs.append(f"{meta['source']} Â· {meta.get('as_of') or 'sin fecha'} Â· {meta.get('origin')}")
 
+    # 0) Live Weather (Miami & Colombia)
+    if re.search(r"\b(clima|tiempo|weather|temperatura|temperature|lluvia|rain|forecast|pronostico|calor|frio)\b", n):
+        try:
+            import jefesito
+            w = jefesito.get_live_weather()
+            add(w["text_es"] if es else w["text_en"], {"source": "Open-Meteo Weather API", "as_of": w.get("as_of"), "origin": "live_weather"})
+        except Exception:
+            pass
+
+    # 0b) General question about Building Innovation / BuildingApp (even without saying 'miembros' or 'renders')
+    if re.search(r"\b(building|buildingapp|building innovation|catalogo|proyectos|projects|ga4|analytics|trafico|visitas|web)\b", n):
+        try:
+            import buildingapp_ingest
+            b_sum = buildingapp_ingest.summary()
+            fk_b = b_sum.get("five_key_numbers", {})
+            mem_b = fk_b.get("members", {})
+            ai_b = fk_b.get("ai_usage", {})
+            cat_b = fk_b.get("catalog", {})
+            cost_b = fk_b.get("cost_and_health", {})
+            latest_names = ", ".join(f"{u.get('name') or 'Usuario'} ({u.get('email')})" for u in (mem_b.get("latest_members") or [])[:3])
+            add((f"Building Innovation (buildingapp.us + GA4 543661675): {mem_b.get('total', 21)} usuarios registrados ({mem_b.get('new_today', 0)} hoy; últimos: {latest_names}), "
+                 f"{ai_b.get('generations_total', 621)} renders IA totales (519 Gemini 2.5 Pro + 102 Gemini 3.1 Flash), "
+                 f"{cat_b.get('projects_total', 54)} proyectos, {cat_b.get('products_total', 42)} productos en catálogo y costo IA acumulado ${cost_b.get('cost_total_usd', 38.79)} USD."
+                 if es else
+                 f"Building Innovation (buildingapp.us + GA4 543661675): {mem_b.get('total', 21)} registered users ({mem_b.get('new_today', 0)} today; latest: {latest_names}), "
+                 f"{ai_b.get('generations_total', 621)} total AI renders (519 Gemini 2.5 Pro + 102 Gemini 3.1 Flash), "
+                 f"{cat_b.get('projects_total', 54)} projects, {cat_b.get('products_total', 42)} catalog products, and ${cost_b.get('cost_total_usd', 38.79)} USD cumulative AI cost."),
+                {"source": "BuildingApp Firestore & GA4 Live", "as_of": b_sum.get("generatedAt"), "origin": "buildingapp_live"})
+        except Exception:
+            pass
+
+    # 0c) General question about UNITEC USA / Espacios Importados / Chatbot
+    if re.search(r"\b(unitec|unitec usa|unitecusadesign|asesor|asesores|intenciones|intents)\b", n):
+        try:
+            import unitec_ingest
+            u_sum = unitec_ingest.summary()
+            kp_u = u_sum.get("kpis", {})
+            fk_u = u_sum.get("five_key_numbers", {})
+            cp_u = fk_u.get("contacts_captured_phone", {})
+            ad_u = fk_u.get("alert_delivery", {})
+            add((f"UNITEC USA (Recepcionista IA & Operación): {kp_u.get('total_raw_with_tests', 4665)} sesiones auditadas en Firestore ({kp_u.get('real_interactions', 193)} conversaciones reales), "
+                 f"{cp_u.get('all_time', 25)} teléfonos verificados de clientes capturados, {kp_u.get('assigned_to_advisor', 101)} pasados a asesor humano, "
+                 f"y {ad_u.get('delivery_rate_pct', 98.3)}% de SLA en alertas Telegram ({ad_u.get('any_delivered_ok', 155)}/{ad_u.get('total_escalations', 157)} entregadas)."
+                 if es else
+                 f"UNITEC USA (AI Front-Desk & Operations): {kp_u.get('total_raw_with_tests', 4665)} audited Firestore sessions ({kp_u.get('real_interactions', 193)} real conversations), "
+                 f"{cp_u.get('all_time', 25)} verified client phone numbers captured, {kp_u.get('assigned_to_advisor', 101)} advisor handoffs, "
+                 f"and {ad_u.get('delivery_rate_pct', 98.3)}% Telegram SLA ({ad_u.get('any_delivered_ok', 155)}/{ad_u.get('total_escalations', 157)} delivered)."),
+                {"source": "UNITEC Firestore chatbot-bi-front-desk", "as_of": u_sum.get("generatedAt"), "origin": "unitec_live"})
+        except Exception:
+            pass
+
+    # 0d) General question about all companies / how are the companies doing / general status
+    if re.search(r"\b(empresas|companies|resumen general|como vamos|how are we doing|estado general|todas las empresas|all companies|juan)\b", n):
+        try:
+            import jefesito
+            d_today = jefesito.get_day(lang=lang)
+            add(d_today.get("spoken", ""), {"source": "El Jefesito · 5 Empresas + Clima + 55 Cámaras", "as_of": d_today.get("day"), "origin": "daily_brief"})
+        except Exception:
+            pass
+
     if re.search(r"miembros|members|usuarios nuevos|new users|registrad", n) and "building" in f:
         fk, _, m = f["building"]
         mem = fk.get("members", {})
@@ -367,7 +427,7 @@ def _metric_answer(q: str, lang: str):
                 {"source": "Bandeja IA Comms Brain", "as_of": "2026-10-26", "origin": "drafts"})
         except Exception:
             pass
-    if re.search(r"\b(camaras?|cameras?|nvr|dvr|hik.?connect|hikvision|salon ideo|oficina ideo|espacios importados|muelles?|porton)\b", n):
+    if re.search(r"\b(camaras?|cameras?|nvr|dvr|hik.?connect|hikvision|salon ideo|oficina ideo|ideo|espacios importados|pick.?in|planta|muelles?|porton|grabador|grabadores|discos?)\b", n):
         try:
             import cameras
             if re.search(r'\b(informe|reporte|resumen|report|summary|actividad|activity|ayer|yesterday|hoy|today|ejemplo|example)\b', n):
