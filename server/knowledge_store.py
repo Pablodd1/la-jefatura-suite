@@ -155,45 +155,45 @@ def ensure_demo_knowledge_seeded():
     c.close()
     if n_notes == 0:
         add_note(
-            "Juan (CEO Building Innovation) solicitÃ³ priorizar el embudo de cotizaciÃ³n de paneles WPC "
-            "y revisar el reporte diario de nuevos miembros de BuildingApp en App Store y Google Play.",
+            "Juan (CEO Building Innovation & UNITEC USA) solicitó priorizar el embudo de cotización de paneles WPC "
+            "y revisar el reporte diario de los 7 miembros y 130 renders IA de BuildingApp.us.",
             source="demo_seed", company="building"
         )
         add_note(
-            "Dr. Molina (Doral Urgent Care) confirmÃ³ interÃ©s en firmar hoy por US$12,400/mes si incluimos "
-            "el mÃ³dulo de denegaciones automÃ¡ticas en CEDEXX.",
-            source="demo_seed", company="cedexx"
+            "Auditoría CCTV Hik-Connect: 53 de 55 cámaras en vivo (96.4% uptime) en USA Miami (8/8), "
+            "Planta Pick-In (16/16) y Espacios Importados (29/29). Revisar 2 cámaras Wi-Fi en SALON/OFICINA IDEO.",
+            source="demo_seed", company="espacios"
         )
     if n_meet == 0:
         add_meeting_summary(
-            "El consejo de Brickell Ortho Institute aprobÃ³ el piloto de facturaciÃ³n mÃ©dica para 3 sedes "
-            "(US$15,200 ARR). El kickoff tÃ©cnico arranca el lunes a las 09:30 AM con Juan Perez.",
-            title="Kickoff & AprobaciÃ³n Brickell Ortho Institute",
-            attendees="Jasmel Acosta, Juan Perez, DirecciÃ³n Brickell Ortho",
-            action_items="Enviar contrato DocuSign y habilitar accesos de las 3 sedes",
-            source="demo_seed", company="mbmb"
+            "Revisión de resultados de la Recepcionista IA de UNITEC USA: 112 conversaciones reales, "
+            "29 teléfonos de clientes capturados y 98.3% de entrega de alertas en Telegram.",
+            title="Comité Comercial & Recepcionista IA — UNITEC USA",
+            attendees="Juan Garcia, Jasmel Acosta, Equipo Comercial UNITEC",
+            action_items="Contactar a los 29 leads con teléfono y confirmar recepción de contenedor WPC en Miami",
+            source="demo_seed", company="unitec"
         )
         add_meeting_summary(
-            "RevisiÃ³n de lanzamiento mÃ³vil BuildingApp AI (iOS App Store y Google Play): el revisor de Apple "
-            "completÃ³ 5 anÃ¡lisis de cuarto con Gemini Flash (100% Ã©xito) y probÃ³ el flujo DELETE_ACCOUNT.",
-            title="AuditorÃ­a App Store & Google Play â€” BuildingApp AI",
-            attendees="Jasmel Acosta, Juan (Building Innovation)",
-            action_items="Conectar Meta WhatsApp Cloud API Oficial (Graph API v21.0 — Cero Bloqueos) y activar GA4 Data API",
+            "Revisión de lanzamiento móvil BuildingApp AI (iOS App Store y Google Play): 130 renders IA generados "
+            "(100% éxito con Gemini 2.5 Flash) y conexión de Google Analytics 4 para buildinginnovation.us.",
+            title="Auditoría App Store, Google Play & GA4 — Building Innovation",
+            attendees="Juan Garcia, Jasmel Acosta",
+            action_items="Conectar Meta WhatsApp Cloud API Oficial (Graph API v21.0) y activar GA4 Data API",
             source="demo_seed", company="building"
         )
     if n_mail == 0:
         add_email_summary(
-            "Luisa de ClÃ­nica Del Mar Cartagena enviÃ³ la Orden de Compra #PO-2214 aprobada por US$9,800 "
-            "para migrar 3 sedes este lunes a las 10:00 AM.",
-            sender="facturas@clinicadelmar.co",
-            subject="Orden de compra #PO-2214 ($9,800) â€” 3 Sedes Cartagena",
-            source="demo_seed", company="saleinn"
+            "Reporte automático de 55 Cámaras Hik-Connect: 53 canales activos con video en tiempo real "
+            "y 11.04 TB de almacenamiento grabando en Espacios Importados, Planta Pick-In y USA.",
+            sender="cctv@espaciosimportados.com.co",
+            subject="Auditoría Diaria 55 Cámaras Hik-Connect (96.4% Online)",
+            source="demo_seed", company="espacios"
         )
         add_email_summary(
-            "NotificaciÃ³n logÃ­stica UNITEC USA: el contenedor de lÃ¡minas PVC mÃ¡rmol y paneles WPC "
-            "actualizÃ³ su ETA al puerto de Miami para el 4 de noviembre.",
+            "Notificación logística UNITEC USA: el contenedor de láminas PVC mármol y paneles WPC "
+            "actualizó su ETA al puerto de Miami para descarga en Showroom y Bodega.",
             sender="logistics@unitecusadesign.com",
-            subject="ActualizaciÃ³n ETA Contenedor WPC / PVC Miami",
+            subject="Actualización ETA Contenedor WPC / PVC Miami",
             source="demo_seed", company="unitec"
         )
 
@@ -396,7 +396,7 @@ def _metric_answer(q: str, lang: str):
             add((f"Tienes {len(evs)} citas sincronizadas en el calendario ({len(today_evs)} hoy 2026-10-26): {summary_evs}."
                  if es else f"You have {len(evs)} synced calendar appointments ({len(today_evs)} today 2026-10-26): {summary_evs}."),
                 {"source": "Calendario mc.db & 9 Integraciones", "as_of": "2026-10-26", "origin": "events"})
-    if re.search(r"\b(ingresos?|ventas?|facturacion|pipeline|portafolio|revenue|sales|mbmb|cedexx|305biz)\b", n):
+    if re.search(r"\b(ingresos?|ventas?|facturacion|pipeline|portafolio|revenue|sales)\b", n):
         add(("Portafolio Consolidado (5 Empresas): Ingreso mensual proyectado $48,200 (+12% vs semana previa), "
              "Pipeline total Nexus $214,500 (23 leads activos), Ventas cerradas $96,400 (31% conversiÃ³n). "
              "Desglose: MBMB $18,600/mes (pipe $84,200), CEDEXX $12,800/mes (pipe $62,400), "
@@ -554,17 +554,12 @@ CREATE TABLE IF NOT EXISTS events (
 """
 
 DEMO_EVENTS_SEED = [
-    ("E-demo1017", "AuditorÃ­a Mensual FacturaciÃ³n MÃ©dica (3 Sedes)", "2026-10-17", "10:00", 45, "mbmb", "Sincronizado con Google Calendar & Nexus CRM", "Google Calendar & Nexus", "scheduled"),
-    ("E-demo1021", "RevisiÃ³n Lanzamiento iOS & Android BuildingApp AI", "2026-10-21", "11:30", 30, "building", "Sincronizado con Google Meet & App Store Connect", "Google Meet & Zoom", "scheduled"),
-    ("E-demo1023", "ComitÃ© de ConversiÃ³n Recepcionista IA UNITEC (29 Leads)", "2026-10-23", "15:00", 45, "unitec", "Sincronizado con Outlook & Vercel Front-Desk", "Google Calendar & Outlook", "scheduled"),
-    ("E-demo1025", "PreparaciÃ³n Semanal de Flujo de Caja & Denegaciones", "2026-10-25", "17:00", 30, "cedexx", "Sincronizado con Cerebro Conductual", "Google Calendar & Outlook", "scheduled"),
-    ("E-demo1026a", "Kickoff TÃ©cnico Brickell Ortho ($15.2k ARR)", "2026-10-26", "09:30", 45, "mbmb", "Sincronizado con Google Calendar & Meet", "Google Calendar & Meet", "scheduled"),
-    ("E-demo1026b", "Cierre Contrato Dr. Molina Â· Doral Urgent Care ($12.4k/m)", "2026-10-26", "14:00", 30, "cedexx", "Sincronizado con Nexus CRM & Outlook", "Nexus CRM & Outlook", "scheduled"),
-    ("E-demo1026c", "Corte Diario BuildingApp AI (130 Renders Â· 7 Miembros)", "2026-10-26", "16:30", 30, "building", "Sincronizado con Google Calendar & Zoom", "Google Meet & Zoom", "scheduled"),
-    ("E-demo1027a", "MigraciÃ³n 3 Sedes ClÃ­nica Del Mar (#PO-2214 Â· $9.8k)", "2026-10-27", "10:00", 60, "305biz", "Sincronizado con Google Calendar & Meet", "Google Calendar & Meet", "scheduled"),
-    ("E-demo1027b", "Demo Portal BilingÃ¼e Â· Jorge (UNITEC USA)", "2026-10-27", "16:00", 45, "unitec", "Sincronizado con Nexus CRM & Google Meet", "Nexus CRM & Meet", "scheduled"),
-    ("E-demo1028", "AuditorÃ­a Mensual Denegaciones & Cashflow (MBMB + CEDEXX)", "2026-10-28", "11:00", 45, "mbmb", "Sincronizado con Outlook & Nexus CRM", "Google Calendar & Outlook", "scheduled"),
-    ("E-demo1030", "ComitÃ© Ejecutivo de Viernes Â· 5 Empresas Consolidadas", "2026-10-30", "15:00", 60, "all", "Sincronizado con Google Calendar, Zoom & PDF Diario", "Google Calendar & Zoom", "scheduled"),
+    ("E-juan1103a", "Revisión Despachos Muelles 1–4 y Planta Pick-In (Espacios Importados)", "2026-11-03", "09:30", 45, "espacios", "Sincronizado con Google Calendar & CCTV 55 Cámaras", "Google Calendar & Meet", "scheduled"),
+    ("E-juan1103b", "Auditoría Tráfico Web GA4 & 130 Renders IA (Building Innovation)", "2026-11-03", "11:30", 30, "building", "Sincronizado con Google Meet & BuildingApp.us", "Google Meet & Zoom", "scheduled"),
+    ("E-juan1103c", "Comité de Conversión Recepcionista IA UNITEC USA (29 Teléfonos)", "2026-11-03", "14:30", 45, "unitec", "Sincronizado con Google Calendar & Vercel Front-Desk", "Google Calendar & Meet", "scheduled"),
+    ("E-juan1103d", "Verificación Técnica 2 Cámaras Wi-Fi SALON/OFICINA IDEO", "2026-11-03", "16:30", 30, "espacios", "Sincronizado con Hik-Connect Cloud API", "Hik-Connect & Calendar", "scheduled"),
+    ("E-juan1104a", "Recepción Contenedor WPC / PVC Mármol en Miami (UNITEC USA)", "2026-11-04", "10:00", 60, "unitec", "Sincronizado con Logística Miami & Cámaras USA", "Google Calendar & Meet", "scheduled"),
+    ("E-juan1104b", "Seguimiento Pipeline B2B Nexus ($104,600 USD Activos)", "2026-11-04", "15:00", 45, "saleinn", "Sincronizado con Nexus CRM & Google Calendar", "Nexus CRM & Meet", "scheduled"),
 ]
 
 

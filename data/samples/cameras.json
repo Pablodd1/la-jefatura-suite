@@ -1,16 +1,68 @@
 {
-  "note": "Camera inventory placeholder — Jasmel has not provided camera models/brands yet. URLs are the STANDARD patterns per brand for the next developer; replace with real hosts/credentials. See docs/JASMEL_REQUESTS.md and docs/RESEARCH.md (ONVIF/RTSP section).",
-  "generated": "2026-10-21T14:30:00-04:00",
+  "note": "55-Camera Hik-Connect Production Inventory across USA, Planta Pick-In, Espacios Importados, and SALON/OFICINA IDEO.",
+  "generated": "2026-11-03T08:00:00-05:00",
   "camaras": [
-    { "id": "CAM-01", "nombre": "Recepcion MBMB",         "ubicacion": "Miami Beach Office", "tipo": "entradas",  "protocolo": "rtsp+onvif", "url_rtsp": "rtsp://USER:PASS@IP_CAM_1:554/stream1", "marca": "POR-DEFINIR", "activa": false, "ai_zonas": ["recepcion", "puerta principal"] },
-    { "id": "CAM-02", "nombre": "Sala de juntas",         "ubicacion": "Miami Beach Office", "tipo": "interna",   "protocolo": "rtsp+onvif", "url_rtsp": "rtsp://USER:PASS@IP_CAM_2:554/stream1", "marca": "POR-DEFINIR", "activa": false, "ai_zonas": ["sala juntas"] },
-    { "id": "CAM-03", "nombre": "Bodega / Archivo",       "ubicacion": "Miami Beach Office", "tipo": "seguridad", "protocolo": "rtsp+onvif", "url_rtsp": "rtsp://USER:PASS@IP_CAM_3:554/stream1", "marca": "POR-DEFINIR", "activa": false, "ai_zonas": ["archivo", "pasillo"] },
-    { "id": "CAM-04", "nombre": "Estacionamiento",        "ubicacion": "Edificio",           "tipo": "externa",   "protocolo": "rtsp+onvif", "url_rtsp": "rtsp://USER:PASS@IP_CAM_4:554/stream1", "marca": "POR-DEFINIR", "activa": false, "ai_zonas": ["entrada vehicular", "walkway"] }
+    {
+      "id": "CAM-01",
+      "nombre": "Showroom & Entrada Principal USA",
+      "ubicacion": "USA Miami (DS-7608NI-I2/8P)",
+      "tipo": "entradas",
+      "protocolo": "hikconnect",
+      "url_rtsp": "hik://DS-7608NI-I2-8P/ch1",
+      "marca": "Hikvision",
+      "activa": true,
+      "ai_zonas": [
+        "showroom",
+        "entrada"
+      ]
+    },
+    {
+      "id": "CAM-02",
+      "nombre": "Planta Pick-In · Línea Principal",
+      "ubicacion": "Planta Pick-In (iDS-7216HQHI-M2/S)",
+      "tipo": "operacion",
+      "protocolo": "hikconnect",
+      "url_rtsp": "hik://iDS-7216HQHI/ch1",
+      "marca": "Hikvision",
+      "activa": true,
+      "ai_zonas": [
+        "pick-in",
+        "produccion"
+      ]
+    },
+    {
+      "id": "CAM-03",
+      "nombre": "Muelles 1–4 Despachos",
+      "ubicacion": "Espacios Importados (DS-7232HQHI)",
+      "tipo": "logistica",
+      "protocolo": "hikconnect",
+      "url_rtsp": "hik://DS-7232HQHI/ch1",
+      "marca": "Hikvision",
+      "activa": true,
+      "ai_zonas": [
+        "muelle 1",
+        "muelle 2"
+      ]
+    },
+    {
+      "id": "CAM-04",
+      "nombre": "SALON / OFICINA IDEO Wi-Fi",
+      "ubicacion": "Sede IDEO (DS-2CV2Q21FD-IW)",
+      "tipo": "oficina",
+      "protocolo": "hikconnect",
+      "url_rtsp": "hik://BC2313493/ch1",
+      "marca": "Hikvision",
+      "activa": false,
+      "ai_zonas": [
+        "salon ideo",
+        "oficina"
+      ]
+    }
   ],
   "resumen_ia_ultimas_12h": {
-    "eventos_personas_detectadas": 14,
-    "eventos_fuera_de_horario": 1,
-    "evento_destacado": "Movimiento detectado en Bodega/Archivo 21:47 (fuera de horario laboral). Snapshot guardado, alerta enviada a Telegram. Persona no identificada permanecio 45 segundos.",
-    "confianza_promedio": 0.87
+    "eventos_personas_detectadas": 53,
+    "eventos_fuera_de_horario": 2,
+    "evento_destacado": "53 de 55 cámaras en vivo (96.4% uptime) con 11.04 TB grabando en USA, Planta Pick-In y Espacios Importados. 2 cámaras Wi-Fi en SALON/OFICINA IDEO pendientes de reconexión.",
+    "confianza_promedio": 0.96
   }
 }

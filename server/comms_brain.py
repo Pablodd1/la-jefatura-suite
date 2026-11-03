@@ -570,30 +570,28 @@ def ensure_demo_inbox_seeded():
     if cnt >= 4:
         return
     # Seed owner voice corpus first
-    ingest("email", "out_owner", "carlos@saleinnovation.co",
-           "Estimado Carlos,\n\nTe envío la cotización actualizada para el servicio de facturación médica. "
-           "Incluye el desglose mensual y las condiciones de pago que conversamos. "
-           "Quedo atento a cualquier ajuste antes de firmar.\n\nCordialmente,\nJasmel Acosta\njasmelacosta@gmail.com",
+    ingest("email", "out_owner", "logistics@unitecusadesign.com",
+           "Estimado equipo,\n\nConfirmamos la recepción del contenedor de paneles WPC y láminas PVC mármol en Miami. "
+           "Por favor coordinar descarga en Showroom y enviar inventario actualizado.\n\nCordialmente,\nJuan Garcia\nceo@espaciosimportados.com.co",
            msg_id="seed-own-1")
-    ingest("email", "out_owner", "sofia@brickellortho.com",
-           "Estimada Sofia,\n\nConfirmamos el kickoff del lunes a las 9:30 AM por Google Meet. "
-           "Nuestro equipo técnico ya tiene listo el entorno de producción.\n\nCordialmente,\nJasmel Acosta",
+    ingest("email", "out_owner", "operaciones@espaciosimportados.com.co",
+           "Estimado equipo,\n\nAutorizado el despacho de los 24 pedidos en Muelle 1 y la revisión técnica de las 2 cámaras en sede IDEO.\n\nCordialmente,\nJuan Garcia",
            msg_id="seed-own-2")
     learn()
     # Seed realistic multi-channel incoming messages requiring CEO review/approval
     incoming_samples = [
-        ("gmail", "dr.molina@doralurgent.com",
-         "Asunto: RE: Propuesta CEDEXX — cambios menores | Hola Jasmel, revisé con el CFO la propuesta de $12,400. ¿Podemos incluir el módulo de denegaciones automáticas sin subir el fee mensual para firmar hoy?",
-         "thread-molina"),
-        ("gmail", "facturas@clinicadelmar.co",
-         "Asunto: Orden de compra #PO-2214 ($9,800) | Estimado Jasmel, adjunto la orden de compra aprobada para las 3 sedes en Cartagena. ¿Nos confirmas fecha de inicio de implementación?",
-         "thread-clinicadelmar"),
-        ("telegram", "@JuanPerez_Sales",
-         "Jasmel, el Dr. Omar Khalil de Sunshine Dental Tampa ($6,700) pide confirmar si podemos hacer el assessment de billing este jueves a las 11am. ¿Lo apruebo?",
-         "thread-sunshine"),
-        ("whatsapp", "+52-55-4190-8821 (Farmacia La Esperanza)",
-         "Buen día Jasmel, soy Jorge Ramírez. Ya resolvimos el corte de red. ¿Podemos reagendar la demo del portal bilingüe para mañana a las 4 PM?",
-         "thread-esperanza"),
+        ("gmail", "logistics@unitecusadesign.com",
+         "Asunto: Contenedor WPC Roble Claro & PVC Mármol Miami | Hola Juan, el contenedor llega mañana a las 09:00 AM a la bodega de Miami. ¿Autorizas turno extra de descarga para actualizar stock en UNITEC USA?",
+         "thread-unitec-container"),
+        ("whatsapp", "+57-310-450-8812 (Jefe de Muelles · Espacios Importados)",
+         "Buen día jefe Juan, Muelle 1 completó 24 despachos hoy y Planta Pick-In opera al 100% (16/16 cámaras). ¿Confirmamos el despacho especial para el proyecto hotelero de Cartagena?",
+         "thread-espacios-muelle1"),
+        ("telegram", "@UnitecBot_Alerts",
+         "Alerta Recepcionista IA UNITEC USA: Nuevo arquitecto en Miami solicitó cotización de 450 paneles WPC y dejó teléfono verificado (+1-305-912-4401). ¿Asignamos llamada inmediata?",
+         "thread-unitec-lead29"),
+        ("gmail", "soporte@buildingapp.us",
+         "Asunto: Reporte BuildingApp AI (130 Renders / 7 Miembros) | Hola Juan, hoy sumamos 16 nuevos renders IA sin errores en Gemini Flash. ¿Activamos la campaña de correo para invitar constructores de Miami?",
+         "thread-building-renders"),
     ]
     for ch, contact, txt, tid in incoming_samples:
         ingest(ch, "in", contact, txt, msg_id=f"seed-in-{tid}", thread_id=tid, auto_flag=True)

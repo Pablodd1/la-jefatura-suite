@@ -1,16 +1,72 @@
 {
-  "generated": "2026-10-21T14:30:00-04:00",
+  "generated": "2026-11-03T08:00:00-05:00",
   "tareas": [
-    { "id": "T-01", "titulo": "Enviar propuesta CEDEXX a Doral Urgent",        "empresa": "cedexx",  "owner": "Jasmel",     "due": "2026-10-19", "estado": "overdue",  "severidad": "critical", "notas": "Bloquea cierre L-1042 ($12.4k). CFO esperando." },
-    { "id": "T-02", "titulo": "Firmar contrato Brickell Ortho",                "empresa": "mbmb",    "owner": "Jasmel",     "due": "2026-10-23", "estado": "open",     "severidad": "high",     "notas": "Contrato en DocuSign. Revisar clausula 7." },
-    { "id": "T-03", "titulo": "Responder orden de compra Clinica Del Mar",     "empresa": "saleinn", "owner": "Maria",      "due": "2026-10-22", "estado": "open",     "severidad": "high",     "notas": "PO-2214 $9.8k. Confirmar datos tributarios." },
-    { "id": "T-04", "titulo": "Renew SSL cedexx.net",                          "empresa": "cedexx",  "owner": "Kimi Claw",  "due": "2026-11-17", "estado": "scheduled","severidad": "medium",   "notas": "Cron de monitoreo activo (27 dias restantes)." },
-    { "id": "T-05", "titulo": "Demo remota Farmacia La Esperanza (reagenda)",  "empresa": "saleinn", "owner": "Carlos",     "due": "2026-10-24", "estado": "open",     "severidad": "medium",   "notas": "Se cayo por outage la vez pasada." },
-    { "id": "T-06", "titulo": "Onboarding MedCore Guadalajara",                "empresa": "cedexx",  "owner": "Juan",       "due": "2026-10-27", "estado": "open",     "severidad": "medium",   "notas": "Tenant prod + capacitacion." },
-    { "id": "T-07", "titulo": "Post semanal LinkedIn MBMB",                    "empresa": "mbmb",    "owner": "Kimi Claw",  "due": "2026-10-22", "estado": "open",     "severidad": "low",      "notas": "Tema sugerido: '5 denegaciones mas caras en billing pediatrico'." },
-    { "id": "T-08", "titulo": "Segundo intento Optica Vision Plus",            "empresa": "saleinn", "owner": "Maria",      "due": "2026-10-23", "estado": "open",     "severidad": "low",      "notas": "Llamar jueves antes de 10am." },
-    { "id": "T-09", "titulo": "Actualizar snapshot listings 305biz",           "empresa": "305biz",  "owner": "Kimi Claw",  "due": "2026-10-25", "estado": "open",     "severidad": "low",      "notas": "Sync con nuevas columnas si hay DDL." },
-    { "id": "T-10", "titulo": "1:1 Jasmel/Juan pendientes",                    "empresa": "mbmb",    "owner": "Jasmel",     "due": "2026-10-22", "estado": "open",     "severidad": "medium",   "notas": "Agenda 16:30." }
+    {
+      "id": "T-01",
+      "titulo": "Reconectar 2 cámaras Wi-Fi en SALON/OFICINA IDEO (DS-2CV2Q21FD-IW)",
+      "empresa": "espacios",
+      "owner": "Juan / IT",
+      "due": "2026-11-03",
+      "estado": "overdue",
+      "severidad": "critical",
+      "notas": "source:camera_audit | Revisar alimentación 5V DC y señal Wi-Fi 2.4GHz en sede IDEO."
+    },
+    {
+      "id": "T-02",
+      "titulo": "Llamar a los 29 leads con teléfono capturados por Recepcionista IA UNITEC",
+      "empresa": "unitec",
+      "owner": "Equipo Comercial",
+      "due": "2026-11-03",
+      "estado": "open",
+      "severidad": "high",
+      "notas": "source:unitec_chatbot | Priorizar los 2 teléfonos nuevos de hoy y cotizaciones WPC/PVC."
+    },
+    {
+      "id": "T-03",
+      "titulo": "Revisar embudo de los 7 miembros registrados y 130 renders IA en BuildingApp.us",
+      "empresa": "building",
+      "owner": "Juan / Jasmel",
+      "due": "2026-11-03",
+      "estado": "open",
+      "severidad": "high",
+      "notas": "source:building_app | Convertir usuarios activos de visualización 3D en cotizaciones."
+    },
+    {
+      "id": "T-04",
+      "titulo": "Configurar Grabación Continua 24/7 en NVR USA (DS-7608NI-I2/8P)",
+      "empresa": "unitec",
+      "owner": "IT / CCTV",
+      "due": "2026-11-04",
+      "estado": "open",
+      "severidad": "medium",
+      "notas": "source:camera_audit | Las 8 cámaras de Miami están online; activar schedule 24/7 en el disco de 1.82 TB."
+    },
+    {
+      "id": "T-05",
+      "titulo": "Confirmar guía de despacho y turno extra en Muelle 1 (Espacios Importados)",
+      "empresa": "espacios",
+      "owner": "Logística",
+      "due": "2026-11-04",
+      "estado": "open",
+      "severidad": "medium",
+      "notas": "source:whatsapp | Contenedor WPC Roble Claro y 24 despachos en Muelle 1."
+    },
+    {
+      "id": "T-06",
+      "titulo": "Conectar Google Analytics 4 (GA4) y Google Calendar de Juan en solo lectura",
+      "empresa": "building",
+      "owner": "Juan / Jasmel",
+      "due": "2026-11-04",
+      "estado": "open",
+      "severidad": "medium",
+      "notas": "source:onboarding | Compartir Property ID de buildinginnovation.us y unitecusadesign.com."
+    }
   ],
-  "resumen": { "total": 10, "overdue": 1, "due_hoy": 3, "critical": 1, "high": 2 }
+  "resumen": {
+    "total": 6,
+    "overdue": 1,
+    "due_hoy": 3,
+    "critical": 1,
+    "high": 2
+  }
 }

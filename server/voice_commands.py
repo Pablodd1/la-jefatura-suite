@@ -79,7 +79,7 @@ def _reply(action, lang="es", **kw):
             "help": ("Grok 3.0 Voice commands: switch to «company» · open «tab» (overview, comms, outcomes, "
                      "brain, setup, blogs) · approve draft · draft reply · complete task «number» · "
                      "order coffee · read brief · download report."),
-            "unknown": "I heard you, CEO. Try saying 'open blogs', 'switch to CEDEXX', 'approve draft', or 'read brief'.",
+            "unknown": "I heard you, CEO. Try saying 'open blogs', 'switch to UNITEC USA', 'approve draft', or 'read brief'.",
         }
         return R_EN.get(action, R_EN["unknown"])
 

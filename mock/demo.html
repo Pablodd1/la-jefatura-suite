@@ -684,7 +684,7 @@
         <select class="inp" id="waSimTargetChat" style="width:auto;min-width:260px">
           <option value="wa-grp-unitec-logistica|Grupo Dirección & Logística — UNITEC / Building|group|unitec">Grupo Dirección & Logística — UNITEC / Building</option>
           <option value="wa-grp-espacios-muelles|Grupo Muelles y Despachos — Espacios Importados|group|building">Grupo Muelles y Despachos — Espacios Importados</option>
-          <option value="wa-grp-mbmb-closers|Grupo Ventas & Closers — MBMB / CEDEXX|group|mbmb">Grupo Ventas & Closers — MBMB / CEDEXX</option>
+          <option value="wa-grp-building-app|Grupo Producto & Marketing — Building Innovation|group|building">Grupo Producto & Marketing — Building Innovation</option>
           <option value="+52-55-4190-8821|Jorge Ramírez · Farmacia La Esperanza|direct|saleinn">Jorge Ramírez · Farmacia La Esperanza (+52-55-4190-8821)</option>
         </select>
         <input class="inp" id="waSimGroupMsg" style="flex:1;min-width:260px" value="Jasmel, llegó el contenedor de Paneles WPC Roble Claro al Muelle 1. ¿Autorizas descargar hoy y enviar factura al cliente de Doral?">
@@ -1013,7 +1013,7 @@
     <div class="sa-dev-drawer" id="saWatchdogDrawer" style="display:none;border-color:rgba(16,185,129,.4);background:rgba(16,185,129,.07)">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:8px;flex-wrap:wrap">
         <div>
-          <strong style="font-size:12.5px;color:#34D399">🛡️ Watchdog Ejecutivo Autónomo &amp; Alarmas Activas (UNITEC · BuildingApp · MBMB · CEDEXX · 305BIZ)</strong>
+          <strong style="font-size:12.5px;color:#34D399">🛡️ Watchdog Ejecutivo Autónomo &amp; Alarmas Activas (UNITEC · BuildingApp · ESPACIOS IMPORTADOS · NEXUS CRM)</strong>
           <div class="muted" style="font-size:11px">Monitoreo proactivo de tráfico GA4, reclamos vencidos, leads de alto valor y alarmas activas en <code>mc.db</code> con ejecución en 1 clic.</div>
         </div>
         <button type="button" class="btn ghost sm" onclick="window.LJSuper && window.LJSuper.loadWatchdogs()">↻ Actualizar Radar</button>
@@ -1041,14 +1041,14 @@
       <button type="button" class="sa-chip" style="border-color:#EB5757;color:#EB5757;font-weight:900" onclick="window.stopAllBotVoice && window.stopAllBotVoice()">🛑 Callar Voz Ahora</button>
       <button type="button" class="sa-chip" onclick="window.LJSuper.send('leer resumen del día')">🔊 Resumen del Día + Clima</button>
       <button type="button" class="sa-chip" onclick="window.LJSuper.send('cómo está el clima hoy en Miami y Colombia')">🌤️ Clima en Vivo (Miami &amp; Colombia)</button>
-      <button type="button" class="sa-chip warn" onclick="window.LJSuper.send('Schedule a call with Dr. Molina tomorrow at 3pm, draft him a confirmation WhatsApp, and remind me at 2pm to check his Medicaid report')">⚡ Orden Compuesta 3-en-1 (Dr. Molina)</button>
+      <button type="button" class="sa-chip warn" onclick="window.LJSuper.send('Agendar reunión con Juan mañana a las 3pm, redactarle un WhatsApp de confirmación y recordarme a las 2pm revisar el reporte de cámaras de UNITEC')">⚡ Orden Compuesta 3-en-1 (UNITEC & Cámaras)</button>
       <button type="button" class="sa-chip" onclick="window.LJSuper.send('qué citas tengo hoy')">Citas y Agenda Hoy</button>
       <button type="button" class="sa-chip" onclick="window.LJSuper.send('cuál es el ingreso proyectado y pipeline de todas las empresas')">Ingresos y Pipeline (5 Empresas)</button>
       <button type="button" class="sa-chip" onclick="window.LJSuper.send('cuántos miembros nuevos hay en BuildingApp y conversaciones en UNITEC')">Métricas BuildingApp &amp; UNITEC</button>
       <button type="button" class="sa-chip" onclick="window.LJSuper.send('cuál es el estado de las cámaras y NVR en Hik-Connect')">Cámaras y NVR Hik-Connect (55 Canales)</button>
       <button type="button" class="sa-chip" onclick="window.LJSuper.send('aprobar borrador')">Aprobar Borrador (1-Clic)</button>
       <button type="button" class="sa-chip" onclick="window.LJSuper.send('agendar cita: Comité Ejecutivo 2026-10-27 11:00')">Agendar Cita Mañana 11:00</button>
-      <button type="button" class="sa-chip" onclick="window.LJSuper.send('crear tarea: Revisar contrato Doral Urgent Care')">Crear Tarea Rápida</button>
+      <button type="button" class="sa-chip" onclick="window.LJSuper.send('crear tarea: Revisar cotizaciones WPC de UNITEC USA')">Crear Tarea Rápida</button>
       <button type="button" class="sa-chip" onclick="window.LJSuper.send('sincronizar calendarios e integraciones')">Sincronizar 9 Integraciones</button>
       <button type="button" class="sa-chip warn" onclick="window.LJSuper.send('conectar cuenta bancaria Suiza UBS en tiempo real')">Probar Escalación al Desarrollador</button>
     </div>
@@ -1074,21 +1074,18 @@
 <script>
 /* ── Complete Multi-Company & White-Label Sample Dataset ── */
 const COMPANIES = [
-  {id:'all', name:'Todas / All', color:'#23d9b0', rev:48200, pipe:214500, leads:23, closed:96400, conv:31, crit:1},
-  {id:'mbmb', name:'MBMB', color:'#23d9b0', rev:21500, pipe:84200, leads:9, closed:44000, conv:36, crit:0},
-  {id:'cedexx', name:'CEDEXX', color:'#7c6cff', rev:12800, pipe:62400, leads:6, closed:28000, conv:33, crit:1},
-  {id:'unitec', name:'UNITEC USA', color:'#00e5ff', rev:18900, pipe:68500, leads:29, closed:31200, conv:35, crit:2},
-  {id:'building', name:'BUILDING (Juan)', color:'#feca57', rev:0, pipe:4500, leads:1, closed:0, conv:0, crit:1},
-  {id:'305biz', name:'305BIZ', color:'#00D4FF', rev:6400, pipe:31000, leads:4, closed:14200, conv:28, crit:0},
-  {id:'aidyn', name:'AIDYN', color:'#ff9f43', rev:4100, pipe:19400, leads:2, closed:6200, conv:25, crit:0},
-  {id:'saleinn', name:'NEXUS', color:'#ff6b81', rev:3400, pipe:17500, leads:2, closed:4000, conv:24, crit:0}
+  {id:'all', name:'Todas / All', color:'#23d9b0', rev:42400, pipe:104600, leads:29, closed:28000, conv:31, crit:2},
+  {id:'unitec', name:'UNITEC USA', color:'#00e5ff', rev:24500, pipe:68500, leads:25, closed:18000, conv:35, crit:1},
+  {id:'building', name:'BUILDING INNOVATION', color:'#feca57', rev:9500, pipe:18600, leads:12, closed:6000, conv:28, crit:0},
+  {id:'espacios', name:'ESPACIOS IMPORTADOS', color:'#7c6cff', rev:5000, pipe:10000, leads:4, closed:2000, conv:30, crit:1},
+  {id:'saleinn', name:'NEXUS CRM', color:'#ff6b81', rev:3400, pipe:7500, leads:2, closed:2000, conv:24, crit:0}
 ];
 
 const AGENDA = [
-  {time:"09:30", title:"Kickoff Brickell Ortho Institute", meta:"Juan Perez + cliente · Google Meet", co:"mbmb"},
-  {time:"11:00", title:"Revisión pipeline Nexus — semana 43", meta:"Equipo ventas · Oficina MBMB", co:"saleinn"},
-  {time:"14:00", title:"Demo CEDEXX — Doral Urgent Care", meta:"Dr. Molina + Jasmel · Google Meet", co:"cedexx"},
-  {time:"16:30", title:"1:1 Jasmel / Juan — pendientes CEO", meta:"Llamada ejecutiva", co:"mbmb"}
+  {time:"09:30", title:"Revisión Comercial Catálogo WPC & PVC Mármol", meta:"Juan + Equipo Ventas · UNITEC USA Miami", co:"unitec"},
+  {time:"11:00", title:"Auditoría Lanzamiento BuildingApp IA (132 Renders)", meta:"Juan + Jasmel · Google Meet", co:"building"},
+  {time:"14:00", title:"Seguimiento Cotizaciones Mayoristas Nexus ($104.6k)", meta:"Equipo Comercial · Showroom", co:"saleinn"},
+  {time:"16:30", title:"Revisión 55 Cámaras Hik-Connect & Muelles 1–4", meta:"Sistemas / CCTV · Espacios Importados", co:"espacios"}
 ];
 
 const PIPE = [
@@ -1106,11 +1103,11 @@ const COUNTRIES = [
 ];
 
 const TASKS = [
-  {id:"T-01", title:"Enviar propuesta CEDEXX a Doral Urgent", sev:"critical", status:"overdue", meta:"Jasmel · $12.4k bloqueado", co:"cedexx"},
-  {id:"T-02", title:"Firmar contrato Brickell Ortho", sev:"high", status:"due 10/23", meta:"Jasmel · DocuSign", co:"mbmb"},
-  {id:"T-03", title:"Responder PO Clínica Del Mar", sev:"high", status:"due hoy", meta:"Maria · $9.8k", co:"saleinn"},
-  {id:"T-04", title:"Renew SSL cedexx.net", sev:"medium", status:"scheduled", meta:"Kimi Claw · 27 días", co:"cedexx"},
-  {id:"T-05", title:"Post semanal LinkedIn MBMB", sev:"low", status:"due hoy", meta:"Kimi Claw · Auto", co:"mbmb"}
+  {id:"T-01", title:"Activar 'Notify Surveillance Center' en DVR Espacios Importados y Pick-In", sev:"critical", status:"due hoy", meta:"IT / CCTV · 55 Cámaras", co:"espacios"},
+  {id:"T-02", title:"Autorizar permiso Viewer en GA4 unitecusadesign (533522460)", sev:"high", status:"due hoy", meta:"Marketing · Google Analytics", co:"unitec"},
+  {id:"T-03", title:"Contactar 29 leads con teléfono capturados por Chatbot UNITEC", sev:"high", status:"due hoy", meta:"Asesores Comerciales · Showroom", co:"unitec"},
+  {id:"T-04", title:"Revisar señal Wi-Fi UNITECUSA en cámaras Salón y Oficina IDEO", sev:"medium", status:"scheduled", meta:"Soporte Técnico · IDEO", co:"espacios"},
+  {id:"T-05", title:"Seguimiento a 12 usuarios registrados en BuildingApp.us", sev:"low", status:"due hoy", meta:"Building Innovation · IA", co:"building"}
 ];
 
 const CAMS = [
@@ -1124,66 +1121,52 @@ const CAMNARR_ES = "Conexión en vivo activa con Hik-Connect Cloud (apiisa.hik-c
 const CAMNARR_EN = "Live Hik-Connect Cloud connection active (apiisa.hik-connect.com · user il6usm): 5 devices and 55 camera channels discovered (53 live online right now): 1) NVR 'USA' (DS-7608NI-Q2/8P · Serial GC5348382 · Owner · ONLINE at LAN 192.168.12.213 / WAN 172.58.135.61 · 8 PoE IP cameras · 2 TB HDD · Unencrypted); 2) DVR 'iDS-7216HUHI-M2/S' (Serial AF5246237 · ONLINE at LAN 192.168.0.121 · 16 cameras: Pick-In, Blue Gate, Aisles, Office, Loading, Orange Gate · 2 TB HDD); 3) DVR 'ESPACIOS IMPORTADOS' (iDS-7216HUHI-M2/S · Serial L12154607 · ONLINE at LAN 192.168.1.148 · 29 cameras: Docks 1-4, Dispatch 1-2, Logistics, Lockers, Kiosk, Perimeters 1-5 · 8 TB HDD); 4) 2 Wi-Fi IPCs 'SALON IDEO' (BF4860946) & 'OFICINA IDEO' (BF4862037) on SSID UNITECUSA, both OFFLINE since 2026-10-26 22:59.";
 
 const ALERTS = [
-  ["08:14","info","Informe del Jefe enviado (texto + voz)."],
-  ["07:52","critical","TAREA VENCIDA 62h: propuesta CEDEXX a Doral Urgent — requiere CEO."],
-  ["02:11","info","Nuevo lead 305biz: 'Verificación de comprador' [test]."],
-  ["ayer","warning","Tunnel cloudflared reiniciado (latencia > 8s)."]
+  ["08:00","info","Informes Diarios CTO/CFO enviados a Juan (Building Innovation & UNITEC USA)."],
+  ["11:02","warning","Micro-reconexión detectada en DVR Planta Pick-In (16/16 cámaras en línea)."],
+  ["09:15","info","2 nuevos usuarios registrados hoy en BuildingApp.us (132 renders IA)."],
+  ["ayer","critical","2 cámaras Wi-Fi (Salón IDEO y Oficina IDEO) sin señal en red UNITECUSA."]
 ];
 
 let DRAFTS_QUEUE = [
   {
     draft_id: 1,
-    thread_id: "thread-molina",
+    thread_id: "thread-unitec-wpc",
     channel: "Gmail",
-    contact: "dr.molina@doralurgent.com",
-    company: "cedexx",
-    age: "2h",
-    incoming: "RE: Propuesta CEDEXX ($12,400) — Hola Jasmel, revisé con el CFO la propuesta. ¿Podemos incluir el módulo de denegaciones automáticas sin subir el fee mensual para firmar hoy?",
-    incoming_en: "RE: CEDEXX Proposal ($12,400) — Hi Jasmel, I reviewed the proposal with our CFO. Can we include the automated denials module without increasing the monthly fee so we can sign today?",
-    body: "Estimado Dr. Molina,\n\nGracias por tu mensaje. Confirmamos la inclusión del módulo de denegaciones automáticas dentro del fee mensual de US$12,400 si cerramos firma hoy mismo. Te envío el anexo actualizado.\n\nCordialmente,\nJasmel Acosta",
-    body_en: "Dear Dr. Molina,\n\nThank you for your message. We confirm the inclusion of the automated denials module within the $12,400 monthly fee if we sign today. I am sending the updated addendum now.\n\nSincerely,\nJasmel Acosta",
+    contact: "compras@constructoraandina.co",
+    company: "unitec",
+    age: "1h",
+    incoming: "Cotización Mayorista Paneles WPC y Láminas PVC Mármol ($18,500) — Hola Juan, necesitamos confirmar disponibilidad en bodega para despacho inmediato de 420 paneles WPC.",
+    incoming_en: "Wholesale Quote WPC Panels & PVC Marble Sheets ($18,500) — Hi Juan, we need to confirm warehouse availability for immediate dispatch of 420 WPC panels.",
+    body: "Estimado equipo de Constructora Andina,\n\nConfirmamos disponibilidad inmediata en nuestra planta de los 420 paneles WPC y láminas PVC Mármol. Les adjunto la orden de despacho y cotización formal por US$18,500.\n\nCordialmente,\nJuan David García Montoya",
+    body_en: "Dear Constructora Andina team,\n\nWe confirm immediate warehouse availability for all 420 WPC panels and PVC Marble sheets. Attached is the dispatch order and formal quote for $18,500.\n\nSincerely,\nJuan David García Montoya",
     version: 1,
     status: "PENDING_REVIEW"
   },
   {
     draft_id: 2,
-    thread_id: "thread-clinicadelmar",
+    thread_id: "thread-building-render",
     channel: "Gmail",
-    contact: "facturas@clinicadelmar.co",
-    company: "saleinn",
-    age: "5h",
-    incoming: "Orden de compra #PO-2214 ($9,800) — Adjunto la orden de compra aprobada para las 3 sedes en Cartagena. ¿Nos confirmas fecha de inicio?",
-    incoming_en: "Purchase Order #PO-2214 ($9,800) — Attached is the approved purchase order for all 3 Cartagena locations. Can you confirm the kickoff date?",
-    body: "Estimada Luisa,\n\nOrden de compra #PO-2214 recibida. Nuestro equipo inicia el onboarding técnico de las 3 sedes este lunes a las 10:00 AM.\n\nCordialmente,\nJasmel Acosta",
-    body_en: "Dear Luisa,\n\nPurchase Order #PO-2214 received. Our team will begin technical onboarding for all 3 locations this Monday at 10:00 AM.\n\nSincerely,\nJasmel Acosta",
+    contact: "arquitectura@miamidesigngroup.us",
+    company: "building",
+    age: "2h",
+    incoming: "Licencia Corporativa BuildingApp.us —Probamos el visualizador IA con nuestros clientes en Miami y queremos activar 10 cuentas para nuestros diseñadores.",
+    incoming_en: "Corporate License BuildingApp.us — We tested the AI visualizer with our Miami clients and want to activate 10 accounts for our designers.",
+    body: "Hola equipo de Miami Design Group,\n\nExcelente noticia. Ya habilitamos el acceso corporativo en BuildingApp.us con el catálogo actualizado de materiales y soporte prioritario.\n\nCordialmente,\nJuan David García Montoya",
+    body_en: "Hello Miami Design Group team,\n\nGreat news. We have enabled your corporate access on BuildingApp.us with the updated materials catalog and priority support.\n\nSincerely,\nJuan David García Montoya",
     version: 1,
     status: "PENDING_REVIEW"
   },
   {
     draft_id: 3,
-    thread_id: "thread-sunshine",
+    thread_id: "thread-espacios-cctv",
     channel: "Telegram",
-    contact: "@JuanPerez_Sales (Sunshine Dental)",
-    company: "mbmb",
+    contact: "Equipo IT / CCTV (Espacios Importados)",
+    company: "espacios",
     age: "3h",
-    incoming: "Jasmel, el Dr. Omar Khalil de Sunshine Dental Tampa ($6,700) pide confirmar si hacemos el assessment de billing este jueves a las 11am. ¿Lo apruebo?",
-    incoming_en: "Jasmel, Dr. Omar Khalil from Sunshine Dental Tampa ($6,700) is asking to confirm the billing assessment for this Thursday at 11:00 AM. Shall I approve?",
-    body: "Estimado Juan,\n\nAprobado. Confirma al Dr. Khalil para el jueves a las 11:00 AM y prepara la comparativa de recuperación de denegaciones.\n\nCordialmente,\nJasmel Acosta",
-    body_en: "Dear Juan,\n\nApproved. Confirm Dr. Khalil for Thursday at 11:00 AM and prepare the denials recovery comparison.\n\nSincerely,\nJasmel Acosta",
-    version: 1,
-    status: "PENDING_REVIEW"
-  },
-  {
-    draft_id: 4,
-    thread_id: "thread-esperanza",
-    channel: "WhatsApp",
-    contact: "+52-55-4190-8821 (Farmacia La Esperanza)",
-    company: "saleinn",
-    age: "6h",
-    incoming: "Buen día Jasmel, soy Jorge Ramírez. Ya resolvimos el corte de red. ¿Podemos reagendar la demo del portal bilingüe para mañana a las 4 PM?",
-    incoming_en: "Good morning Jasmel, this is Jorge Ramirez. We resolved the network outage. Can we reschedule the bilingual portal demo for tomorrow at 4:00 PM?",
-    body: "Estimado Jorge,\n\nCon gusto. Queda agendada la demostración del portal bilingüe para mañana a las 16:00 hrs. Ya envié la invitación de calendario.\n\nCordialmente,\nJasmel Acosta",
-    body_en: "Dear Jorge,\n\nGladly. The bilingual portal demo is scheduled for tomorrow at 4:00 PM. I have sent the calendar invitation.\n\nSincerely,\nJasmel Acosta",
+    incoming: "Juan, recibimos la guía técnica para activar 'Notificar al Centro de Vigilancia' en los grabadores AcuSense de Espacios Importados y Planta Pick-In. ¿Procedemos hoy?",
+    incoming_en: "Juan, we received the technical guide to enable 'Notify Surveillance Center' on the AcuSense DVRs at Espacios Importados and Planta Pick-In. Shall we proceed today?",
+    body: "Adelante equipo,\n\nPor favor activen hoy mismo 'Notificar al Centro de Vigilancia' en los canales de puertas y muelles 1 al 4, y revisen el Wi-Fi UNITECUSA de Salón y Oficina IDEO.\n\nSaludos,\nJuan David García Montoya",
+    body_en: "Go ahead team,\n\nPlease enable 'Notify Surveillance Center' today on the door and dock 1–4 channels, and check the UNITECUSA Wi-Fi for Salon and Oficina IDEO.\n\nBest regards,\nJuan David García Montoya",
     version: 1,
     status: "PENDING_REVIEW"
   }
@@ -1197,11 +1180,11 @@ const STAFF_MONITOR = [
 ];
 
 const CLIENT_MONITOR = [
-  {client:"Brickell Ortho Institute", country:"USA", arr:15200, health:98, stage:"Cerrado · Kickoff", visit:"Firma completada"},
-  {client:"MedCore Guadalajara", country:"México", arr:12800, health:95, stage:"Cerrado · Onboarding", visit:"Pago inicial recibido"},
-  {client:"Doral Urgent Care Group", country:"USA", arr:12400, health:84, stage:"Cotización Final", visit:"Demo con CFO positiva"},
-  {client:"Grupo Médico del Norte", country:"Colombia", arr:11200, health:79, stage:"Revisión Legal", visit:"Habeas Data en validación"},
-  {client:"Clínica Del Mar Cartagena", country:"Colombia", arr:9800, health:91, stage:"PO Recibida", visit:"3 sedes listas para migrar"}
+  {client:"Miami Design District Showroom", country:"USA", arr:28500, health:98, stage:"Cerrado · Despacho WPC", visit:"Entrega confirmada"},
+  {client:"Constructora Andina S.A.S.", country:"Colombia", arr:18500, health:95, stage:"Cotización Mayorista", visit:"Muestras aprobadas"},
+  {client:" Coral Gables Luxury Remodel", country:"USA", arr:16400, health:92, stage:"Render IA + Catálogo", visit:"Diseño en BuildingApp.us"},
+  {client:"Distribuidora Acabados Antioquia", country:"Colombia", arr:14200, health:88, stage:"Orden Recurrente", visit:"Despacho desde Pick-In"},
+  {client:"Doral Commercial Interiors", country:"USA", arr:11800, health:91, stage:"Lead Chatbot UNITEC", visit:"Asignado a asesor"}
 ];
 
 const INTEGRATIONS = [
@@ -1228,12 +1211,12 @@ const BLOGS_DATA = [
     steps_es:[
       "<b>Paso 1 (Consolidación Automática):</b> El servidor recopila en segundo plano ventas de Nexus CRM, tareas del equipo, eventos de calendario, correos y cámaras.",
       "<b>Paso 2 (Cálculo Exacto sin Alucinaciones):</b> Todas las métricas y sumas financieras se calculan en código/SQL antes de que la IA redacte el resumen.",
-      "<b>Paso 3 (Filtro Multi-Empresa Instantáneo):</b> Con un clic o comando de voz («cambiar a CEDEXX»), todas las gráficas, KPIs y pendientes se filtran al instante."
+      "<b>Paso 3 (Filtro Multi-Empresa Instantáneo):</b> Con un clic o comando de voz («cambiar a UNITEC USA»), todas las gráficas, KPIs y pendientes se filtran al instante."
     ],
     steps_en:[
       "<b>Step 1 (Automatic Consolidation):</b> The server pulls Nexus CRM sales, team tasks, calendar events, emails, and cameras in the background.",
       "<b>Step 2 (Exact Code Math):</b> All financial metrics and sums are computed in SQL/code before AI narrates the executive summary.",
-      "<b>Step 3 (Instant Multi-Company Filter):</b> With one click or voice command ('switch to CEDEXX'), all charts, KPIs, and tasks filter immediately."
+      "<b>Step 3 (Instant Multi-Company Filter):</b> With one click or voice command ('switch to UNITEC USA'), all charts, KPIs, and tasks filter immediately."
     ],
     outcome_es:"Resultado: El CEO entiende el estado de sus 5 empresas en menos de 60 segundos cada mañana.",
     outcome_en:"Outcome: The CEO grasps the state of all 5 companies in under 60 seconds every morning."
@@ -1290,12 +1273,12 @@ const BLOGS_DATA = [
     summary_en:"A conversational voice second brain that understands everything on screen, knows the CEO's profile, and can touch/click any button or link.",
     steps_es:[
       "<b>Paso 1 (Inspección Viva del DOM):</b> El widget lee en tiempo real en qué pestaña estás, qué empresa filtras, qué KPIs se muestran y qué botones existen.",
-      "<b>Paso 2 (Interacción por Voz con Enlaces y Botones):</b> Di «abrir blogs», «cambiar a CEDEXX», «aprobar borrador» o «completar tarea 1» y verás cómo ilumina y pulsa el control.",
+      "<b>Paso 2 (Interacción por Voz con Enlaces y Botones):</b> Di «abrir blogs», «cambiar a UNITEC USA», «aprobar borrador» o «completar tarea 1» y verás cómo ilumina y pulsa el control.",
       "<b>Paso 3 (Explicación de Planes y Resumen Hablado):</b> Pregunta «qué hay en pantalla» o «leer resumen» para escuchar el informe ejecutivo narrado."
     ],
     steps_en:[
       "<b>Step 1 (Live DOM Inspection):</b> The widget reads in real time which tab is active, which company is filtered, visible KPIs, and available buttons.",
-      "<b>Step 2 (Voice Interaction with Links & Buttons):</b> Say 'open blogs', 'switch to CEDEXX', 'approve draft', or 'complete task 1' and watch it highlight and click the element.",
+      "<b>Step 2 (Voice Interaction with Links & Buttons):</b> Say 'open blogs', 'switch to UNITEC USA', 'approve draft', or 'complete task 1' and watch it highlight and click the element.",
       "<b>Step 3 (Plan Explanation & Spoken Brief):</b> Ask 'what is on screen' or 'read brief' to hear the narrated executive summary."
     ],
     outcome_es:"Resultado: Control manos libres total del centro de mando desde escritorio o móvil.",
@@ -1535,7 +1518,7 @@ const FALLBACK_ROUTINES = {
     items: [
       {icon:"", title_es:"Café Matutino Preparado: Cortado Doble Espresso", title_en:"Morning Coffee Ready: Double Espresso Cortado", desc_es:"Orden automática 07:45 AM (leche de avena, extra caliente) lista antes de tu informe de las 08:17 AM.", desc_en:"Auto-scheduled 07:45 AM order (oat milk, extra hot) ready before your 08:17 AM briefing.", btn_es:"Confirmar Café", btn_en:"Confirm Coffee", cmd:"confirm_coffee"},
       {icon:"", title_es:"Informe Matutino Pre-Generado (Visual + PDF)", title_en:"Pre-Generated Morning Report (Visual + PDF)", desc_es:"Formato preferido detectado: 5 empresas consolidadas, 3 párrafos ejecutivos y embudo de conversión.", desc_en:"Preferred format detected: 5 consolidated companies, 3 executive paragraphs, and conversion funnel.", btn_es:"Descargar PDF", btn_en:"Download PDF", cmd:"download_report"},
-      {icon:"", title_es:"Borrador Urgente Listo: Dr. Molina ($12.4k)", title_en:"Urgent Draft Ready: Dr. Molina ($12.4k)", desc_es:"Pre-redactado en tu voz formal con firma «Cordialmente, Jasmel Acosta». Listo para aprobar con 1 clic.", desc_en:"Pre-drafted in your formal voice with signature. Ready for 1-click approval.", btn_es:"Revisar y Aprobar", btn_en:"Review & Approve", cmd:"open_comms"}
+      {icon:"", title_es:"Cotización Mayorista Lista: Constructora Andina ($18.5k)", title_en:"Wholesale Quote Ready: Constructora Andina ($18.5k)", desc_es:"Pre-redactado en tu voz formal con firma «Cordialmente, Jasmel Acosta». Listo para aprobar con 1 clic.", desc_en:"Pre-drafted in your formal voice with signature. Ready for 1-click approval.", btn_es:"Revisar y Aprobar", btn_en:"Review & Approve", cmd:"open_comms"}
     ]
   },
   afternoon: {
@@ -1544,7 +1527,7 @@ const FALLBACK_ROUTINES = {
     habit_es: "Por la tarde te enfocas en cierres de Nexus CRM, visitas a clientes (USA/Colombia/México) y velocidad de entrega del equipo.",
     habit_en: "In the afternoon you focus on Nexus CRM closures, client visits (USA/Colombia/Mexico), and staff delivery velocity.",
     items: [
-      {icon:"", title_es:"Dossier Pre-Demo Listo: Doral Urgent Care (14:00)", title_en:"Pre-Demo Dossier Ready: Doral Urgent Care (2:00 PM)", desc_es:"Preparado antes de tu llamada con Dr. Molina: historial de visitas y retorno proyectado.", desc_en:"Prepared before your call with Dr. Molina: visit history and projected ROI.", btn_es:"Ver Estudio Clientes", btn_en:"View Client Study", cmd:"open_outcomes"},
+      {icon:"", title_es:"Reporte de Renders & Leads: BuildingApp + UNITEC (14:00)", title_en:"Renders & Leads Dossier: BuildingApp + UNITEC (2:00 PM)", desc_es:"Preparado antes de tu revisión de UNITEC USA y Building Innovation: historial de visitas y retorno proyectado.", desc_en:"Prepared before your UNITEC USA and Building Innovation review: visit history and projected ROI.", btn_es:"Ver Estudio Clientes", btn_en:"View Client Study", cmd:"open_outcomes"},
       {icon:"", title_es:"Pulso de Equipo: 3 Cotizaciones Activas", title_en:"Team Pulse: 3 Active Quotes", desc_es:"Sueles auditar el avance de Juan, María y Carlos a las 15:00. Gráfico de productividad actualizado.", desc_en:"You typically audit Juan, Maria, and Carlos at 3:00 PM. Productivity chart updated.", btn_es:"Ver Personal", btn_en:"View Staff", cmd:"open_outcomes"},
       {icon:"", title_es:"Lectura de Voz de Media Tarde (Grok 3.0)", title_en:"Mid-Afternoon Voice Readout (Grok 3.0)", desc_es:"Resumen hablado de 30 segundos sobre movimientos del pipeline y tareas completadas.", desc_en:"30-second spoken summary on pipeline movements and completed tasks.", btn_es:"Escuchar Resumen", btn_en:"Listen Brief", cmd:"read_brief"}
     ]
@@ -2212,7 +2195,7 @@ function simulateIncomingMsg() {
     thread_id: 'thread-sim-' + newId,
     channel: 'Gmail',
     contact: sender,
-    company: cur === 'all' ? 'mbmb' : cur,
+    company: cur === 'all' ? 'unitec' : cur,
     age: 'ahora',
     incoming: txt,
     body: draftBody,
@@ -2268,15 +2251,15 @@ function renderOutcomesTab() {
     <div class="stage"><span class="n">15%</span><div style="flex:1"><div style="display:flex;justify-content:space-between"><span>1:1 Desbloqueo de Tareas Críticas</span><b>2.0 hrs/sem</b></div><div class="bar"><i style="width:15%;background:var(--vio)"></i></div></div></div>
     <div class="stage"><span class="n">10%</span><div style="flex:1"><div style="display:flex;justify-content:space-between"><span>Operación Manual / Admin (Reducido por IA)</span><b>1.2 hrs/sem</b></div><div class="bar"><i style="width:10%;background:var(--warn)"></i></div></div></div>
     <div class="narr" style="margin-top:12px">
-      <b>Estudio de Tiempo del CEO:</b> La automatización de agendamiento (MBMB Booking Server + Google Meet) y pre-redacción de correos ahorró <b>11.4 horas esta semana</b>.
+      <b>Estudio de Tiempo del CEO:</b> La automatización de agendamiento (Recepcionista IA UNITEC + Google Calendar) y pre-redacción de correos ahorró <b>11.4 horas esta semana</b>.
     </div>
   `;
 
   // 4. Connected Apps ROI & Studies
   $('#appsOutcomeStudyBox').innerHTML = `
-    <div class="row"><div><b>MBMB Revenue Cycle Analytics</b><div class="t">41 denegaciones detectadas → plan de recuperación activo</div></div><span class="tag ok">$18.4k recuperables</span></div>
-    <div class="row"><div><b>CEDEXX Health Tech SaaS</b><div class="t">Uptime 99.98% · 2 nuevos tenants en onboarding</div></div><span class="tag ok">+$28.0k ARR</span></div>
-    <div class="row"><div><b>305 Business Group Deal Flow</b><div class="t">Auth nativa MC activa · leads sincronizados en tiempo real</div></div><span class="tag medium">14 leads calificados</span></div>
+    <div class="row"><div><b>BuildingApp.us AI Visualizer (Firebase + Gemini)</b><div class="t">12 usuarios activos · 132 renders IA generados · 42 productos en catálogo</div></div><span class="tag ok">100% En Vivo</span></div>
+    <div class="row"><div><b>Recepcionista IA UNITEC USA (Firestore)</b><div class="t">4,665 sesiones · 193 conversaciones reales · 29 teléfonos capturados</div></div><span class="tag ok">98.3% SLA Telegram</span></div>
+    <div class="row"><div><b>Google Analytics 4 (buildinginnovation.us &amp; unitecusadesign.com)</b><div class="t">Propiedad 543661675 conectada en vivo · tráfico orgánico y referidos</div></div><span class="tag ok">GA4 Conectado</span></div>
     <div class="row"><div><b>Hik-Connect Cloud &amp; Cámaras IA (5 Equipos · 55 Canales)</b><div class="t">3 NVR/DVR ONLINE (53 canales en vivo: USA, Pick-In, Espacios Importados) · 2 IPC Wi-Fi OFFLINE (IDEO)</div></div><span class="tag ok">53/55 en línea</span></div>
   `;
   loadKnowledgeVault(false);
@@ -4183,8 +4166,8 @@ window.LJ_applyUi = function (ui) {
     }
     if (g('saInput')) {
       g('saInput').placeholder = isEn
-        ? 'Speak or type a single or 3-in-1 command (e.g. Schedule call with Dr. Molina tomorrow at 3pm, draft him a WhatsApp, and remind me at 2pm)…'
-        : 'Habla o escribe una orden simple o compuesta 3-en-1 (ej. Agenda llamada con Dr. Molina mañana 3pm, redáctale WhatsApp y recuérdame a las 2pm)…';
+        ? 'Speak or type a single or 3-in-1 command (e.g. Schedule UNITEC USA and Building Innovation review tomorrow at 3pm, draft him a WhatsApp, and remind me at 2pm)…'
+        : 'Habla o escribe una orden simple o compuesta 3-en-1 (ej. Agenda revisión de UNITEC USA y Building Innovation mañana 3pm, redáctale WhatsApp y recuérdame a las 2pm)…';
     }
     if (messages.length && messages[0].meta && messages[0].meta.isWelcome) {
       const w = getWelcomeMsg(newLang);

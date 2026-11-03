@@ -1,23 +1,83 @@
 {
-  "generated": "2026-10-21T14:30:00-04:00",
+  "generated": "2026-11-03T08:00:00-05:00",
   "agenda_hoy": [
-    { "hora": "09:30", "fin": "10:00", "titulo": "Kickoff Brickell Ortho Institute",        "quien": "Juan Perez + cliente",       "lugar": "Google Meet",  "tipo": "cliente" },
-    { "hora": "11:00", "fin": "11:45", "titulo": "Revision pipeline Nexus — semana 43",      "quien": "Juan + Maria + Carlos",      "lugar": "Oficina MBMB", "tipo": "interna" },
-    { "hora": "14:00", "fin": "14:30", "titulo": "Demo CEDEXX — Doral Urgent Care",          "quien": "Dr. Molina + Jasmel",        "lugar": "Google Meet",  "tipo": "cliente" },
-    { "hora": "16:30", "fin": "17:00", "titulo": "1:1 Jasmel / Juan — pendientes CEO",       "quien": "Jasmel + Juan",              "lugar": "Llamada",      "tipo": "interna" }
+    {
+      "hora": "09:30",
+      "fin": "10:15",
+      "titulo": "Revisión Despachos Muelles 1–4 y Planta Pick-In",
+      "quien": "Juan + Logística Espacios Importados",
+      "lugar": "Google Meet",
+      "tipo": "operaciones"
+    },
+    {
+      "hora": "11:30",
+      "fin": "12:00",
+      "titulo": "Auditoría Tráfico Web GA4 & 130 Renders IA",
+      "quien": "Juan + Jasmel (BuildingApp.us)",
+      "lugar": "Google Meet",
+      "tipo": "producto"
+    },
+    {
+      "hora": "14:30",
+      "fin": "15:15",
+      "titulo": "Comité de Conversión Recepcionista IA UNITEC (29 Leads)",
+      "quien": "Equipo Comercial UNITEC USA",
+      "lugar": "Showroom Miami",
+      "tipo": "comercial"
+    },
+    {
+      "hora": "16:30",
+      "fin": "17:00",
+      "titulo": "Verificación Técnica 2 Cámaras Wi-Fi SALON/OFICINA IDEO",
+      "quien": "IT / CCTV Hik-Connect",
+      "lugar": "Sede IDEO",
+      "tipo": "seguridad"
+    }
   ],
   "gmail_sin_leer": [
-    { "de": "dr.molina@doralurgent.com",  "asunto": "RE: Propuesta CEDEXX — cambios menores", "edad_h": 2,  "prioridad": "alta" },
-    { "de": "justmail@michaelbuildingmb.com", "asunto": "Sept claims report — 41 denegaciones", "edad_h": 5,  "prioridad": "alta" },
-    { "de": "carlos@saleinnovation.co",   "asunto": "Pipeline actualizado — 3 cotizaciones listas", "edad_h": 7, "prioridad": "media" },
-    { "de": "facturas@clinicadelmar.co",  "asunto": "Orden de compra #PO-2214",               "edad_h": 11, "prioridad": "alta" },
-    { "de": "maria@saleinnovation.co",    "asunto": "Feedback demo LabMed Santiago",          "edad_h": 19, "prioridad": "baja" },
-    { "de": "hosting@rackspace.com",      "asunto": "Renovacion SSL cedexx.net — 27 dias",    "edad_h": 26, "prioridad": "media" }
+    {
+      "de": "logistics@unitecusadesign.com",
+      "asunto": "ETA Contenedor WPC Roble Claro & PVC Mármol Miami",
+      "edad_h": 2,
+      "prioridad": "alta"
+    },
+    {
+      "de": "cctv@espaciosimportados.com.co",
+      "asunto": "Auditoría 55 Cámaras Hik-Connect (53/55 En Vivo)",
+      "edad_h": 4,
+      "prioridad": "alta"
+    },
+    {
+      "de": "soporte@buildingapp.us",
+      "asunto": "Reporte BuildingApp AI: 130 Renders y 7 Miembros",
+      "edad_h": 6,
+      "prioridad": "media"
+    },
+    {
+      "de": "operaciones@espaciosimportados.com.co",
+      "asunto": "Confirmación 24 despachos completados en Muelle 1",
+      "edad_h": 9,
+      "prioridad": "media"
+    }
   ],
   "alertas_telegram_recientes": [
-    { "hora": "08:14", "nivel": "info",     "fuente": "informe",   "texto": "Informe del Jefe enviado (texto + voz)." },
-    { "hora": "07:52", "nivel": "critical", "fuente": "escalate",  "texto": "TAREA VENCIDA 62h: 'Enviar propuesta CEDEXX a Doral Urgent' — se requiere accion del CEO." },
-    { "hora": "02:11", "nivel": "info",     "fuente": "lead",      "texto": "Nuevo lead 305biz: 'Verificacion de comprador' — Smoke Test [test]." },
-    { "hora": "ayer 18:40", "nivel": "warning", "fuente": "sistema", "texto": "Tunnel cloudflared reiniciado (latencia > 8s)." }
+    {
+      "hora": "08:00",
+      "nivel": "info",
+      "fuente": "informe",
+      "texto": "Resumen Ejecutivo Diario enviado a UnitecBuilding Resumen diario."
+    },
+    {
+      "hora": "07:45",
+      "nivel": "critical",
+      "fuente": "cctv",
+      "texto": "ALERTA CCTV: 2 cámaras Wi-Fi en SALON/OFICINA IDEO sin señal (53/55 activas)."
+    },
+    {
+      "hora": "06:30",
+      "nivel": "info",
+      "fuente": "lead",
+      "texto": "Nuevo teléfono capturado por Recepcionista IA UNITEC USA (#29 total)."
+    }
   ]
 }
