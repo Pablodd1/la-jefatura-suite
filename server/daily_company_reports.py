@@ -380,7 +380,7 @@ def _parse_ga4_metrics(ga4: dict) -> dict:
 # ─────────────────────────────────────────────────────────────────────────────
 # BUILD INDIVIDUAL COMPANY REPORT (BUILDING INNOVATION vs UNITEC USA)
 # ─────────────────────────────────────────────────────────────────────────────
-def build_company_report(company_slug: str = "building", lang: str = "es", portal_url: str = "https://tension-maine-rebel-explains.trycloudflare.com") -> dict:
+def build_company_report(company_slug: str = "building", lang: str = "es", portal_url: str = "https://discuss-improved-mar-kids.trycloudflare.com") -> dict:
     """
     Builds a comprehensive CTO + CFO Daily Executive Report for either:
       - 'building' -> BUILDING INNOVATION (BuildingApp.us + GA4 543661675 + Chatbot Building)
