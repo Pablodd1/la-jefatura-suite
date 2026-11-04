@@ -227,7 +227,7 @@ def search(query: str, limit: int = 5) -> list:
     for r in c.execute("SELECT * FROM meetings"):
         s = score(" ".join([r["title"], r["attendees"], r["summary"], r["action_items"]]))
         if s:
-            hits.append((s, r["ts"], {"type": "reuniÃ³n", "id": r["id"], "date": _iso(r["ts"]),
+            hits.append((s, r["ts"], {"type": "reunión", "id": r["id"], "date": _iso(r["ts"]),
                                       "title": r["title"], "text": r["summary"],
                                       "action_items": r["action_items"]}))
     for r in c.execute("SELECT * FROM email_summaries"):
@@ -284,7 +284,7 @@ def _metric_answer(q: str, lang: str):
 
     def add(text, meta):
         out.append(text)
-        srcs.append(f"{meta['source']} Â· {meta.get('as_of') or 'sin fecha'} Â· {meta.get('origin')}")
+        srcs.append(f"{meta['source']} · {meta.get('as_of') or 'sin fecha'} · {meta.get('origin')}")
 
     # 0) Live Weather (Miami & Colombia)
     if re.search(r"\b(clima|tiempo|weather|temperatura|temperature|lluvia|rain|forecast|pronostico|calor|frio)\b", n):
@@ -355,7 +355,7 @@ def _metric_answer(q: str, lang: str):
         fk, _, m = f["building"]
         ai = fk.get("ai_usage", {})
         add((f"BuildingApp IA: {ai.get('generations_today')} generaciones hoy, {ai.get('generations_total')} en total, "
-             f"Ã©xito {ai.get('success_rate_pct')}%." if es else
+             f"éxito {ai.get('success_rate_pct')}%." if es else
              f"BuildingApp AI: {ai.get('generations_today')} generations today, {ai.get('generations_total')} total, "
              f"{ai.get('success_rate_pct')}% success."), m)
     if re.search(r"costo|cost|gasto|spend", n) and "building" in f:
@@ -367,13 +367,13 @@ def _metric_answer(q: str, lang: str):
         fk, kp, m = f["unitec"]
         rc = fk.get("real_conversations_today", {})
         add((f"Chatbot UNITEC: {rc.get('unitec')} conversaciones reales hoy (UNITEC) y {rc.get('building')} (Building); "
-             f"{kp.get('real_interactions')} interacciones reales histÃ³ricas." if es else
+             f"{kp.get('real_interactions')} interacciones reales históricas." if es else
              f"UNITEC chatbot: {rc.get('unitec')} real conversations today (UNITEC), {rc.get('building')} (Building); "
              f"{kp.get('real_interactions')} real interactions all-time."), m)
     if re.search(r"contactos|telefonos|phones|contacts|leads capturados", n) and "unitec" in f:
         fk, _, m = f["unitec"]
         cp = fk.get("contacts_captured_phone", {})
-        add((f"Contactos con telÃ©fono: {cp.get('today')} hoy, {cp.get('all_time')} histÃ³ricos."
+        add((f"Contactos con teléfono: {cp.get('today')} hoy, {cp.get('all_time')} históricos."
              if es else f"Phone contacts: {cp.get('today')} today, {cp.get('all_time')} all-time."), m)
     if re.search(r"alertas|alerts|escalacion|escalation|entrega|delivery", n) and "unitec" in f:
         fk, _, m = f["unitec"]
@@ -389,13 +389,18 @@ def _metric_answer(q: str, lang: str):
              if es else f"Greeting abandonment: {ga.get('rate_pct')}% ({ga.get('abandoned')} of {ga.get('total_raw')})."), m)
     if re.search(r"\b(citas?|agenda|eventos?|calendario|appointments?|schedule)\b", n):
         evs = list_events()
-        today_evs = [e for e in evs if e.get("date") == "2026-10-26"]
-        target_evs = today_evs if ("hoy" in n or "today" in n or not evs) else evs[:5]
+        today_iso = time.strftime("%Y-%m-%d")
+        today_evs = [e for e in evs if e.get("date") == today_iso]
+        target_evs = today_evs if (("hoy" in n or "today" in n) and today_evs) else evs[-6:]
         if target_evs:
-            summary_evs = "; ".join(f"{e.get('date')} {e.get('time') or ''} {e.get('title')} ({e.get('source')})" for e in target_evs[:4])
-            add((f"Tienes {len(evs)} citas sincronizadas en el calendario ({len(today_evs)} hoy 2026-10-26): {summary_evs}."
-                 if es else f"You have {len(evs)} synced calendar appointments ({len(today_evs)} today 2026-10-26): {summary_evs}."),
-                {"source": "Calendario mc.db & 9 Integraciones", "as_of": "2026-10-26", "origin": "events"})
+            summary_evs = "; ".join(f"{e.get('date')} {e.get('time') or ''} — {e.get('title')} ({e.get('source')})" for e in target_evs[:5])
+            add((f"Tienes {len(evs)} citas sincronizadas en Google Calendar y mc.db ({len(today_evs)} hoy {today_iso}): {summary_evs}."
+                 if es else f"You have {len(evs)} synced calendar appointments ({len(today_evs)} today {today_iso}): {summary_evs}."),
+                {"source": "Calendario mc.db & Google Calendar", "as_of": today_iso, "origin": "events"})
+        else:
+            add((f"No tienes citas agendadas para hoy ({today_iso}) en Google Calendar / mc.db."
+                 if es else f"You have no appointments scheduled for today ({today_iso}) in Google Calendar / mc.db."),
+                {"source": "Calendario mc.db & Google Calendar", "as_of": today_iso, "origin": "events"})
     if re.search(r"(ingresos?|ventas?|facturacion|pipeline|portafolio|revenue|sales)", n):
         add(("Portafolio Consolidado de Juan (5 Proyectos Activos — Cero Adivinanzas): "
              "Pipeline B2B Nexus CRM $104,600 USD activos ($28,000 USD cerrados ganados, 14 oportunidades B2B). "
@@ -445,14 +450,14 @@ def _metric_answer(q: str, lang: str):
         except Exception:
             pass
     if re.search(r"\b(mision|directiva|proposito|que pasa si no puedes|escalar|desarrollador|como funcionas)\b", n):
-        add(("Directiva Principal en Memoria: Soy tu Super Asistente Ejecutivo manos-libres. TÃº solo lees o escuchas resultados "
-             "y das Ã³rdenes por voz o texto; yo interpreto, aprendo de cada interacciÃ³n, ejecuto en tus 9 integraciones y, "
-             "si algo no existe o no puedo ejecutarlo aÃºn, jamÃ¡s adivino: notifico automÃ¡ticamente al desarrollador (Jasmel) "
-             "con un ticket #DEV para que construya la soluciÃ³n."
+        add(("Directiva Principal en Memoria: Soy tu Super Asistente Ejecutivo manos-libres. Tú solo lees o escuchas resultados "
+             "y das órdenes por voz o texto; yo interpreto, aprendo de cada interacción, ejecuto en tus 9 integraciones y, "
+             "si algo no existe o no puedo ejecutarlo aún, jamás adivino: notifico automáticamente al desarrollador (Jasmel) "
+             "con un ticket #DEV para que construya la solución."
              if es else
              "Core Memory Directive: I am your hands-off Executive Super Assistant. You only read/listen to results and issue "
              "voice/text commands; I interpret, learn, execute across all 9 integrations, and if I cannot perform something yet, "
-             "I never guess â€” I automatically notify the developer (Jasmel) with a #DEV ticket to build the solution."),
+             "I never guess — I automatically notify the developer (Jasmel) with a #DEV ticket to build the solution."),
             {"source": "Memoria Directiva CEO (mc.db)", "as_of": "2026-10-26", "origin": "system_directive"})
     if not out:
         return None
@@ -479,8 +484,8 @@ def ask(question: str, lang: str = "es") -> dict:
     listing = [
         (r"\b(notas?|notes?)\b", "notes", "notas", "notes"),
         (r"\b(tareas?|tasks?|pendientes)\b", "tasks", "tareas abiertas", "open tasks"),
-        (r"\b(reuniones?|meetings?)\b", "meetings", "resÃºmenes de reuniÃ³n", "meeting summaries"),
-        (r"\b(correos?|emails?|mails?)\b", "emails", "resÃºmenes de correo", "email summaries"),
+        (r"\b(reuniones?|meetings?)\b", "meetings", "resúmenes de reunión", "meeting summaries"),
+        (r"\b(correos?|emails?|mails?)\b", "emails", "resúmenes de correo", "email summaries"),
     ]
     if re.search(r"\b(que|cuales|cuantas?|lista|listar|lee|leer|read|list|show|what|how many|dame|muestra)\b", n):
         for rx, kind, lab_es, lab_en in listing:
@@ -492,7 +497,7 @@ def ask(question: str, lang: str = "es") -> dict:
                     n_sample = len(items) - len(real)
                     items = real
                     if n_sample:
-                        sample_note = (f" (AdemÃ¡s hay {n_sample} tareas de ejemplo del demo, que no son tuyas.)" if es
+                        sample_note = (f" (Además hay {n_sample} tareas de ejemplo del demo, que no son tuyas.)" if es
                                        else f" (Plus {n_sample} demo sample tasks, which are not yours.)")
                 label = lab_es if es else lab_en
                 if not items:
@@ -504,7 +509,7 @@ def ask(question: str, lang: str = "es") -> dict:
                 for it in items:
                     txt = it.get("text") or it.get("title") or it.get("summary") or it.get("subject") or ""
                     lines.append(f"[{it['id']}] {txt[:140]}")
-                head = (f"Tienes {total} {label}. Las mÃ¡s recientes: " if es
+                head = (f"Tienes {total} {label}. Las más recientes: " if es
                         else f"You have {total} {label}. Most recent: ")
                 return {"answer": head + " | ".join(lines) + sample_note,
                         "sources": [it["id"] for it in items], "grounded": True}
@@ -519,13 +524,13 @@ def ask(question: str, lang: str = "es") -> dict:
     if hits:
         parts = []
         for h in hits[:3]:
-            label = h["type"] + (f" Â«{h['title']}Â»" if h.get("title") else "")
+            label = h["type"] + (f" «{h['title']}»" if h.get("title") else "")
             parts.append(f"{label} [{h['id']}, {h.get('date', '')}]: {h['text'][:220]}")
         exact = hits[0].get("_coverage", 0) >= 0.75
         if exact:
             head = ""
         else:
-            head = ("No tengo una coincidencia exacta con tu pregunta; lo mÃ¡s cercano que hay guardado es (puede no responder lo que preguntas): "
+            head = ("No tengo una coincidencia exacta con tu pregunta; lo más cercano que hay guardado es (puede no responder lo que preguntas): "
                     if es else
                     "I have no exact match for your question; the closest stored item is (it may not answer what you asked): ")
         return {"answer": head + " || ".join(parts), "sources": [h["id"] for h in hits[:3]],
@@ -534,16 +539,16 @@ def ask(question: str, lang: str = "es") -> dict:
     # 4) Honest refusal + Automatic Developer Escalation Notification.
     esc = log_dev_escalation(q, reason="unrecorded_data_or_missing_capability", channel="ask")
     dev_id = esc.get("id", "DEV-0001")
-    return {"answer": ((f"No tengo ese dato registrado, asÃ­ que no voy a adivinar. "
-                        f"He notificado automÃ¡ticamente al desarrollador (Jasmel Â· Ticket #{dev_id}) con tu solicitud "
-                        f"para que conecte el dato o implemente la soluciÃ³n. Mientras tanto puedo buscar en tus notas, "
-                        f"citas, tareas, correos o mÃ©tricas de UNITEC, BuildingApp y Nexus CRM.")
+    return {"answer": ((f"No tengo ese dato registrado, así que no voy a adivinar. "
+                        f"He notificado automáticamente al desarrollador (Jasmel · Ticket #{dev_id}) con tu solicitud "
+                        f"para que conecte el dato o implemente la solución. Mientras tanto puedo buscar en tus notas, "
+                        f"citas, tareas, correos o métricas de UNITEC, BuildingApp y Nexus CRM.")
                        if es else
                        (f"I don't have that recorded, so I won't guess. "
-                        f"I have automatically notified the developer (Jasmel Â· Ticket #{dev_id}) with your exact request "
+                        f"I have automatically notified the developer (Jasmel · Ticket #{dev_id}) with your exact request "
                         f"so they can build the solution. Meanwhile I can search your notes, calendar, tasks, emails, "
                         f"or connected UNITEC, BuildingApp, and Nexus CRM metrics.")),
-            "sources": [f"Escalado al Desarrollador Â· #{dev_id}"], "grounded": False, "dev_ticket": esc}
+            "sources": [f"Escalado al Desarrollador · #{dev_id}"], "grounded": False, "dev_ticket": esc}
 
 
 if __name__ == "__main__":
@@ -727,7 +732,7 @@ def log_dev_escalation(request_text: str, reason: str = "missing_capability_or_d
     now = time.time()
     c.execute("INSERT INTO dev_escalations VALUES(?,?,?,?,?,?,?)",
               (did, now, req, reason, channel, "pending_developer",
-               "Enviado automÃ¡ticamente a Jasmel (Desarrollador) para implementar conector/soluciÃ³n."))
+               "Enviado automáticamente a Jasmel (Desarrollador) para implementar conector/solución."))
     c.commit(); c.close()
     return {"ok": True, "id": did, "request": req, "status": "pending_developer", "ts": _iso(now)}
 

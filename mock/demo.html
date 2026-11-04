@@ -276,12 +276,12 @@
     left: 12px;
     top: 12px;
     bottom: 12px;
-    width: 244px;
+    width: 248px;
     z-index: 250;
-    background: rgba(16, 14, 11, 0.82);
+    background: rgba(16, 14, 11, 0.86);
     backdrop-filter: blur(32px) saturate(190%);
     -webkit-backdrop-filter: blur(32px) saturate(190%);
-    border: 1px solid rgba(205, 182, 140, 0.32);
+    border: 1px solid rgba(205, 182, 140, 0.36);
     border-radius: 24px;
     padding: 14px 12px;
     display: flex;
@@ -290,20 +290,28 @@
     box-shadow: 0 22px 54px rgba(0, 0, 0, 0.62);
     overflow-y: auto;
     overflow-x: hidden;
-    transition: width 0.22s ease;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    transition: width 0.2s ease, padding 0.2s ease;
+  }
+  .lj-glass-sidebar::-webkit-scrollbar {
+    width: 0 !important;
+    height: 0 !important;
+    display: none !important;
   }
   body.sidebar-collapsed .lj-glass-sidebar {
-    width: 58px;
+    width: 60px;
     padding: 14px 8px;
   }
   body.sidebar-collapsed .lj-glass-sidebar:hover {
-    width: 244px;
-    padding: 14px 12px;
+    width: 252px !important;
+    padding: 14px 12px !important;
   }
   body.sidebar-collapsed .lj-glass-sidebar:not(:hover) .lj-sb-text,
   body.sidebar-collapsed .lj-glass-sidebar:not(:hover) .lj-sb-sec-title,
-  body.sidebar-collapsed .lj-glass-sidebar:not(:hover) .lj-sb-sub {
-    display: none;
+  body.sidebar-collapsed .lj-glass-sidebar:not(:hover) .lj-sb-sub,
+  body.sidebar-collapsed .lj-glass-sidebar:not(:hover) .lj-sb-badge {
+    display: none !important;
   }
   .lj-sb-brand {
     display: flex;
@@ -432,11 +440,21 @@
     justify-content: space-between;
   }
   @media (max-width: 960px) {
-    .lj-glass-sidebar { width: 58px; padding: 12px 6px; }
+    .lj-glass-sidebar { width: 60px; padding: 12px 6px; }
+    .lj-glass-sidebar:hover,
+    body.sidebar-expanded .lj-glass-sidebar {
+      width: 252px !important;
+      padding: 14px 12px !important;
+    }
     .lj-glass-sidebar:not(:hover) .lj-sb-text,
     .lj-glass-sidebar:not(:hover) .lj-sb-sec-title,
-    .lj-glass-sidebar:not(:hover) .lj-sb-sub { display: none; }
-    body { padding-left: 74px !important; }
+    .lj-glass-sidebar:not(:hover) .lj-sb-sub,
+    .lj-glass-sidebar:not(:hover) .lj-sb-badge { display: none; }
+    body.sidebar-expanded .lj-glass-sidebar .lj-sb-text,
+    body.sidebar-expanded .lj-glass-sidebar .lj-sb-sec-title,
+    body.sidebar-expanded .lj-glass-sidebar .lj-sb-sub,
+    body.sidebar-expanded .lj-glass-sidebar .lj-sb-badge { display: inline-block !important; }
+    body { padding-left: 78px !important; }
   }
 
 </style>
@@ -594,6 +612,20 @@
   <button class="nav-tab" data-tab="assistant" id="navTabAssistant"></button>
 </nav>
 
+<!-- Active Single-Focus View Banner (Shown when clicking a specific Company or Category in the Left Menu) -->
+<div id="ljActiveViewBanner" style="display:none;max-width:1520px;margin:10px auto 0;padding:0 22px">
+  <div style="background:linear-gradient(135deg,rgba(205,182,140,.22),rgba(16,185,129,.14));border:1.5px solid rgba(205,182,140,.55);border-radius:16px;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;box-shadow:0 12px 28px rgba(0,0,0,.28)">
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <span class="tag ok" style="font-size:10.5px;font-weight:900">🎯 VISTA EXCLUSIVA SELECCIONADA</span>
+      <strong id="ljActiveViewTitle" style="font-size:15px;font-weight:900;color:var(--txt)"></strong>
+      <span id="ljActiveViewSub" class="muted" style="font-size:12px"></span>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <button type="button" class="btn sm" onclick="selectCompanyFromMenu('all')" style="font-weight:800">🌐 Ver Todas las Empresas (Vista Global)</button>
+    </div>
+  </div>
+</div>
+
 <!-- El Jefesito: daily greeting / day summary (spoken on open unless stopped) -->
 <div id="jfGreeting"></div>
 
@@ -726,7 +758,7 @@
 <!-- ==================== TAB 1: OVERVIEW (CEO COMMAND CENTER) ==================== -->
 <section class="tab-pane active" id="pane-overview">
   <!-- Proactive Behavioral Foresight Strip -->
-  <div class="foreseen-strip">
+  <div class="foreseen-strip" id="overviewForeseenStrip">
     <div class="foreseen-head">
       <div>
         <span class="tag ok" id="foreseenBadge">PREPARADO POR ADELANTADO PARA TI</span>
@@ -741,27 +773,27 @@
     <div class="foreseen-cards" id="foreseenCards"></div>
   </div>
 
-  <div class="grid">
+  <div class="grid" id="overviewMainGrid">
     <!-- 4 Executive KPI Cards -->
-    <div class="card kpi-card" style="grid-column:span 3" onclick="trackBehavior('click','kpi_projected_revenue')">
+    <div class="card kpi-card" id="kpiCardRev" style="grid-column:span 3" onclick="trackBehavior('click','kpi_projected_revenue')">
       <h3><span class="lhs"><span class="dot" style="background:var(--acc)"></span><span data-i18n="k1">Ingreso mensual proyectado</span></span></h3>
       <div class="kpi" id="kpiRev">$48,200<small class="up">▲ 12% <span data-i18n="vs">vs semana previa</span></small></div>
     </div>
-    <div class="card kpi-card" style="grid-column:span 3" onclick="trackBehavior('click','kpi_pipeline_total')">
+    <div class="card kpi-card" id="kpiCardPipe" style="grid-column:span 3" onclick="trackBehavior('click','kpi_pipeline_total')">
       <h3><span class="lhs"><span class="dot" style="background:var(--acc2)"></span><span data-i18n="k2">Pipeline total (Nexus)</span></span></h3>
       <div class="kpi" id="kpiPipe">$214,500<small><span id="kpiLeadsCount">23</span> <span data-i18n="leads">leads activos</span></small></div>
     </div>
-    <div class="card kpi-card" style="grid-column:span 3" onclick="trackBehavior('click','kpi_closed_sales')">
+    <div class="card kpi-card" id="kpiCardClosed" style="grid-column:span 3" onclick="trackBehavior('click','kpi_closed_sales')">
       <h3><span class="lhs"><span class="dot" style="background:var(--vio)"></span><span data-i18n="k3">Ventas cerradas</span></span></h3>
       <div class="kpi" id="kpiClosed">$96,400<small class="up"><span id="kpiConvRate">31%</span> <span data-i18n="conv">conversión</span></small></div>
     </div>
-    <div class="card kpi-card" style="grid-column:span 3" onclick="trackBehavior('click','kpi_critical_tasks')">
+    <div class="card kpi-card" id="kpiCardCrit" style="grid-column:span 3" onclick="trackBehavior('click','kpi_critical_tasks')">
       <h3><span class="lhs"><span class="dot" style="background:var(--crit)"></span><span data-i18n="k4">Tareas críticas</span></span></h3>
       <div class="kpi" id="kpiCrit">1<small class="down">62h <span data-i18n="over">vencida — requiere CEO</span></small></div>
     </div>
 
     <!-- Daily Executive Summary Across Connected Apps -->
-    <div class="card" style="grid-column:span 5">
+    <div class="card" id="overviewExecDigestCard" style="grid-column:span 5">
       <h3>
         <span class="lhs"><span class="dot" style="background:var(--acc)"></span><span data-i18n="exec_digest">Resumen Ejecutivo Diario (Todas las Apps Conectadas)</span></span>
         <div style="display:flex;gap:5px;flex-wrap:wrap">
@@ -777,7 +809,7 @@
     </div>
 
     <!-- Quick 1-Click Draft Approval Box -->
-    <div class="card" style="grid-column:span 3">
+    <div class="card" id="overviewQuickDraftsCard" style="grid-column:span 3">
       <h3>
         <span class="lhs"><span class="dot" style="background:var(--warn)"></span><span data-i18n="quick_approvals">Respuestas Listas para Aprobar</span></span>
         <button class="btn ghost sm" onclick="switchTab('comms')" data-i18n="see_all">Ver todas →</button>
@@ -891,23 +923,23 @@
     </div>
 
     <!-- Agenda, Pipeline, Tasks -->
-    <div class="card" style="grid-column:span 4">
+    <div class="card" id="overviewAgendaCard" style="grid-column:span 4">
       <h3><span class="lhs"><span class="dot" style="background:var(--acc)"></span><span data-i18n="agenda">Agenda de hoy</span></span></h3>
       <div id="agenda"></div>
     </div>
-    <div class="card" style="grid-column:span 4">
+    <div class="card" id="overviewPipelineCard" style="grid-column:span 4">
       <h3><span class="lhs"><span class="dot" style="background:var(--acc2)"></span><span data-i18n="pipe">Pipeline Nexus por etapa</span></span></h3>
       <div id="pipeline"></div>
       <h3 style="margin-top:16px"><span class="lhs"><span class="dot" style="background:var(--vio)"></span><span data-i18n="country">Pipeline por país</span></span></h3>
       <div id="countries"></div>
     </div>
-    <div class="card" style="grid-column:span 4">
+    <div class="card" id="overviewTasksCard" style="grid-column:span 4">
       <h3><span class="lhs"><span class="dot" style="background:var(--warn)"></span><span data-i18n="tasks">Pendientes del equipo</span></span></h3>
       <div id="tasks"></div>
     </div>
 
     <!-- Cameras & Alerts -->
-    <div class="card" style="grid-column:span 8" onmouseenter="trackBehavior('mouse_focus','cameras_security_grid')">
+    <div class="card" id="overviewCamerasCard" style="grid-column:span 8" onmouseenter="trackBehavior('mouse_focus','cameras_security_grid')">
       <h3>
         <span class="lhs">
           <span class="dot" style="background:var(--crit)"></span>
@@ -934,7 +966,7 @@
       <div class="narr" style="margin-top:12px" id="camNarr"></div>
     </div>
 
-    <div class="card" style="grid-column:span 4">
+    <div class="card" id="overviewAlertsCard" style="grid-column:span 4">
       <h3><span class="lhs"><span class="dot" style="background:var(--acc2)"></span><span data-i18n="alerts">Alertas Telegram</span></span></h3>
       <div id="alerts"></div>
       <h3 style="margin-top:16px"><span class="lhs"><span class="dot" style="background:var(--warn)"></span><span data-i18n="inbox">Gmail / Mensajes Recientes</span></span></h3>
@@ -1385,7 +1417,7 @@
 <div class="toast" id="toastBox"></div>
 <div class="foot">LA JEFATURA · Made &amp; Powered by Building Innovation · <span data-i18n="foot">Datos de muestra listos para demostración + API real en servidor (mc.db / Nexus / Comms Brain / Grok 3.0 Voice)</span></div>
 
-<script src="/widgets/lajefatura-widget.js"></script>
+<script src="/widgets/lajefatura-widget.js?v=20261104c"></script>
 <script>
 /* ── Complete Multi-Company & White-Label Sample Dataset ── */
 const COMPANIES = [
@@ -1787,12 +1819,190 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
+/* ── Helper: Close any blocking floating drawers when navigating from the Left Menu ── */
+function closeAllBlockingOverlays() {
+  const ap = document.getElementById('agendaPanel');
+  if (ap) ap.classList.remove('open');
+  const ljp = document.getElementById('ljw-panel');
+  if (ljp) ljp.classList.remove('open');
+}
+
+/* ── Strict Single-Focus Isolation for Selected Company or Category ── */
+function applySingleFocusView() {
+  const greetEl = document.getElementById('jfGreeting');
+  const hubEl = document.getElementById('ljCtoExecutiveHub');
+  const mcBarEl = document.getElementById('mcVoiceChatBarSection');
+  const bannerEl = document.getElementById('ljActiveViewBanner');
+  const bannerTitle = document.getElementById('ljActiveViewTitle');
+  const bannerSub = document.getElementById('ljActiveViewSub');
+  const catCardEl = document.getElementById('masterFunctionsCatalogCard');
+  const foreseenEl = document.getElementById('overviewForeseenStrip');
+
+  const setDisp = (id, show, span) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.style.display = show ? '' : 'none';
+    if (show && span) el.style.gridColumn = 'span ' + span;
+  };
+
+  // 1) If user clicked a non-overview Category (Settings/Conexiones, Bandeja IA, Resultados, Cerebro, Blogs, Super Asistente)
+  if (activeTab !== 'overview') {
+    if (greetEl) greetEl.style.display = 'none';
+    if (hubEl) hubEl.style.display = 'none';
+    if (mcBarEl) mcBarEl.style.display = (activeTab === 'assistant') ? 'none' : 'block';
+
+    const catMeta = {
+      comms: { title: '✉️ Bandeja Ejecutiva IA (Gmail, Telegram y WhatsApp Meta)', sub: 'Mostrando únicamente borradores preparados por IA, huella de voz y monitoreo de canales.' },
+      outcomes: { title: '📈 Resultados, Informes Diarios por Empresa, Personal y Clientes', sub: 'Mostrando únicamente los reportes CTO/CFO, productividad del equipo y salud de clientes.' },
+      behavior: { title: '🧠 Cerebro Conductual y Rutinas Aprendidas del CEO', sub: 'Mostrando únicamente preferencias de horario, café matutino y telemetría de hábitos.' },
+      setup: { title: '🔌 Conexiones y Configuración (Telegram, Gmail, Google Calendar y Meta API)', sub: 'Mostrando únicamente las integraciones conectadas, estado de cuentas y configuración.' },
+      blogs: { title: '📰 Periódico Matutino PDF y Guías Paso a Paso por Función', sub: 'Mostrando únicamente la documentación interactiva y reportes PDF ejecutivos.' },
+      assistant: { title: '🎙️ Super Asistente Minimalista (Solo Voz y Chat)', sub: 'Modo de enfoque total en conversación por voz y texto con acceso a las 5 empresas.' }
+    };
+    const info = catMeta[activeTab] || { title: activeTab.toUpperCase(), sub: '' };
+    if (bannerEl && activeTab !== 'assistant') {
+      bannerEl.style.display = 'block';
+      if (bannerTitle) bannerTitle.textContent = info.title;
+      if (bannerSub) bannerSub.textContent = info.sub;
+    } else if (bannerEl) {
+      bannerEl.style.display = 'none';
+    }
+    return;
+  }
+
+  // 2) We are in Overview (Company / Project View)
+  if (hubEl) hubEl.style.display = 'block';
+  if (mcBarEl) mcBarEl.style.display = 'block';
+
+  if (cur === 'all') {
+    // Consolidated Global Portfolio View
+    if (bannerEl) bannerEl.style.display = 'none';
+    if (foreseenEl) foreseenEl.style.display = '';
+    if (catCardEl) catCardEl.style.display = 'block';
+    setDisp('kpiCardRev', true, 3);
+    setDisp('kpiCardPipe', true, 3);
+    setDisp('kpiCardClosed', true, 3);
+    setDisp('kpiCardCrit', true, 3);
+    setDisp('overviewExecDigestCard', true, 5);
+    setDisp('overviewQuickDraftsCard', true, 3);
+    setDisp('v12RightCalendarDock', true, 4);
+    setDisp('unitecLiveCard', true, 12);
+    setDisp('buildingAppLivePanel', true, 12);
+    setDisp('overviewAgendaCard', true, 4);
+    setDisp('overviewPipelineCard', true, 4);
+    setDisp('overviewTasksCard', true, 4);
+    setDisp('overviewCamerasCard', true, 8);
+    setDisp('overviewAlertsCard', true, 4);
+    return;
+  }
+
+  // 3) Single Company Selected (Strict Isolation: show ONLY this company's analytics, live panel, and memory vault)
+  if (greetEl) greetEl.style.display = 'none';
+  if (foreseenEl) foreseenEl.style.display = 'none';
+  if (catCardEl) catCardEl.style.display = 'none';
+
+  const coMeta = {
+    unitec: {
+      title: '🏛️ UNITEC USA — Vista Exclusiva del Proyecto',
+      sub: 'Mostrando únicamente Analítica CTO/CFO, Recepcionista IA Front-Desk (4,665 sesiones · 25 teléfonos), Agenda, Tareas y Memoria de UNITEC USA.'
+    },
+    building: {
+      title: '🏗️ BUILDING INNOVATION — Vista Exclusiva del Proyecto',
+      sub: 'Mostrando únicamente Analítica CTO/CFO, BuildingApp AI (21 miembros · 621 renders IA · 322 SKUs · GA4 #543661675), Agenda, Tareas y Memoria de Building Innovation.'
+    },
+    cameras: {
+      title: '📹 55 CÁMARAS CCTV (Hik-Connect Cloud) — Vista Exclusiva del Proyecto',
+      sub: 'Mostrando únicamente el Centro de Monitoreo de las 55 Cámaras (53/55 en vivo · 5 Grabadores · 11.04 TB HDD), canales en vivo, alertas y reporte diario.'
+    },
+    espacios: {
+      title: '🏭 ESPACIOS IMPORTADOS (Colombia) — Vista Exclusiva del Proyecto',
+      sub: 'Mostrando únicamente Operación Logística, Muelles 1–4, Planta Pick-In (45/45 cámaras en línea), Agenda, Tareas y Memoria de Espacios Importados.'
+    },
+    saleinn: {
+      title: '💼 NEXUS CRM (Pipeline B2B) — Vista Exclusiva del Proyecto',
+      sub: 'Mostrando únicamente el Embudo Comercial B2B ($104,600 USD activos · $28,000 cerrados), países, cotizaciones Modo C, Agenda y Memoria de Nexus CRM.'
+    }
+  };
+  const cm = coMeta[cur] || { title: cur.toUpperCase(), sub: '' };
+  if (bannerEl) {
+    bannerEl.style.display = 'block';
+    if (bannerTitle) bannerTitle.textContent = cm.title;
+    if (bannerSub) bannerSub.textContent = cm.sub;
+  }
+
+  // Hide all company-specific cards first, then enable ONLY those belonging to `cur`
+  setDisp('overviewExecDigestCard', false);
+  setDisp('unitecLiveCard', cur === 'unitec', 12);
+  setDisp('buildingAppLivePanel', cur === 'building', 12);
+
+  if (cur === 'cameras') {
+    setDisp('kpiCardRev', false);
+    setDisp('kpiCardPipe', false);
+    setDisp('kpiCardClosed', false);
+    setDisp('kpiCardCrit', false);
+    setDisp('overviewQuickDraftsCard', false);
+    setDisp('v12RightCalendarDock', false);
+    setDisp('overviewAgendaCard', false);
+    setDisp('overviewPipelineCard', false);
+    setDisp('overviewTasksCard', false);
+    setDisp('overviewCamerasCard', true, 8);
+    setDisp('overviewAlertsCard', true, 4);
+    const devSel = document.getElementById('hikDeviceFilter');
+    if (devSel) { devSel.value = 'ALL'; if (typeof renderHikConnectCameras === 'function') renderHikConnectCameras(); }
+  } else if (cur === 'espacios') {
+    setDisp('kpiCardRev', true, 3);
+    setDisp('kpiCardPipe', true, 3);
+    setDisp('kpiCardClosed', true, 3);
+    setDisp('kpiCardCrit', true, 3);
+    setDisp('overviewCamerasCard', true, 8);
+    setDisp('overviewAlertsCard', true, 4);
+    setDisp('overviewAgendaCard', true, 4);
+    setDisp('overviewTasksCard', true, 4);
+    setDisp('overviewQuickDraftsCard', true, 4);
+    setDisp('v12RightCalendarDock', false);
+    setDisp('overviewPipelineCard', false);
+    const devSel = document.getElementById('hikDeviceFilter');
+    if (devSel) { devSel.value = 'L12154607'; if (typeof renderHikConnectCameras === 'function') renderHikConnectCameras(); }
+  } else if (cur === 'saleinn') {
+    setDisp('kpiCardRev', true, 3);
+    setDisp('kpiCardPipe', true, 3);
+    setDisp('kpiCardClosed', true, 3);
+    setDisp('kpiCardCrit', true, 3);
+    setDisp('overviewPipelineCard', true, 4);
+    setDisp('overviewQuickDraftsCard', true, 4);
+    setDisp('v12RightCalendarDock', true, 4);
+    setDisp('overviewAgendaCard', true, 6);
+    setDisp('overviewTasksCard', true, 6);
+    setDisp('overviewCamerasCard', false);
+    setDisp('overviewAlertsCard', false);
+  } else {
+    // unitec or building
+    setDisp('kpiCardRev', true, 3);
+    setDisp('kpiCardPipe', true, 3);
+    setDisp('kpiCardClosed', true, 3);
+    setDisp('kpiCardCrit', true, 3);
+    setDisp('overviewAgendaCard', true, 4);
+    setDisp('overviewTasksCard', true, 4);
+    setDisp('overviewQuickDraftsCard', true, 4);
+    setDisp('v12RightCalendarDock', false);
+    setDisp('overviewPipelineCard', false);
+    setDisp('overviewCamerasCard', false);
+    setDisp('overviewAlertsCard', false);
+  }
+}
+
 /* ── Tab Navigation ── */
 function switchTab(tabId) {
+  closeAllBlockingOverlays();
   activeTab = tabId;
   document.body.classList.toggle('minimal-assistant-mode', tabId === 'assistant');
   document.querySelectorAll('.nav-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === tabId));
   document.querySelectorAll('#ljSidebarCategories .lj-sb-btn').forEach(b => b.classList.toggle('active', b.getAttribute('data-rail') === tabId));
+  if (tabId !== 'overview') {
+    document.querySelectorAll('#ljSidebarCompanies .lj-sb-btn').forEach(b => b.classList.remove('active'));
+  } else {
+    document.querySelectorAll('#ljSidebarCompanies .lj-sb-btn').forEach(b => b.classList.toggle('active', b.getAttribute('data-sb-co') === cur));
+  }
   document.querySelectorAll('.tab-pane').forEach(p => p.classList.toggle('active', p.id === 'pane-' + tabId));
   const catNamesEs = {
     overview: 'VISTA: CENTRO DE MANDO & CTO',
@@ -1806,6 +2016,7 @@ function switchTab(tabId) {
   const catBadge = document.getElementById('ctoActiveCategoryBadge');
   if (catBadge) catBadge.textContent = catNamesEs[tabId] || ('VISTA: ' + tabId.toUpperCase());
   trackBehavior('click', 'tab_' + tabId);
+  applySingleFocusView();
   if (typeof renderCtoProjectDeepDive === 'function') renderCtoProjectDeepDive();
   if (tabId === 'comms') renderCommsTab();
   if (tabId === 'outcomes') renderOutcomesTab();
@@ -1813,6 +2024,7 @@ function switchTab(tabId) {
   if (tabId === 'setup') renderSetupTab();
   if (tabId === 'blogs') renderBlogs();
   if (tabId === 'assistant' && window.LJSuper) window.LJSuper.onOpen();
+  try { window.scrollTo({top: 0, behavior: 'smooth'}); } catch (e) {}
 }
 
 /* ── Time-of-Day Routine Switcher ── */
@@ -1919,7 +2131,9 @@ function renderSeg() {
 }
 
 function selectCompany(id) {
+  if (id === 'nexus') id = 'saleinn';
   cur = id;
+  closeAllBlockingOverlays();
   trackBehavior('click', 'switch_company_' + id, {company: id});
   document.querySelectorAll('#ljSidebarCompanies .lj-sb-btn').forEach(b => {
     b.classList.toggle('active', b.getAttribute('data-sb-co') === id);
@@ -1928,16 +2142,24 @@ function selectCompany(id) {
   renderAll();
   if (typeof renderCtoProjectDeepDive === 'function') renderCtoProjectDeepDive();
   if (typeof loadProjectMemoryVault === 'function') loadProjectMemoryVault(id);
+  applySingleFocusView();
 }
 
 function selectCompanyFromMenu(id) {
+  if (id === 'nexus') id = 'saleinn';
+  closeAllBlockingOverlays();
   if (activeTab !== 'overview') {
     switchTab('overview');
   }
   selectCompany(id);
-  const hub = document.getElementById('ljCtoExecutiveHub');
-  if (hub) {
-    try { hub.scrollIntoView({behavior: 'smooth', block: 'start'}); } catch (e) {}
+  try {
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  } catch (e) {}
+  const coMeta = COMPANIES.find(c => c.id === id);
+  if (coMeta && typeof toast === 'function') {
+    toast(id === 'all'
+      ? (lang === 'es' ? '?? Vista Global: Mostrando todas las empresas' : '?? Global View: Showing all companies')
+      : (lang === 'es' ? `?? Mostrando ?nicamente: ${coMeta.name}` : `?? Showing exclusively: ${coMeta.name}`));
   }
 }
 
@@ -4225,7 +4447,7 @@ loadMasterFunctionsCatalog();
   .ag-sync code{display:block;word-break:break-all;margin:6px 0;color:var(--acc);font-size:10.5px}
   .ag-int-pills{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0}
   .ag-int-pill{font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:999px;background:rgba(16,185,129,.14);color:#34d399;border:1px solid rgba(16,185,129,.3)}
-  @media (max-width:900px){#agendaPanel{left:14px;width:auto}}
+  @media (max-width:900px){#agendaPanel{left:82px;width:auto}}
 </style>
 <button id="agendaToggle" type="button" aria-controls="agendaPanel">AGENDA · SYNC</button>
 <aside id="agendaPanel" aria-label="Calendario, citas y tareas">

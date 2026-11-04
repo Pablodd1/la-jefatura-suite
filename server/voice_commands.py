@@ -152,17 +152,30 @@ def parse(command: str, lang: str = "es") -> dict:
     if m_em_rem:
         return {"action": "email_reminder", "text": m_em_rem.group(1).strip()}
 
-    # Schedule / add calendar appointment ("agendar cita: ...", "crear cita ...", "programar reunión ...", "agenda ...")
+    # Schedule / add calendar appointment ("agendar cita: ...", "crear cita ...", "agrega a las 9pm masaje para mi", "pon a las 4pm llamada...")
+    is_agenda_question = bool(
+        "?" in t
+        or re.search(r"^(?:qu[eé]|cu[aá]l(?:es)?|cu[aá]ntas?|c[oó]mo|d[oó]nde|abrir|abre|ver|mostrar|mu[eé]strame|open|show|what|which)\b", low)
+        or re.search(r"\b(?:qu[eé]\s+tengo|que\s+tengo|qu[eé]\s+hay|que\s+hay|agenda\s+de\s+hoy|citas\s+de\s+hoy)\b", low)
+    )
     m_ev = re.match(
-        r"^(?:por favor\s+)?(?:agendar|agenda|programar|programa|crear|crea|agregar|agrega|a[ñn]adir|"
+        r"^(?:por favor\s+)?(?:agendar|agenda|programar|programa|crear|crea|agregar|agrega|a[ñn]adir|a[ñn]ade|"
         r"pon\s+en\s+el\s+calendario|poner\s+en\s+el\s+calendario|schedule|book|add)\s+"
         r"(?:una\s+|un\s+|a\s+|la\s+|el\s+)?(?:nueva\s+|new\s+)?(?:cita|reuni[oó]n|evento|appointment|meeting on calendar|meeting)\s*[:,-]?\s*(.+)$",
         t, re.I
     ) or re.match(
         r"^(?:por favor\s+)?(?:agendar|agenda|nueva\s+cita|cita)\s*[:,\-\s]\s*(.+)$",
         t, re.I
+    ) or (
+        re.match(
+            r"^(?:por favor\s+)?(?:agendar|agenda|programar|programa|agregar|agrega|a[ñn]adir|a[ñn]ade|pon|poner|apunta|apuntar|reserva|reservar|schedule|book)\s+(.+)$",
+            t, re.I
+        )
+        if re.search(r"(?:\ba\s+las\s+\d{1,2}|\b\d{1,2}(?::\d{2})?\s*(?:am|pm|a\.m\.|p\.m\.)\b|\b\d{1,2}:\d{2}\b)", low)
+        and not re.search(r"\b(?:nota|note|recordatorio|tarea|task|correo|email)\b", low)
+        else None
     )
-    if m_ev and not re.search(r"^(?:abrir|abre|ver|mostrar|open|show)\b", low):
+    if m_ev and not is_agenda_question:
         return {"action": "schedule_event", "text": m_ev.group(1).strip()}
 
     if re.search(r"\b(sincronizar|sincroniza|sync)\b.*\b(calendario|agenda|integraciones|apps|todo|all)\b", low):
