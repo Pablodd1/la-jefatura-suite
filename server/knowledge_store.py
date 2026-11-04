@@ -338,7 +338,7 @@ def _metric_answer(q: str, lang: str):
             pass
 
     # 0d) General question about all companies / how are the companies doing / general status
-    if re.search(r"\b(empresas|companies|resumen general|como vamos|how are we doing|estado general|todas las empresas|all companies|juan)\b", n):
+    if re.search(r"\b(empresas|companies|resumen general|como vamos|how are we doing|estado general|todas las empresas|all companies)\b", n):
         try:
             import jefesito
             d_today = jefesito.get_day(lang=lang)

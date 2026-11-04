@@ -180,6 +180,7 @@ def fetch_live_ga4(property_id_override: str = "") -> dict:
         "synced_at": time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
         "service_account_email": sa_email,
         "active_property_id": target_pid,
+        "property_id": target_pid,
         "properties": properties,
         "overview_raw": ov_res,
         "channels_raw": ch_res,

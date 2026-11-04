@@ -114,7 +114,7 @@ def _make_newspaper_charts(u_data: dict, b_data: dict, hik_sum: dict, es: bool =
     return buf
 
 
-def build(out_path: str, day: str = None, lang: str = None, focus_company: str = None) -> str:
+def build(out_path: str, lang: str = None, day: str = None, today=None, focus_company: str = None) -> str:
     """Builds the Multi-Page Morning Executive Newspaper PDF and returns the written path."""
     import jefesito
     import knowledge_store as ks
@@ -129,7 +129,10 @@ def build(out_path: str, day: str = None, lang: str = None, focus_company: str =
     lang = lang or prefs.get("lang", "es")
     es = lang != "en"
 
-    d = jefesito.get_day(day, lang=lang)
+    if lang not in ('es', 'en', None) and day is None:
+        day, lang = lang, None
+    d = jefesito.get_day(day, lang=lang or 'es', today=today)
+    all_pages = jefesito.pages(lang or 'es', today=today)
     w = jefesito.get_live_weather()
     tzs = w.get("timezones") or jefesito.get_south_america_timezones()
 
@@ -170,6 +173,7 @@ def build(out_path: str, day: str = None, lang: str = None, focus_company: str =
         from reportlab.lib.units import inch
         from reportlab.platypus import (
             Image,
+            PageBreak,
             Paragraph,
             SimpleDocTemplate,
             Spacer,
@@ -389,7 +393,8 @@ def build(out_path: str, day: str = None, lang: str = None, focus_company: str =
         ]))
         story.append(proj_tbl)
 
-        # 5. EVERY CEO TASK, SCHEDULED APPOINTMENT, REMINDER & MEMORIZED NOTE
+        # 5. PAGE 2: EVERY CEO TASK, SCHEDULED APPOINTMENT, REMINDER & MEMORIZED NOTE
+        story.append(PageBreak())
         story.append(Paragraph("4. TAREAS DEL CEO, AGENDA DEL DÍA, RECORDATORIOS Y NOTAS MEMORIZADAS (mc.db)", st_h2))
 
         # 5A. Scheduled Calendar Appointments
@@ -438,8 +443,16 @@ def build(out_path: str, day: str = None, lang: str = None, focus_company: str =
         else:
             story.append(Paragraph("• Sin notas memorizadas aún.", st_body))
 
-        # 6. CONNECTED TOOLS & ZERO-GUESSING STATUS
-        story.append(Spacer(1, 6))
+        # 6. PAGE 3: NEXT-DAY SHEET, ARCHIVED DAYS & ZERO-GUESSING PROVENANCE MATRIX
+        story.append(PageBreak())
+        story.append(Paragraph("5. HOJAS DIARIAS DE EL JEFESITO (HOJA ABIERTA, PREVISIÓN DE MAÑANA E HISTORIAL)", st_h2))
+        for pg in (all_pages or [])[:3]:
+            st_tag = "CERRADA" if pg.get("closed") else ("PREVISIÓN" if pg.get("kind") == "preview" else "ABIERTA HOY")
+            story.append(Paragraph(f"📄 <b>{pg.get('label', pg.get('day', ''))} [{st_tag}]</b> — {pg.get('greeting', '')}", st_h3))
+            for sec in pg.get("sections", [])[:4]:
+                story.append(Paragraph(f"• <b>{sec.get('title', '')}:</b> {' '.join(sec.get('lines', []))}", st_body))
+
+        story.append(Spacer(1, 8))
         story.append(HRFlowable(width="100%", thickness=0.8, color=colors.HexColor("#94A3B8")))
         story.append(Paragraph(
             "<b>LA JEFATURA — Made &amp; Powered by Building Innovation</b> · "

@@ -9,7 +9,7 @@
       "due": "2026-11-03",
       "estado": "overdue",
       "severidad": "critical",
-      "notas": "source:camera_audit | Revisar alimentación 5V DC y señal Wi-Fi 2.4GHz en sede IDEO."
+      "notas": "sample:camera_audit | Revisar alimentación 5V DC y señal Wi-Fi 2.4GHz en sede IDEO."
     },
     {
       "id": "T-02",
@@ -19,7 +19,7 @@
       "due": "2026-11-03",
       "estado": "open",
       "severidad": "high",
-      "notas": "source:unitec_chatbot | Priorizar los 2 teléfonos nuevos de hoy y cotizaciones WPC/PVC."
+      "notas": "sample:unitec_chatbot | Priorizar los 2 teléfonos nuevos de hoy y cotizaciones WPC/PVC."
     },
     {
       "id": "T-03",
@@ -29,7 +29,7 @@
       "due": "2026-11-03",
       "estado": "open",
       "severidad": "high",
-      "notas": "source:building_app | Convertir usuarios activos de visualización 3D en cotizaciones."
+      "notas": "sample:building_app | Convertir usuarios activos de visualización 3D en cotizaciones."
     },
     {
       "id": "T-04",
@@ -39,7 +39,7 @@
       "due": "2026-11-04",
       "estado": "open",
       "severidad": "medium",
-      "notas": "source:camera_audit | Las 8 cámaras de Miami están online; activar schedule 24/7 en el disco de 1.82 TB."
+      "notas": "sample:camera_audit | Las 8 cámaras de Miami están online; activar schedule 24/7 en el disco de 1.82 TB."
     },
     {
       "id": "T-05",
@@ -49,7 +49,7 @@
       "due": "2026-11-04",
       "estado": "open",
       "severidad": "medium",
-      "notas": "source:whatsapp | Contenedor WPC Roble Claro y 24 despachos en Muelle 1."
+      "notas": "sample:whatsapp | Contenedor WPC Roble Claro y 24 despachos en Muelle 1."
     },
     {
       "id": "T-06",
@@ -59,7 +59,7 @@
       "due": "2026-11-04",
       "estado": "open",
       "severidad": "medium",
-      "notas": "source:onboarding | Compartir Property ID de buildinginnovation.us y unitecusadesign.com."
+      "notas": "sample:onboarding | Compartir Property ID de buildinginnovation.us y unitecusadesign.com."
     }
   ],
   "resumen": {

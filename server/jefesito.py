@@ -432,16 +432,24 @@ def _compose_day(f, prof, prefs, lang, day, hour) -> dict:
     secs.append({"title": "📹 55 Cámaras Hik-Connect" if es else "📹 55 Hik-Connect Cameras", "lines": [cam_line]})
     sources.append("Hik-Connect Cloud API · 55 Canales")
 
+    demo_note_es = f" (Además hay {f.get('notes_demo', 0)} notas y {f.get('meetings_demo', 0)} reuniones de ejemplo en memoria.)" if (f.get("notes_demo") or f.get("meetings_demo")) else ""
+    demo_note_en = f" (Plus {f.get('notes_demo', 0)} demo sample notes and {f.get('meetings_demo', 0)} sample meetings.)" if (f.get("notes_demo") or f.get("meetings_demo")) else ""
     lines = [(f"Pipeline Nexus $104,600 USD ($28,000 cerrados); {f['tasks_open']} tareas abiertas; "
-              f"{f.get('drafts') or 0} borradores Mode C listos para aprobar.") if es else
+              f"{f.get('drafts') or 0} borradores Mode C listos para aprobar.{demo_note_es}") if es else
              (f"Nexus Pipeline $104,600 USD ($28,000 closed); {f['tasks_open']} open tasks; "
-              f"{f.get('drafts') or 0} Mode C drafts ready for approval.")]
+              f"{f.get('drafts') or 0} Mode C drafts ready for approval.{demo_note_en}")]
     if f["task_titles"]:
-        lines.append(("Pendientes: " if es else "Pending: ") + " | ".join(t[:90] for t in f["task_titles"][:2]))
+        lines.append(("Pendientes: " if es else "Pending: ") + " | ".join(t[:90] for t in f["task_titles"][:4]))
+    if prof and prof.get("enough"):
+        lines.append(
+            f"Lo que he aprendido de ti ({prof.get('interactions')} interacciones): {prof.get('summary_es')}"
+            if es else
+            f"What I have learned about you ({prof.get('interactions')} interactions): {prof.get('summary_en')}"
+        )
     secs.append({"title": "💼 Pipeline & Pendientes" if es else "💼 Pipeline & Tasks", "lines": lines})
 
     greet = f"{_hello(lang, hour)}, {name}. " + (f"Resumen ejecutivo de {_label(day, lang)}." if es
-                                                  else f"Executive summary for {_label(day, lang)}.")
+                                                  else f"Executive Summary for {_label(day, lang)}.")
     spoken = (
         greet + " " +
         " ".join(f"{s['title']}: " + " ".join(s["lines"]) for s in secs) +
