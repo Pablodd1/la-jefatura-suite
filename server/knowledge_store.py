@@ -895,3 +895,106 @@ def memorize_project_directive(
         "summary_es": summary_es,
         "memory": get_project_memory(co, limit=25),
     }
+
+
+
+def _ensure_feedback_table(con: sqlite3.Connection) -> None:
+    con.execute("""
+        CREATE TABLE IF NOT EXISTS ceo_feedback_requests (
+            id TEXT PRIMARY KEY,
+            company TEXT NOT NULL DEFAULT 'all',
+            action_type TEXT NOT NULL DEFAULT 'add_function',
+            message TEXT NOT NULL,
+            author TEXT NOT NULL DEFAULT 'CEO / Juan',
+            status TEXT NOT NULL DEFAULT 'pending_implementation',
+            ticket_id TEXT NOT NULL DEFAULT '',
+            created_at REAL NOT NULL
+        )
+    """)
+    con.commit()
+
+
+def save_feedback_request(
+    message: str,
+    company: str = "all",
+    action_type: str = "add_function",
+    author: str = "CEO / Juan",
+    lang: str = "es",
+) -> dict:
+    msg = (message or "").strip()
+    if not msg:
+        return {"ok": False, "error": "empty_message"}
+    co = (company or "all").strip().lower()
+    if co == "nexus":
+        co = "saleinn"
+    act = (action_type or "add_function").strip().lower()
+    fid = f"FB-{uuid.uuid4().hex[:8]}"
+    now = time.time()
+    esc = log_dev_escalation(
+        request_text=f"[{co.upper()} · {act.upper()}] {msg}",
+        reason="ceo_anything_new_feedback",
+        channel="anything_new_section",
+    )
+    ticket_id = esc.get("id", "DEV-OK")
+    con = _db()
+    _ensure_feedback_table(con)
+    con.execute(
+        "INSERT INTO ceo_feedback_requests (id, company, action_type, message, author, status, ticket_id, created_at) "
+        "VALUES (?, ?, ?, ?, ?, 'received', ?, ?)",
+        (fid, co, act, msg, author or "CEO / Juan", ticket_id, now),
+    )
+    con.commit()
+    con.close()
+
+    add_note(
+        text=f"[Solicitud de Mejora / Función ({act})]: {msg}",
+        company=co,
+        tags="feedback,feature_request",
+        source="anything_new_section",
+    )
+
+    return {
+        "ok": True,
+        "id": fid,
+        "ticket_id": ticket_id,
+        "company": co,
+        "action_type": act,
+        "message": msg,
+        "author": author or "CEO / Juan",
+        "created_at": now,
+        "created_iso": time.strftime("%Y-%m-%d %H:%M", time.localtime(now)),
+        "reply_es": (
+            f"✅ Solicitud registrada ({fid} · Ticket {ticket_id}): «{msg}». "
+            f"Guardada en memoria de {co.upper()} y enviada para agregar/ajustar la función o mejorar los resultados."
+        ),
+        "reply_en": (
+            f"✅ Request logged ({fid} · Ticket {ticket_id}): «{msg}». "
+            f"Saved in {co.upper()} memory and queued to add/remove functions or improve results."
+        ),
+        "items": list_feedback_requests(company="all", limit=20),
+    }
+
+
+def list_feedback_requests(company: str = "all", limit: int = 20) -> list[dict]:
+    co = (company or "all").strip().lower()
+    if co == "nexus":
+        co = "saleinn"
+    con = _db()
+    _ensure_feedback_table(con)
+    if co and co != "all":
+        rows = con.execute(
+            "SELECT * FROM ceo_feedback_requests WHERE lower(company) IN (?, 'all') ORDER BY created_at DESC LIMIT ?",
+            (co, limit),
+        ).fetchall()
+    else:
+        rows = con.execute(
+            "SELECT * FROM ceo_feedback_requests ORDER BY created_at DESC LIMIT ?",
+            (limit,),
+        ).fetchall()
+    con.close()
+    out = []
+    for r in rows:
+        d = dict(r)
+        d["created_iso"] = time.strftime("%Y-%m-%d %H:%M", time.localtime(d.get("created_at") or time.time()))
+        out.append(d)
+    return out

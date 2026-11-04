@@ -383,6 +383,9 @@
 
     const root = document.createElement("div");
     root.id = "ljw";
+    if (document.getElementById("mcVoiceChatBarSection")) {
+      root.style.display = "none";
+    }
     root.innerHTML = `
       <div class="panel" id="ljw-panel">
         <div class="head">
@@ -522,17 +525,24 @@
       const curLang = getLang();
       const T = getT();
       stopAudio();
-      openPanelAndFocus(true);
+      const hasUnifiedBar = !!document.getElementById("mcVoiceChatBarSection");
+      if (!hasUnifiedBar && !targetInputEl) {
+        openPanelAndFocus(true);
+      } else if (targetInputEl) {
+        try { targetInputEl.focus(); } catch (_) {}
+      }
 
       if (!SR) {
-        state.log.push({
-          who: "lj",
-          text: curLang === "es"
-            ? "Tu navegador actual bloqueó el micrófono directo. Escribe tu orden en la caja de texto aquí abajo (reconozco palabras cercanas, notas, citas y recordatorios)."
-            : "Your browser blocked direct microphone access. Type your command in the box below."
-        });
+        const msgNoSr = curLang === "es"
+          ? "Tu navegador actual bloqueó el micrófono directo. Escribe tu orden en la caja de texto (reconozco palabras cercanas, notas, citas y recordatorios)."
+          : "Your browser blocked direct microphone access. Type your command in the box.";
+        state.log.push({ who: "lj", text: msgNoSr });
         renderLog();
-        input.focus();
+        if (typeof window.updateMasterControlChatFeedback === "function") {
+          window.updateMasterControlChatFeedback("Micrófono", { action: "mic_notice", reply: msgNoSr });
+        }
+        if (targetInputEl) targetInputEl.focus();
+        else input.focus();
         return;
       }
       if (state.listening && rec) {

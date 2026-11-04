@@ -303,6 +303,9 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
         elif path == "/api/ceo/project_memory":
             co = (qs.get("company") or ["all"])[0]
             self._send(200, knowledge_store.get_project_memory(company=co, limit=30))
+        elif path == "/api/ceo/feedback":
+            co = (qs.get("company") or ["all"])[0]
+            self._send(200, {"ok": True, "items": knowledge_store.list_feedback_requests(company=co, limit=25)})
         elif path == "/api/functions/catalog":
             q_match = (qs.get("q") or [""])[0].strip()
             cat = functions_catalog.get_catalog()
@@ -559,6 +562,15 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
                 create_reminder=bool(body.get("create_reminder", True)),
                 create_task=bool(body.get("create_task", True)),
                 source=body.get("source", "ceo_project_memory"),
+            )
+            self._send(200 if res.get("ok") else 400, res)
+        elif path == "/api/ceo/feedback":
+            res = knowledge_store.save_feedback_request(
+                message=body.get("message") or body.get("text") or "",
+                company=body.get("company", "all"),
+                action_type=body.get("action_type", "add_function"),
+                author=body.get("author", "CEO / Juan"),
+                lang=body.get("lang", "es"),
             )
             self._send(200 if res.get("ok") else 400, res)
         elif path == "/api/ceo/email_reminder":

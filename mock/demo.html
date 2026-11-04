@@ -714,6 +714,18 @@
       </div>
     </div>
 
+    <!-- 1-PAGE ALL-COMPANY EXECUTIVE SUMMARY & REPORTS CARDS (Shown on 'Todas las Empresas', hidden when viewing a single company) -->
+    <div id="allCompaniesSummarySection" style="margin-bottom:16px">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px">
+        <div>
+          <span class="tag ok">RESUMEN EJECUTIVO EN 1 P?GINA ? 5 EMPRESAS</span>
+          <b style="margin-left:8px;font-size:13.5px;color:var(--txt)">Haz clic en cualquier empresa aqu? o en el men? izquierdo para abrir su informaci?n detallada y elaborada</b>
+        </div>
+        <span class="muted" style="font-size:11px">Vista Global Consolidada ? Clic en una empresa = Vista Detallada Exclusiva</span>
+      </div>
+      <div id="allCompaniesSummaryGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(265px,1fr));gap:12px"></div>
+    </div>
+
     <!-- 2-Column CTO Deep Dive: Detailed Text Analytics + Visual Graphics -->
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:14px;margin-bottom:14px">
       <div style="background:var(--inset);border:1px solid var(--hair);border-radius:16px;padding:14px 16px" id="ctoTextAnalyticsBox"></div>
@@ -739,7 +751,7 @@
     </div>
 
     <!-- Master Functions, Menus & Links Catalog (What Each Function Does, How It Works & Close Words) -->
-    <div id="masterFunctionsCatalogCard" style="margin-top:14px;background:var(--inset);border:1px solid rgba(16,185,129,.38);border-radius:16px;padding:14px 16px">
+    <div id="masterFunctionsCatalogCard" style="display:none;margin-top:14px;background:var(--inset);border:1px solid rgba(16,185,129,.38);border-radius:16px;padding:14px 16px">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px">
         <div>
           <span class="tag ok">CATÁLOGO DE FUNCIONES, MENÚS Y ENLACES</span>
@@ -1414,10 +1426,62 @@
   </div>
 </section>
 
+<!-- ==================== END-OF-SESSION FEEDBACK & FEATURE EVOLUTION ("ANYTHING NEW YOU WOULD LIKE TO ADD?") ==================== -->
+<section id="ljAnythingNewSection" style="max-width:1520px;margin:18px auto 12px;padding:0 22px">
+  <div class="card" style="border:2px solid rgba(205,182,140,.52);background:linear-gradient(145deg,rgba(205,182,140,.10),rgba(16,185,129,.07));padding:18px 22px;border-radius:20px;box-shadow:0 18px 42px rgba(0,0,0,.35)">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:12px">
+      <div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <span class="tag ok" style="font-size:10.5px;font-weight:900">?? MEJORA CONTINUA ? DIRECTO AL DESARROLLADOR</span>
+          <span class="tag medium" id="anythingNewContextTag">CONTEXTO: TODAS LAS EMPRESAS</span>
+        </div>
+        <h3 style="font-size:17px;font-weight:900;margin:6px 0 2px;color:var(--txt)">Anything new you would like to add? ? ?Algo nuevo que te gustar?a agregar, quitar o mejorar?</h3>
+        <div class="muted" style="font-size:12px">Env?anos al final de tu revisi?n cualquier funci?n que quieras agregar o quitar, o c?mo mejorar los resultados y reportes de esta empresa o del panel general.</div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <button type="button" class="btn ghost sm" onclick="prefillAnythingNew('add_function', 'Agregar nueva funci?n: ')">? Agregar Funci?n</button>
+        <button type="button" class="btn ghost sm" onclick="prefillAnythingNew('remove_function', 'Quitar o simplificar: ')">? Quitar Funci?n</button>
+        <button type="button" class="btn ghost sm" onclick="prefillAnythingNew('improve_results', 'Mejorar resultados / anal?tica de: ')">?? Mejorar Resultados</button>
+        <button type="button" class="btn ghost sm" onclick="prefillAnythingNew('improve_report', 'Agregar al Peri?dico PDF matutino: ')">?? Mejorar Reporte PDF</button>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:190px 210px 1fr auto auto;gap:8px;align-items:center;flex-wrap:wrap">
+      <select id="anythingNewCompany" class="inp" style="padding:10px 12px;font-size:12.5px;border-radius:12px;font-weight:700">
+        <option value="all">?? Todas las Empresas</option>
+        <option value="unitec">??? UNITEC USA</option>
+        <option value="building">??? Building Innovation</option>
+        <option value="cameras">?? 55 C?maras CCTV</option>
+        <option value="espacios">?? Espacios Importados</option>
+        <option value="saleinn">?? Nexus CRM</option>
+      </select>
+      <select id="anythingNewType" class="inp" style="padding:10px 12px;font-size:12.5px;border-radius:12px;font-weight:700">
+        <option value="add_function">? Agregar Funci?n (Add)</option>
+        <option value="remove_function">? Quitar Funci?n (Remove)</option>
+        <option value="improve_results">?? Mejorar Resultados</option>
+        <option value="improve_report">?? Mejorar Reporte / PDF</option>
+      </select>
+      <input id="anythingNewInput" class="inp" placeholder="Escribe o dicta qu? te gustar?a agregar, quitar o mejorar (ej. Agregar gr?fica de costos de contenedores en Espacios Importados)?" style="width:100%;padding:11px 14px;font-size:13px;border-radius:12px;border:1px solid rgba(205,182,140,.48)" onkeydown="if(event.key==='Enter'){event.preventDefault();submitAnythingNewRequest();}">
+      <button type="button" class="btn ghost sm" onclick="window.LJ && window.LJ.startMic && window.LJ.startMic(document.getElementById('anythingNewInput'))" style="padding:11px 14px;border-radius:12px;font-weight:800;white-space:nowrap" title="Dictar por micr?fono">??? Dictar</button>
+      <button type="button" class="btn sm" onclick="submitAnythingNewRequest()" style="padding:11px 20px;border-radius:12px;font-weight:900;font-size:12.5px;white-space:nowrap">?? Enviar Solicitud</button>
+    </div>
+
+    <div id="anythingNewFeedbackBanner" style="display:none;margin-top:10px;padding:10px 14px;border-radius:12px;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.45);font-size:12.5px;font-weight:700;color:#34d399"></div>
+
+    <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--hair)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <span class="muted" style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em">?? Solicitudes enviadas para agregar/quitar funciones o mejorar resultados</span>
+        <button type="button" class="btn ghost sm" style="font-size:10.5px;padding:2px 8px" onclick="loadAnythingNewRequests()">? Actualizar</button>
+      </div>
+      <div id="anythingNewHistoryList" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:8px"></div>
+    </div>
+  </div>
+</section>
+
 <div class="toast" id="toastBox"></div>
 <div class="foot">LA JEFATURA · Made &amp; Powered by Building Innovation · <span data-i18n="foot">Datos de muestra listos para demostración + API real en servidor (mc.db / Nexus / Comms Brain / Grok 3.0 Voice)</span></div>
 
-<script src="/widgets/lajefatura-widget.js?v=20261104c"></script>
+<script src="/widgets/lajefatura-widget.js?v=20261104d"></script>
 <script>
 /* ── Complete Multi-Company & White-Label Sample Dataset ── */
 const COMPANIES = [
@@ -1874,11 +1938,23 @@ function applySingleFocusView() {
   if (hubEl) hubEl.style.display = 'block';
   if (mcBarEl) mcBarEl.style.display = 'block';
 
+  const allSumSec = document.getElementById('allCompaniesSummarySection');
+  const anCoSel = document.getElementById('anythingNewCompany');
+  const anCtxTag = document.getElementById('anythingNewContextTag');
+  if (anCoSel) anCoSel.value = cur || 'all';
+  if (anCtxTag) {
+    const coObjNow = COMPANIES.find(c => c.id === cur) || COMPANIES[0];
+    anCtxTag.textContent = 'CONTEXTO: ' + (cur === 'all' ? 'TODAS LAS EMPRESAS (RESUMEN)' : coObjNow.name.toUpperCase());
+  }
+
   if (cur === 'all') {
-    // Consolidated Global Portfolio View
+    // 1-PAGE ALL-COMPANY EXECUTIVE SUMMARY & CONSOLIDATED REPORTS VIEW
     if (bannerEl) bannerEl.style.display = 'none';
-    if (foreseenEl) foreseenEl.style.display = '';
-    if (catCardEl) catCardEl.style.display = 'block';
+    if (allSumSec) allSumSec.style.display = 'block';
+    if (foreseenEl) foreseenEl.style.display = 'none';
+    if (catCardEl) catCardEl.style.display = 'none';
+    if (typeof renderAllCompaniesSummaryCards === 'function') renderAllCompaniesSummaryCards();
+    // Keep only the high-level 4 global KPIs + Executive Digest + Quick Drafts + Calendar Dock on the 1-page summary
     setDisp('kpiCardRev', true, 3);
     setDisp('kpiCardPipe', true, 3);
     setDisp('kpiCardClosed', true, 3);
@@ -1886,18 +1962,20 @@ function applySingleFocusView() {
     setDisp('overviewExecDigestCard', true, 5);
     setDisp('overviewQuickDraftsCard', true, 3);
     setDisp('v12RightCalendarDock', true, 4);
-    setDisp('unitecLiveCard', true, 12);
-    setDisp('buildingAppLivePanel', true, 12);
-    setDisp('overviewAgendaCard', true, 4);
-    setDisp('overviewPipelineCard', true, 4);
-    setDisp('overviewTasksCard', true, 4);
-    setDisp('overviewCamerasCard', true, 8);
-    setDisp('overviewAlertsCard', true, 4);
+    // Hide the individual company deep-dive cards until the user clicks that company
+    setDisp('unitecLiveCard', false);
+    setDisp('buildingAppLivePanel', false);
+    setDisp('overviewAgendaCard', false);
+    setDisp('overviewPipelineCard', false);
+    setDisp('overviewTasksCard', false);
+    setDisp('overviewCamerasCard', false);
+    setDisp('overviewAlertsCard', false);
     return;
   }
 
-  // 3) Single Company Selected (Strict Isolation: show ONLY this company's analytics, live panel, and memory vault)
+  // 3) Single Company Selected (Strict Isolation: show ONLY this company's elaborated analytics, live panel, and memory vault)
   if (greetEl) greetEl.style.display = 'none';
+  if (allSumSec) allSumSec.style.display = 'none';
   if (foreseenEl) foreseenEl.style.display = 'none';
   if (catCardEl) catCardEl.style.display = 'none';
 
@@ -3082,29 +3160,6 @@ $('#pdfBtn').onclick = () => {
   showToast(lang === 'es'
     ? '📰 Abriendo El Periódico Matutino del CEO (PDF Completo con Gráficos y Tareas)…'
     : '📰 Opening CEO Morning Newspaper PDF (Full Charts & Tasks)…');
-};
-    doc.setFillColor(11, 16, 32); doc.rect(0, 0, 210, 30, 'F');
-    doc.setTextColor(35, 217, 176); doc.setFontSize(16);
-    doc.text(`LA JEFATURA — INFORME EJECUTIVO (${coObj.name.toUpperCase()})`, 14, 13);
-    doc.setFontSize(9); doc.setTextColor(230, 237, 247);
-    doc.text(new Date().toLocaleString() + ' · LA JEFATURA — Made & Powered by Building Innovation', 14, 21);
-    y = 40; doc.setTextColor(20, 25, 40);
-    line('Resumen Ejecutivo / Executive Summary', 12, true);
-    doc.setFontSize(9.5); doc.setFont('helvetica', 'normal');
-    const narr = lang === 'es'
-      ? `Ingreso mensual proyectado ${money(coObj.rev)} con pipeline total de ${money(coObj.pipe)} y conversion del ${coObj.conv}%. Todas las integraciones (Calendario, Correo, CRM, Tareas, Camaras, Personal y Clientes) operan automaticamente.`
-      : `Projected monthly revenue ${money(coObj.rev)} with ${money(coObj.pipe)} total pipeline at ${coObj.conv}% conversion. All integrations (Calendar, Email, CRM, Tasks, Cameras, Staff & Clients) are running automatically.`;
-    doc.text(doc.splitTextToSize(narr, 182), 14, y); y += 22;
-    line('Pipeline por etapa (USD)', 12, true);
-    doc.autoTable({startY: y, head: [['Etapa', 'Leads', 'Valor']], body: PIPE.map(p => [lang==='es'?p.stage_es:p.stage_en, p.count, money(p.val)]), theme: 'grid', headStyles: {fillColor: [11, 16, 32]}, styles: {fontSize: 9}});
-    y = doc.lastAutoTable.finalY + 10;
-    line('Tareas / Tasks', 12, true);
-    doc.autoTable({startY: y, head: [['Tarea', 'Severidad', 'Estado']], body: TASKS.map(t => [t.title, t.sev, t.status]), theme: 'grid', headStyles: {fillColor: [11, 16, 32]}, styles: {fontSize: 9}});
-    doc.save(`informe-${coObj.id}-${new Date().toISOString().slice(0,10)}.pdf`);
-    showToast(lang === 'es' ? 'Informe PDF generado y descargado.' : 'Executive PDF generated and downloaded.');
-  } else {
-    window.open(`/api/report.pdf?company=${encodeURIComponent(cur)}&lang=${lang}`, '_blank');
-  }
 };
 
 $('#langBtn').onclick = () => {
@@ -4295,8 +4350,11 @@ function filterMasterFunctionsCatalog(q) {
 function toggleMasterFunctionsCatalog() {
   const card = document.getElementById('masterFunctionsCatalogCard');
   const grid = document.getElementById('masterFunctionsCatalogGrid');
+  if (!card) return;
+  const isHidden = card.style.display === 'none';
+  card.style.display = isHidden ? 'block' : 'none';
   if (grid) grid.style.display = 'grid';
-  if (card) {
+  if (isHidden) {
     try { card.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {}
   }
 }
@@ -4386,6 +4444,178 @@ function syncAllLiveNow() {
 }
 
 loadMasterFunctionsCatalog();
+
+function renderAllCompaniesSummaryCards() {
+  const grid = document.getElementById('allCompaniesSummaryGrid');
+  if (!grid) return;
+  const summaryCards = [
+    {
+      id: 'unitec',
+      icon: '???',
+      name: 'UNITEC USA',
+      badge: '4,665 Sesiones ? 25 Tel',
+      color: '#00e5ff',
+      rev: '$24,500/mes',
+      pipe: '$58,400 USD',
+      summary: 'Recepcionista IA Front-Desk en vivo ? 193 conversaciones reales ? 98.3% SLA en Telegram ? 8/8 c?maras Miami activas.',
+      pdfUrl: '/api/reports/company_daily/html?company=unitec'
+    },
+    {
+      id: 'building',
+      icon: '???',
+      name: 'Building Innovation',
+      badge: '21 Miembros ? 621 IA',
+      color: '#feca57',
+      rev: '$9,500/mes',
+      pipe: '$28,700 USD',
+      summary: '621 renders arquitect?nicos IA (100% ?xito ? Gemini 2.5 Pro & 3.1 Flash) ? 54 proyectos ? GA4 #543661675 activo.',
+      pdfUrl: '/api/reports/company_daily/html?company=building'
+    },
+    {
+      id: 'cameras',
+      icon: '??',
+      name: '55 C?maras CCTV',
+      badge: '53/55 En Vivo (96.4%)',
+      color: '#10b981',
+      rev: '11.04 TB HDD',
+      pipe: '5 Grabadores NVR',
+      summary: 'USA Miami (8/8), Planta Pick-In (16/16), Espacios Importados (29/29) 100% online. 2 c?maras Wi-Fi IDEO por reconectar.',
+      pdfUrl: '/api/cameras/report.pdf?lang=es'
+    },
+    {
+      id: 'espacios',
+      icon: '??',
+      name: 'Espacios Importados',
+      badge: '45/45 C?maras (100%)',
+      color: '#7c6cff',
+      rev: '$5,000/mes',
+      pipe: '$10,000 USD',
+      summary: 'Operaci?n log?stica en Medell?n ? Muelles de carga 1?4, Despachos y Planta Pick-In al 100% ? 10.0 TB grabando.',
+      pdfUrl: '/api/report.pdf?company=espacios&lang=es'
+    },
+    {
+      id: 'saleinn',
+      icon: '??',
+      name: 'Nexus CRM (Pipeline)',
+      badge: '$104,600 Activos',
+      color: '#ff6b81',
+      rev: '$28,000 Cerrados',
+      pipe: '14 Oportunidades',
+      summary: 'Embudo B2B mayorista con 31% de conversi?n ? Cotizaciones pre-redactadas en Bandeja Modo C listas para aprobar.',
+      pdfUrl: '/api/report.pdf?company=saleinn&lang=es'
+    }
+  ];
+  grid.innerHTML = summaryCards.map(c => `
+    <div style="background:rgba(255,255,255,.035);border:1.5px solid var(--hair);border-top:3px solid ${c.color};border-radius:14px;padding:13px 15px;display:flex;flex-direction:column;justify-content:space-between;gap:8px;transition:.18s">
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:6px">
+          <strong style="font-size:14px;color:var(--txt)">${c.icon} ${c.name}</strong>
+          <span class="tag ok" style="font-size:9.5px">${c.badge}</span>
+        </div>
+        <div style="display:flex;gap:10px;font-size:11.5px;margin-bottom:6px;color:var(--acc);font-weight:800">
+          <span>?? ${c.rev}</span>
+          <span>?</span>
+          <span>?? ${c.pipe}</span>
+        </div>
+        <div class="muted" style="font-size:11.5px;line-height:1.42">${c.summary}</div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding-top:8px;border-top:1px solid var(--hair)">
+        <button type="button" class="btn sm" style="font-size:11px;font-weight:900;padding:6px 12px" onclick="selectCompanyFromMenu('${c.id}')">?? Ver Informaci?n Detallada ?</button>
+        <a href="${c.pdfUrl}" target="_blank" rel="noopener" class="btn ghost sm" style="font-size:10.5px;text-decoration:none;padding:5px 9px">?? Reporte</a>
+      </div>
+    </div>
+  `).join('');
+}
+
+function prefillAnythingNew(actionType, prefixText) {
+  const typeSel = document.getElementById('anythingNewType');
+  const coSel = document.getElementById('anythingNewCompany');
+  const inp = document.getElementById('anythingNewInput');
+  if (typeSel && actionType) typeSel.value = actionType;
+  if (coSel) coSel.value = cur || 'all';
+  if (inp) {
+    inp.value = prefixText || '';
+    inp.focus();
+  }
+}
+
+function loadAnythingNewRequests() {
+  fetch('/api/ceo/feedback?company=all')
+    .then(r => r.json())
+    .then(d => {
+      const listEl = document.getElementById('anythingNewHistoryList');
+      if (!listEl) return;
+      const items = (d && d.items) || [];
+      if (!items.length) {
+        listEl.innerHTML = '<div class="muted" style="font-size:11.5px;padding:6px 0">Todav?a no hay solicitudes enviadas en esta sesi?n. Escribe arriba cualquier funci?n que desees agregar, quitar o mejorar.</div>';
+        return;
+      }
+      const typeLabels = {
+        add_function: '? Agregar Funci?n',
+        remove_function: '? Quitar Funci?n',
+        improve_results: '?? Mejorar Resultados',
+        improve_report: '?? Mejorar Reporte PDF'
+      };
+      listEl.innerHTML = items.slice(0, 8).map(it => `
+        <div style="background:rgba(255,255,255,.04);border:1px solid var(--hair);border-radius:11px;padding:9px 12px;font-size:11.5px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:4px">
+            <span class="tag ok" style="font-size:9.5px">${(it.company || 'all').toUpperCase()} ? ${typeLabels[it.action_type] || it.action_type}</span>
+            <code style="font-size:10px;color:var(--acc)">${it.id} (${it.ticket_id || 'OK'})</code>
+          </div>
+          <div style="font-weight:700;color:var(--txt);line-height:1.4">?${it.message}?</div>
+          <div class="muted" style="font-size:10px;margin-top:3px">?? ${it.created_iso || ''} ? Estado: Recibido para implementaci?n</div>
+        </div>
+      `).join('');
+    })
+    .catch(() => {});
+}
+
+function submitAnythingNewRequest() {
+  const coSel = document.getElementById('anythingNewCompany');
+  const typeSel = document.getElementById('anythingNewType');
+  const inp = document.getElementById('anythingNewInput');
+  const banner = document.getElementById('anythingNewFeedbackBanner');
+  const msg = (inp && inp.value || '').trim();
+  if (!msg) {
+    showToast(lang === 'en' ? 'Write what you would like to add, remove, or improve first.' : 'Escribe primero qu? funci?n te gustar?a agregar, quitar o mejorar.');
+    if (inp) inp.focus();
+    return;
+  }
+  const company = (coSel && coSel.value) || cur || 'all';
+  const action_type = (typeSel && typeSel.value) || 'add_function';
+  fetch('/api/ceo/feedback', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      message: msg,
+      company,
+      action_type,
+      author: 'CEO / Juan',
+      lang: typeof lang !== 'undefined' ? lang : 'es'
+    })
+  })
+    .then(r => r.json())
+    .then(d => {
+      if (d && d.ok) {
+        if (inp) inp.value = '';
+        const replyTxt = (lang === 'en' ? d.reply_en : d.reply_es) || 'Solicitud enviada y guardada.';
+        if (banner) {
+          banner.style.display = 'block';
+          banner.textContent = replyTxt;
+        }
+        showToast(replyTxt);
+        loadAnythingNewRequests();
+        loadProjectMemoryVault(cur);
+      }
+    })
+    .catch(() => {});
+}
+
+setTimeout(() => {
+  renderAllCompaniesSummaryCards();
+  loadAnythingNewRequests();
+  applySingleFocusView();
+}, 120);
 (async function initJefesito() {
   const hasExplicitLang = /[?&]lang=(en|es)\b/i.test(location.search) || !!(function(){ try { return localStorage.getItem('lj_lang'); } catch(e) { return null; } })();
   try { Object.assign(PREFS, await (await fetch('/api/prefs')).json()); } catch (e) {}
