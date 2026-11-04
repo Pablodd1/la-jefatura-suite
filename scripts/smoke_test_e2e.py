@@ -99,6 +99,16 @@ def main():
     check("5a. POST /api/ceo/project_memory stores note, schedule & reminder", mem_post.get("ok") is True and bool(mem_post.get("note", {}).get("id")), mem_post.get("summary_es", ""))
     mem_get = get_json("/api/ceo/project_memory?company=building")
     check("5b. GET /api/ceo/project_memory returns stored project items", mem_get.get("ok") is True and mem_get.get("counts", {}).get("notes", 0) >= 1, str(mem_get.get("counts")))
+    # Clean up smoke test rows from data/mc.db so production memory stays clean
+    import os, sqlite3
+    db_p = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "mc.db")
+    if os.path.exists(db_p):
+        with sqlite3.connect(db_p) as conn:
+            conn.execute("DELETE FROM notes WHERE body LIKE '%Smoke Test CTO%'")
+            conn.execute("DELETE FROM tasks WHERE titulo LIKE '%Smoke Test CTO%'")
+            conn.execute("DELETE FROM events WHERE title LIKE '%Smoke Test CTO%'")
+            conn.execute("DELETE FROM reminders WHERE title LIKE '%Smoke Test CTO%'")
+            conn.commit()
 
     # 6. Grounded Q&A & Voice Command Execution (Zero Guessing)
     ask_cam = get_json("/api/ask?lang=es&q=" + urllib.parse.quote("cuántas cámaras están en vivo"))
