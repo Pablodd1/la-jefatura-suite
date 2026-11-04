@@ -949,7 +949,6 @@ def save_feedback_request(
     add_note(
         text=f"[Solicitud de Mejora / Función ({act})]: {msg}",
         company=co,
-        tags="feedback,feature_request",
         source="anything_new_section",
     )
 
