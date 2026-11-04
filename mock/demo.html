@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <script>try{document.documentElement.dataset.theme='sand';localStorage.setItem('ljTheme','sand')}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>La Jefatura — White-Label CEO Mission Control</title>
+<title>La Jefatura — Made & Powered by Building Innovation</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <style>
@@ -260,153 +260,412 @@
     color: #cdb68c !important;
   }
 
-  /* Left Floating Vertical Pill Rail (V12 Sidebar) */
-  .v12-app-rail {
-    position: fixed;
-    left: 14px;
-    top: 16px;
-    bottom: 16px;
-    width: 54px;
-    z-index: 120;
-    background: rgba(24, 21, 17, 0.90);
-    backdrop-filter: blur(28px) saturate(165%);
-    -webkit-backdrop-filter: blur(28px) saturate(165%);
-    border: 1px solid rgba(205, 182, 140, 0.24);
-    border-radius: 999px;
-    padding: 14px 7px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.48);
+  /* Left Glassmorphism Full-Name Sidebar Menu (No Menu Mirror) */
+  body {
+    padding-left: 266px !important;
+    transition: padding-left 0.22s ease;
   }
-  .v12-rail-group {
+  body.sidebar-collapsed {
+    padding-left: 78px !important;
+  }
+  #mainNav {
+    display: none !important;
+  }
+  .lj-glass-sidebar {
+    position: fixed;
+    left: 12px;
+    top: 12px;
+    bottom: 12px;
+    width: 244px;
+    z-index: 250;
+    background: rgba(16, 14, 11, 0.82);
+    backdrop-filter: blur(32px) saturate(190%);
+    -webkit-backdrop-filter: blur(32px) saturate(190%);
+    border: 1px solid rgba(205, 182, 140, 0.32);
+    border-radius: 24px;
+    padding: 14px 12px;
     display: flex;
     flex-direction: column;
     gap: 10px;
-    align-items: center;
+    box-shadow: 0 22px 54px rgba(0, 0, 0, 0.62);
+    overflow-y: auto;
+    overflow-x: hidden;
+    transition: width 0.22s ease;
   }
-  .v12-rail-btn {
-    position: relative;
-    width: 38px;
-    height: 38px;
-    border-radius: 13px;
-    border: none;
-    background: transparent;
-    color: rgba(255, 255, 255, 0.65);
+  body.sidebar-collapsed .lj-glass-sidebar {
+    width: 58px;
+    padding: 14px 8px;
+  }
+  body.sidebar-collapsed .lj-glass-sidebar:hover {
+    width: 244px;
+    padding: 14px 12px;
+  }
+  body.sidebar-collapsed .lj-glass-sidebar:not(:hover) .lj-sb-text,
+  body.sidebar-collapsed .lj-glass-sidebar:not(:hover) .lj-sb-sec-title,
+  body.sidebar-collapsed .lj-glass-sidebar:not(:hover) .lj-sb-sub {
+    display: none;
+  }
+  .lj-sb-brand {
     display: flex;
     align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.18s ease;
+    justify-content: space-between;
+    padding: 6px 8px 10px;
+    border-bottom: 1px solid rgba(205, 182, 140, 0.2);
   }
-  .v12-rail-btn:hover {
-    color: #ffffff;
-    background: rgba(255, 255, 255, 0.10);
+  .lj-sb-brand-title {
+    font-size: 14px;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    color: #f5f2eb;
+    line-height: 1.15;
   }
-  .v12-rail-btn.active {
-    background: linear-gradient(135deg, #dccaa6, #b59b6d);
-    color: #0b0a08;
-    box-shadow: 0 6px 16px rgba(205, 182, 140, 0.45);
-  }
-  .v12-rail-tip {
-    position: absolute;
-    left: 48px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(18, 18, 20, 0.94);
-    color: #ffffff;
-    font-size: 11px;
+  .lj-sb-sub {
+    font-size: 9.5px;
     font-weight: 700;
-    padding: 5px 12px;
-    border-radius: 999px;
-    white-space: nowrap;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.18s ease;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    z-index: 200;
+    color: #cdb68c;
+    letter-spacing: 0.04em;
+    margin-top: 2px;
+    display: block;
   }
-  .v12-rail-btn:hover .v12-rail-tip { opacity: 1; }
-
-  @media (max-width: 900px) {
-    .v12-app-rail { display: none; }
-    body { padding-left: 0 !important; }
+  .lj-sb-sec-title {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: #cdb68c;
+    padding: 4px 8px 2px;
+    opacity: 0.9;
+  }
+  .lj-sb-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .lj-sb-btn {
+    width: 100%;
+    border: 1px solid transparent;
+    background: rgba(255, 255, 255, 0.03);
+    color: rgba(245, 242, 235, 0.85);
+    border-radius: 13px;
+    padding: 8px 10px;
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.16s ease;
+  }
+  .lj-sb-btn:hover {
+    background: rgba(205, 182, 140, 0.15);
+    border-color: rgba(205, 182, 140, 0.35);
+    color: #ffffff;
+    transform: translateX(2px);
+  }
+  .lj-sb-btn.active {
+    background: linear-gradient(135deg, #dccaa6, #b59b6d);
+    color: #0b0a08 !important;
+    font-weight: 800;
+    box-shadow: 0 6px 16px rgba(205, 182, 140, 0.38);
+  }
+  .lj-sb-ico {
+    font-size: 15px;
+    min-width: 20px;
+    text-align: center;
+    line-height: 1;
+  }
+  .lj-sb-badge {
+    margin-left: auto;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 999px;
+    background: rgba(16, 185, 129, 0.22);
+    color: #34d399;
+  }
+  .lj-sb-btn.active .lj-sb-badge {
+    background: rgba(11, 10, 8, 0.2);
+    color: #0b0a08;
+  }
+  /* World Clocks & Live Temperature Strip */
+  .lj-world-strip {
+    margin: 10px 22px 0;
+    padding: 10px 16px;
+    border-radius: 18px;
+    background: rgba(18, 16, 13, 0.84);
+    backdrop-filter: blur(26px) saturate(175%);
+    -webkit-backdrop-filter: blur(26px) saturate(175%);
+    border: 1px solid rgba(205, 182, 140, 0.28);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(185px, 1fr));
+    gap: 8px;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+  }
+  .lj-tz-pill {
+    display: flex;
+    flex-direction: column;
+    padding: 6px 10px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(205, 182, 140, 0.16);
+  }
+  .lj-tz-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    font-weight: 800;
+    color: #f5f2eb;
+  }
+  .lj-tz-time {
+    font-size: 13px;
+    font-weight: 900;
+    color: #cdb68c;
+    font-variant-numeric: tabular-nums;
+  }
+  .lj-tz-sub {
+    font-size: 10.5px;
+    color: #a1a1aa;
+    margin-top: 2px;
+    display: flex;
+    justify-content: space-between;
+  }
+  @media (max-width: 960px) {
+    .lj-glass-sidebar { width: 58px; padding: 12px 6px; }
+    .lj-glass-sidebar:not(:hover) .lj-sb-text,
+    .lj-glass-sidebar:not(:hover) .lj-sb-sec-title,
+    .lj-glass-sidebar:not(:hover) .lj-sb-sub { display: none; }
+    body { padding-left: 74px !important; }
   }
 
 </style>
 </head>
 <body>
 
-<!-- V12 LEFT FLOATING VERTICAL PILL SIDEBAR -->
-<aside class="v12-app-rail" aria-label="V12 Spatial Navigation">
-  <div style="color:#cdb68c;display:flex;align-items:center;justify-content:center;width:34px;height:34px">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 9v6M18 9v6M3 11v2M21 11v2M6 12h12"/></svg>
+<!-- LEFT GLASSMORPHISM FULL-NAME SIDEBAR MENU (NO MENU MIRROR) -->
+<aside class="lj-glass-sidebar" id="ljGlassSidebar" aria-label="La Jefatura Left Glass Menu">
+  <div class="lj-sb-brand">
+    <div>
+      <div class="lj-sb-brand-title">👑 <span class="lj-sb-text">LA JEFATURA</span></div>
+      <span class="lj-sb-sub">Made &amp; Powered by Building Innovation</span>
+    </div>
+    <button type="button" class="btn ghost sm" onclick="document.body.classList.toggle('sidebar-collapsed')" title="Expandir / Contraer Menú Glass" style="padding:4px 7px;font-size:11px">☰</button>
   </div>
-  <div class="v12-rail-group" id="v12RailGroup">
-    <button class="v12-rail-btn active" data-rail="overview" onclick="switchTab('overview')">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>
-      <span class="v12-rail-tip">Overview · Mando</span>
+
+  <div class="lj-sb-sec-title">🏢 Proyectos &amp; Empresas (CTO)</div>
+  <div class="lj-sb-list" id="ljSidebarCompanies">
+    <button type="button" class="lj-sb-btn active" data-sb-co="all" onclick="selectCompanyFromMenu('all')">
+      <span class="lj-sb-ico">🌐</span>
+      <span class="lj-sb-text">Todas las Empresas</span>
+      <span class="lj-sb-badge">5</span>
     </button>
-    <button class="v12-rail-btn" data-rail="comms" onclick="switchTab('comms')">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-      <span class="v12-rail-tip">Bandeja IA (1-Clic)</span>
+    <button type="button" class="lj-sb-btn" data-sb-co="unitec" onclick="selectCompanyFromMenu('unitec')">
+      <span class="lj-sb-ico">🏛️</span>
+      <span class="lj-sb-text">UNITEC USA</span>
+      <span class="lj-sb-badge">25 Tel</span>
     </button>
-    <button class="v12-rail-btn" data-rail="outcomes" onclick="switchTab('outcomes')">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
-      <span class="v12-rail-tip">Analytics &amp; Memoria</span>
+    <button type="button" class="lj-sb-btn" data-sb-co="building" onclick="selectCompanyFromMenu('building')">
+      <span class="lj-sb-ico">🏗️</span>
+      <span class="lj-sb-text">Building Innovation</span>
+      <span class="lj-sb-badge">621 IA</span>
     </button>
-    <button class="v12-rail-btn" data-rail="behavior" onclick="switchTab('behavior')">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M10 2h4"/></svg>
-      <span class="v12-rail-tip">Rutinas &amp; Cerebro</span>
+    <button type="button" class="lj-sb-btn" data-sb-co="cameras" onclick="selectCompanyFromMenu('cameras')">
+      <span class="lj-sb-ico">📹</span>
+      <span class="lj-sb-text">55 Cámaras CCTV</span>
+      <span class="lj-sb-badge">53/55</span>
     </button>
-    <button class="v12-rail-btn" data-rail="setup" onclick="switchTab('setup')">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-      <span class="v12-rail-tip">Setup 1-Vez</span>
+    <button type="button" class="lj-sb-btn" data-sb-co="espacios" onclick="selectCompanyFromMenu('espacios')">
+      <span class="lj-sb-ico">🏭</span>
+      <span class="lj-sb-text">Espacios Importados</span>
+      <span class="lj-sb-badge">45 Cám</span>
     </button>
-    <button class="v12-rail-btn" data-rail="blogs" onclick="switchTab('blogs')">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-      <span class="v12-rail-tip">Guías Paso a Paso</span>
+    <button type="button" class="lj-sb-btn" data-sb-co="saleinn" onclick="selectCompanyFromMenu('saleinn')">
+      <span class="lj-sb-ico">💼</span>
+      <span class="lj-sb-text">Nexus CRM (Pipeline)</span>
+      <span class="lj-sb-badge">$104k</span>
     </button>
   </div>
-  <div style="width:24px;height:24px"></div>
+
+  <div class="lj-sb-sec-title" style="margin-top:4px">🧭 Categorías del Asistente</div>
+  <div class="lj-sb-list" id="ljSidebarCategories">
+    <button type="button" class="lj-sb-btn active" data-rail="overview" onclick="switchTab('overview')">
+      <span class="lj-sb-ico">📊</span>
+      <span class="lj-sb-text" data-i18n="tab_overview">Centro de Mando &amp; CTO</span>
+    </button>
+    <button type="button" class="lj-sb-btn" data-rail="comms" onclick="switchTab('comms')">
+      <span class="lj-sb-ico">✉️</span>
+      <span class="lj-sb-text" data-i18n="tab_comms">Bandeja IA (Gmail &amp; TG)</span>
+      <span class="lj-sb-badge" id="pendingDraftsBadge">4</span>
+    </button>
+    <button type="button" class="lj-sb-btn" data-rail="outcomes" onclick="switchTab('outcomes')">
+      <span class="lj-sb-ico">📈</span>
+      <span class="lj-sb-text" data-i18n="tab_outcomes">Resultados &amp; Monitoreo</span>
+    </button>
+    <button type="button" class="lj-sb-btn" data-rail="behavior" onclick="switchTab('behavior')">
+      <span class="lj-sb-ico">🧠</span>
+      <span class="lj-sb-text" data-i18n="tab_behavior">Cerebro Conductual</span>
+    </button>
+    <button type="button" class="lj-sb-btn" data-rail="setup" onclick="switchTab('setup')">
+      <span class="lj-sb-ico">🔌</span>
+      <span class="lj-sb-text" data-i18n="tab_setup">Conexiones (TG/Gmail/Cal)</span>
+    </button>
+    <button type="button" class="lj-sb-btn" data-rail="blogs" onclick="switchTab('blogs')">
+      <span class="lj-sb-ico">📰</span>
+      <span class="lj-sb-text" data-i18n="tab_blogs">Periódico PDF &amp; Guías</span>
+    </button>
+    <button type="button" class="lj-sb-btn" data-rail="assistant" onclick="switchTab('assistant')">
+      <span class="lj-sb-ico">🎙️</span>
+      <span class="lj-sb-text" data-i18n="tab_assistant">Super Asistente (Voz/Chat)</span>
+    </button>
+  </div>
+
+  <div class="lj-sb-sec-title" style="margin-top:auto">📰 Acciones Directas CEO</div>
+  <div class="lj-sb-list">
+    <button type="button" class="lj-sb-btn" onclick="window.open('/api/daily.pdf?lang=' + lang + '&company=' + encodeURIComponent(cur), '_blank')" style="border-color:rgba(16,185,129,.4);background:rgba(16,185,129,.12)">
+      <span class="lj-sb-ico">🗞️</span>
+      <span class="lj-sb-text">Periódico Matutino PDF</span>
+    </button>
+    <button type="button" class="lj-sb-btn lj-stop-voice-btn" onclick="toggleOrStopVoiceBrief()" style="border-color:rgba(235,87,87,.45);background:rgba(235,87,87,.15);color:#fca5a5">
+      <span class="lj-sb-ico">🛑</span>
+      <span class="lj-sb-text">Callar / Pausar Voz (ESC)</span>
+    </button>
+  </div>
 </aside>
 
 <header>
   <div class="logo">
     <span id="brandLogo">LA <b>JEFATURA</b></span>
-    <span class="badge-wl" id="brandSub">WHITE-LABEL CEO MISSION CONTROL</span>
+    <span class="badge-wl" id="brandSub">MADE &amp; POWERED BY BUILDING INNOVATION</span>
   </div>
   <div class="seg" id="companySeg"></div>
   <div class="sp"></div>
   <div class="pill" id="slotPill" style="cursor:pointer" title="Click to cycle Morning / Afternoon / Evening"><span id="slotLabel">Rutina Mañana</span></div>
   <div class="pill" id="clock"></div>
   <button type="button" class="btn sm lj-stop-voice-btn" id="headerStopVoiceBtn" onclick="window.stopAllBotVoice && window.stopAllBotVoice()" style="background:#EB5757;color:#fff;border:1px solid #ff7b7b;font-weight:900;letter-spacing:.04em;padding:7px 13px;border-radius:999px;box-shadow:0 4px 14px rgba(235,87,87,.35)" title="Callar la voz inmediatamente (Tecla ESC)">🛑 CALLAR VOZ (ESC)</button>
-  <button type="button" class="btn ghost sm" id="headerPlayBriefBtn" onclick="window._ljUserStoppedSpeech=false; renderGreeting(true)" title="Leer el Resumen del Día + Clima en Vivo">🔊 Resumen + Clima</button>
+  <button type="button" class="btn ghost sm" id="headerPlayBriefBtn" onclick="toggleOrStopVoiceBrief()" title="Si está hablando la calla; si está en silencio lee el Resumen + Clima">🔊 Escuchar Resumen</button>
   <div class="pill" id="jfGreetPill" style="cursor:pointer" title="Saludo automático al entrar: activar / desactivar" onclick="toggleGreeting()"><span id="jfGreetLbl">Saludo: ON</span></div>
   <button class="btn ghost" id="langBtn" style="font-weight:800;border-color:var(--acc);color:var(--acc)">ES / EN</button>
-  <button class="btn" id="pdfBtn">Informe PDF</button>
+  <button class="btn" id="pdfBtn">📰 Periódico PDF</button>
 </header>
+
+<!-- LIVE WORLD TIMEZONES (MIAMI, COLOMBIA, CHILE & ALL SOUTH AMERICA) + LIVE TEMPERATURE STRIP -->
+<div class="lj-world-strip" id="ljWorldTimeWeatherStrip">
+  <div class="lj-tz-pill">
+    <div class="lj-tz-top"><span>🇺🇸 Miami (EST)</span><span class="lj-tz-time" id="tzTimeMiami">--:--</span></div>
+    <div class="lj-tz-sub"><span id="tzTempMiami">🌡️ 81°F (27°C)</span><span>UNITEC · Building</span></div>
+  </div>
+  <div class="lj-tz-pill">
+    <div class="lj-tz-top"><span>🇨🇴 Colombia · Perú · Ecu</span><span class="lj-tz-time" id="tzTimeColombia">--:--</span></div>
+    <div class="lj-tz-sub"><span id="tzTempColombia">🌡️ 23°C (73°F)</span><span>Espacios · Pick-In</span></div>
+  </div>
+  <div class="lj-tz-pill">
+    <div class="lj-tz-top"><span>🇨🇱 Chile (Santiago)</span><span class="lj-tz-time" id="tzTimeChile">--:--</span></div>
+    <div class="lj-tz-sub"><span id="tzTempChile">🌡️ 21°C (70°F)</span><span>Cono Sur (UTC-3)</span></div>
+  </div>
+  <div class="lj-tz-pill">
+    <div class="lj-tz-top"><span>🇦🇷 Arg · Bra · Uru</span><span class="lj-tz-time" id="tzTimeArgentina">--:--</span></div>
+    <div class="lj-tz-sub"><span>Sudamérica Este</span><span>UTC-3 En Vivo</span></div>
+  </div>
+  <div class="lj-tz-pill">
+    <div class="lj-tz-top"><span>🇻🇪 Ven · Bol · Par</span><span class="lj-tz-time" id="tzTimeVenezuela">--:--</span></div>
+    <div class="lj-tz-sub"><span>Región Andina/Norte</span><span>UTC-4 En Vivo</span></div>
+  </div>
+  <div class="lj-tz-pill">
+    <div class="lj-tz-top"><span>🇲🇽 México (CDMX)</span><span class="lj-tz-time" id="tzTimeMexico">--:--</span></div>
+    <div class="lj-tz-sub"><span>Logística LatAm</span><span>UTC-6 En Vivo</span></div>
+  </div>
+</div>
 
 <!-- Floating Instant Voice Stop Bar (Visible automatically whenever bot is talking) -->
 <div id="ljGlobalStopBar" style="display:none;position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:10001;background:linear-gradient(135deg,#b91c1c,#ef4444);color:#ffffff;padding:10px 20px;border-radius:999px;box-shadow:0 14px 36px rgba(185,28,28,.55);border:2px solid #fecaca;align-items:center;gap:14px;font-weight:800;font-size:13px;">
-  <span>🔊 El Jefesito está hablando (Resumen Diario + Clima)…</span>
+  <span>🔊 La Jefatura está hablando (Resumen Diario + Clima)…</span>
   <button type="button" onclick="window.stopAllBotVoice && window.stopAllBotVoice()" style="background:#ffffff;color:#991b1b;border:0;padding:6px 16px;border-radius:999px;font-weight:900;font-size:12.5px;cursor:pointer;letter-spacing:.04em;box-shadow:0 2px 8px rgba(0,0,0,.2)">🛑 CALLAR AHORA (ESC)</button>
 </div>
 
-<!-- Navigation Tabs -->
-<nav class="nav-bar" id="mainNav">
-  <button class="nav-tab active" data-tab="overview" onclick="switchTab('overview')"><span data-i18n="tab_overview">Centro de Mando</span></button>
-  <button class="nav-tab" data-tab="comms" onclick="switchTab('comms')"><span data-i18n="tab_comms">Bandeja IA (Aprobar y Enviar)</span> <span class="cnt" id="pendingDraftsBadge">4</span></button>
-  <button class="nav-tab" data-tab="outcomes" onclick="switchTab('outcomes')"><span data-i18n="tab_outcomes">Resultados y Monitoreo</span></button>
-  <button class="nav-tab" data-tab="behavior" onclick="switchTab('behavior')"><span data-i18n="tab_behavior">Cerebro Conductual</span></button>
-  <button class="nav-tab" data-tab="setup" onclick="switchTab('setup')"><span data-i18n="tab_setup">Configuración (1-Vez)</span></button>
-  <button class="nav-tab" data-tab="blogs" onclick="switchTab('blogs')"><span data-i18n="tab_blogs">Blogs por Función (Paso a Paso)</span></button>
-  <button class="nav-tab" data-tab="assistant" onclick="switchTab('assistant')" id="navTabAssistant" style="border-color:rgba(205,182,140,.45);background:rgba(205,182,140,.16);color:#dccaa6;font-weight:800"><span data-i18n="tab_assistant">Super Asistente (Solo Voz y Texto)</span></button>
+<!-- Hidden legacy nav for DOM compatibility (No Menu Mirror) -->
+<nav class="nav-bar" id="mainNav" style="display:none!important">
+  <button class="nav-tab active" data-tab="overview"></button>
+  <button class="nav-tab" data-tab="comms"></button>
+  <button class="nav-tab" data-tab="outcomes"></button>
+  <button class="nav-tab" data-tab="behavior"></button>
+  <button class="nav-tab" data-tab="setup"></button>
+  <button class="nav-tab" data-tab="blogs"></button>
+  <button class="nav-tab" data-tab="assistant" id="navTabAssistant"></button>
 </nav>
 
 <!-- El Jefesito: daily greeting / day summary (spoken on open unless stopped) -->
 <div id="jfGreeting"></div>
+
+<!-- ==================== UNIVERSAL CTO & CEO PROJECT DEEP-DIVE (TEXT + GRAPHICS + TOOLS + MEMORY VAULT) ==================== -->
+<section id="ljCtoExecutiveHub" style="max-width:1520px;margin:14px auto 0;padding:0 22px">
+  <div class="card" style="border:1px solid rgba(205,182,140,.42);padding:18px 20px;margin-bottom:14px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--hair);padding-bottom:12px;margin-bottom:14px">
+      <div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <span class="tag ok">CERO ADIVINANZAS · 100% CONECTADO</span>
+          <span class="tag medium" id="ctoActiveCategoryBadge">VISTA: CENTRO DE MANDO &amp; CTO</span>
+          <span class="muted" style="font-size:11px">LA JEFATURA — Made &amp; Powered by Building Innovation</span>
+        </div>
+        <h2 style="font-size:18px;font-weight:900;margin:6px 0 2px;color:var(--txt)" id="ctoProjectHeadline">🌐 Portafolio Consolidado de Juan (5 Proyectos Activos + 55 Cámaras CCTV)</h2>
+        <div class="muted" style="font-size:12px" id="ctoProjectSubline">Analítica técnica para el CTO y comercial para el CEO en texto detallado y gráficos visuales · Todas las fuentes auditadas en tiempo real.</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <button type="button" class="btn sm" onclick="window.open('/api/daily.pdf?lang=' + lang + '&company=' + encodeURIComponent(cur), '_blank')" title="Abrir el Periódico Matutino del CEO en PDF (Multpágina con Gráficos)">📰 Abrir Periódico Matutino PDF</button>
+        <button type="button" class="btn ghost sm" onclick="sendCompanyDailyReportNow(['building','unitec'])" title="Despachar informes diarios a los correos y Telegram de Juan">📤 Enviar Ahora a Correo &amp; Telegram</button>
+        <button type="button" class="btn ghost sm" onclick="speakActiveProjectDeepDive()" title="Escuchar o callar explicación hablada de este proyecto">🔊 Escuchar / Callar Proyecto</button>
+      </div>
+    </div>
+
+    <!-- Connected Daily Channels Strip (Telegram, Gmail, Google Calendar, GA4, Hik-Connect, Firestore) -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(195px,1fr));gap:8px;margin-bottom:14px" id="ctoConnectedToolsBar">
+      <div style="background:var(--inset);border:1px solid rgba(16,185,129,.35);border-radius:12px;padding:9px 12px;display:flex;justify-content:space-between;align-items:center">
+        <div><div style="font-size:10.5px;font-weight:800;color:#10b981">✈️ TELEGRAM BOT</div><div style="font-size:11.5px;font-weight:700">@UnitecAlertsBot · 98.3% SLA</div><div class="muted" style="font-size:10px">155/157 alertas entregadas</div></div>
+        <button class="btn ghost sm" onclick="switchTab('setup')">Ver</button>
+      </div>
+      <div style="background:var(--inset);border:1px solid rgba(16,185,129,.35);border-radius:12px;padding:9px 12px;display:flex;justify-content:space-between;align-items:center">
+        <div><div style="font-size:10.5px;font-weight:800;color:#10b981">📧 GMAIL &amp; SMTP</div><div style="font-size:11.5px;font-weight:700">jgarcia@buildinginnovation.us</div><div class="muted" style="font-size:10px">Periódico matutino + Modo C</div></div>
+        <button class="btn ghost sm" onclick="switchTab('comms')">Bandeja</button>
+      </div>
+      <div style="background:var(--inset);border:1px solid rgba(16,185,129,.35);border-radius:12px;padding:9px 12px;display:flex;justify-content:space-between;align-items:center">
+        <div><div style="font-size:10.5px;font-weight:800;color:#10b981">📅 GOOGLE CALENDAR</div><div style="font-size:11.5px;font-weight:700">6 Citas + Feed .ics Activo</div><div class="muted" style="font-size:10px">Sincronizado con mc.db</div></div>
+        <button class="btn ghost sm" onclick="document.getElementById('agendaPanel').classList.add('open')">Agenda</button>
+      </div>
+      <div style="background:var(--inset);border:1px solid rgba(16,185,129,.35);border-radius:12px;padding:9px 12px;display:flex;justify-content:space-between;align-items:center">
+        <div><div style="font-size:10.5px;font-weight:800;color:#10b981">📹 55 CÁMARAS HIK-CONNECT</div><div style="font-size:11.5px;font-weight:700">53/55 En Vivo (96.4%)</div><div class="muted" style="font-size:10px">5 Grabadores · 11.04 TB HDD</div></div>
+        <button class="btn ghost sm" onclick="selectCompanyFromMenu('cameras')">Ver 55</button>
+      </div>
+      <div style="background:var(--inset);border:1px solid rgba(16,185,129,.35);border-radius:12px;padding:9px 12px;display:flex;justify-content:space-between;align-items:center">
+        <div><div style="font-size:10.5px;font-weight:800;color:#10b981">🔥 FIRESTORE &amp; GA4</div><div style="font-size:11.5px;font-weight:700">UNITEC + BuildingApp + GA4</div><div class="muted" style="font-size:10px">4,665 sesiones · 621 renders</div></div>
+        <button class="btn ghost sm" onclick="selectCompanyFromMenu('building')">Datos</button>
+      </div>
+    </div>
+
+    <!-- 2-Column CTO Deep Dive: Detailed Text Analytics + Visual Graphics -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:14px;margin-bottom:14px">
+      <div style="background:var(--inset);border:1px solid var(--hair);border-radius:16px;padding:14px 16px" id="ctoTextAnalyticsBox"></div>
+      <div style="background:var(--inset);border:1px solid var(--hair);border-radius:16px;padding:14px 16px" id="ctoGraphicAnalyticsBox"></div>
+    </div>
+
+    <!-- Per-Project & Per-Category Memorized Notes, Schedule & Reminders Box -->
+    <div style="background:var(--inset);border:1px solid rgba(205,182,140,.38);border-radius:16px;padding:14px 16px">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px">
+        <div>
+          <span class="tag ok">MEMORIA ACTIVA DEL ASISTENTE (mc.db)</span>
+          <b style="margin-left:8px;font-size:13.5px" id="ctoMemoryVaultTitle">🧠 Notas Memorizadas, Horario y Recordatorios de este Proyecto</b>
+        </div>
+        <span class="muted" style="font-size:11px">El asistente lee tu nota, la comprende, la guarda en memoria, la pone en tu horario (Calendario) y crea un recordatorio.</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr auto auto auto;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px">
+        <input id="ctoMemoryInput" class="inp" placeholder="Escribe o dicta una nota, decisión, tarea o recordatorio para este proyecto (ej: Revisar contenedor WPC mañana a las 10:00)…" style="width:100%;min-width:240px">
+        <input id="ctoMemoryDate" type="date" class="inp" style="width:138px" title="Fecha para agendar en el horario">
+        <input id="ctoMemoryTime" type="time" class="inp" value="09:00" style="width:105px" title="Hora del recordatorio / cita">
+        <button type="button" class="btn sm" onclick="submitProjectMemoryDirective()" style="white-space:nowrap;font-weight:900">🧠 Memorizar, Agendar y Recordar</button>
+      </div>
+      <div id="ctoMemoryItemsGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px"></div>
+    </div>
+  </div>
+</section>
 
 <!-- ==================== TAB 1: OVERVIEW (CEO COMMAND CENTER) ==================== -->
 <section class="tab-pane active" id="pane-overview">
@@ -1068,17 +1327,18 @@
 </section>
 
 <div class="toast" id="toastBox"></div>
-<div class="foot">La Jefatura Suite · White-Label CEO Mission Control · <span data-i18n="foot">Datos de muestra listos para demostración + API real en servidor (mc.db / Nexus / Comms Brain / Grok 3.0 Voice)</span></div>
+<div class="foot">LA JEFATURA · Made &amp; Powered by Building Innovation · <span data-i18n="foot">Datos de muestra listos para demostración + API real en servidor (mc.db / Nexus / Comms Brain / Grok 3.0 Voice)</span></div>
 
 <script src="/widgets/lajefatura-widget.js"></script>
 <script>
 /* ── Complete Multi-Company & White-Label Sample Dataset ── */
 const COMPANIES = [
   {id:'all', name:'Todas / All', color:'#23d9b0', rev:42400, pipe:104600, leads:29, closed:28000, conv:31, crit:2},
-  {id:'unitec', name:'UNITEC USA', color:'#00e5ff', rev:24500, pipe:68500, leads:25, closed:18000, conv:35, crit:1},
-  {id:'building', name:'BUILDING INNOVATION', color:'#feca57', rev:9500, pipe:18600, leads:12, closed:6000, conv:28, crit:0},
+  {id:'unitec', name:'UNITEC USA', color:'#00e5ff', rev:24500, pipe:58400, leads:25, closed:18000, conv:35, crit:1},
+  {id:'building', name:'BUILDING INNOVATION', color:'#feca57', rev:9500, pipe:28700, leads:21, closed:6000, conv:28, crit:0},
+  {id:'cameras', name:'55 CÁMARAS CCTV', color:'#10b981', rev:0, pipe:0, leads:53, closed:55, conv:96, crit:2},
   {id:'espacios', name:'ESPACIOS IMPORTADOS', color:'#7c6cff', rev:5000, pipe:10000, leads:4, closed:2000, conv:30, crit:1},
-  {id:'saleinn', name:'NEXUS CRM', color:'#ff6b81', rev:3400, pipe:7500, leads:2, closed:2000, conv:24, crit:0}
+  {id:'saleinn', name:'NEXUS CRM', color:'#ff6b81', rev:3400, pipe:7500, leads:14, closed:2000, conv:24, crit:0}
 ];
 
 const AGENDA = [
@@ -1476,8 +1736,21 @@ function switchTab(tabId) {
   activeTab = tabId;
   document.body.classList.toggle('minimal-assistant-mode', tabId === 'assistant');
   document.querySelectorAll('.nav-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === tabId));
+  document.querySelectorAll('#ljSidebarCategories .lj-sb-btn').forEach(b => b.classList.toggle('active', b.getAttribute('data-rail') === tabId));
   document.querySelectorAll('.tab-pane').forEach(p => p.classList.toggle('active', p.id === 'pane-' + tabId));
+  const catNamesEs = {
+    overview: 'VISTA: CENTRO DE MANDO & CTO',
+    comms: 'VISTA: BANDEJA IA · GMAIL & TELEGRAM',
+    outcomes: 'VISTA: RESULTADOS, CÁMARAS & PERSONAL',
+    behavior: 'VISTA: CEREBRO CONDUCTUAL & RUTINAS',
+    setup: 'VISTA: CONEXIONES DIARIAS (TELEGRAM / GMAIL / CALENDAR)',
+    blogs: 'VISTA: PERIÓDICO MATUTINO PDF & GUÍAS',
+    assistant: 'VISTA: SUPER ASISTENTE (VOZ & CHAT)'
+  };
+  const catBadge = document.getElementById('ctoActiveCategoryBadge');
+  if (catBadge) catBadge.textContent = catNamesEs[tabId] || ('VISTA: ' + tabId.toUpperCase());
   trackBehavior('click', 'tab_' + tabId);
+  if (typeof renderCtoProjectDeepDive === 'function') renderCtoProjectDeepDive();
   if (tabId === 'comms') renderCommsTab();
   if (tabId === 'outcomes') renderOutcomesTab();
   if (tabId === 'behavior') renderBehaviorTab();
@@ -1592,8 +1865,24 @@ function renderSeg() {
 function selectCompany(id) {
   cur = id;
   trackBehavior('click', 'switch_company_' + id, {company: id});
+  document.querySelectorAll('#ljSidebarCompanies .lj-sb-btn').forEach(b => {
+    b.classList.toggle('active', b.getAttribute('data-sb-co') === id);
+  });
   renderSeg();
   renderAll();
+  if (typeof renderCtoProjectDeepDive === 'function') renderCtoProjectDeepDive();
+  if (typeof loadProjectMemoryVault === 'function') loadProjectMemoryVault(id);
+}
+
+function selectCompanyFromMenu(id) {
+  if (activeTab !== 'overview') {
+    switchTab('overview');
+  }
+  selectCompany(id);
+  const hub = document.getElementById('ljCtoExecutiveHub');
+  if (hub) {
+    try { hub.scrollIntoView({behavior: 'smooth', block: 'start'}); } catch (e) {}
+  }
 }
 
 function renderAll() {
@@ -2508,20 +2797,19 @@ setInterval(() => {
   });
 }, 1000);
 
-/* ── PDF Report Download ── */
+/* ── Morning Executive Newspaper PDF Download ── */
 $('#pdfBtn').onclick = () => {
-  trackBehavior('report_download', 'pdf_executive_report', {company: cur, lang});
-  if (window.jspdf && window.jspdf.jsPDF) {
-    const {jsPDF} = window.jspdf;
-    const doc = new jsPDF();
-    const coObj = COMPANIES.find(c => c.id === cur) || COMPANIES[0];
-    let y = 16;
-    const line = (txt, size=10, bold=false) => { doc.setFontSize(size); doc.setFont('helvetica', bold?'bold':'normal'); doc.text(txt, 14, y); y += size * .55; };
+  trackBehavior('report_download', 'pdf_executive_newspaper', {company: cur, lang});
+  window.open(`/api/daily.pdf?company=${encodeURIComponent(cur)}&lang=${lang}`, '_blank');
+  showToast(lang === 'es'
+    ? '📰 Abriendo El Periódico Matutino del CEO (PDF Completo con Gráficos y Tareas)…'
+    : '📰 Opening CEO Morning Newspaper PDF (Full Charts & Tasks)…');
+};
     doc.setFillColor(11, 16, 32); doc.rect(0, 0, 210, 30, 'F');
     doc.setTextColor(35, 217, 176); doc.setFontSize(16);
     doc.text(`LA JEFATURA — INFORME EJECUTIVO (${coObj.name.toUpperCase()})`, 14, 13);
     doc.setFontSize(9); doc.setTextColor(230, 237, 247);
-    doc.text(new Date().toLocaleString() + ' · White-Label CEO Mission Control', 14, 21);
+    doc.text(new Date().toLocaleString() + ' · LA JEFATURA — Made & Powered by Building Innovation', 14, 21);
     y = 40; doc.setTextColor(20, 25, 40);
     line('Resumen Ejecutivo / Executive Summary', 12, true);
     doc.setFontSize(9.5); doc.setFont('helvetica', 'normal');
@@ -2665,9 +2953,342 @@ window.LJ.register('help', () => lang === 'es'
   ? 'El Jefesito: cambiar a «empresa» · abrir «pestaña» · aprobar borrador · pedir café · completar tarea «n» · leer resumen · descargar informe · «tema claro / grafito / amarillo» · «detén el saludo» · «cerrar el día» · «imprime el resumen del día» · «habla en inglés» · «qué has aprendido de mí» · «llámame Juan» · «guardar nota: …».'
   : 'El Jefesito: switch to «company» · open «tab» · approve draft · order coffee · complete task «n» · read brief · download report · «light / graphite / yellow theme» · «stop the greeting» · «close the day» · «print the daily summary» · «speak Spanish» · «what have you learned about me» · «call me Juan» · «save note: …».');
 
-setInterval(() => {
-  $('#clock').textContent = new Date().toLocaleString(lang === 'es' ? 'es-US' : 'en-US', {weekday:'short', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false});
-}, 1000);
+function updateWorldClocksAndWeatherStrip() {
+  const now = new Date();
+  const locale = lang === 'es' ? 'es-US' : 'en-US';
+  $('#clock').textContent = now.toLocaleString(locale, {weekday:'short', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false});
+  const fmtZone = (tz) => {
+    try {
+      return new Intl.DateTimeFormat('en-US', {timeZone: tz, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true}).format(now);
+    } catch (e) {
+      return now.toLocaleTimeString();
+    }
+  };
+  const mapTz = [
+    ['tzTimeMiami', 'America/New_York'],
+    ['tzTimeColombia', 'America/Bogota'],
+    ['tzTimeChile', 'America/Santiago'],
+    ['tzTimeArgentina', 'America/Argentina/Buenos_Aires'],
+    ['tzTimeVenezuela', 'America/Caracas'],
+    ['tzTimeMexico', 'America/Mexico_City']
+  ];
+  mapTz.forEach(([elId, tz]) => {
+    const el = document.getElementById(elId);
+    if (el) el.textContent = fmtZone(tz);
+  });
+  if (typeof JF_BRIEF !== 'undefined' && JF_BRIEF && JF_BRIEF.weather) {
+    const w = JF_BRIEF.weather;
+    const mEl = document.getElementById('tzTempMiami');
+    const cEl = document.getElementById('tzTempColombia');
+    const chEl = document.getElementById('tzTempChile');
+    if (mEl && w.miami) mEl.textContent = `🌡️ ${w.miami.temp_f}°F (${w.miami.temp_c}°C) · ${lang==='en'?w.miami.cond_en:w.miami.cond_es}`;
+    if (cEl && w.colombia) cEl.textContent = `🌡️ ${w.colombia.temp_c}°C (${w.colombia.temp_f}°F) · ${lang==='en'?w.colombia.cond_en:w.colombia.cond_es}`;
+    if (chEl && w.chile) chEl.textContent = `🌡️ ${w.chile.temp_c}°C (${w.chile.temp_f}°F) · ${lang==='en'?w.chile.cond_en:w.chile.cond_es}`;
+  }
+}
+setInterval(updateWorldClocksAndWeatherStrip, 1000);
+setTimeout(updateWorldClocksAndWeatherStrip, 150);
+
+function toggleOrStopVoiceBrief() {
+  const isTalking = (window.LJ && typeof window.LJ.isSpeaking === 'function' && window.LJ.isSpeaking()) ||
+                    (window.speechSynthesis && window.speechSynthesis.speaking);
+  if (isTalking) {
+    if (window.stopAllBotVoice) window.stopAllBotVoice();
+    showToast(lang === 'es' ? '🛑 Voz detenida inmediatamente.' : '🛑 Voice stopped immediately.');
+    return;
+  }
+  window._ljUserStoppedSpeech = false;
+  renderGreeting(true);
+}
+
+const CTO_PROJECT_SPECS = {
+  all: {
+    headline_es: '🌐 Portafolio Consolidado de Juan (5 Proyectos Activos · Vista CTO & CEO)',
+    headline_en: '🌐 Juan Consolidated Portfolio (5 Active Projects · CTO & CEO View)',
+    sub_es: 'Auditoría técnica y comercial en tiempo real sin adivinanzas: UNITEC USA, Building Innovation, 55 Cámaras CCTV, Espacios Importados y Nexus CRM.',
+    sub_en: 'Real-time technical & commercial audit with zero guessing: UNITEC USA, Building Innovation, 55 CCTV Cameras, Espacios Importados, and Nexus CRM.',
+    spoken_es: 'Portafolio consolidado de La Jefatura, hecho e impulsado por Building Innovation. UNITEC USA tiene 4,665 sesiones auditadas, 193 conversaciones reales y 25 teléfonos capturados con 98.3% de SLA en Telegram. Building Innovation registra 21 usuarios, 621 renders IA con 100% de éxito y propiedad GA4 543661675 activa. El sistema de 55 cámaras Hik-Connect tiene 53 cámaras en vivo en Miami, Planta Pick-In y Espacios Importados con 11.04 Terabytes grabando. Nexus CRM mantiene 104,600 dólares en pipeline.',
+    bullets_es: [
+      '<b>1. UNITEC USA (Firestore <code>chatbot-bi-front-desk</code>):</b> 4,665 sesiones brutas · <b>193 conversaciones reales</b> · <b>25 teléfonos verificados</b> · 101 pasados a asesor · <b>98.3% SLA Telegram</b> (155/157).',
+      '<b>2. BUILDING INNOVATION (Firestore <code>building-app-1212e</code> + GA4 <code>#543661675</code>):</b> <b>21 usuarios registrados</b> · <b>621 renders IA</b> (519 Gemini 2.5 Pro + 102 Gemini 3.1 Flash) · 54 proyectos · 42 productos · Costo IA $38.79 USD.',
+      '<b>3. 55 CÁMARAS CCTV (Hik-Connect Cloud API <code>apiisa.hik-connect.com</code>):</b> <b>53/55 canales en vivo (96.4%)</b> · USA Miami (8/8), Planta Pick-In (16/16), Espacios Importados (29/29), IDEO Wi-Fi (0/2) · <b>11.04 TB HDD</b>.',
+      '<b>4. ESPACIOS IMPORTADOS (Medellín / Colombia):</b> <b>45/45 cámaras industriales y comerciales</b> activas (100% uptime en Muelles 1–4, Despachos y Planta Pick-In).',
+      '<b>5. NEXUS CRM &amp; MODO C:</b> <b>$104,600 USD pipeline activo</b> ($28,000 USD cerrados) · Borradores IA listos para aprobar con 1 clic.'
+    ],
+    bars: [
+      {label: '55 Cámaras CCTV Online (53/55)', pct: 96.4, val: '96.4% (53 Cám)', color: '#10b981'},
+      {label: 'UNITEC USA · SLA Alertas Telegram (155/157)', pct: 98.3, val: '98.3% SLA', color: '#0ea5e9'},
+      {label: 'BuildingApp.us · Tasa Éxito Renders IA (621)', pct: 100, val: '100% (621 IA)', color: '#f59e0b'},
+      {label: 'Espacios Importados · Muelles & Pick-In (45/45)', pct: 100, val: '100% (45 Cám)', color: '#8b5cf6'},
+      {label: 'Nexus CRM · Conversión B2B ($28k / $104.6k)', pct: 31, val: '31% Conv.', color: '#ec4899'}
+    ],
+    trendTitle: 'Curva de Actividad Consolidada (Últimos 7 Días · Sesiones, Renders y Eventos CCTV)',
+    trendPoints: [48, 62, 75, 84, 91, 108, 124]
+  },
+  unitec: {
+    headline_es: '🏛️ UNITEC USA — Analítica CTO & Comercial (unitecusadesign.com)',
+    headline_en: '🏛️ UNITEC USA — CTO & Commercial Analytics (unitecusadesign.com)',
+    sub_es: 'Proyecto Firebase: chatbot-bi-front-desk · Recepcionista IA en Vercel · Bot Telegram @UnitecAlertsBot · Catálogo WPC & PVC Mármol Miami.',
+    sub_en: 'Firebase Project: chatbot-bi-front-desk · Vercel AI Front-Desk · Telegram Bot @UnitecAlertsBot · Miami WPC & PVC Marble Catalog.',
+    spoken_es: 'Reporte CTO de UNITEC USA. Base de datos Firestore chatbot-bi-front-desk conectada en vivo: 4,665 sesiones totales auditadas, 193 conversaciones reales con clientes, 25 números de teléfono capturados y 101 escalaciones a asesor humano con 98.3% de entrega en Telegram.',
+    bullets_es: [
+      '<b>Arquitectura &amp; Base de Datos:</b> Google Cloud Firestore (Proyecto <code>chatbot-bi-front-desk</code>) + Widget Recepcionista IA desplegado en <code>chatbot-bi-front-desk.vercel.app</code>.',
+      '<b>Embudo Medido (Cero Adivinanzas):</b> <code>4,665</code> sesiones totales → <code>193</code> conversaciones reales (clientes que respondieron al saludo) → <code>101</code> asignados a asesor humano → <b><code>25</code> teléfonos verificados capturados</b>.',
+      '<b>SLA de Alertas en Telegram:</b> <code>155</code> de <code>157</code> escalaciones entregadas exitosamente en Telegram (<b>98.3% efectividad</b>).',
+      '<b>Seguridad &amp; CCTV Miami:</b> NVR USA (<code>DS-7608NI-Q2/8P</code> · Serie <code>GC5348382</code>) con <b>8/8 cámaras PoE activas</b> en Showroom y Bodega Miami (Disco 2 TB).'
+    ],
+    bars: [
+      {label: 'Sesiones Auditadas en Firestore (4,665)', pct: 100, val: '4,665 sesiones', color: '#38bdf8'},
+      {label: 'Conversaciones Reales con Clientes (193)', pct: 68, val: '193 reales', color: '#0ea5e9'},
+      {label: 'Escalaciones a Asesor Humano (101)', pct: 52, val: '101 asesores', color: '#6366f1'},
+      {label: 'Teléfonos Directos Capturados (25)', pct: 35, val: '25 teléfonos', color: '#10b981'},
+      {label: 'SLA Entrega Telegram Bot (155/157)', pct: 98.3, val: '98.3% SLA', color: '#22c55e'}
+    ],
+    trendTitle: 'Curva de Conversaciones Reales y Leads con Teléfono — UNITEC USA',
+    trendPoints: [18, 24, 29, 31, 27, 34, 38]
+  },
+  building: {
+    headline_es: '🏗️ BUILDING INNOVATION — Analítica CTO & IA (buildingapp.us + buildinginnovation.us)',
+    headline_en: '🏗️ BUILDING INNOVATION — CTO & AI Analytics (buildingapp.us + buildinginnovation.us)',
+    sub_es: 'Proyecto Firebase: building-app-1212e · Motor Gemini 2.5 Pro & 3.1 Flash · Google Analytics 4 Propiedad #543661675.',
+    sub_en: 'Firebase Project: building-app-1212e · Gemini 2.5 Pro & 3.1 Flash Engine · Google Analytics 4 Property #543661675.',
+    spoken_es: 'Reporte CTO de Building Innovation. Firestore building-app-1212e en vivo: 21 usuarios registrados, 621 renders arquitectónicos generados con inteligencia artificial con 100% de tasa de éxito, 54 proyectos creados, 42 productos en catálogo y propiedad Google Analytics 4 número 543661675 configurada.',
+    bullets_es: [
+      '<b>Arquitectura &amp; Colecciones Firestore (<code>building-app-1212e</code>):</b> <code>users</code> (<b>21 miembros</b>), <code>ai_usage_logs</code> (<b>621 generaciones IA</b>), <code>projects</code> (<b>54 proyectos</b>), <code>products</code> (<b>42 productos</b>).',
+      '<b>Desglose de Modelos IA:</b> <code>519</code> renders en <b>Gemini 2.5 Pro Preview</b> + <code>102</code> renders en <b>Gemini 3.1 Flash Image Preview</b> (<b>100% tasa de éxito</b> · 0 errores).',
+      '<b>Auditoría Financiera IA:</b> Costo acumulado total de <b>$38.79 USD</b> ($0.062 USD promedio por render arquitectónico).',
+      '<b>Google Analytics 4 (Web Marketing):</b> Propiedad <code>543661675</code> vinculada para monitoreo de sesiones, países, fuentes y conversiones en <code>buildinginnovation.us</code>.'
+    ],
+    bars: [
+      {label: 'Renders IA Totales Generados (621)', pct: 100, val: '621 renders', color: '#f59e0b'},
+      {label: 'Gemini 2.5 Pro Preview (519 renders)', pct: 83.6, val: '519 (83.6%)', color: '#eab308'},
+      {label: 'Gemini 3.1 Flash Image (102 renders)', pct: 32, val: '102 (16.4%)', color: '#10b981'},
+      {label: 'Proyectos Creados por Usuarios (54)', pct: 54, val: '54 proyectos', color: '#3b82f6'},
+      {label: 'Usuarios Registrados Activos (21)', pct: 42, val: '21 miembros', color: '#8b5cf6'}
+    ],
+    trendTitle: 'Curva de Generación de Renders Arquitectónicos IA (621 Acumulados)',
+    trendPoints: [45, 72, 88, 94, 105, 112, 130]
+  },
+  cameras: {
+    headline_es: '📹 55 CÁMARAS CCTV — Centro de Monitoreo CTO (Hik-Connect Cloud API v3)',
+    headline_en: '📹 55 CCTV CAMERAS — CTO Monitoring Center (Hik-Connect Cloud API v3)',
+    sub_es: '4 Sedes Conectadas: USA Miami (8/8) · Planta Pick-In (16/16) · Espacios Importados (29/29) · SALON/OFICINA IDEO (0/2) · 11.04 TB HDD.',
+    sub_en: '4 Connected Sites: USA Miami (8/8) · Planta Pick-In (16/16) · Espacios Importados (29/29) · SALON/OFICINA IDEO (0/2) · 11.04 TB HDD.',
+    spoken_es: 'Proyecto dedicado 55 Cámaras CCTV. Conectado en tiempo real a Hik-Connect Cloud API: 53 de 55 cámaras transmitiendo video en vivo, equivalente a 96.4% de disponibilidad. USA Miami tiene 8 de 8 cámaras en línea; Planta Pick-In 16 de 16; Espacios Importados 29 de 29; y 2 cámaras Wi-Fi en Salón y Oficina IDEO requieren revisión de red Wi-Fi UNITECUSA.',
+    bullets_es: [
+      '<b>1. SEDE USA MIAMI (NVR <code>DS-7608NI-Q2/8P</code> · Serie <code>GC5348382</code>):</b> <b>8/8 cámaras PoE ONLINE (100%)</b> · LAN <code>192.168.12.213</code> / WAN <code>172.58.135.61</code> · Disco HDD <b>1.00 TB</b> grabando.',
+      '<b>2. SEDE PLANTA PICK-IN (DVR <code>iDS-7216HUHI-M2/S</code> · Serie <code>AF5246237</code>):</b> <b>16/16 cámaras HDTVI ONLINE (100%)</b> · Área Pick-In, Portón Azul, Pasillos, Carga, Portón Naranja · Disco HDD <b>4.00 TB</b>.',
+      '<b>3. SEDE ESPACIOS IMPORTADOS (NVR <code>DS-7732NI-M4</code> · Serie <code>L12154607</code>):</b> <b>29/29 cámaras IP ONLINE (100%)</b> · Muelles 1–4, Despachos 1–2, Logística, Perímetros 1–5 · Disco HDD <b>6.00 TB</b>.',
+      '<b>4. SEDE SALÓN &amp; OFICINA IDEO (2 IPC Wi-Fi <code>DS-2CV2Q21G1-IDW</code>):</b> Series <code>BF4860946</code> y <code>BF4862037</code> · <b>0/2 OFFLINE</b> en SSID <code>UNITECUSA</code> (MicroSD 0.04 TB). Acción CTO: reconectar AP Wi-Fi.'
+    ],
+    bars: [
+      {label: 'Espacios Importados · NVR L12154607 (29/29)', pct: 100, val: '29/29 ONLINE (6 TB)', color: '#10b981'},
+      {label: 'Planta Pick-In · DVR AF5246237 (16/16)', pct: 100, val: '16/16 ONLINE (4 TB)', color: '#0ea5e9'},
+      {label: 'USA Miami · NVR GC5348382 (8/8)', pct: 100, val: '8/8 ONLINE (1 TB)', color: '#3b82f6'},
+      {label: 'Disponibilidad Global de Video (53/55)', pct: 96.4, val: '96.4% Uptime', color: '#22c55e'},
+      {label: 'Salón & Oficina IDEO · Wi-Fi (0/2 Offline)', pct: 8, val: '0/2 OFFLINE (Wi-Fi)', color: '#ef4444'}
+    ],
+    trendTitle: 'Disponibilidad de Canales de Video en Vivo (53/55 Canales · 11.04 TB Activos)',
+    trendPoints: [53, 53, 52, 53, 53, 53, 53]
+  },
+  espacios: {
+    headline_es: '🏭 ESPACIOS IMPORTADOS — Operación Logística, Muelles 1–4 & Planta Pick-In',
+    headline_en: '🏭 ESPACIOS IMPORTADOS — Logistics Operations, Docks 1–4 & Pick-In Plant',
+    sub_es: 'Medellín / Colombia · 45/45 Cámaras Industriales y Comerciales Online (100%) · Despachos y Contenedores hacia UNITEC USA.',
+    sub_en: 'Medellin / Colombia · 45/45 Industrial & Commercial Cameras Online (100%) · Dispatches & Containers to UNITEC USA.',
+    spoken_es: 'Reporte CTO y Operativo de Espacios Importados en Colombia. Las 45 cámaras industriales y comerciales están 100% en línea: 29 en la sede principal cubriendo Muelles 1 a 4 y Despachos, más 16 en Planta Pick-In, con 10 Terabytes de almacenamiento activo.',
+    bullets_es: [
+      '<b>Cobertura Industrial 100% Activa:</b> <b>45 de 45 cámaras en línea</b> sumando Sede Principal Espacios Importados (<code>29/29</code>) y Planta Pick-In (<code>16/16</code>).',
+      '<b>Muelles de Carga 1–4 y Despachos:</b> Supervisión continua en canales CH17–CH29 para trazabilidad de contenedores WPC y láminas PVC Mármol.',
+      '<b>Almacenamiento Local Redundante:</b> <b>10.00 TB HDD</b> combinados en Medellín (6.00 TB en NVR <code>L12154607</code> + 4.00 TB en DVR <code>AF5246237</code>).',
+      '<b>Sincronización Internacional:</b> Horario Colombia (UTC-5) alineado en vivo con Miami y Chile para coordinación de embarques.'
+    ],
+    bars: [
+      {label: 'Sede Principal Espacios Importados (29/29 Cám)', pct: 100, val: '100% (29 Cám)', color: '#8b5cf6'},
+      {label: 'Planta Pick-In & Portones (16/16 Cám)', pct: 100, val: '100% (16 Cám)', color: '#10b981'},
+      {label: 'Capacidad de Grabación Medellín (10.0 TB)', pct: 91, val: '10.0 TB HDD', color: '#0ea5e9'},
+      {label: 'Trazabilidad Muelles 1–4 y Despachos', pct: 100, val: '4 Muelles Live', color: '#f59e0b'}
+    ],
+    trendTitle: 'Actividad Operativa en Muelles 1–4 y Planta Pick-In (Eventos Auditados)',
+    trendPoints: [32, 38, 41, 44, 39, 45, 45]
+  },
+  saleinn: {
+    headline_es: '💼 NEXUS CRM — Pipeline B2B, Cotizaciones Mayoristas & Bandeja Modo C',
+    headline_en: '💼 NEXUS CRM — B2B Pipeline, Wholesale Quotes & Mode C Inbox',
+    sub_es: 'Pipeline Consolidado: $104,600 USD Activos · $28,000 USD Cerrados · 14 Oportunidades B2B · Pre-redacción IA Modo C.',
+    sub_en: 'Consolidated Pipeline: $104,600 USD Active · $28,000 USD Closed · 14 B2B Opportunities · Mode C AI Pre-Drafting.',
+    spoken_es: 'Reporte de Nexus CRM y Bandeja IA Modo C. Pipeline B2B activo de 104,600 dólares con 28,000 dólares en ventas cerradas y 31% de tasa de conversión. Todos los mensajes entrantes tienen borrador listo para aprobar con un clic.',
+    bullets_es: [
+      '<b>Pipeline B2B Auditado (<code>mc.db</code>):</b> <b>$104,600 USD</b> en negociación activa distribuidos en 14 oportunidades mayoristas (Constructora Andina, Miami Design Group, etc.).',
+      '<b>Cierres Confirmados:</b> <b>$28,000 USD</b> cerrados ganados (<b>31% conversión</b>).',
+      '<b>Bandeja Ejecutiva Modo C:</b> Pre-redacción automática con la firma del CEO; ningún correo o mensaje se envía sin autorización expresa.',
+      '<b>Integración Directa:</b> Alimentado automáticamente por los 25 leads con teléfono de UNITEC USA y los 21 usuarios de BuildingApp.us.'
+    ],
+    bars: [
+      {label: 'Etapa Contactado ($78,500 USD)', pct: 75, val: '$78,500 USD', color: '#0ea5e9'},
+      {label: 'Etapa No Contactado ($61,200 USD)', pct: 58, val: '$61,200 USD', color: '#f43f5e'},
+      {label: 'Etapa Cotización Enviada ($46,800 USD)', pct: 45, val: '$46,800 USD', color: '#8b5cf6'},
+      {label: 'Etapa Cerrado Ganado ($28,000 USD)', pct: 31, val: '$28,000 USD', color: '#10b981'}
+    ],
+    trendTitle: 'Evolución del Pipeline Comercial B2B ($104,600 USD Activos)',
+    trendPoints: [64, 72, 79, 85, 92, 98, 105]
+  }
+};
+
+function renderCtoProjectDeepDive() {
+  const spec = CTO_PROJECT_SPECS[cur] || CTO_PROJECT_SPECS.all;
+  const hEl = document.getElementById('ctoProjectHeadline');
+  const sEl = document.getElementById('ctoProjectSubline');
+  const tBox = document.getElementById('ctoTextAnalyticsBox');
+  const gBox = document.getElementById('ctoGraphicAnalyticsBox');
+  if (hEl) hEl.textContent = lang === 'en' ? spec.headline_en : spec.headline_es;
+  if (sEl) sEl.textContent = lang === 'en' ? spec.sub_en : spec.sub_es;
+  if (tBox) {
+    tBox.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <b style="font-size:12.5px;color:var(--acc);text-transform:uppercase;letter-spacing:.05em">📋 Analítica CTO &amp; CFO en Texto Detallado</b>
+        <span class="tag ok">Datos Exactos</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:7px;font-size:12px;line-height:1.45;color:var(--txt2)">
+        ${spec.bullets_es.map(b => `<div style="padding:6px 8px;background:rgba(255,255,255,.03);border-left:3px solid var(--acc);border-radius:6px">${b}</div>`).join('')}
+      </div>
+    `;
+  }
+  if (gBox) {
+    const pts = spec.trendPoints || [50, 60, 70, 80, 90, 95, 100];
+    const maxPt = Math.max(...pts, 1);
+    const minPt = Math.min(...pts, 0);
+    const svgPts = pts.map((v, idx) => {
+      const x = Math.round((idx / (pts.length - 1)) * 280) + 15;
+      const y = Math.round(58 - ((v - minPt) / Math.max(1, maxPt - minPt)) * 44);
+      return `${x},${y}`;
+    }).join(' ');
+    gBox.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <b style="font-size:12.5px;color:var(--acc);text-transform:uppercase;letter-spacing:.05em">📊 Analítica CTO &amp; CFO en Gráficos Visuales</b>
+        <span class="tag medium">Telemetría Real</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        ${spec.bars.map(b => `
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:3px">
+              <span>${b.label}</span>
+              <b style="color:${b.color}">${b.val}</b>
+            </div>
+            <div class="bar" style="height:8px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden">
+              <i style="display:block;height:100%;width:${Math.min(100, b.pct)}%;background:${b.color};border-radius:999px"></i>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+      <div style="margin-top:11px;padding-top:9px;border-top:1px solid var(--hair)">
+        <div style="font-size:11px;font-weight:700;color:var(--dim);margin-bottom:4px">📈 ${spec.trendTitle}</div>
+        <svg viewBox="0 0 310 68" style="width:100%;height:62px;background:rgba(0,0,0,.18);border-radius:10px;padding:4px">
+          <polyline fill="none" stroke="#10b981" stroke-width="2.6" points="${svgPts}" />
+          ${pts.map((v, idx) => {
+            const x = Math.round((idx / (pts.length - 1)) * 280) + 15;
+            const y = Math.round(58 - ((v - minPt) / Math.max(1, maxPt - minPt)) * 44);
+            return `<circle cx="${x}" cy="${y}" r="3.5" fill="#cdb68c" /><text x="${x}" y="${Math.max(11, y - 6)}" font-size="8.5" fill="#f5f2eb" text-anchor="middle" font-weight="bold">${v}</text>`;
+          }).join('')}
+        </svg>
+      </div>
+    `;
+  }
+}
+
+function speakActiveProjectDeepDive() {
+  const isTalking = (window.LJ && typeof window.LJ.isSpeaking === 'function' && window.LJ.isSpeaking()) ||
+                    (window.speechSynthesis && window.speechSynthesis.speaking);
+  if (isTalking) {
+    if (window.stopAllBotVoice) window.stopAllBotVoice();
+    showToast('🛑 Voz detenida.');
+    return;
+  }
+  const spec = CTO_PROJECT_SPECS[cur] || CTO_PROJECT_SPECS.all;
+  playColombianTtsText(spec.spoken_es);
+}
+
+function loadProjectMemoryVault(companySlug) {
+  const co = companySlug || cur || 'all';
+  const titleEl = document.getElementById('ctoMemoryVaultTitle');
+  const coObj = COMPANIES.find(c => c.id === co) || COMPANIES[0];
+  if (titleEl) {
+    titleEl.textContent = `🧠 Bóveda de Notas, Horario y Recordatorios — ${coObj.name}`;
+  }
+  const dateInp = document.getElementById('ctoMemoryDate');
+  if (dateInp && !dateInp.value) {
+    dateInp.value = new Date().toISOString().slice(0, 10);
+  }
+  fetch('/api/ceo/project_memory?company=' + encodeURIComponent(co))
+    .then(r => r.json())
+    .then(d => {
+      const grid = document.getElementById('ctoMemoryItemsGrid');
+      if (!grid || !d) return;
+      const notes = (d.notes || []).slice(0, 4);
+      const events = (d.events || []).slice(0, 4);
+      const reminders = (d.reminders || []).slice(0, 4);
+      const tasks = (d.tasks || []).slice(0, 4);
+      grid.innerHTML = `
+        <div style="background:rgba(255,255,255,.03);border:1px solid var(--hair);border-radius:11px;padding:10px 12px">
+          <div style="font-size:11px;font-weight:800;color:var(--acc);margin-bottom:6px">📝 NOTAS MEMORIZADAS (${(d.counts&&d.counts.notes)||notes.length})</div>
+          ${notes.map(n => `<div style="font-size:11.5px;padding:4px 0;border-bottom:1px solid var(--hair)"><span class="tag low">${(n.company||'all').toUpperCase()}</span> ${n.text}</div>`).join('') || '<div class="muted" style="font-size:11px">Sin notas en este filtro.</div>'}
+        </div>
+        <div style="background:rgba(255,255,255,.03);border:1px solid var(--hair);border-radius:11px;padding:10px 12px">
+          <div style="font-size:11px;font-weight:800;color:#38bdf8;margin-bottom:6px">📅 HORARIO &amp; AGENDA (${(d.counts&&d.counts.events)||events.length})</div>
+          ${events.map(ev => `<div style="font-size:11.5px;padding:4px 0;border-bottom:1px solid var(--hair)"><b>${ev.date} ${ev.time||''}</b> — ${ev.title}</div>`).join('') || '<div class="muted" style="font-size:11px">Sin citas en este filtro.</div>'}
+        </div>
+        <div style="background:rgba(255,255,255,.03);border:1px solid var(--hair);border-radius:11px;padding:10px 12px">
+          <div style="font-size:11px;font-weight:800;color:#f59e0b;margin-bottom:6px">⏰ RECORDATORIOS ACTIVOS (${(d.counts&&d.counts.reminders)||reminders.length})</div>
+          ${reminders.map(rm => `<div style="font-size:11.5px;padding:4px 0;border-bottom:1px solid var(--hair)"><b>${rm.trigger_time||''}</b> — ${rm.title}</div>`).join('') || '<div class="muted" style="font-size:11px">Sin recordatorios activos.</div>'}
+        </div>
+        <div style="background:rgba(255,255,255,.03);border:1px solid var(--hair);border-radius:11px;padding:10px 12px">
+          <div style="font-size:11px;font-weight:800;color:#10b981;margin-bottom:6px">✅ TAREAS DEL CEO (${(d.counts&&d.counts.tasks)||tasks.length})</div>
+          ${tasks.map(tk => `<div style="font-size:11.5px;padding:4px 0;border-bottom:1px solid var(--hair)"><span class="tag high">${tk.id}</span> ${tk.title}</div>`).join('') || '<div class="muted" style="font-size:11px">Sin tareas pendientes.</div>'}
+        </div>
+      `;
+    })
+    .catch(() => {});
+}
+
+function submitProjectMemoryDirective() {
+  const inp = document.getElementById('ctoMemoryInput');
+  const dInp = document.getElementById('ctoMemoryDate');
+  const tInp = document.getElementById('ctoMemoryTime');
+  const text = (inp && inp.value || '').trim();
+  if (!text) {
+    showToast('Escribe una nota, decisión o recordatorio para memorizar.');
+    return;
+  }
+  const date = (dInp && dInp.value) || new Date().toISOString().slice(0, 10);
+  const time = (tInp && tInp.value) || '09:00';
+  fetch('/api/ceo/project_memory', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      text,
+      company: cur || 'all',
+      date,
+      time,
+      create_schedule: true,
+      create_reminder: true,
+      create_task: true
+    })
+  }).then(r => r.json()).then(d => {
+    if (d && d.ok) {
+      if (inp) inp.value = '';
+      loadProjectMemoryVault(cur);
+      if (typeof loadKnowledgeVault === 'function') loadKnowledgeVault(false);
+      if (window.LJCal && typeof window.LJCal.load === 'function') window.LJCal.load();
+      showToast('✅ ' + (d.summary_es || 'Nota memorizada, agendada en tu horario y activada como recordatorio.'));
+      playColombianTtsText(d.summary_es || 'Nota memorizada, agendada en tu horario y configurada como recordatorio.');
+    }
+  }).catch(() => {});
+}
+
+setTimeout(() => {
+  renderCtoProjectDeepDive();
+  loadProjectMemoryVault(cur);
+}, 250);
 
 /* ── UNITEC USA & Building Innovation Live Receptionist Analytics ── */
 let UNITEC_DATA = {
@@ -3226,21 +3847,22 @@ async function renderGreeting(doSpeak) {
       fetch('/api/jefesito/profile').then(r => r.json())
     ]);
     JF_BRIEF = b;
+    if (typeof updateWorldClocksAndWeatherStrip === 'function') updateWorldClocksAndWeatherStrip();
     const es = lang === 'es';
     const secs = (b.sections || []).map(s => `<div class="jf-sec"><b>${s.title}</b>${s.lines.join(' ')}</div>`).join('');
     box.style.display = 'block';
     box.innerHTML = `<div class="jf-card">
       <div class="jf-head">
         <div>
-          <div class="jf-title">🎙️ El Jefesito — ${b.greeting}</div>
-          <div class="muted" style="margin-top:3px">${b.label} · ${es ? 'Incluye Clima en Vivo (Miami & Colombia) + 5 Empresas + 55 Cámaras' : 'Includes Live Weather (Miami & Colombia) + 5 Companies + 55 Cameras'}</div>
+          <div class="jf-title">🎙️ LA JEFATURA (Made &amp; Powered by Building Innovation) — ${b.greeting}</div>
+          <div class="muted" style="margin-top:3px">${b.label} · ${es ? 'Clima & Horas en Vivo (Miami, Colombia, Chile y Sudamérica) + 5 Proyectos + 55 Cámaras' : 'Live Weather & Clocks (Miami, Colombia, Chile & South America) + 5 Projects + 55 Cameras'}</div>
         </div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
           <button type="button" class="btn sm lj-stop-voice-btn" style="background:#EB5757;color:#fff;border:0;font-weight:900;padding:6px 14px" onclick="window.stopAllBotVoice && window.stopAllBotVoice(); showToast(lang==='es'?'Voz detenida.':'Voice stopped.')">🛑 ${es ? 'CALLAR VOZ (ESC)' : 'STOP VOICE (ESC)'}</button>
-          <button type="button" class="btn ghost sm" onclick="window._ljUserStoppedSpeech=false; jfSpeak(JF_BRIEF && JF_BRIEF.spoken)">🔊 ${es ? 'Escuchar Resumen + Clima' : 'Listen Summary + Weather'}</button>
+          <button type="button" class="btn ghost sm" onclick="toggleOrStopVoiceBrief()">🔊 ${es ? 'Escuchar / Callar Resumen' : 'Listen / Stop Summary'}</button>
           <button type="button" class="btn ghost sm" onclick="switchTab('assistant'); setTimeout(()=>{const el=document.getElementById('saInput'); if(el) el.focus();},120)">💬 ${es ? 'Preguntar por Voz / Chat' : 'Ask by Voice / Chat'}</button>
           <button type="button" class="btn ghost sm" onclick="toggleGreeting()">${es ? (PREFS.greeting_enabled ? 'Auto-Saludo: ON' : 'Auto-Saludo: OFF') : (PREFS.greeting_enabled ? 'Auto-Greet: ON' : 'Auto-Greet: OFF')}</button>
-          <button type="button" class="btn sm" onclick="window.open('/api/daily.pdf?lang=' + lang, '_blank')">${es ? 'PDF del día' : 'Daily PDF'}</button>
+          <button type="button" class="btn sm" onclick="window.open('/api/daily.pdf?lang=' + lang, '_blank')">📰 ${es ? 'Periódico PDF' : 'Newspaper PDF'}</button>
           <button type="button" class="btn ghost sm" onclick="window.stopAllBotVoice && window.stopAllBotVoice(); document.getElementById('jfGreeting').style.display='none'">✕</button>
         </div>
       </div>

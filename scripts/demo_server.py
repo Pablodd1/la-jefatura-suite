@@ -65,20 +65,20 @@ SAMPLES = os.path.join(ROOT, "data", "samples")
 ONBOARDING_FILE = os.path.join(ROOT, "data", "onboarding_state.json")
 
 DEFAULT_ONBOARDING = {
-    "brand_name": "LA JEFATURA",
-    "ceo_name": "Jasmel Acosta",
+    "brand_name": "LA JEFATURA — Made & Powered by Building Innovation",
+    "ceo_name": "Juan Garcia",
     "accent_color": "#23d9b0",
     "operating_mode": "C",
     "onboarding_completed": True,
     "integrations": [
-        {"id": "gcal", "name": "Google Calendar & Outlook", "category": "Calendars & Schedule", "connected": True, "account": "jasmelacosta@gmail.com", "sync_interval": "Real-time"},
-        {"id": "gmail", "name": "Gmail / Brevo / Corporate Mail", "category": "Email & Draft Brain", "connected": True, "account": "jasmel@medicalbillingmb.com", "sync_interval": "Real-time"},
+        {"id": "gcal", "name": "Google Calendar & Outlook", "category": "Calendars & Schedule", "connected": True, "account": "jgarcia@buildinginnovation.us", "sync_interval": "Real-time"},
+        {"id": "gmail", "name": "Gmail / Brevo / Corporate Mail", "category": "Email & Draft Brain", "connected": True, "account": "jgarcia@buildinginnovation.us", "sync_interval": "Real-time"},
         {"id": "meetings", "name": "Google Meet & Zoom Intelligence", "category": "Meetings & Briefs", "connected": True, "account": "Workspace Auto-Notes", "sync_interval": "Post-call"},
         {"id": "nexus", "name": "Nexus CRM Global & Pipelines", "category": "CRM & Sales Data", "connected": True, "account": "nexus-crm-global.ai.studio", "sync_interval": "Every 5m"},
-        {"id": "tasks", "name": "Mission Control Tasks & Escalations", "category": "Task Managers & Assignments", "connected": True, "account": "24h Nudge / 48h Critical", "sync_interval": "Hourly"},
-        {"id": "cameras", "name": "ONVIF / RTSP AI Security Cameras", "category": "Camera Monitoring", "connected": True, "account": "4 Zones (MBMB / Warehouse)", "sync_interval": "Live + 12h Digest"},
-        {"id": "people", "name": "Staff Velocity & Assignment Monitor", "category": "People Monitoring", "connected": True, "account": "Juan, Maria, Carlos, AI Agents", "sync_interval": "Continuous"},
-        {"id": "clients", "name": "Client Health & Retention Radar", "category": "Clients Monitoring", "connected": True, "account": "12 Active Accounts (4 Countries)", "sync_interval": "Daily"},
+        {"id": "tasks", "name": "La Jefatura Tasks & Escalations", "category": "Task Managers & Assignments", "connected": True, "account": "24h Nudge / 48h Critical", "sync_interval": "Hourly"},
+        {"id": "cameras", "name": "55 Cámaras CCTV Hik-Connect Cloud", "category": "Camera Monitoring", "connected": True, "account": "4 Sedes (USA Miami, Pick-In, Espacios, IDEO)", "sync_interval": "Live + Morning Newspaper"},
+        {"id": "people", "name": "Staff Velocity & Assignment Monitor", "category": "People Monitoring", "connected": True, "account": "Juan, Jasmel, Equipo UNITEC & Building", "sync_interval": "Continuous"},
+        {"id": "clients", "name": "Client Health & Retention Radar", "category": "Clients Monitoring", "connected": True, "account": "UNITEC USA, BuildingApp, Espacios Importados", "sync_interval": "Daily"},
         {"id": "grok_voice", "name": "Grok 3.0 Voice & DOM Brain Layer", "category": "Voice & Behavioral AI", "connected": True, "account": "Bilingual ES/EN + Profile Memory", "sync_interval": "Always-On"},
     ]
 }
@@ -297,6 +297,9 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
         elif path == "/api/ceo/watchdog":
             co = (qs.get("company") or ["all"])[0]
             self._send(200, ceo_action_brain.get_executive_watchdog_alerts(company=co))
+        elif path == "/api/ceo/project_memory":
+            co = (qs.get("company") or ["all"])[0]
+            self._send(200, knowledge_store.get_project_memory(company=co, limit=30))
         elif path in ("/api/ga4/summary", "/api/ga4/live"):
             pid = (qs.get("property_id") or [""])[0]
             self._send(200, ga4_ingest.fetch_live_ga4(property_id_override=pid))
@@ -340,7 +343,7 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
         elif path == "/api/onboarding/state":
             self._send(200, _get_onboarding())
         elif path == "/api/report.pdf":
-            company = (qs.get("company") or ["Medical Billing Miami Beach"])[0]
+            company = (qs.get("company") or ["Building Innovation"])[0]
             lang = (qs.get("lang") or ["es"])[0]
             out = os.path.join(tempfile.gettempdir(), "_demo_report.pdf")
             built_path = reports_pdf.build_report(company, SAMPLES, out, lang=lang)
@@ -529,6 +532,18 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
                 company=body.get("company", "all"),
                 goal=body.get("goal", ""),
             ))
+        elif path == "/api/ceo/project_memory":
+            res = knowledge_store.memorize_project_directive(
+                text=body.get("text", ""),
+                company=body.get("company", "all"),
+                date_str=body.get("date", ""),
+                time_str=body.get("time", "09:00"),
+                create_schedule=bool(body.get("create_schedule", True)),
+                create_reminder=bool(body.get("create_reminder", True)),
+                create_task=bool(body.get("create_task", True)),
+                source=body.get("source", "ceo_project_memory"),
+            )
+            self._send(200 if res.get("ok") else 400, res)
         elif path == "/api/cameras/events":
             if not mc_auth.token_ok(self.headers.get("X-MC-Token", "")):
                 self._send(401, {"error": "X-MC-Token required"})

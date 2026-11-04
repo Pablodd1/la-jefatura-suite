@@ -252,14 +252,46 @@
 
     function _setSpeakingUI(isSpeaking) {
       state.speaking = isSpeaking;
+      const curLang = getLang();
       if (root) root.classList.toggle("speaking", isSpeaking);
       const bar = document.getElementById("ljGlobalStopBar");
       if (bar) bar.style.display = isSpeaking ? "flex" : "none";
       const stopBtns = document.querySelectorAll(".lj-stop-voice-btn");
       stopBtns.forEach(b => {
-        b.style.opacity = isSpeaking ? "1" : "0.85";
+        b.style.opacity = isSpeaking ? "1" : "0.9";
         b.classList.toggle("is-speaking", isSpeaking);
       });
+      // Toggle any active voice/play buttons so clicking the SAME button while talking stops it immediately
+      const playBriefBtn = document.getElementById("headerPlayBriefBtn");
+      if (playBriefBtn) {
+        if (isSpeaking) {
+          if (!playBriefBtn.getAttribute("data-orig-label")) {
+            playBriefBtn.setAttribute("data-orig-label", playBriefBtn.textContent);
+          }
+          playBriefBtn.textContent = curLang === "en" ? "🛑 SPEAKING · CLICK TO STOP" : "🛑 HABLANDO · CLIC PARA CALLAR";
+          playBriefBtn.style.background = "#EB5757";
+          playBriefBtn.style.color = "#FFFFFF";
+          playBriefBtn.style.borderColor = "#EB5757";
+        } else {
+          playBriefBtn.textContent = curLang === "en" ? "🔊 Listen Summary" : "🔊 Escuchar Resumen";
+          playBriefBtn.style.background = "rgba(16,185,129,.14)";
+          playBriefBtn.style.color = "#10B981";
+          playBriefBtn.style.borderColor = "rgba(16,185,129,.4)";
+        }
+      }
+      if (typeof fab !== "undefined" && fab) {
+        if (isSpeaking) {
+          fab.textContent = curLang === "en" ? "🛑 SPEAKING · CLICK TO STOP" : "🛑 HABLANDO · CLIC PARA CALLAR";
+          fab.style.background = "#EB5757";
+          fab.style.color = "#FFFFFF";
+          fab.style.borderColor = "#EB5757";
+        } else {
+          fab.textContent = getT().fabBtn;
+          fab.style.background = "#ffffff";
+          fab.style.color = "#12100d";
+          fab.style.borderColor = "#cdb68c";
+        }
+      }
     }
 
     function stopAudio() {
@@ -289,6 +321,7 @@
       _setSpeakingUI(false);
     }
     window.LJ.stopAudio = stopAudio;
+    window.LJ.isSpeaking = () => Boolean(state.speaking);
     window.stopAllBotVoice = stopAudio;
 
     function _browserFallbackSpeak(text, langCode, mySeq) {
@@ -562,6 +595,10 @@
     }
 
     fab.onclick = () => {
+      if (state.speaking) {
+        stopAudio();
+        return;
+      }
       state.open = !state.open;
       panel.classList.toggle("open", state.open);
       if (state.open && !state._greeted) {

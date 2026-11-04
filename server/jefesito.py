@@ -216,15 +216,36 @@ _WMO_EN = {
 }
 
 
+def get_south_america_timezones() -> dict:
+    """Computes live local clocks for Miami, Colombia/Perú/Ecuador, Chile, Argentina/Brasil/Uruguay, Venezuela/Bolivia, and México."""
+    utc_now = datetime.datetime.now(datetime.timezone.utc)
+    def fmt_offset(hours: int):
+        dt = utc_now + datetime.timedelta(hours=hours)
+        return dt.strftime("%I:%M %p"), dt.strftime("%H:%M")
+    return {
+        "miami": {"label_es": "🇺🇸 Miami (USA)", "label_en": "🇺🇸 Miami (USA)", "time_12": fmt_offset(-5)[0], "time_24": fmt_offset(-5)[1], "utc": "UTC-5"},
+        "colombia": {"label_es": "🇨🇴 Colombia · Perú · Ecuador", "label_en": "🇨🇴 Colombia · Peru · Ecuador", "time_12": fmt_offset(-5)[0], "time_24": fmt_offset(-5)[1], "utc": "UTC-5"},
+        "chile": {"label_es": "🇨🇱 Chile (Santiago)", "label_en": "🇨🇱 Chile (Santiago)", "time_12": fmt_offset(-3)[0], "time_24": fmt_offset(-3)[1], "utc": "UTC-3"},
+        "argentina": {"label_es": "🇦🇷 Argentina · Brasil · Uruguay", "label_en": "🇦🇷 Argentina · Brazil · Uruguay", "time_12": fmt_offset(-3)[0], "time_24": fmt_offset(-3)[1], "utc": "UTC-3"},
+        "venezuela": {"label_es": "🇻🇪 Venezuela · Bolivia · Paraguay", "label_en": "🇻🇪 Venezuela · Bolivia · Paraguay", "time_12": fmt_offset(-4)[0], "time_24": fmt_offset(-4)[1], "utc": "UTC-4"},
+        "mexico": {"label_es": "🇲🇽 México (CDMX)", "label_en": "🇲🇽 Mexico (CDMX)", "time_12": fmt_offset(-6)[0], "time_24": fmt_offset(-6)[1], "utc": "UTC-6"},
+    }
+
+
 def get_live_weather() -> dict:
-    """Fetches real-time weather for Miami, FL and Colombia (Medellín/Bogotá) via Open-Meteo (15m cache)."""
+    """Fetches real-time weather for Miami, FL, Colombia (Medellín/Bogotá), and Chile (Santiago) via Open-Meteo (15m cache)."""
     now = time.time()
+    tzs = get_south_america_timezones()
     if _WEATHER_CACHE["data"] and (now - _WEATHER_CACHE["ts"] < 900):
-        return _WEATHER_CACHE["data"]
+        cached = dict(_WEATHER_CACHE["data"])
+        cached["timezones"] = tzs
+        return cached
     import urllib.request
     out = {
         "miami": {"temp_f": 81, "temp_c": 27, "cond_es": "parcialmente nublado", "cond_en": "partly cloudy", "humidity": 68, "wind_mph": 9},
         "colombia": {"temp_c": 23, "temp_f": 73, "cond_es": "agradable y templado", "cond_en": "pleasant and mild", "humidity": 64, "wind_kmh": 11},
+        "chile": {"temp_c": 21, "temp_f": 70, "cond_es": "cielo despejado", "cond_en": "clear sky", "humidity": 48, "wind_kmh": 12},
+        "timezones": tzs,
         "as_of": time.strftime("%Y-%m-%d %H:%M"),
         "live": False,
     }
@@ -264,15 +285,37 @@ def get_live_weather() -> dict:
             out["live"] = True
     except Exception:
         pass
+    try:
+        url_chl = "https://api.open-meteo.com/v1/forecast?latitude=-33.4489&longitude=-70.6693&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m"
+        with urllib.request.urlopen(url_chl, timeout=4) as r:
+            d = json.loads(r.read().decode("utf-8")).get("current", {})
+            tc = round(float(d.get("temperature_2m", 21)))
+            tf = round(tc * 9 / 5 + 32)
+            wcode = int(d.get("weather_code", 0))
+            out["chile"] = {
+                "temp_c": tc,
+                "temp_f": tf,
+                "cond_es": _WMO_ES.get(wcode, "cielo despejado"),
+                "cond_en": _WMO_EN.get(wcode, "clear sky"),
+                "humidity": int(d.get("relative_humidity_2m", 48)),
+                "wind_kmh": round(float(d.get("wind_speed_10m", 12))),
+            }
+            out["live"] = True
+    except Exception:
+        pass
     out["text_es"] = (
-        f"Clima en vivo ({out['as_of']}): En Miami {out['miami']['temp_f']}°F ({out['miami']['temp_c']}°C) con {out['miami']['cond_es']} "
-        f"(humedad {out['miami']['humidity']}%, viento {out['miami']['wind_mph']} mph). "
-        f"En Colombia (Sedes Espacios Importados y Planta Pick-In) {out['colombia']['temp_c']}°C ({out['colombia']['temp_f']}°F) con {out['colombia']['cond_es']}."
+        f"Clima y Husos Horarios Sudamérica en vivo ({out['as_of']}): "
+        f"Miami ({tzs['miami']['time_12']}): {out['miami']['temp_f']}°F ({out['miami']['temp_c']}°C), {out['miami']['cond_es']}. "
+        f"Colombia / Perú / Ecuador ({tzs['colombia']['time_12']}): {out['colombia']['temp_c']}°C ({out['colombia']['temp_f']}°F), {out['colombia']['cond_es']}. "
+        f"Chile ({tzs['chile']['time_12']}): {out['chile']['temp_c']}°C ({out['chile']['temp_f']}°F), {out['chile']['cond_es']}. "
+        f"Argentina / Brasil / Uruguay: {tzs['argentina']['time_12']}; Venezuela / Bolivia: {tzs['venezuela']['time_12']}."
     )
     out["text_en"] = (
-        f"Live Weather ({out['as_of']}): In Miami {out['miami']['temp_f']}°F ({out['miami']['temp_c']}°C) with {out['miami']['cond_en']} "
-        f"(humidity {out['miami']['humidity']}%, wind {out['miami']['wind_mph']} mph). "
-        f"In Colombia (Espacios Importados & Planta Pick-In hubs) {out['colombia']['temp_c']}°C ({out['colombia']['temp_f']}°F) with {out['colombia']['cond_en']}."
+        f"Live Weather & South America Timezones ({out['as_of']}): "
+        f"Miami ({tzs['miami']['time_12']}): {out['miami']['temp_f']}°F ({out['miami']['temp_c']}°C), {out['miami']['cond_en']}. "
+        f"Colombia / Peru / Ecuador ({tzs['colombia']['time_12']}): {out['colombia']['temp_c']}°C ({out['colombia']['temp_f']}°F), {out['colombia']['cond_en']}. "
+        f"Chile ({tzs['chile']['time_12']}): {out['chile']['temp_c']}°C ({out['chile']['temp_f']}°F), {out['chile']['cond_en']}. "
+        f"Argentina / Brazil / Uruguay: {tzs['argentina']['time_12']}; Venezuela / Bolivia: {tzs['venezuela']['time_12']}."
     )
     _WEATHER_CACHE["ts"] = now
     _WEATHER_CACHE["data"] = out
@@ -331,16 +374,22 @@ def _compose_day(f, prof, prefs, lang, day, hour) -> dict:
     w = f.get("weather") or get_live_weather()
     hik = f.get("hik") or {"live_signal_channels": 53, "total_channels": 55, "online_devices": 3, "total_devices": 5}
 
-    # 1. Live Weather Section
+    # 1. Live Weather & South America Clocks Section
+    tzs = w.get("timezones") or get_south_america_timezones()
+    chl = w.get("chile") or {"temp_c": 21, "temp_f": 70, "cond_es": "cielo despejado", "cond_en": "clear sky"}
     w_line = (
-        f"Miami: {w['miami']['temp_f']}°F ({w['miami']['temp_c']}°C), {w['miami']['cond_es']}, humedad {w['miami']['humidity']}%. "
-        f"Colombia: {w['colombia']['temp_c']}°C ({w['colombia']['temp_f']}°F), {w['colombia']['cond_es']}."
+        f"Miami ({tzs['miami']['time_12']}): {w['miami']['temp_f']}°F ({w['miami']['temp_c']}°C), {w['miami']['cond_es']}. "
+        f"Colombia/Perú/Ecuador ({tzs['colombia']['time_12']}): {w['colombia']['temp_c']}°C ({w['colombia']['temp_f']}°F), {w['colombia']['cond_es']}. "
+        f"Chile ({tzs['chile']['time_12']}): {chl['temp_c']}°C ({chl['temp_f']}°F), {chl['cond_es']}. "
+        f"Argentina/Brasil/Uruguay: {tzs['argentina']['time_12']} · Venezuela/Bolivia: {tzs['venezuela']['time_12']}."
         if es else
-        f"Miami: {w['miami']['temp_f']}°F ({w['miami']['temp_c']}°C), {w['miami']['cond_en']}, humidity {w['miami']['humidity']}%. "
-        f"Colombia: {w['colombia']['temp_c']}°C ({w['colombia']['temp_f']}°F), {w['colombia']['cond_en']}."
+        f"Miami ({tzs['miami']['time_12']}): {w['miami']['temp_f']}°F ({w['miami']['temp_c']}°C), {w['miami']['cond_en']}. "
+        f"Colombia/Peru/Ecuador ({tzs['colombia']['time_12']}): {w['colombia']['temp_c']}°C ({w['colombia']['temp_f']}°F), {w['colombia']['cond_en']}. "
+        f"Chile ({tzs['chile']['time_12']}): {chl['temp_c']}°C ({chl['temp_f']}°F), {chl['cond_en']}. "
+        f"Argentina/Brazil/Uruguay: {tzs['argentina']['time_12']} · Venezuela/Bolivia: {tzs['venezuela']['time_12']}."
     )
-    secs.append({"title": "🌤️ Clima en Vivo" if es else "🌤️ Live Weather", "lines": [w_line]})
-    sources.append(f"Open-Meteo Weather · {w.get('as_of')}")
+    secs.append({"title": "🌤️ Clima y Horas en Sudamérica" if es else "🌤️ Weather & South America Clocks", "lines": [w_line]})
+    sources.append(f"Open-Meteo Weather & World Clocks · {w.get('as_of')}")
 
     b = apps.get("building")
     lines = []

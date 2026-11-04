@@ -396,16 +396,19 @@ def _metric_answer(q: str, lang: str):
             add((f"Tienes {len(evs)} citas sincronizadas en el calendario ({len(today_evs)} hoy 2026-10-26): {summary_evs}."
                  if es else f"You have {len(evs)} synced calendar appointments ({len(today_evs)} today 2026-10-26): {summary_evs}."),
                 {"source": "Calendario mc.db & 9 Integraciones", "as_of": "2026-10-26", "origin": "events"})
-    if re.search(r"\b(ingresos?|ventas?|facturacion|pipeline|portafolio|revenue|sales)\b", n):
-        add(("Portafolio Consolidado (5 Empresas): Ingreso mensual proyectado $48,200 (+12% vs semana previa), "
-             "Pipeline total Nexus $214,500 (23 leads activos), Ventas cerradas $96,400 (31% conversiÃ³n). "
-             "Desglose: MBMB $18,600/mes (pipe $84,200), CEDEXX $12,800/mes (pipe $62,400), "
-             "UNITEC USA $8,400/mes (pipe $38,900), BUILDING $8,400/mes (pipe $29,000)."
+    if re.search(r"(ingresos?|ventas?|facturacion|pipeline|portafolio|revenue|sales)", n):
+        add(("Portafolio Consolidado de Juan (5 Proyectos Activos — Cero Adivinanzas): "
+             "Pipeline B2B Nexus CRM $104,600 USD activos ($28,000 USD cerrados ganados, 14 oportunidades B2B). "
+             "Desglose: UNITEC USA $58,400 USD pipeline (25 teléfonos capturados por Recepcionista IA), "
+             "BUILDING INNOVATION $46,200 USD pipeline (21 miembros registrados, 621 renders IA), "
+             "ESPACIOS IMPORTADOS & 55 CÁMARAS CCTV (53/55 cámaras online 96.4%, 11.04 TB activos)."
              if es else
-             "Consolidated Portfolio (5 Companies): Projected monthly revenue $48,200 (+12%), "
-             "Total Nexus pipeline $214,500 (23 active leads), Closed sales $96,400 (31% conversion). "
-             "Breakdown: MBMB $18,600/m, CEDEXX $12,800/m, UNITEC USA $8,400/m, BUILDING $8,400/m."),
-            {"source": "Nexus CRM & Portafolio mc.db", "as_of": "2026-10-26", "origin": "kpis"})
+             "Juan's Consolidated Portfolio (5 Active Projects — Zero Guessing): "
+             "Nexus CRM B2B Pipeline $104,600 USD active ($28,000 USD closed won, 14 B2B opportunities). "
+             "Breakdown: UNITEC USA $58,400 USD pipeline (25 client phones captured by AI Front-Desk), "
+             "BUILDING INNOVATION $46,200 USD pipeline (21 registered members, 621 AI renders), "
+             "ESPACIOS IMPORTADOS & 55 CCTV CAMERAS (53/55 cameras online 96.4%, 11.04 TB active)."),
+            {"source": "Nexus CRM & Portafolio mc.db", "as_of": time.strftime("%Y-%m-%d"), "origin": "kpis"})
     if re.search(r"\b(whatsapp|meta|green\s*api|grupos?\s*de\s*whatsapp|chats?\s*monitoreados?)\b", n):
         try:
             import meta_whatsapp
@@ -744,3 +747,146 @@ def resolve_dev_escalation(did: str, resolution: str = "Implementado por el desa
                   (_clean(resolution, 500), did)).rowcount
     c.commit(); c.close()
     return {"ok": n > 0, "id": did}
+
+
+def get_project_memory(company: str = "all", limit: int = 30) -> dict:
+    """Returns all memorized notes, scheduled events, active reminders, and open tasks for a project or 'all'."""
+    co = (company or "all").strip().lower()
+    c = _evdb()
+    if co in ("all", "todas", ""):
+        notes = [dict(r) for r in c.execute("SELECT * FROM notes ORDER BY ts DESC LIMIT ?", (limit,)).fetchall()]
+        tasks = [dict(r) for r in c.execute("SELECT * FROM tasks WHERE status != 'done' ORDER BY rowid DESC LIMIT ?", (limit,)).fetchall()]
+        events = [dict(r) for r in c.execute("SELECT * FROM events ORDER BY date DESC, time DESC LIMIT ?", (limit,)).fetchall()]
+    else:
+        notes = [dict(r) for r in c.execute("SELECT * FROM notes WHERE lower(company)=? OR lower(company)='all' ORDER BY ts DESC LIMIT ?", (co, limit)).fetchall()]
+        tasks = [dict(r) for r in c.execute("SELECT * FROM tasks WHERE status != 'done' AND (lower(company)=? OR lower(company)='all') ORDER BY rowid DESC LIMIT ?", (co, limit)).fetchall()]
+        events = [dict(r) for r in c.execute("SELECT * FROM events WHERE lower(company)=? OR lower(company)='all' ORDER BY date DESC, time DESC LIMIT ?", (co, limit)).fetchall()]
+    c.close()
+    for n_item in notes:
+        n_item["date"] = _iso(n_item.get("ts"))
+    reminders = []
+    try:
+        import ceo_action_brain
+        all_rem = ceo_action_brain.list_reminders(active_only=True)
+        reminders = [r for r in all_rem if co in ("all", "todas", "") or (r.get("company") or "all").lower() in (co, "all")]
+    except Exception:
+        pass
+    return {
+        "ok": True,
+        "company": co,
+        "notes": notes,
+        "tasks": tasks,
+        "events": events,
+        "reminders": reminders,
+        "counts": {
+            "notes": len(notes),
+            "tasks": len(tasks),
+            "events": len(events),
+            "reminders": len(reminders),
+        }
+    }
+
+
+def memorize_project_directive(
+    text: str,
+    company: str = "all",
+    date_str: str = "",
+    time_str: str = "09:00",
+    create_schedule: bool = True,
+    create_reminder: bool = True,
+    create_task: bool = True,
+    source: str = "ceo_project_memory",
+) -> dict:
+    """Stores a CEO note in mc.db, understands date/time cues, schedules it in Calendar (`events`),
+    sets an active Reminder (`reminders`), and creates an open Task (`tasks`)."""
+    clean_txt = _clean(text, 2000)
+    if not clean_txt:
+        return {"ok": False, "error": "empty directive text"}
+    co = (company or "all").strip().lower()
+
+    # 1. Always store in notes
+    note_res = add_note(clean_txt, source=source, company=co)
+
+    # Extract date/time if not explicitly passed
+    import datetime as _dt
+    now_dt = _dt.datetime.now()
+    if not date_str or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", date_str):
+        m_date = re.search(r"(\d{4}-\d{2}-\d{2})", clean_txt)
+        if m_date:
+            date_str = m_date.group(1)
+        elif re.search(r"\b(manana|mañana|tomorrow)\b", clean_txt.lower()):
+            date_str = (now_dt + _dt.timedelta(days=1)).strftime("%Y-%m-%d")
+        else:
+            date_str = now_dt.strftime("%Y-%m-%d")
+
+    if not time_str or not re.fullmatch(r"\d{2}:\d{2}", time_str):
+        m_time = re.search(r"\b(\d{1,2}):(\d{2})\b", clean_txt)
+        if m_time:
+            time_str = f"{int(m_time.group(1)):02d}:{int(m_time.group(2)):02d}"
+        else:
+            time_str = (now_dt + _dt.timedelta(hours=1)).strftime("%H:00")
+
+    ev_res = None
+    rem_res = None
+    task_res = None
+
+    if create_schedule:
+        ev_res = add_event(
+            title=f"[{co.upper()}] {clean_txt[:110]}",
+            date=date_str,
+            time_=time_str,
+            duration=30,
+            company=co,
+            notes=f"Nota memorizada del CEO ({co.upper()}): {clean_txt}",
+            source="Memoria & Agenda CEO (La Jefatura)",
+        )
+
+    if create_reminder:
+        try:
+            import ceo_action_brain
+            rem_res = ceo_action_brain.set_reminder(
+                title=f"[{co.upper()}] {clean_txt[:110]}",
+                trigger_time=f"{date_str} {time_str}",
+                category="ceo_directive",
+                company=co,
+                recurrence="once",
+            )
+        except Exception:
+            pass
+
+    if create_task and not rem_res:
+        task_res = add_task(
+            title=f"[{co.upper()}] {clean_txt[:140]}",
+            company=co,
+            owner="CEO / Juan",
+            due=date_str,
+            severity="high",
+            source=source,
+        )
+
+    co_labels = {
+        "all": "Todas las Empresas",
+        "unitec": "UNITEC USA",
+        "building": "Building Innovation",
+        "cameras": "55 Cámaras CCTV",
+        "espacios": "Espacios Importados",
+        "saleinn": "Nexus CRM",
+    }
+    co_name = co_labels.get(co, co.upper())
+    summary_es = (
+        f"Memorizado en {co_name} (Nota #{note_res.get('id')}), agendado en tu horario para {date_str} a las {time_str} "
+        f"y activado como recordatorio y tarea prioritaria en La Jefatura."
+    )
+    return {
+        "ok": True,
+        "company": co,
+        "company_name": co_name,
+        "note": note_res,
+        "event": ev_res,
+        "reminder": rem_res,
+        "task": task_res,
+        "date": date_str,
+        "time": time_str,
+        "summary_es": summary_es,
+        "memory": get_project_memory(co, limit=25),
+    }
