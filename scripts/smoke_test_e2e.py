@@ -104,10 +104,18 @@ def main():
     db_p = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "mc.db")
     if os.path.exists(db_p):
         with sqlite3.connect(db_p) as conn:
-            conn.execute("DELETE FROM notes WHERE body LIKE '%Smoke Test CTO%'")
-            conn.execute("DELETE FROM tasks WHERE titulo LIKE '%Smoke Test CTO%'")
-            conn.execute("DELETE FROM events WHERE title LIKE '%Smoke Test CTO%'")
-            conn.execute("DELETE FROM reminders WHERE title LIKE '%Smoke Test CTO%'")
+            for sql in (
+                "DELETE FROM notes WHERE text LIKE '%Smoke Test CTO%'",
+                "DELETE FROM tasks WHERE titulo LIKE '%Smoke Test CTO%'",
+                "DELETE FROM tasks WHERE title LIKE '%Smoke Test CTO%'",
+                "DELETE FROM events WHERE title LIKE '%Smoke Test CTO%'",
+                "DELETE FROM ceo_reminders WHERE text LIKE '%Smoke Test CTO%'",
+                "DELETE FROM ceo_reminders WHERE title LIKE '%Smoke Test CTO%'",
+            ):
+                try:
+                    conn.execute(sql)
+                except Exception:
+                    pass
             conn.commit()
 
     # 6. Grounded Q&A & Voice Command Execution (Zero Guessing)
