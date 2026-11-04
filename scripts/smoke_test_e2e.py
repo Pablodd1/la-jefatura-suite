@@ -59,11 +59,14 @@ def main():
     check("1f. World Timezones & Weather Strip (#ljWorldTimeWeatherStrip)", 'id="ljWorldTimeWeatherStrip"' in html)
     check("1g. CTO Text & Graphic Analytics Boxes present", 'id="ctoTextAnalyticsBox"' in html and 'id="ctoGraphicAnalyticsBox"' in html)
     check("1h. Voice Toggle Stop Handler (toggleOrStopVoiceBrief)", "toggleOrStopVoiceBrief()" in html)
+    check("1i. Master Control Voice & Chat Bar (#mcVoiceChatBarSection) present", 'id="mcVoiceChatBarSection"' in html and 'id="masterControlChatInput"' in html)
+    check("1j. Master Functions Catalog Card (#masterFunctionsCatalogCard) present", 'id="masterFunctionsCatalogCard"' in html)
 
     # 2. Widget JS Voice Toggle Check
     with urllib.request.urlopen(BASE + "/widgets/lajefatura-widget.js", timeout=10) as r:
         wjs = r.read().decode("utf-8")
     check("2. Widget exposes window.LJ.isSpeaking & click-to-stop", "window.LJ.isSpeaking" in wjs and "if (state.speaking)" in wjs)
+    check("2b. Widget exposes window.LJ.startMic & window.LJ.openChat", "window.LJ.startMic" in wjs and "window.LJ.openChat" in wjs)
 
     # 3. Live Brief, Weather (Miami, Colombia, Chile) & South America Timezones
     brief = get_json("/api/jefesito/brief?lang=es")
@@ -118,11 +121,40 @@ def main():
                     pass
             conn.commit()
 
-    # 6. Grounded Q&A & Voice Command Execution (Zero Guessing)
+    # 6. Grounded Q&A, Close-Word Function Catalog, Notes, Google Calendar Sync & Email Reminders
+    cat_res = get_json("/api/functions/catalog?q=cam")
+    check("6a. /api/functions/catalog returns functions & matches 'cam'", cat_res.get("ok") is True and cat_res.get("count", 0) >= 20 and (cat_res.get("matched") or {}).get("fn", {}).get("id") == "proj_cameras", f"count={cat_res.get('count')}")
+    cw_cam = post_json("/api/voice/command", {"command": "abrir cam", "lang": "es"})
+    check("6b. Close-word voice command 'abrir cam' selects cameras & explains how it works", (cw_cam.get("ui") or {}).get("select_company") == "cameras" and "Cómo funciona" in cw_cam.get("reply", ""), cw_cam.get("reply", "")[:100])
+    cw_uni = post_json("/api/voice/command", {"command": "ir a uni", "lang": "es"})
+    check("6c. Close-word voice command 'ir a uni' selects UNITEC USA", (cw_uni.get("ui") or {}).get("select_company") == "unitec", cw_uni.get("reply", "")[:100])
+    v_note = post_json("/api/voice/command", {"command": "anota Smoke Test CTO revisar inventario WPC en Miami", "lang": "es"})
+    check("6d. Chatbot 'anota ...' saves note in mc.db", v_note.get("action") == "save_note" and v_note.get("ok") is True, v_note.get("reply", ""))
+    v_gcal = post_json("/api/voice/command", {"command": "agendar cita Smoke Test CTO reunión con Juan mañana a las 3pm", "lang": "es"})
+    check("6e. Chatbot schedules appointment + real-time Google Calendar sync", v_gcal.get("action") == "schedule_event" and "calendar.google.com" in str((v_gcal.get("ui") or {}).get("gcal_template_url", "")), v_gcal.get("reply", "")[:110])
+    v_emrem = post_json("/api/voice/command", {"command": "recordatorio por correo Smoke Test CTO confirmar despacho UNITEC mañana a las 9am", "lang": "es"})
+    check("6f. Chatbot creates & dispatches Email Reminder", v_emrem.get("action") == "email_reminder" and "mail.google.com" in str((v_emrem.get("ui") or {}).get("gmail_compose_url", "")), v_emrem.get("reply", "")[:110])
     ask_cam = get_json("/api/ask?lang=es&q=" + urllib.parse.quote("cuántas cámaras están en vivo"))
-    check("6a. Grounded Q&A answers 53/55 cameras with source", "53" in ask_cam.get("answer", "") and ask_cam.get("grounded") is True, ask_cam.get("answer", "")[:100])
+    check("6g. Grounded Q&A answers 53/55 cameras with source", "53" in ask_cam.get("answer", "") and ask_cam.get("grounded") is True, ask_cam.get("answer", "")[:100])
     v_cmd = post_json("/api/voice/command", {"command": "cómo van las empresas", "lang": "es"})
-    check("6b. Voice command 'cómo van las empresas'", v_cmd.get("ok") is True and len(v_cmd.get("reply", "")) > 40, v_cmd.get("reply", "")[:100])
+    check("6h. Voice command 'cómo van las empresas'", v_cmd.get("ok") is True and len(v_cmd.get("reply", "")) > 40, v_cmd.get("reply", "")[:100])
+
+    # Clean up any Smoke Test CTO rows created during step 5 & 6
+    if os.path.exists(db_p):
+        with sqlite3.connect(db_p) as conn:
+            for sql in (
+                "DELETE FROM notes WHERE text LIKE '%Smoke Test CTO%'",
+                "DELETE FROM tasks WHERE titulo LIKE '%Smoke Test CTO%'",
+                "DELETE FROM tasks WHERE title LIKE '%Smoke Test CTO%'",
+                "DELETE FROM events WHERE title LIKE '%Smoke Test CTO%'",
+                "DELETE FROM reminders WHERE title LIKE '%Smoke Test CTO%'",
+                "DELETE FROM ceo_reminders WHERE text LIKE '%Smoke Test CTO%'",
+            ):
+                try:
+                    conn.execute(sql)
+                except Exception:
+                    pass
+            conn.commit()
 
     # 7. Colombian Neural TTS Endpoint
     with urllib.request.urlopen(BASE + "/api/tts?lang=es&text=" + urllib.parse.quote("Resumen ejecutivo listo"), timeout=15) as r:

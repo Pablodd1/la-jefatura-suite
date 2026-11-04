@@ -597,6 +597,47 @@
 <!-- El Jefesito: daily greeting / day summary (spoken on open unless stopped) -->
 <div id="jfGreeting"></div>
 
+<!-- ==================== MASTER CONTROL VOICE & CHAT COMMAND BAR (ALWAYS ACCESSIBLE) ==================== -->
+<section id="mcVoiceChatBarSection" style="max-width:1520px;margin:12px auto 0;padding:0 22px">
+  <div class="card" style="border:2px solid rgba(16,185,129,.48);background:linear-gradient(145deg,rgba(16,185,129,.09),rgba(205,182,140,.08));padding:14px 18px;border-radius:18px;box-shadow:0 16px 40px rgba(0,0,0,.32)">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span class="tag ok" style="font-size:10.5px;font-weight:900">🎙️💬 CONTROL MAESTRO POR VOZ Y CHAT</span>
+        <strong style="font-size:14px;color:var(--txt)">Habla o escribe cualquier orden, palabra corta/cercana, nota, cita en Google Calendar o recordatorio por correo</strong>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <button type="button" class="btn ghost sm" onclick="toggleMasterFunctionsCatalog()" style="font-weight:800;border-color:rgba(205,182,140,.5)">📖 Catálogo de Todas las Funciones y Cómo Funcionan</button>
+        <button type="button" class="btn ghost sm" onclick="window.LJ && window.LJ.openChat && window.LJ.openChat(true)" style="font-weight:800">💬 Abrir Panel Chatbot</button>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:auto 1fr auto auto;gap:8px;align-items:center">
+      <button type="button" id="mcVoiceMicBtn" class="btn sm" onclick="window.LJ && window.LJ.startMic ? window.LJ.startMic(document.getElementById('masterControlChatInput')) : (window.LJSuper && window.LJSuper.toggleMic())" style="background:#10B981;color:#ffffff;border:0;font-weight:900;padding:11px 18px;border-radius:12px;font-size:12.5px;cursor:pointer;white-space:nowrap;box-shadow:0 6px 18px rgba(16,185,129,.35)">🎙️ HABLAR POR VOZ</button>
+      <input id="masterControlChatInput" class="inp" placeholder="Habla o escribe aquí: ej. «cam», «uni», «building», «bandeja», «periódico pdf», «nota: revisar WPC», «agenda cita mañana a las 3pm», «recordatorio por correo...»" style="width:100%;padding:11px 14px;font-size:13px;border-radius:12px;border:1px solid rgba(205,182,140,.45)" onkeydown="if(event.key==='Enter'){event.preventDefault();runMasterControlChatCommand();}">
+      <button type="button" id="mcSendCmdBtn" class="btn sm" onclick="runMasterControlChatCommand()" style="font-weight:900;padding:11px 20px;border-radius:12px;font-size:12.5px;white-space:nowrap">⚡ EJECUTAR</button>
+      <button type="button" class="btn sm lj-stop-voice-btn" onclick="window.stopAllBotVoice && window.stopAllBotVoice()" style="background:#EB5757;color:#fff;border:0;font-weight:900;padding:11px 14px;border-radius:12px;font-size:12px;white-space:nowrap">🛑 CALLAR</button>
+    </div>
+
+    <!-- Instant 1-Click Voice/Chat Command Shortcuts -->
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:9px;align-items:center">
+      <span class="muted" style="font-size:10.5px;font-weight:800">ACCESO RÁPIDO (PALABRAS CERCANAS):</span>
+      <button type="button" class="btn ghost sm" style="font-size:10.5px;padding:3px 9px" onclick="runMasterControlChatCommand('abrir cámaras')">📹 «cam» → 55 Cámaras</button>
+      <button type="button" class="btn ghost sm" style="font-size:10.5px;padding:3px 9px" onclick="runMasterControlChatCommand('cambiar a unitec')">🏢 «uni» → UNITEC USA</button>
+      <button type="button" class="btn ghost sm" style="font-size:10.5px;padding:3px 9px" onclick="runMasterControlChatCommand('cambiar a building')">🏗️ «bui» → BuildingApp</button>
+      <button type="button" class="btn ghost sm" style="font-size:10.5px;padding:3px 9px" onclick="runMasterControlChatCommand('cambiar a espacios')">🚢 «espacios» → Importados</button>
+      <button type="button" class="btn ghost sm" style="font-size:10.5px;padding:3px 9px" onclick="runMasterControlChatCommand('cambiar a nexus')">💼 «crm» → Nexus CRM</button>
+      <button type="button" class="btn ghost sm" style="font-size:10.5px;padding:3px 9px" onclick="runMasterControlChatCommand('abrir bandeja')">✉️ «bandeja» → Correos IA</button>
+      <button type="button" class="btn ghost sm" style="font-size:10.5px;padding:3px 9px" onclick="runMasterControlChatCommand('abrir periódico pdf')">📰 «periódico» → PDF 4 Págs</button>
+      <button type="button" class="btn ghost sm" style="font-size:10.5px;padding:3px 9px" onclick="prefillMasterControlChat('nota: ')">📝 + Nota</button>
+      <button type="button" class="btn ghost sm" style="font-size:10.5px;padding:3px 9px" onclick="prefillMasterControlChat('agendar cita mañana a las 10:00 ')">📅 + Cita Google Cal</button>
+      <button type="button" class="btn ghost sm" style="font-size:10.5px;padding:3px 9px" onclick="prefillMasterControlChat('recordatorio por correo mañana a las 09:00 ')">⏰ + Recordatorio Email</button>
+    </div>
+
+    <!-- Live Chatbot Response & Matched Function Card -->
+    <div id="masterControlChatFeedbackBox" style="display:none;margin-top:11px;padding:12px 15px;border-radius:14px;background:var(--inset);border:1px solid rgba(16,185,129,.45)"></div>
+  </div>
+</section>
+
 <!-- ==================== UNIVERSAL CTO & CEO PROJECT DEEP-DIVE (TEXT + GRAPHICS + TOOLS + MEMORY VAULT) ==================== -->
 <section id="ljCtoExecutiveHub" style="max-width:1520px;margin:14px auto 0;padding:0 22px">
   <div class="card" style="border:1px solid rgba(205,182,140,.42);padding:18px 20px;margin-bottom:14px">
@@ -663,6 +704,21 @@
         <button type="button" class="btn sm" onclick="submitProjectMemoryDirective()" style="white-space:nowrap;font-weight:900">🧠 Memorizar, Agendar y Recordar</button>
       </div>
       <div id="ctoMemoryItemsGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px"></div>
+    </div>
+
+    <!-- Master Functions, Menus & Links Catalog (What Each Function Does, How It Works & Close Words) -->
+    <div id="masterFunctionsCatalogCard" style="margin-top:14px;background:var(--inset);border:1px solid rgba(16,185,129,.38);border-radius:16px;padding:14px 16px">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px">
+        <div>
+          <span class="tag ok">CATÁLOGO DE FUNCIONES, MENÚS Y ENLACES</span>
+          <b style="margin-left:8px;font-size:13.5px">📖 Qué Hace Cada Función, Cómo Funciona y Palabras Cercanas de Voz/Chat</b>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <input id="fnCatalogFilterInput" class="inp" placeholder="Buscar función o palabra cercana (ej: cam, uni, cita, pdf, correo)…" style="width:260px;padding:6px 10px;font-size:11.5px" oninput="filterMasterFunctionsCatalog(this.value)">
+          <button type="button" class="btn ghost sm" onclick="toggleMasterFunctionsCatalogBody()" id="fnCatalogToggleBtn">Ocultar / Mostrar Catálogo</button>
+        </div>
+      </div>
+      <div id="masterFunctionsCatalogGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:10px;max-height:420px;overflow-y:auto;padding-right:4px"></div>
     </div>
   </div>
 </section>
@@ -3911,11 +3967,203 @@ window.LJ_applyUi = function (ui) {
   }
   if (ui.set_name) { PREFS.ceo_name = ui.set_name; renderGreeting(false); }
   if (ui.show_brief || ui.refresh_brief) renderGreeting(false);
-  if (ui.open_url) window.open(ui.open_url, '_blank');
-  if (ui.refresh_calendar && window.LJCal) window.LJCal.load();
-  if (ui.refresh_dev_escalations && window.LJSuper) window.LJSuper.loadDevEscalations();
   if (ui.open_tab) switchTab(ui.open_tab);
+  if (ui.select_company && typeof selectCompanyFromMenu === 'function') {
+    selectCompanyFromMenu(ui.select_company);
+  }
+  if (ui.set_routine_slot && typeof setRoutineSlot === 'function') {
+    setRoutineSlot(ui.set_routine_slot);
+  }
+  if (ui.select_date && window.LJCal && typeof window.LJCal.selectDate === 'function') {
+    window.LJCal.selectDate(ui.select_date);
+  }
+  if (ui.refresh_calendar && window.LJCal) window.LJCal.load();
+  if (ui.open_agenda_drawer && window.LJCal && typeof window.LJCal.openDrawer === 'function') {
+    window.LJCal.openDrawer(true);
+  }
+  if (ui.refresh_memory) {
+    if (typeof loadProjectMemoryBox === 'function') loadProjectMemoryBox();
+    if (typeof loadKnowledgeVault === 'function') loadKnowledgeVault(false);
+  }
+  if (ui.refresh_dev_escalations && window.LJSuper) window.LJSuper.loadDevEscalations();
+  if (ui.open_catalog) {
+    const cGrid = document.getElementById('masterFunctionsCatalogGrid');
+    if (cGrid) cGrid.style.display = 'grid';
+  }
+  if (ui.trigger_fn) {
+    if (ui.trigger_fn === 'syncAllLiveNow' && typeof syncAllLiveNow === 'function') syncAllLiveNow();
+    else if (ui.trigger_fn === 'dispatchTwiceDailyBriefNow' && typeof dispatchTwiceDailyBriefNow === 'function') dispatchTwiceDailyBriefNow();
+  }
+  if (ui.open_url) {
+    try { window.open(ui.open_url, '_blank'); } catch (e) {}
+  }
+  if (ui.scroll_to) {
+    setTimeout(() => {
+      const targetEl = document.getElementById(ui.scroll_to);
+      if (targetEl) {
+        try { targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (e) {}
+        targetEl.style.outline = '2px solid #10b981';
+        setTimeout(() => { targetEl.style.outline = ''; }, 2200);
+      }
+    }, 120);
+  }
 };
+
+window.MASTER_FUNCTIONS_LIST = [];
+
+function renderMasterFunctionsCatalog(list) {
+  const grid = document.getElementById('masterFunctionsCatalogGrid');
+  if (!grid) return;
+  const es = (typeof lang === 'undefined' || lang !== 'en');
+  if (!list || !list.length) {
+    grid.innerHTML = '<div class="muted" style="padding:8px">No se encontraron funciones para ese filtro.</div>';
+    return;
+  }
+  grid.innerHTML = list.map(f => {
+    const title = es ? f.title_es : f.title_en;
+    const cat = es ? f.category_es : f.category_en;
+    const what = es ? f.what_it_does_es : f.what_it_does_en;
+    const how = es ? f.how_it_works_es : f.how_it_works_en;
+    const cw = (f.close_words || []).slice(0, 8).join(', ');
+    const sampleCmd = (f.voice_examples_es && f.voice_examples_es[0]) ? f.voice_examples_es[0].replace(/'/g, "\'") : title.replace(/'/g, "\'");
+    return `<div style="background:rgba(255,255,255,.04);border:1px solid var(--hair);border-radius:12px;padding:11px 13px;display:flex;flex-direction:column;justify-content:space-between;gap:6px">
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:4px">
+          <span class="tag ok" style="font-size:9px">${cat}</span>
+          <code style="font-size:9.5px;color:var(--acc)">${f.id}</code>
+        </div>
+        <b style="font-size:12.5px;color:var(--txt);display:block;margin-bottom:4px">${title}</b>
+        <div style="font-size:11px;line-height:1.4;margin-bottom:4px"><b>Qué hace:</b> ${what}</div>
+        <div class="muted" style="font-size:10.5px;line-height:1.38;margin-bottom:5px"><b>Cómo funciona:</b> ${how}</div>
+        <div style="font-size:10px;color:#10b981"><b>🗣️ Palabras cercanas:</b> ${cw}</div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-top:4px;padding-top:6px;border-top:1px solid var(--hair)">
+        <button type="button" class="btn sm" style="font-size:10.5px;padding:4px 10px" onclick="runMasterControlChatCommand('${sampleCmd}')">⚡ Ejecutar Función</button>
+        ${f.link ? `<a href="${f.link}" target="${f.link.startsWith('http') || f.link.endsWith('.pdf') || f.link.endsWith('.ics') ? '_blank' : '_self'}" style="font-size:10.5px;color:var(--acc);font-weight:700;text-decoration:none">🔗 Enlace Directo →</a>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function loadMasterFunctionsCatalog() {
+  fetch('/api/functions/catalog')
+    .then(r => r.json())
+    .then(d => {
+      if (d && d.functions) {
+        window.MASTER_FUNCTIONS_LIST = d.functions;
+        renderMasterFunctionsCatalog(d.functions);
+      }
+    })
+    .catch(() => {});
+}
+
+function filterMasterFunctionsCatalog(q) {
+  const nq = (q || '').toLowerCase().trim();
+  if (!nq) {
+    renderMasterFunctionsCatalog(window.MASTER_FUNCTIONS_LIST);
+    return;
+  }
+  const filtered = (window.MASTER_FUNCTIONS_LIST || []).filter(f => {
+    const blob = [f.title_es, f.title_en, f.what_it_does_es, f.how_it_works_es, ...(f.close_words || [])].join(' ').toLowerCase();
+    return blob.includes(nq);
+  });
+  renderMasterFunctionsCatalog(filtered);
+}
+
+function toggleMasterFunctionsCatalog() {
+  const card = document.getElementById('masterFunctionsCatalogCard');
+  const grid = document.getElementById('masterFunctionsCatalogGrid');
+  if (grid) grid.style.display = 'grid';
+  if (card) {
+    try { card.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {}
+  }
+}
+
+function toggleMasterFunctionsCatalogBody() {
+  const grid = document.getElementById('masterFunctionsCatalogGrid');
+  if (!grid) return;
+  grid.style.display = (grid.style.display === 'none') ? 'grid' : 'none';
+}
+
+function prefillMasterControlChat(prefix) {
+  const inp = document.getElementById('masterControlChatInput');
+  if (!inp) return;
+  inp.value = prefix;
+  inp.focus();
+}
+
+function updateMasterControlChatFeedback(cmdText, d) {
+  const box = document.getElementById('masterControlChatFeedbackBox');
+  if (!box || !d) return;
+  box.style.display = 'block';
+  const mf = d.matched_function;
+  const ui = d.ui || {};
+  let mfHtml = '';
+  if (mf) {
+    mfHtml = `<div style="margin-top:8px;padding:9px 12px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(205,182,140,.35);font-size:11.5px;line-height:1.45">
+      <div><span class="tag ok" style="font-size:9.5px">FUNCIÓN IDENTIFICADA</span> <b style="margin-left:6px;color:var(--acc)">${mf.title_es}</b></div>
+      <div style="margin-top:4px"><b>Qué hace:</b> ${mf.what_it_does_es}</div>
+      <div class="muted" style="margin-top:2px"><b>Cómo funciona:</b> ${mf.how_it_works_es}</div>
+      <div style="margin-top:3px;font-size:10.5px;color:#10b981"><b>Palabras cercanas activas:</b> ${(mf.close_words || []).slice(0, 10).join(', ')}</div>
+    </div>`;
+  }
+  const actionLinks = [];
+  if (ui.gcal_template_url) {
+    actionLinks.push(`<a href="${ui.gcal_template_url}" target="_blank" rel="noopener" class="btn sm" style="background:#10b981;color:#fff;text-decoration:none;font-size:11px">📅 Confirmar / Ver en Google Calendar En Vivo</a>`);
+  }
+  if (ui.gmail_compose_url) {
+    actionLinks.push(`<a href="${ui.gmail_compose_url}" target="_blank" rel="noopener" class="btn sm" style="background:#2563eb;color:#fff;text-decoration:none;font-size:11px">✉️ Abrir Recordatorio en Gmail</a>`);
+  }
+  if (ui.open_url) {
+    actionLinks.push(`<a href="${ui.open_url}" target="_blank" rel="noopener" class="btn ghost sm" style="text-decoration:none;font-size:11px">🔗 Abrir Enlace / Reporte PDF</a>`);
+  }
+  box.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap">
+      <div style="flex:1;min-width:260px">
+        <div style="font-size:11px;color:var(--dim);margin-bottom:3px">🗣️ Tu orden: <b>«${cmdText}»</b> · Acción: <span class="tag ok" style="font-size:9.5px">${(d.action || 'ejecutado').toUpperCase()}</span></div>
+        <div style="font-size:13px;font-weight:700;line-height:1.45;color:var(--txt)">🤖 La Jefatura: ${d.reply || 'Orden ejecutada.'}</div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+        ${actionLinks.join('')}
+        <button type="button" class="btn ghost sm" onclick="document.getElementById('masterControlChatFeedbackBox').style.display='none'">✕</button>
+      </div>
+    </div>
+    ${mfHtml}
+  `;
+}
+
+function runMasterControlChatCommand(cmdOverride) {
+  const inp = document.getElementById('masterControlChatInput');
+  const raw = (cmdOverride !== undefined ? cmdOverride : (inp ? inp.value : '')).trim();
+  if (!raw) return;
+  if (inp && cmdOverride === undefined) inp.value = '';
+  if (window.LJ && typeof window.LJ.execute === 'function') {
+    window.LJ.execute(raw, 'text');
+    return;
+  }
+  fetch('/api/voice/command', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ command: raw, lang: typeof lang !== 'undefined' ? lang : 'es', channel: 'text' })
+  })
+    .then(r => r.json())
+    .then(d => {
+      if (d.ui && typeof window.LJ_applyUi === 'function') window.LJ_applyUi(d.ui);
+      updateMasterControlChatFeedback(raw, d);
+      if (window.LJ && typeof window.LJ.speak === 'function') window.LJ.speak(d.reply || '', false);
+    })
+    .catch(() => {});
+}
+
+function syncAllLiveNow() {
+  if (window.LJCal && typeof window.LJCal.syncNow === 'function') window.LJCal.syncNow();
+  if (typeof syncUnitecLive === 'function') syncUnitecLive(true);
+  if (typeof syncBuildingAppLive === 'function') syncBuildingAppLive(true);
+  if (typeof syncHikConnectLive === 'function') syncHikConnectLive(true);
+  if (typeof loadProjectMemoryBox === 'function') loadProjectMemoryBox();
+}
+
+loadMasterFunctionsCatalog();
 (async function initJefesito() {
   const hasExplicitLang = /[?&]lang=(en|es)\b/i.test(location.search) || !!(function(){ try { return localStorage.getItem('lj_lang'); } catch(e) { return null; } })();
   try { Object.assign(PREFS, await (await fetch('/api/prefs')).json()); } catch (e) {}
@@ -4034,7 +4282,7 @@ window.LJ_applyUi = function (ui) {
   const pad = n => String(n).padStart(2,'0');
   const iso = d => d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
   const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-  const today = new Date(2026, 9, 26); // Demo anchor date 2026-10-26
+  const today = new Date();
   let view = new Date(today.getFullYear(), today.getMonth(), 1), sel = iso(today), events = [], tasks = [], editingKey = null;
   const toast = m => { try { showToast(m); } catch(e) {} };
   const post = (u, b) => fetch(u, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(b)}).then(r => r.json());
@@ -4262,6 +4510,14 @@ window.LJ_applyUi = function (ui) {
     syncNow,
     openDrawer,
     addFromDock,
+    selectDate: dStr => {
+      if (dStr && /^\d{4}-\d{2}-\d{2}$/.test(dStr)) {
+        sel = dStr;
+        const [yy, mm] = dStr.split('-');
+        view = new Date(+yy, +mm - 1, 1);
+        load();
+      }
+    },
     stepMonth: delta => { view.setMonth(view.getMonth() + delta); render(); }
   };
 

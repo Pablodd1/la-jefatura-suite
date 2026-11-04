@@ -59,6 +59,7 @@ import unitec_ingest  # noqa: E402
 import voice_commands  # noqa: E402
 import ceo_action_brain  # noqa: E402
 import text_messaging  # noqa: E402
+import functions_catalog  # noqa: E402
 
 PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 8931
 SAMPLES = os.path.join(ROOT, "data", "samples")
@@ -300,6 +301,11 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
         elif path == "/api/ceo/project_memory":
             co = (qs.get("company") or ["all"])[0]
             self._send(200, knowledge_store.get_project_memory(company=co, limit=30))
+        elif path == "/api/functions/catalog":
+            q_match = (qs.get("q") or [""])[0].strip()
+            cat = functions_catalog.get_catalog()
+            matched = functions_catalog.match_function(q_match) if q_match else None
+            self._send(200, {"ok": True, "count": len(cat), "functions": cat, "matched": matched})
         elif path in ("/api/ga4/summary", "/api/ga4/live"):
             pid = (qs.get("property_id") or [""])[0]
             self._send(200, ga4_ingest.fetch_live_ga4(property_id_override=pid))
@@ -403,10 +409,19 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
         elif path == "/api/dev_escalations/resolve":
             self._send(200, knowledge_store.resolve_dev_escalation(body.get("id", ""), body.get("resolution", "Resuelto")))
         elif path == "/api/events":
-            r = knowledge_store.add_event(body.get("title", ""), body.get("date", ""), body.get("time", ""),
-                                          body.get("duration", 30), body.get("company", "all"),
-                                          body.get("notes", ""), body.get("source", "ui"))
-            self._send(200 if r["ok"] else 400, r)
+            sync_res = functions_catalog.sync_appointment_realtime(
+                title=body.get("title", ""),
+                date_str=body.get("date", ""),
+                time_str=body.get("time", "10:00"),
+                duration_min=int(body.get("duration", 30) or 30),
+                company=body.get("company", "all"),
+                notes=body.get("notes", ""),
+                send_email_invite=bool(body.get("send_email_invite", True)),
+            )
+            ev_rec = dict(sync_res.get("event") or {})
+            ev_rec["gcal_template_url"] = sync_res.get("gcal_template_url")
+            ev_rec["gcal_api_status"] = sync_res.get("gcal_api_status")
+            self._send(200 if ev_rec.get("ok") else 400, ev_rec)
         elif path == "/api/events/update":
             r = knowledge_store.update_event(body.get("id", ""), **{k: v for k, v in body.items() if k != "id"})
             self._send(200 if r["ok"] else 400, r)
@@ -544,6 +559,19 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
                 source=body.get("source", "ceo_project_memory"),
             )
             self._send(200 if res.get("ok") else 400, res)
+        elif path == "/api/ceo/email_reminder":
+            raw_txt = body.get("text") or body.get("title") or ""
+            parsed_dt = functions_catalog.parse_natural_datetime(raw_txt)
+            rem_res = functions_catalog.send_email_and_telegram_reminder(
+                title=body.get("title") or parsed_dt["title"],
+                date_str=body.get("date") or parsed_dt["date"],
+                time_str=body.get("time") or parsed_dt["time"],
+                company=body.get("company") or parsed_dt["company"],
+                to_email=body.get("to_email", ""),
+                notes=body.get("notes", ""),
+                create_db_row=True,
+            )
+            self._send(200 if rem_res.get("ok") else 400, rem_res)
         elif path == "/api/cameras/events":
             if not mc_auth.token_ok(self.headers.get("X-MC-Token", "")):
                 self._send(401, {"error": "X-MC-Token required"})
@@ -569,32 +597,56 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
         elif path == "/api/voice/command":
             cmd = body.get("command", "")
             lang = body.get("lang", "es")
+            v_res = voice_commands.execute(cmd, lang=lang, samples_dir=SAMPLES)
+            # Check if this is a multi-intent compound order (e.g. "agenda ..., redacta ... y recuérdame ...")
             action_res = ceo_action_brain.execute_ceo_chat(cmd, lang=lang)
-            if action_res.get("is_compound") or (action_res.get("intent") and action_res.get("intent") != "general_chat"):
-                intents_lbl = ", ".join(action_res.get("compound_intents") or [action_res.get("intent", "action")])
+            if action_res.get("is_compound"):
+                intents_lbl = ", ".join(action_res.get("compound_intents") or ["compound"])
+                ui_merged = dict(v_res.get("ui") or {})
+                ui_merged["refresh_calendar"] = True
+                ui_merged["refresh_memory"] = True
                 res = {
                     "ok": True,
-                    "action": "compound_execution" if action_res.get("is_compound") else action_res.get("intent"),
-                    "is_compound": bool(action_res.get("is_compound")),
+                    "action": "compound_execution",
+                    "is_compound": True,
                     "compound_intents": action_res.get("compound_intents", []),
                     "company": action_res.get("company", "all"),
-                    "reply": action_res.get("reply", "Acción ejecutada correctamente."),
+                    "reply": action_res.get("reply", v_res.get("reply", "Acción ejecutada correctamente.")),
                     "action_result": action_res.get("action_result"),
                     "actions_executed": action_res.get("actions_executed", []),
                     "inline_cards": action_res.get("inline_cards", []),
+                    "ui": ui_merged,
+                    "matched_function": v_res.get("matched_function"),
                     "sources": [f"mc.db ({intents_lbl})"],
+                    "grounded": True,
+                }
+            elif v_res.get("action") in (
+                "catalog_function", "switch_company", "open_tab", "schedule_event",
+                "email_reminder", "save_note", "save_task", "save_meeting", "save_email",
+                "control", "read_brief", "download_report", "sync_integrations",
+                "approve_draft", "draft_reply", "complete_task", "confirm_coffee",
+                "help", "explain_plans", "escalate_dev"
+            ) or (v_res.get("action") == "ask" and v_res.get("grounded")):
+                res = v_res
+            elif action_res.get("intent") and action_res.get("intent") not in ("general_chat", "unknown"):
+                ui_merged = dict(v_res.get("ui") or {})
+                ui_merged["refresh_calendar"] = True
+                ui_merged["refresh_memory"] = True
+                res = {
+                    "ok": True,
+                    "action": action_res.get("intent"),
+                    "company": action_res.get("company", "all"),
+                    "reply": action_res.get("reply", v_res.get("reply", "Acción ejecutada correctamente.")),
+                    "action_result": action_res.get("action_result"),
+                    "actions_executed": action_res.get("actions_executed", []),
+                    "inline_cards": action_res.get("inline_cards", []),
+                    "ui": ui_merged,
+                    "matched_function": v_res.get("matched_function"),
+                    "sources": [f"mc.db ({action_res.get('intent')})"],
+                    "grounded": True,
                 }
             else:
-                v_res = voice_commands.execute(cmd, lang=lang, samples_dir=SAMPLES)
-                if v_res.get("action") not in ("unknown", "switch_slot") or "mañana" not in cmd.lower():
-                    res = v_res
-                else:
-                    res = {
-                        "ok": True,
-                        "action": "chat",
-                        "reply": action_res.get("reply") or v_res.get("reply"),
-                        "sources": ["mc.db"],
-                    }
+                res = v_res
             jefesito.record(cmd, body.get("channel", "text"), res.get("action"), lang)
             self._send(200, res)
         else:

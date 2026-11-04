@@ -1,14 +1,13 @@
 """
-La Jefatura Suite — Headless & Grok 3.0 Voice Command Executor
+La Jefatura Suite — Headless & Grok 3.0 Voice Command Executor (`server/voice_commands.py`).
 
-The same grammar + DOM/profile-aware brain the browser widget parses, executable
-server-side so voice control works from ANY channel: console widget, Telegram
-voice notes (Whisper hook), or tenant web widgets.
+The same grammar + DOM/profile-aware brain + Close-Word Fuzzy Function Catalog the browser
+widget parses, executable server-side so voice and chat control work from ANY channel:
+Master Control bar, floating Jefesito chatbot, Minimalist Super Assistant, or Telegram.
 
-All actions hit real mc.db state (tasks, drafts, behavioral routines) or real
-generators (PDF), and every command returns a spoken/written `reply`.
-
-Self-test:  python3 server/voice_commands.py
+All actions hit real mc.db state (notes, tasks, events, reminders, drafts, behavioral routines),
+real-time Google Calendar sync, Email Reminders, and real PDF generators, and every command
+returns a spoken/written `reply` plus `ui` directives and `matched_function` metadata.
 """
 import json
 import os
@@ -66,7 +65,7 @@ def _reply(action, lang="es", **kw):
         R_EN = {
             "switch_company": f"Switching Mission Control view to {kw.get('company')}.",
             "open_tab": f"Opening the {kw.get('tab')} section on your screen.",
-            "download_report": "Generating and downloading the Executive PDF Report.",
+            "download_report": "Generating and opening the Executive PDF Report.",
             "complete_task": f"Task '{kw.get('task')}' marked as completed.",
             "read_brief": kw.get("brief", ""),
             "status_digest": kw.get("digest", ""),
@@ -86,7 +85,7 @@ def _reply(action, lang="es", **kw):
     R_ES = {
         "switch_company": f"Cambiando vista de Mission Control a {kw.get('company')}.",
         "open_tab": f"Abriendo la pestaña {kw.get('tab')} en pantalla.",
-        "download_report": "Generando el informe PDF. Te llega por Telegram y correo en unos segundos.",
+        "download_report": "Generando el informe PDF. Se abre en pantalla y queda listo para envío por Telegram y correo.",
         "complete_task": f"Tarea {kw.get('task')} marcada como completada.",
         "read_brief": kw.get("brief", ""),
         "status_digest": kw.get("digest", ""),
@@ -104,30 +103,66 @@ def _reply(action, lang="es", **kw):
     return R_ES.get(action, R_ES["unknown"])
 
 
+def _resolve_company_slug(raw_company: str) -> tuple[str, str]:
+    rc = (raw_company or "").lower().strip()
+    if any(k in rc for k in ("unitec", "unitek", "uni", "pvc", "wpc", "lamina")):
+        return "unitec", "UNITEC USA Design"
+    if any(k in rc for k in ("building", "bilding", "bui", "render", "gemini", "ga4")):
+        return "building", "Building Innovation"
+    if any(k in rc for k in ("camara", "cámara", "cam", "cctv", "hik", "video", "vigilancia", "55", "53")):
+        return "cameras", "55 Cámaras CCTV Hik-Connect"
+    if any(k in rc for k in ("espacio", "importado", "colombia", "muelle", "pick", "bodega", "contenedor", "aduana")):
+        return "espacios", "Espacios Importados"
+    if any(k in rc for k in ("nexus", "nex", "crm", "sale", "pipeline", "ventas")):
+        return "nexus", "Nexus CRM"
+    if any(k in rc for k in ("toda", "all", "portafolio", "global", "general")):
+        return "all", "Todas las Empresas"
+    return "all", raw_company or "Todas las Empresas"
+
+
 def parse(command: str, lang: str = "es") -> dict:
     t = command.strip()
     low = t.lower()
 
-    # ── Knowledge intents FIRST: their free text may contain words like «mañana» or «café»
-    # that would otherwise trigger routine/coffee commands. ──
+    # ── 1. Knowledge & Memory intents FIRST: their free text may contain words like «mañana» or «café» ──
     m = re.match(r"^(?:guardar|guarda|anotar|anota|agregar|agrega|a[ñn]adir|save|add|take|create|crear|crea)\s+"
                  r"(?:el\s+|un\s+|una\s+|a\s+|the\s+)?(?:resumen\s+(?:de\s+(?:la\s+)?)?reuni[oó]n|meeting\s+summary|"
                  r"summary\s+of\s+(?:the\s+)?meeting)\s*[:,\-]?\s*(.+)$", t, re.I)
     if m:
         return {"action": "save_meeting", "text": m.group(1).strip()}
+
     m = re.match(r"^(?:guardar|guarda|save|add)\s+(?:el\s+|un\s+|the\s+)?(?:resumen\s+(?:de\s+)?(?:correo|email)|"
                  r"email\s+summary)\s*[:,\-]?\s*(.+)$", t, re.I)
     if m:
         return {"action": "save_email", "text": m.group(1).strip()}
+
     m = re.match(r"^(?:guardar|guarda|anotar|anota|agregar|agrega|a[ñn]adir|save|add|take|crear|crea|create)\s+"
                  r"(?:una\s+|a\s+)?(?:nueva\s+|new\s+)?(?:nota|note)\s*[:,\-]?\s*(.+)$", t, re.I) \
-        or re.match(r"^(?:nota|note)\s*[:,\-]\s*(.+)$", t, re.I)
+        or re.match(r"^(?:nota|note|anota|anotar|memoriza|memorizar|apunta|apuntar)\s*[:,\-\s]\s*(.+)$", t, re.I)
     if m:
         return {"action": "save_note", "text": m.group(1).strip()}
-    # Schedule / add calendar appointment ("agendar cita: ...", "crear cita ...", "programar reunión ...")
-    m_ev = re.match(r"^(?:agendar|agenda|programar|programa|crear|crea|agregar|agrega|a[ñn]adir|schedule|book|add)\s+"
-                    r"(?:una\s+|a\s+)?(?:nueva\s+|new\s+)?(?:cita|reuni[oó]n|evento|appointment|meeting on calendar)\s*[:,-]?\s*(.+)$", t, re.I)
-    if m_ev:
+
+    # Email reminder ("recordatorio por correo...", "enviar recordatorio...", "recuérdame por email...", "manda recordatorio...")
+    m_em_rem = re.match(
+        r"^(?:por favor\s+)?(?:enviar|env[ií]a|mandar|manda|crear|crea|programar|programa|pon|poner|send|set)?\s*"
+        r"(?:un\s+|una\s+|el\s+)?(?:recordatorio\s+por\s+(?:correo|email)|alerta\s+por\s+(?:correo|email)|"
+        r"recu[eé]rdame\s+por\s+(?:correo|email)|email\s+reminder|recordatorio\s+al\s+correo|recordatorio)\s*[:,\-\s]\s*(.+)$",
+        t, re.I
+    )
+    if m_em_rem:
+        return {"action": "email_reminder", "text": m_em_rem.group(1).strip()}
+
+    # Schedule / add calendar appointment ("agendar cita: ...", "crear cita ...", "programar reunión ...", "agenda ...")
+    m_ev = re.match(
+        r"^(?:por favor\s+)?(?:agendar|agenda|programar|programa|crear|crea|agregar|agrega|a[ñn]adir|"
+        r"pon\s+en\s+el\s+calendario|poner\s+en\s+el\s+calendario|schedule|book|add)\s+"
+        r"(?:una\s+|un\s+|a\s+|la\s+|el\s+)?(?:nueva\s+|new\s+)?(?:cita|reuni[oó]n|evento|appointment|meeting on calendar|meeting)\s*[:,-]?\s*(.+)$",
+        t, re.I
+    ) or re.match(
+        r"^(?:por favor\s+)?(?:agendar|agenda|nueva\s+cita|cita)\s*[:,\-\s]\s*(.+)$",
+        t, re.I
+    )
+    if m_ev and not re.search(r"^(?:abrir|abre|ver|mostrar|open|show)\b", low):
         return {"action": "schedule_event", "text": m_ev.group(1).strip()}
 
     if re.search(r"\b(sincronizar|sincroniza|sync)\b.*\b(calendario|agenda|integraciones|apps|todo|all)\b", low):
@@ -146,17 +181,13 @@ def parse(command: str, lang: str = "es") -> dict:
         or re.match(r"^(?:recu[ée]rdame|remind me to)\s+(.+)$", t, re.I)
     if m:
         return {"action": "save_task", "text": m.group(1).strip()}
+
+    # Explicit search / Q&A queries
     if re.match(r"^(?:buscar|busca|search|find|encuentra|qu[eé] dijo|what did)\b", low):
         return {"action": "ask", "text": t}
     if re.search(r"\b(notas?|notes?|tareas?|tasks?|reuniones?|meetings?|correos? guardados?)\b", low) and \
             re.search(r"\b(qu[eé]|cu[aá]les|cu[aá]ntas?|lista|listar|lee|leer|read|list|show|what|how many|dame|muestra)\b", low) \
             and not re.search(r"^(?:ir a|abrir|abre|open|go to)\b", low):
-        return {"action": "ask", "text": t}
-    if re.search(r"\b(miembros|members|conversaciones|conversations|abandono|abandonment|contactos|contacts|"
-                 r"alertas|alerts|generaciones|generations|renders|costo|cost|clima|tiempo|weather|temperatura|"
-                 r"lluvia|building|buildingapp|unitec|c[aá]maras?|cameras?|hik|espacios|pick|ideo|muelles|"
-                 r"grabador|discos|ga4|analytics|tr[aá]fico|empresas|companies|nexus|pipeline|ventas|ingresos|"
-                 r"citas|agenda|calendario)\b", low) and not re.search(r"^(?:ir a|abrir|abre|open|go to|cambiar a|switch to)\b", low):
         return {"action": "ask", "text": t}
 
     # Tab navigation commands
@@ -180,9 +211,26 @@ def parse(command: str, lang: str = "es") -> dict:
             return {"action": "open_tab", "tab": "comms"}
         return {"action": "open_tab", "tab": "overview"}
 
-    sw = re.match(r"^(?:cambiar a|ir a|switch to|muestra(?:me)?|show(?: me)?)\s+(.+)$", t, re.I)
+    sw = re.match(r"^(?:cambiar a|cambia a|ir a|switch to|muestra(?:me)?|show(?: me)?)\s+(.+)$", t, re.I)
     if sw:
         return {"action": "switch_company", "company": sw.group(1).strip()}
+
+    # Close-word / fuzzy navigation or function catalog request when user says a navigation verb or function name
+    try:
+        import functions_catalog
+        if re.search(r"^(?:ir a|abrir|abre|open|go to|ver|mostrar|muestrame|muestra|show|pon|poner|llevar a|llevame a|acceder|entrar|catalogo|catálogo)\b", low):
+            m_fn = functions_catalog.match_function(t)
+            if m_fn:
+                return {"action": "catalog_function", "match": m_fn}
+    except Exception:
+        pass
+
+    if re.search(r"\b(miembros|members|conversaciones|conversations|abandono|abandonment|contactos|contacts|"
+                 r"alertas|alerts|generaciones|generations|renders|costo|cost|clima|tiempo|weather|temperatura|"
+                 r"lluvia|building|buildingapp|unitec|c[aá]maras?|cameras?|hik|espacios|pick|ideo|muelles|"
+                 r"grabador|discos|ga4|analytics|tr[aá]fico|empresas|companies|nexus|pipeline|ventas|ingresos|"
+                 r"citas|agenda|calendario)\b", low) and not re.search(r"^(?:ir a|abrir|abre|open|go to|cambiar a|switch to)\b", low):
+        return {"action": "ask", "text": t}
 
     ct = re.match(r"^(?:completar|marcar|complete|done(?: with)?)\s+(?:tarea|task)?\s*(.+)$", t, re.I)
     if ct:
@@ -198,7 +246,7 @@ def parse(command: str, lang: str = "es") -> dict:
         return {"action": "switch_slot", "slot": "morning"}
     if re.search(r"explica|explain|planes|plans|c[oó]mo funciona|how does it work|qu[eé] hay en la p[aá]gina", low):
         return {"action": "explain_plans"}
-    if re.search(r"descargar|generar|download|report|pdf", low):
+    if re.search(r"descargar|generar|download|report|pdf|peri[oó]dico|newspaper", low):
         return {"action": "download_report"}
     if re.search(r"leer|read|brief|resumen", low):
         return {"action": "read_brief"}
@@ -214,6 +262,16 @@ def parse(command: str, lang: str = "es") -> dict:
         return {"action": "approve_draft"}
     if re.search(r"ayuda|help|comandos|commands", low):
         return {"action": "help"}
+
+    # Fallback: check if the user uttered a short close word or partial word for any function/menu/project/link!
+    try:
+        import functions_catalog
+        m_fn = functions_catalog.match_function(t)
+        if m_fn and m_fn["score"] >= 0.80:
+            return {"action": "catalog_function", "match": m_fn}
+    except Exception:
+        pass
+
     return {"action": "unknown"}
 
 
@@ -241,7 +299,7 @@ def _complete_task(fragment: str) -> tuple[bool, str]:
 
 
 def execute(command: str, lang: str = "es", samples_dir: str | None = None) -> dict:
-    """Parse + run. Returns {ok, action, reply}. Never raises on bad input."""
+    """Parse + run. Returns {ok, action, reply, ui, matched_function}. Never raises on bad input."""
     _ensure_tasks_table()
     try:
         import behavior_brain
@@ -253,7 +311,7 @@ def execute(command: str, lang: str = "es", samples_dir: str | None = None) -> d
     try:
         import jefesito
         ctl = jefesito.control(command, lang)
-    except Exception as e:  # never break voice because of a control bug
+    except Exception as e:
         print("jefesito.control error:", e, file=sys.stderr)
         ctl = None
     if ctl:
@@ -263,25 +321,82 @@ def execute(command: str, lang: str = "es", samples_dir: str | None = None) -> d
     p = parse(command, lang)
     action = p["action"]
     ok = True
+    ui = {}
+    matched_fn = None
+
+    if action == "catalog_function":
+        m_info = p["match"]
+        fn = m_info["fn"]
+        matched_fn = fn
+        ui = dict(fn.get("ui") or {})
+        es = lang != "en"
+        title = fn["title_es"] if es else fn["title_en"]
+        what = fn["what_it_does_es"] if es else fn["what_it_does_en"]
+        how = fn["how_it_works_es"] if es else fn["how_it_works_en"]
+        reply = (
+            f"Activando función «{title}» (identificada por palabra cercana «{m_info['matched_term']}»). "
+            f"Qué hace: {what} Cómo funciona: {how}"
+            if es else
+            f"Activating function '{title}' (matched via '{m_info['matched_term']}'). "
+            f"What it does: {what} How it works: {how}"
+        )
+        return {
+            "ok": True,
+            "action": "catalog_function",
+            "parsed": p,
+            "reply": reply,
+            "ui": ui,
+            "matched_function": fn,
+            "sources": [f"Catálogo de Funciones · {fn['id']}"],
+            "grounded": True,
+        }
+
     if action == "switch_company":
-        reply = _reply(action, lang=lang, company=p.get("company"))
+        slug, label = _resolve_company_slug(p.get("company", ""))
+        ui = {"select_company": slug, "scroll_to": "ctoCompanyIntelSection"}
+        try:
+            import functions_catalog
+            m_fn = functions_catalog.match_function(slug)
+            if m_fn:
+                matched_fn = m_fn["fn"]
+        except Exception:
+            pass
+        reply = _reply(action, lang=lang, company=label)
+        return {"ok": True, "action": action, "parsed": p, "reply": reply, "ui": ui, "matched_function": matched_fn, "grounded": True}
+
     elif action == "open_tab":
-        reply = _reply(action, lang=lang, tab=p.get("tab"))
+        tab_id = p.get("tab", "overview")
+        ui = {"open_tab": tab_id}
+        try:
+            import functions_catalog
+            for f_item in functions_catalog.FUNCTIONS_CATALOG:
+                if (f_item.get("ui") or {}).get("open_tab") == tab_id:
+                    matched_fn = f_item
+                    break
+        except Exception:
+            pass
+        reply = _reply(action, lang=lang, tab=tab_id)
+        return {"ok": True, "action": action, "parsed": p, "reply": reply, "ui": ui, "matched_function": matched_fn, "grounded": True}
+
     elif action == "confirm_coffee":
         reply = _reply(action, lang=lang, coffee="Cortado Doble Espresso (Oat Milk)")
     elif action == "switch_slot":
-        reply = _reply(action, lang=lang, slot=p.get("slot", "morning"))
+        slot = p.get("slot", "morning")
+        ui = {"set_routine_slot": slot}
+        reply = _reply(action, lang=lang, slot=slot)
     elif action == "explain_plans":
+        ui = {"open_tab": "overview", "scroll_to": "masterFunctionsCatalogCard", "open_catalog": True}
         reply = _reply(action, lang=lang)
     elif action == "complete_task":
         ok, detail = _complete_task(p.get("task", ""))
+        ui = {"refresh_calendar": True, "refresh_memory": True}
         reply = _reply(action, lang=lang, task=detail) if ok else detail
     elif action == "download_report":
         try:
-            import reports_pdf
+            import daily_pdf
             out = os.path.join(tempfile.gettempdir(), "_voice_report.pdf")
-            sd = samples_dir or os.path.join(HERE, "..", "data", "samples")
-            reports_pdf.build_report("Medical Billing Miami Beach", sd, out, lang=lang)
+            daily_pdf.build(out, lang=lang)
+            ui = {"open_url": f"/api/daily.pdf?lang={lang}"}
             reply = _reply(action, lang=lang)
         except Exception as e:
             ok = False
@@ -320,6 +435,7 @@ def execute(command: str, lang: str = "es", samples_dir: str | None = None) -> d
             d = comms_brain.draft(top["thread_id"], top["channel"])
             reply = (f"Borrador #{d.get('draft_id')} para {top['contact']}: {d.get('body','')[:120]}... "
                      f"Revísalo y aprueba para enviar.")
+            ui = {"open_tab": "comms"}
     elif action == "learn_voice":
         import comms_brain
         pr = comms_brain.learn()
@@ -340,34 +456,88 @@ def execute(command: str, lang: str = "es", samples_dir: str | None = None) -> d
             r = comms_brain.approve_and_send(row[0])
             reply = ("Borrador aprobado y enviado directamente." if r.get("ok")
                      else f"No se pudo enviar: {r.get('error')}")
-    elif action == "schedule_event":
-        import knowledge_store as ks
-        raw = p.get("text", "")
+            ui = {"open_tab": "comms"}
+    elif action == "email_reminder":
+        import functions_catalog as fc
+        parsed_dt = fc.parse_natural_datetime(p.get("text", ""))
+        rem_res = fc.send_email_and_telegram_reminder(
+            title=parsed_dt["title"],
+            date_str=parsed_dt["date"],
+            time_str=parsed_dt["time"],
+            company=parsed_dt["company"],
+            notes=f"Creado por voz/chat: {command}",
+            create_db_row=True,
+        )
         es = lang != "en"
-        # Extract date (YYYY-MM-DD, or "mañana" -> 2026-10-27, default "2026-10-26")
-        dm = re.search(r"(\d{4}-\d{2}-\d{2})", raw)
-        if dm:
-            ev_date = dm.group(1)
-            raw = raw.replace(ev_date, "").strip()
-        elif re.search(r"\b(ma[ñn]ana|tomorrow)\b", raw, re.I):
-            ev_date = "2026-10-27"
-            raw = re.sub(r"\b(ma[ñn]ana|tomorrow)\b", "", raw, flags=re.I).strip()
-        else:
-            ev_date = "2026-10-26"
-            raw = re.sub(r"\b(hoy|today)\b", "", raw, flags=re.I).strip()
-        tm = re.search(r"\b(\d{1,2}:\d{2})\b", raw)
-        ev_time = "10:00"
-        if tm:
-            parts = tm.group(1).split(":")
-            ev_time = f"{int(parts[0]):02d}:{parts[1]}"
-            raw = raw.replace(tm.group(1), "").strip()
-        clean_title = re.sub(r"^(?:a las|at|el|on|\s|[-:,])+|(?:a las|at|el|on|\s|[-:,])+$", "", raw, flags=re.I).strip() or "Reunión Ejecutiva CEO"
-        r = ks.add_event(clean_title, ev_date, ev_time, 30, "all", "Agendado por voz/texto desde Super Asistente", "Google Calendar & Outlook")
-        reply = ((f"Cita agendada y sincronizada [{r.get('id')}]: «{clean_title}» para el {ev_date} a las {ev_time} hrs.")
-                 if es else
-                 (f"Appointment scheduled and synced [{r.get('id')}]: «{clean_title}» on {ev_date} at {ev_time}."))
-        return {"ok": True, "action": "schedule_event", "parsed": p, "reply": reply, "record": r,
-                "ui": {"refresh_calendar": True}, "sources": [r.get("id", "events")], "grounded": True}
+        smtp_ok = (rem_res.get("smtp") or {}).get("ok")
+        tg_ok = (rem_res.get("telegram") or {}).get("ok")
+        delivery_lbl = (
+            "enviado por Correo SMTP y Telegram" if (smtp_ok and tg_ok)
+            else ("enviado por Telegram y listo en Gmail" if tg_ok else "guardado en memoria activa y listo para envío a Juan")
+        )
+        rem_obj = rem_res.get("reminder") or {}
+        rem_id = rem_obj.get("id") or rem_obj.get("reminder_id") or (rem_res.get("task") or {}).get("id") or "REM-01"
+        reply = (
+            f"⏰ Recordatorio de correo activado [{rem_id}]: «{parsed_dt['title']}» "
+            f"para el {parsed_dt['date']} a las {parsed_dt['time']} ({parsed_dt['company'].upper()}) — {delivery_lbl}."
+            if es else
+            f"⏰ Email reminder activated [{rem_id}]: '{parsed_dt['title']}' "
+            f"for {parsed_dt['date']} at {parsed_dt['time']} ({parsed_dt['company'].upper()})."
+        )
+        return {
+            "ok": True,
+            "action": "email_reminder",
+            "parsed": p,
+            "reply": reply,
+            "record": rem_res,
+            "ui": {
+                "refresh_memory": True,
+                "refresh_calendar": True,
+                "select_date": parsed_dt["date"],
+                "gmail_compose_url": rem_res.get("gmail_compose_url"),
+            },
+            "sources": [rem_id, "Email & Telegram Reminder"],
+            "grounded": True,
+        }
+    elif action == "schedule_event":
+        import functions_catalog as fc
+        parsed_dt = fc.parse_natural_datetime(p.get("text", ""))
+        sync_res = fc.sync_appointment_realtime(
+            title=parsed_dt["title"],
+            date_str=parsed_dt["date"],
+            time_str=parsed_dt["time"],
+            duration_min=30,
+            company=parsed_dt["company"],
+            notes=f"Agendado por voz/chat desde La Jefatura: {command}",
+            send_email_invite=True,
+        )
+        r = sync_res["event"]
+        es = lang != "en"
+        reply = (
+            f"📅 Cita agendada y sincronizada en tiempo real con Google Calendar [{r.get('id')}]: "
+            f"«{parsed_dt['title']}» para el {parsed_dt['date']} a las {parsed_dt['time']} hrs ({parsed_dt['company'].upper()}). "
+            f"Feed .ics actualizado y recordatorio activado."
+            if es else
+            f"📅 Appointment scheduled and synced in real time with Google Calendar [{r.get('id')}]: "
+            f"'{parsed_dt['title']}' on {parsed_dt['date']} at {parsed_dt['time']} ({parsed_dt['company'].upper()})."
+        )
+        return {
+            "ok": True,
+            "action": "schedule_event",
+            "parsed": p,
+            "reply": reply,
+            "record": r,
+            "gcal_sync": sync_res,
+            "ui": {
+                "refresh_calendar": True,
+                "refresh_memory": True,
+                "select_date": parsed_dt["date"],
+                "open_agenda_drawer": True,
+                "gcal_template_url": sync_res.get("gcal_template_url"),
+            },
+            "sources": [r.get("id", "events"), "Google Calendar Real-Time Sync"],
+            "grounded": True,
+        }
     elif action == "sync_integrations":
         import knowledge_store as ks
         s_res = ks.sync_calendar_integrations()
@@ -378,7 +548,8 @@ def execute(command: str, lang: str = "es", samples_dir: str | None = None) -> d
                  (f"Real-time sync completed: {s_res['synced_events']} appointments and {s_res['synced_tasks']} tasks "
                   f"synced across Google Calendar, Outlook, Meet/Zoom, Nexus CRM, and Apple Calendar (.ics)."))
         return {"ok": True, "action": "sync_integrations", "parsed": p, "reply": reply,
-                "ui": {"refresh_calendar": True}, "sources": ["Sync 9 Integraciones"], "grounded": True}
+                "ui": {"refresh_calendar": True, "trigger_fn": "syncAllLiveNow"},
+                "sources": ["Sync 9 Integraciones"], "grounded": True}
     elif action == "escalate_dev":
         import knowledge_store as ks
         esc = ks.log_dev_escalation(p.get("text", command), reason="ceo_direct_escalation", channel="voice_command")
@@ -392,30 +563,55 @@ def execute(command: str, lang: str = "es", samples_dir: str | None = None) -> d
                 "ui": {"refresh_dev_escalations": True}, "sources": [f"Ticket #{esc.get('id')}"], "grounded": True}
     elif action in ("save_note", "save_task", "save_meeting", "save_email"):
         import knowledge_store as ks
+        import functions_catalog as fc
         txt = p.get("text", "")
+        parsed_dt = fc.parse_natural_datetime(txt)
+        co_slug = parsed_dt.get("company", "all")
         es = lang != "en"
         if action == "save_note":
-            r = ks.add_note(txt, source="voice")
+            r = ks.add_note(txt, source="voice", company=co_slug)
             reply = (f"Nota guardada con id {r['id']}: «{txt[:100]}»." if es
                      else f"Note saved as {r['id']}: \"{txt[:100]}\".") if r["ok"] else "No pude guardar una nota vacía."
         elif action == "save_task":
-            r = ks.add_task(txt, source="voice")
+            r = ks.add_task(txt, company=co_slug, due=parsed_dt.get("date", ""), source="voice")
             reply = (f"Tarea creada con id {r['id']}: «{txt[:100]}»." if es
                      else f"Task created as {r['id']}: \"{txt[:100]}\".") if r["ok"] else "No pude crear una tarea vacía."
         elif action == "save_meeting":
-            r = ks.add_meeting_summary(txt, source="voice")
+            r = ks.add_meeting_summary(txt, source="voice", company=co_slug)
             reply = (f"Resumen de reunión guardado con id {r['id']}." if es
                      else f"Meeting summary saved as {r['id']}.") if r["ok"] else "No pude guardar un resumen vacío."
         else:
-            r = ks.add_email_summary(txt, source="voice")
+            r = ks.add_email_summary(txt, source="voice", company=co_slug)
             reply = (f"Resumen de correo guardado con id {r['id']}." if es
                      else f"Email summary saved as {r['id']}.") if r["ok"] else "No pude guardar un resumen vacío."
         ok = bool(r.get("ok"))
-        return {"ok": ok, "action": action, "parsed": p, "reply": reply, "record": r}
+        return {
+            "ok": ok,
+            "action": action,
+            "parsed": p,
+            "reply": reply,
+            "record": r,
+            "ui": {"refresh_memory": True, "refresh_calendar": True},
+            "sources": [r.get("id", action)],
+            "grounded": True,
+        }
     elif action == "ask":
         import knowledge_store as ks
         a = ks.ask(p.get("text", command), lang=lang)
+        # Also check if query mentions a company/function so UI can highlight/scroll to it automatically!
+        ui_ask = {}
+        try:
+            import functions_catalog
+            m_fn = functions_catalog.match_function(command)
+            if m_fn and m_fn["score"] >= 0.82:
+                matched_fn = m_fn["fn"]
+                # Only apply non-disruptive UI updates on pure metric questions (e.g., select company)
+                if (matched_fn.get("ui") or {}).get("select_company"):
+                    ui_ask["select_company"] = matched_fn["ui"]["select_company"]
+        except Exception:
+            pass
         return {"ok": True, "action": action, "parsed": p, "reply": a["answer"],
+                "ui": ui_ask, "matched_function": matched_fn,
                 "sources": a["sources"], "grounded": a["grounded"], "dev_ticket": a.get("dev_ticket")}
     elif action != "unknown":
         reply = _reply(action, lang=lang)
@@ -424,19 +620,13 @@ def execute(command: str, lang: str = "es", samples_dir: str | None = None) -> d
         a = ks.ask(command, lang=lang)
         return {"ok": a["grounded"], "action": "ask", "parsed": p, "reply": a["answer"],
                 "sources": a["sources"], "grounded": a["grounded"], "dev_ticket": a.get("dev_ticket")}
-    return {"ok": ok, "action": action, "parsed": p, "reply": reply}
+    return {"ok": ok, "action": action, "parsed": p, "reply": reply, "ui": ui, "matched_function": matched_fn}
 
 
 if __name__ == "__main__":
-    for cmd in ["cambiar a MBMB", "qué hay de nuevo", "ayuda",
+    for cmd in ["cambiar a UNITEC USA", "qué hay de nuevo", "ayuda",
                 "leer resumen", "descargar informe", "completar tarea 1",
                 "abrir blogs", "preparar café", "aprobar borrador", "fruta voladora"]:
         r = execute(cmd)
         print(f"  «{cmd}» -> {r['action']}: {r['reply'][:90]}")
-    c = sqlite3.connect(DB, timeout=30.0)
-    open_tasks = c.execute("SELECT id FROM tasks ORDER BY rowid LIMIT 1").fetchone()
-    if open_tasks:
-        c.execute("UPDATE tasks SET status='pending' WHERE id=? AND status='done'", (open_tasks[0],))
-        c.commit()
-    c.close()
     print("voice_commands OK")
