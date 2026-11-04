@@ -457,6 +457,374 @@
     body { padding-left: 78px !important; }
   }
 
+
+  /* ??????????????????????????????????????????????????????????????????????????
+     ARDENA DARK GLASS DASHBOARD UI & MOTION SYSTEM (GLOBAL IMPLEMENTATION)
+     Inspired by @_code_and_chill_ Real Estate Investment Dashboard Reel
+     ?????????????????????????????????????????????????????????????????????????? */
+  :root,
+  :root[data-theme="sand"],
+  :root[data-theme="graphite"],
+  :root[data-theme="light"],
+  :root[data-theme="yellow"] {
+    --bg: #121311 !important;
+    --panel: rgba(34, 35, 32, 0.76) !important;
+    --panel2: rgba(26, 27, 24, 0.84) !important;
+    --panel3: rgba(44, 45, 41, 0.72) !important;
+    --hair: rgba(255, 255, 255, 0.085) !important;
+    --txt: #f5f4f0 !important;
+    --txt2: #d6d4ce !important;
+    --dim: #8e8d87 !important;
+    --acc: #f05a28 !important;
+    --acc2: #ff7847 !important;
+    --ok: #22c55e !important;
+    --warn: #f59e0b !important;
+    --crit: #ef4444 !important;
+    --inset: rgba(18, 19, 17, 0.62) !important;
+    --onacc: #ffffff !important;
+    --hdr: rgba(28, 29, 26, 0.78) !important;
+    --nav: rgba(28, 29, 26, 0.78) !important;
+  }
+
+  body.ardena-light-glass {
+    --bg: #e8e6df !important;
+    --panel: rgba(255, 255, 255, 0.82) !important;
+    --panel2: rgba(247, 245, 240, 0.88) !important;
+    --panel3: rgba(238, 235, 228, 0.85) !important;
+    --hair: rgba(20, 20, 19, 0.09) !important;
+    --txt: #181816 !important;
+    --txt2: #3a3935 !important;
+    --dim: #6e6d68 !important;
+    --inset: rgba(235, 232, 224, 0.75) !important;
+    --hdr: rgba(255, 255, 255, 0.82) !important;
+  }
+
+  body {
+    background:
+      radial-gradient(circle at 18% 12%, rgba(240, 90, 40, 0.11), transparent 38%),
+      radial-gradient(circle at 82% 24%, rgba(34, 197, 94, 0.08), transparent 42%),
+      radial-gradient(circle at 50% 85%, rgba(255, 255, 255, 0.04), transparent 45%),
+      linear-gradient(160deg, #171815 0%, #111210 55%, #161714 100%) !important;
+    background-attachment: fixed !important;
+    color: var(--txt) !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif !important;
+    padding-left: 268px !important;
+    letter-spacing: -0.01em;
+  }
+
+  body.ardena-light-glass {
+    background:
+      radial-gradient(circle at 18% 12%, rgba(240, 90, 40, 0.10), transparent 38%),
+      radial-gradient(circle at 82% 24%, rgba(34, 197, 94, 0.08), transparent 42%),
+      linear-gradient(160deg, #efede7 0%, #e3e0d8 100%) !important;
+  }
+
+  /* Ardena Dark Glass Cards */
+  .card, .jf-card, .foreseen-strip, header, .lj-world-strip {
+    background: linear-gradient(165deg, rgba(42, 43, 39, 0.74) 0%, rgba(26, 27, 24, 0.84) 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.085) !important;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.09) !important;
+    backdrop-filter: blur(28px) saturate(165%) !important;
+    -webkit-backdrop-filter: blur(28px) saturate(165%) !important;
+    border-radius: 20px !important;
+    color: var(--txt) !important;
+  }
+
+  body.ardena-light-glass .card,
+  body.ardena-light-glass .jf-card,
+  body.ardena-light-glass header,
+  body.ardena-light-glass .lj-world-strip {
+    background: linear-gradient(165deg, rgba(255, 255, 255, 0.88) 0%, rgba(246, 244, 238, 0.92) 100%) !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+  }
+
+  /* Override old white KPI cards to match Ardena Dark Glass */
+  .card.kpi-card {
+    background: linear-gradient(165deg, rgba(44, 45, 41, 0.82) 0%, rgba(27, 28, 25, 0.90) 100%) !important;
+    color: var(--txt) !important;
+    border: 1px solid rgba(255, 255, 255, 0.09) !important;
+    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.09) !important;
+  }
+  .card.kpi-card h3 { color: var(--dim) !important; font-size: 11px !important; text-transform: none !important; letter-spacing: 0.01em !important; }
+  .card.kpi-card:nth-of-type(1) .kpi { color: #f5f4f0 !important; }
+  .card.kpi-card:nth-of-type(2) .kpi { color: #f05a28 !important; }
+  .card.kpi-card:nth-of-type(3) .kpi { color: #22c55e !important; }
+  .card.kpi-card:nth-of-type(4) .kpi { color: #ff7847 !important; }
+  .card.kpi-card .kpi small { color: var(--dim) !important; }
+
+  /* Ardena Buttons */
+  .btn:not(.ghost) {
+    background: linear-gradient(135deg, #f4602e 0%, #df4918 100%) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.16) !important;
+    box-shadow: 0 8px 22px rgba(240, 90, 40, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+    border-radius: 999px !important;
+    font-weight: 700 !important;
+  }
+  .btn.ghost {
+    background: rgba(255, 255, 255, 0.055) !important;
+    color: var(--txt) !important;
+    border: 1px solid rgba(255, 255, 255, 0.10) !important;
+    border-radius: 999px !important;
+  }
+  .btn.ghost:hover {
+    background: rgba(255, 255, 255, 0.11) !important;
+    border-color: rgba(240, 90, 40, 0.45) !important;
+  }
+
+  /* Ardena Left Floating Glass Sidebar */
+  .lj-glass-sidebar {
+    background: linear-gradient(180deg, rgba(36, 37, 34, 0.86) 0%, rgba(22, 23, 21, 0.92) 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.09) !important;
+    box-shadow: 0 28px 68px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.10) !important;
+    border-radius: 22px !important;
+    padding: 16px 13px !important;
+    width: 246px !important;
+    gap: 8px !important;
+  }
+  .lj-sb-brand {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07) !important;
+    padding: 4px 6px 12px !important;
+  }
+  .ardena-brand-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .ardena-logo-sq {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #f4602e 0%, #df4918 100%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 900;
+    box-shadow: 0 6px 16px rgba(240, 90, 40, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    flex-shrink: 0;
+  }
+  .lj-sb-brand-title {
+    font-size: 15px !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.01em !important;
+    color: #f5f4f0 !important;
+  }
+  .lj-sb-sub {
+    font-size: 10.5px !important;
+    font-weight: 500 !important;
+    color: #8e8d87 !important;
+    letter-spacing: 0 !important;
+  }
+  .lj-sb-sec-title {
+    font-size: 9.5px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.08em !important;
+    color: #7b7a75 !important;
+    padding: 8px 8px 3px !important;
+  }
+  .lj-sb-btn {
+    background: transparent !important;
+    border: 1px solid transparent !important;
+    color: #c7c5be !important;
+    border-radius: 11px !important;
+    padding: 8px 10px !important;
+    font-size: 12.5px !important;
+    font-weight: 600 !important;
+    transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  }
+  .lj-sb-btn:hover {
+    background: rgba(255, 255, 255, 0.06) !important;
+    color: #ffffff !important;
+    transform: translateX(2px);
+  }
+  .lj-sb-btn.active {
+    background: linear-gradient(135deg, #f05a28 0%, #de4918 100%) !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
+    box-shadow: 0 8px 20px rgba(240, 90, 40, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+  }
+  .lj-sb-badge {
+    background: rgba(240, 90, 40, 0.22) !important;
+    color: #ff8559 !important;
+    font-size: 10px !important;
+    font-weight: 800 !important;
+    padding: 1px 7px !important;
+    border-radius: 999px !important;
+  }
+  .lj-sb-btn.active .lj-sb-badge {
+    background: rgba(0, 0, 0, 0.24) !important;
+    color: #ffffff !important;
+  }
+
+  /* Ardena Sidebar Bottom Net-Worth / Portfolio Card + Dark Glass Switch + Profile */
+  .ardena-sb-footer {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 8px;
+  }
+  .ardena-networth-card {
+    background: rgba(18, 19, 17, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    padding: 11px 12px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+  .ardena-nw-lbl {
+    font-size: 10.5px;
+    color: #8e8d87;
+    font-weight: 500;
+  }
+  .ardena-nw-val {
+    font-size: 18px;
+    font-weight: 800;
+    color: #f5f4f0;
+    letter-spacing: -0.02em;
+    margin: 3px 0 5px;
+  }
+  .ardena-nw-sub {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10.5px;
+    color: #a3a29c;
+  }
+  .ardena-nw-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #22c55e;
+    box-shadow: 0 0 8px #22c55e;
+  }
+  .ardena-glass-toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 8px;
+    font-size: 12px;
+    color: #c7c5be;
+    font-weight: 600;
+  }
+  .ardena-user-row {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 7px 8px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+  .ardena-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #22c55e, #15803d);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  /* Ardena Sub-Navigation Pills (Mortgage / Rental yield / Rent or buy style) */
+  .ardena-sub-pills {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(18, 19, 17, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 4px;
+    border-radius: 12px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+  .ardena-sub-pill {
+    background: transparent;
+    border: 0;
+    color: #a3a29c;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 13px;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+  }
+  .ardena-sub-pill:hover {
+    color: #ffffff;
+  }
+  .ardena-sub-pill.active {
+    background: linear-gradient(135deg, #f05a28, #de4918);
+    color: #ffffff;
+    font-weight: 700;
+    box-shadow: 0 4px 14px rgba(240, 90, 40, 0.38);
+  }
+
+  /* Ardena Custom Range Sliders (Exact Match to Screenshot) */
+  .ardena-slider-group {
+    margin-bottom: 15px;
+  }
+  .ardena-slider-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12.5px;
+    margin-bottom: 7px;
+    color: #c7c5be;
+  }
+  .ardena-slider-head b {
+    color: #f5f4f0;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  input[type="range"].ardena-range {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 5px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #f05a28 var(--pct, 50%), rgba(255, 255, 255, 0.12) var(--pct, 50%));
+    outline: none;
+    cursor: pointer;
+  }
+  input[type="range"].ardena-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 3px solid #f05a28;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.55);
+    cursor: grab;
+    transition: transform 0.15s ease;
+  }
+  input[type="range"].ardena-range::-webkit-slider-thumb:hover {
+    transform: scale(1.15);
+  }
+
+  /* src/motion.ts ? landCards() Staggered Reading-Order Entrance Animation */
+  @keyframes ardenaLandCard {
+    0% {
+      opacity: 0;
+      transform: translateY(26px) scale(0.985);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  .ardena-land-anim {
+    animation: ardenaLandCard 0.72s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
 </style>
 </head>
 <body>
@@ -464,11 +832,14 @@
 <!-- LEFT GLASSMORPHISM FULL-NAME SIDEBAR MENU (NO MENU MIRROR) -->
 <aside class="lj-glass-sidebar" id="ljGlassSidebar" aria-label="La Jefatura Left Glass Menu">
   <div class="lj-sb-brand">
-    <div>
-      <div class="lj-sb-brand-title">👑 <span class="lj-sb-text">LA JEFATURA</span></div>
-      <span class="lj-sb-sub">Made &amp; Powered by Building Innovation</span>
+    <div class="ardena-brand-box">
+      <div class="ardena-logo-sq">??</div>
+      <div>
+        <div class="lj-sb-brand-title"><span class="lj-sb-text">La Jefatura</span></div>
+        <span class="lj-sb-sub">Made &amp; Powered by Building Innovation</span>
+      </div>
     </div>
-    <button type="button" class="btn ghost sm" onclick="document.body.classList.toggle('sidebar-collapsed')" title="Expandir / Contraer Menú Glass" style="padding:4px 7px;font-size:11px">☰</button>
+    <button type="button" class="btn ghost sm" onclick="document.body.classList.toggle('sidebar-collapsed')" title="Expandir / Contraer Men? Glass" style="padding:4px 7px;font-size:11px">?</button>
   </div>
 
   <div class="lj-sb-sec-title">🏢 Proyectos &amp; Empresas (CTO)</div>
@@ -538,16 +909,32 @@
     </button>
   </div>
 
-  <div class="lj-sb-sec-title" style="margin-top:auto">📰 Acciones Directas CEO</div>
-  <div class="lj-sb-list">
-    <button type="button" class="lj-sb-btn" onclick="window.open('/api/daily.pdf?lang=' + lang + '&company=' + encodeURIComponent(cur), '_blank')" style="border-color:rgba(16,185,129,.4);background:rgba(16,185,129,.12)">
-      <span class="lj-sb-ico">🗞️</span>
-      <span class="lj-sb-text">Periódico Matutino PDF</span>
-    </button>
-    <button type="button" class="lj-sb-btn lj-stop-voice-btn" onclick="toggleOrStopVoiceBrief()" style="border-color:rgba(235,87,87,.45);background:rgba(235,87,87,.15);color:#fca5a5">
-      <span class="lj-sb-ico">🛑</span>
-      <span class="lj-sb-text">Callar / Pausar Voz (ESC)</span>
-    </button>
+  <div class="ardena-sb-footer lj-sb-text">
+    <div class="ardena-networth-card" onclick="selectCompanyFromMenu('all')" style="cursor:pointer" title="Clic para ver el Resumen Global de Todas las Empresas">
+      <div class="ardena-nw-lbl" id="sbNetWorthLbl">Valor en Portafolio &amp; Pipeline</div>
+      <div class="ardena-nw-val" id="sbNetWorthVal">$104,600</div>
+      <div class="ardena-nw-sub">
+        <span class="ardena-nw-dot"></span>
+        <span id="sbNetWorthSub">53 de 55 c?maras en vivo ? 5 empresas</span>
+      </div>
+    </div>
+
+    <div class="ardena-glass-toggle-row">
+      <span>?? Dark glass</span>
+      <label class="switch" title="Alternar entre Dark Glass y Light Glass">
+        <input type="checkbox" id="ardenaDarkGlassSwitch" checked onchange="document.body.classList.toggle('ardena-light-glass', !this.checked)">
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div class="ardena-user-row">
+      <div class="ardena-avatar">JG</div>
+      <div style="min-width:0;flex:1">
+        <div style="font-size:12px;font-weight:700;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Juan Garc?a</div>
+        <div style="font-size:10px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Miami, USA ? Colombia</div>
+      </div>
+      <button type="button" class="btn ghost sm" onclick="window.open('/api/daily.pdf?lang=' + lang + '&company=' + encodeURIComponent(cur), '_blank')" title="Abrir Peri?dico PDF" style="padding:4px 7px;font-size:10.5px">???</button>
+    </div>
   </div>
 </aside>
 
@@ -629,44 +1016,50 @@
 <!-- El Jefesito: daily greeting / day summary (spoken on open unless stopped) -->
 <div id="jfGreeting"></div>
 
-<!-- ==================== MASTER CONTROL VOICE & CHAT COMMAND BAR (ALWAYS ACCESSIBLE) ==================== -->
+<!-- ==================== ARDENA TOP BREADCRUMB + SINGLE UNIFIED VOICE & CHAT SEARCH BAR ==================== -->
 <section id="mcVoiceChatBarSection" style="max-width:1520px;margin:12px auto 0;padding:0 22px">
-  <div class="card" style="border:2px solid rgba(16,185,129,.48);background:linear-gradient(145deg,rgba(16,185,129,.09),rgba(205,182,140,.08));padding:14px 18px;border-radius:18px;box-shadow:0 16px 40px rgba(0,0,0,.32)">
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px">
-      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <span class="tag ok" style="font-size:10.5px;font-weight:900">🎙️💬 CONTROL MAESTRO POR VOZ Y CHAT</span>
-        <strong style="font-size:14px;color:var(--txt)">Habla o escribe cualquier orden, palabra corta/cercana, nota, cita en Google Calendar o recordatorio por correo</strong>
+  <div class="card" style="padding:14px 18px;border-radius:20px">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap">
+      <!-- Left: Dynamic Greeting & Breadcrumb Trail (Just like 'Good morning, Marta ? Calculators / Mortgage') -->
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12.5px">
+        <span style="color:var(--txt2);font-weight:600" id="ardenaTopGreeting">Buenas tardes, Juan</span>
+        <span style="color:var(--dim)">?</span>
+        <span style="color:var(--dim)" id="ardenaBreadcrumbRoot">Proyectos</span>
+        <span style="color:var(--dim)">/</span>
+        <strong style="color:var(--txt);font-weight:700" id="ardenaBreadcrumbCurrent">Todas las Empresas</strong>
       </div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap">
-        <button type="button" class="btn ghost sm" onclick="toggleMasterFunctionsCatalog()" style="font-weight:800;border-color:rgba(205,182,140,.5)">📖 Catálogo de Todas las Funciones y Cómo Funcionan</button>
-        <button type="button" class="btn ghost sm" onclick="window.LJ && window.LJ.openChat && window.LJ.openChat(true)" style="font-weight:800">💬 Abrir Panel Chatbot</button>
+
+      <!-- Center: Sleek Single Unified Voice & Chat Search Input Pill -->
+      <div style="flex:1;min-width:290px;max-width:680px;display:flex;align-items:center;gap:6px;background:rgba(15,16,14,.68);border:1px solid rgba(255,255,255,.10);border-radius:999px;padding:5px 8px 5px 14px">
+        <span style="color:var(--dim);font-size:13px">??</span>
+        <input id="masterControlChatInput" placeholder="Habla o escribe a La Jefatura (ej. ?cam?, ?uni?, ?building?, ?agrega a las 9pm...?, ?nota:...?)" style="flex:1;background:transparent;border:0;color:var(--txt);font-size:12.5px;outline:none;padding:6px 4px" onkeydown="if(event.key==='Enter'){event.preventDefault();runMasterControlChatCommand();}">
+        <button type="button" id="mcVoiceMicBtn" onclick="window.LJ && window.LJ.startMic ? window.LJ.startMic(document.getElementById('masterControlChatInput')) : (window.LJSuper && window.LJSuper.toggleMic())" style="background:rgba(34,197,94,.18);color:#4ade80;border:1px solid rgba(34,197,94,.35);border-radius:999px;padding:6px 12px;font-size:11.5px;font-weight:800;cursor:pointer;white-space:nowrap" title="Hablar por micr?fono">??? Voz</button>
+        <button type="button" id="mcSendCmdBtn" onclick="runMasterControlChatCommand()" style="background:linear-gradient(135deg,#f05a28,#de4918);color:#fff;border:0;border-radius:999px;padding:6px 14px;font-size:11.5px;font-weight:800;cursor:pointer;white-space:nowrap">+ Ejecutar</button>
+        <button type="button" class="lj-stop-voice-btn" onclick="window.stopAllBotVoice && window.stopAllBotVoice()" style="background:rgba(239,68,68,.2);color:#fca5a5;border:1px solid rgba(239,68,68,.4);border-radius:999px;padding:6px 10px;font-size:11px;font-weight:800;cursor:pointer" title="Callar Voz (ESC)">??</button>
+      </div>
+
+      <!-- Right: Quick Actions & + New Pill (Exact Ardena Top-Right Style) -->
+      <div style="display:flex;align-items:center;gap:8px">
+        <button type="button" class="btn ghost sm" onclick="toggleMasterFunctionsCatalog()" title="Ver cat?logo de las 28 funciones y palabras cercanas">?? 28 Funciones</button>
+        <button type="button" class="btn sm" onclick="prefillMasterControlChat('agendar cita ma?ana a las 10:00 ')" style="padding:7px 14px;font-size:12px">+ Nueva Orden</button>
       </div>
     </div>
 
-    <div style="display:grid;grid-template-columns:auto 1fr auto auto;gap:8px;align-items:center">
-      <button type="button" id="mcVoiceMicBtn" class="btn sm" onclick="window.LJ && window.LJ.startMic ? window.LJ.startMic(document.getElementById('masterControlChatInput')) : (window.LJSuper && window.LJSuper.toggleMic())" style="background:#10B981;color:#ffffff;border:0;font-weight:900;padding:11px 18px;border-radius:12px;font-size:12.5px;cursor:pointer;white-space:nowrap;box-shadow:0 6px 18px rgba(16,185,129,.35)">🎙️ HABLAR POR VOZ</button>
-      <input id="masterControlChatInput" class="inp" placeholder="Habla o escribe aquí: ej. «cam», «uni», «building», «bandeja», «periódico pdf», «nota: revisar WPC», «agenda cita mañana a las 3pm», «recordatorio por correo...»" style="width:100%;padding:11px 14px;font-size:13px;border-radius:12px;border:1px solid rgba(205,182,140,.45)" onkeydown="if(event.key==='Enter'){event.preventDefault();runMasterControlChatCommand();}">
-      <button type="button" id="mcSendCmdBtn" class="btn sm" onclick="runMasterControlChatCommand()" style="font-weight:900;padding:11px 20px;border-radius:12px;font-size:12.5px;white-space:nowrap">⚡ EJECUTAR</button>
-      <button type="button" class="btn sm lj-stop-voice-btn" onclick="window.stopAllBotVoice && window.stopAllBotVoice()" style="background:#EB5757;color:#fff;border:0;font-weight:900;padding:11px 14px;border-radius:12px;font-size:12px;white-space:nowrap">🛑 CALLAR</button>
-    </div>
-
-    <!-- Instant 1-Click Voice/Chat Command Shortcuts -->
+    <!-- Compact Quick Chips Row -->
     <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:9px;align-items:center">
-      <span class="muted" style="font-size:10.5px;font-weight:800">ACCESO RÁPIDO (PALABRAS CERCANAS):</span>
-      <button type="button" class="btn ghost sm" style="font-size:10.5px;padding:3px 9px" onclick="runMasterControlChatCommand('abrir cámaras')">📹 «cam» → 55 Cámaras</button>
-      <button type="button" class="btn ghost sm" style="font-size:10.5px;padding:3px 9px" onclick="runMasterControlChatCommand('cambiar a unitec')">🏢 «uni» → UNITEC USA</button>
-      <button type="button" class="btn ghost sm" style="font-size:10.5px;padding:3px 9px" onclick="runMasterControlChatCommand('cambiar a building')">🏗️ «bui» → BuildingApp</button>
-      <button type="button" class="btn ghost sm" style="font-size:10.5px;padding:3px 9px" onclick="runMasterControlChatCommand('cambiar a espacios')">🚢 «espacios» → Importados</button>
-      <button type="button" class="btn ghost sm" style="font-size:10.5px;padding:3px 9px" onclick="runMasterControlChatCommand('cambiar a nexus')">💼 «crm» → Nexus CRM</button>
-      <button type="button" class="btn ghost sm" style="font-size:10.5px;padding:3px 9px" onclick="runMasterControlChatCommand('abrir bandeja')">✉️ «bandeja» → Correos IA</button>
-      <button type="button" class="btn ghost sm" style="font-size:10.5px;padding:3px 9px" onclick="runMasterControlChatCommand('abrir periódico pdf')">📰 «periódico» → PDF 4 Págs</button>
-      <button type="button" class="btn ghost sm" style="font-size:10.5px;padding:3px 9px" onclick="prefillMasterControlChat('nota: ')">📝 + Nota</button>
-      <button type="button" class="btn ghost sm" style="font-size:10.5px;padding:3px 9px" onclick="prefillMasterControlChat('agendar cita mañana a las 10:00 ')">📅 + Cita Google Cal</button>
-      <button type="button" class="btn ghost sm" style="font-size:10.5px;padding:3px 9px" onclick="prefillMasterControlChat('recordatorio por correo mañana a las 09:00 ')">⏰ + Recordatorio Email</button>
+      <span class="muted" style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em">Acceso directo:</span>
+      <button type="button" class="btn ghost sm" style="font-size:10.5px;padding:3px 9px" onclick="selectCompanyFromMenu('all')">?? Todas (Resumen)</button>
+      <button type="button" class="btn ghost sm" style="font-size:10.5px;padding:3px 9px" onclick="selectCompanyFromMenu('unitec')">??? UNITEC USA</button>
+      <button type="button" class="btn ghost sm" style="font-size:10.5px;padding:3px 9px" onclick="selectCompanyFromMenu('building')">??? BuildingApp</button>
+      <button type="button" class="btn ghost sm" style="font-size:10.5px;padding:3px 9px" onclick="selectCompanyFromMenu('cameras')">?? 55 C?maras</button>
+      <button type="button" class="btn ghost sm" style="font-size:10.5px;padding:3px 9px" onclick="selectCompanyFromMenu('espacios')">?? Espacios</button>
+      <button type="button" class="btn ghost sm" style="font-size:10.5px;padding:3px 9px" onclick="selectCompanyFromMenu('saleinn')">?? Nexus CRM</button>
+      <button type="button" class="btn ghost sm" style="font-size:10.5px;padding:3px 9px" onclick="prefillMasterControlChat('nota: ')">?? + Nota</button>
+      <button type="button" class="btn ghost sm" style="font-size:10.5px;padding:3px 9px" onclick="prefillMasterControlChat('agrega a las 4pm ')">?? + Cita</button>
     </div>
 
-    <!-- Live Chatbot Response & Matched Function Card -->
-    <div id="masterControlChatFeedbackBox" style="display:none;margin-top:11px;padding:12px 15px;border-radius:14px;background:var(--inset);border:1px solid rgba(16,185,129,.45)"></div>
+    <!-- Single Unified Bot Inline Response Box -->
+    <div id="masterControlChatFeedbackBox" style="display:none;margin-top:11px;padding:12px 15px;border-radius:14px;background:var(--inset);border:1px solid rgba(240,90,40,.45)"></div>
   </div>
 </section>
 
@@ -724,6 +1117,107 @@
         <span class="muted" style="font-size:11px">Vista Global Consolidada ? Clic en una empresa = Vista Detallada Exclusiva</span>
       </div>
       <div id="allCompaniesSummaryGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(265px,1fr));gap:12px"></div>
+    </div>
+
+    <!-- ARDENA INTERACTIVE SIMULATOR & PROJECTION SHOWCASE (Exact Match to Screenshot UI: Sliders + Monthly Split Card + Multi-Bar Chart) -->
+    <div style="margin-bottom:16px">
+      <div class="ardena-sub-pills" id="ardenaSubPillsBar" style="margin-bottom:14px">
+        <button type="button" class="ardena-sub-pill active" data-subpill="all" onclick="switchArdenaSubPill('all')">Resumen &amp; Simulador</button>
+        <button type="button" class="ardena-sub-pill" data-subpill="analytics" onclick="switchArdenaSubPill('analytics')">Anal?tica CTO &amp; Gr?ficos</button>
+        <button type="button" class="ardena-sub-pill" data-subpill="memory" onclick="switchArdenaSubPill('memory')">Memoria, Notas &amp; Agenda</button>
+      </div>
+
+      <div id="ardenaInteractiveShowcase" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(350px,1fr));gap:14px">
+        <!-- Left Card: Interactive Sliders ("Your loan / Tu Proyecci?n Operativa y Comercial") -->
+        <div class="card" style="background:rgba(22,23,20,.72)!important;padding:18px 20px">
+          <div style="font-size:15px;font-weight:800;color:var(--txt);margin-bottom:10px" id="ardenaSimTitle">Simulador Comercial &amp; Operativo</div>
+          <div style="font-size:11.5px;color:var(--dim);margin-bottom:6px">Selecciona empresa o escenario en el mercado</div>
+          <select id="ardenaSimPreset" class="inp" style="margin-bottom:16px;border-radius:11px;padding:9px 12px;font-weight:600" onchange="onArdenaPresetChange(this.value)">
+            <option value="all">?? Portafolio Consolidado (5 Empresas ? $104.6k Pipeline)</option>
+            <option value="unitec">??? UNITEC USA ? Paneles WPC &amp; PVC M?rmol ($58.4k)</option>
+            <option value="building">??? Building Innovation ? BuildingApp IA ($28.7k)</option>
+            <option value="cameras">?? 55 C?maras CCTV ? 5 Grabadores NVR (53/55 Live)</option>
+            <option value="espacios">?? Espacios Importados ? Log?stica Medell?n ($10.0k)</option>
+            <option value="saleinn">?? Nexus CRM ? Mayoristas B2B ($104.6k)</option>
+          </select>
+
+          <div class="ardena-slider-group">
+            <div class="ardena-slider-head">
+              <span>Pipeline comercial activo</span>
+              <b id="ardSimPipeLbl">$104,600</b>
+            </div>
+            <input type="range" id="ardSimPipe" class="ardena-range" min="10000" max="350000" step="2000" value="104600" oninput="updateArdenaSimulator()">
+          </div>
+
+          <div class="ardena-slider-group">
+            <div class="ardena-slider-head">
+              <span>Tasa de cierre &amp; conversi?n</span>
+              <b id="ardSimConvLbl">31% ? $32,426</b>
+            </div>
+            <input type="range" id="ardSimConv" class="ardena-range" min="10" max="85" step="1" value="31" oninput="updateArdenaSimulator()">
+          </div>
+
+          <div class="ardena-slider-group">
+            <div class="ardena-slider-head">
+              <span>Automatizaci?n IA &amp; Uptime CCTV</span>
+              <b id="ardSimSlaLbl">96.4%</b>
+            </div>
+            <input type="range" id="ardSimSla" class="ardena-range" min="60" max="100" step="0.5" value="96.4" oninput="updateArdenaSimulator()">
+          </div>
+
+          <div class="ardena-slider-group" style="margin-bottom:4px">
+            <div class="ardena-slider-head">
+              <span>Horizonte de proyecci?n</span>
+              <b id="ardSimMonthsLbl">12 meses</b>
+            </div>
+            <input type="range" id="ardSimMonths" class="ardena-range" min="1" max="36" step="1" value="12" oninput="updateArdenaSimulator()">
+          </div>
+        </div>
+
+        <!-- Right Column: Top Monthly Split Card + Bottom Multi-Bar Chart -->
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <!-- Top Right Card ("Each month / Ingreso Mensual Estimado") -->
+          <div class="card" style="background:rgba(22,23,20,.72)!important;padding:18px 20px">
+            <div style="font-size:11.5px;color:var(--dim)">Ingreso mensual proyectado</div>
+            <div style="font-size:32px;font-weight:800;color:var(--txt);letter-spacing:-0.03em;margin:2px 0" id="ardSimMonthlyHero">$42,400</div>
+            <div style="font-size:11.5px;color:var(--dim);margin-bottom:14px" id="ardSimHorizonSub">durante 12 meses ? auditor?a en vivo</div>
+
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">
+              <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:11px;padding:9px 11px">
+                <div style="font-size:10px;color:var(--dim)">Ventas cerradas</div>
+                <div style="font-size:14px;font-weight:800;color:var(--txt);margin-top:2px" id="ardSimBoxClosed">$32,426</div>
+              </div>
+              <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:11px;padding:9px 11px">
+                <div style="font-size:10px;color:var(--dim)">En negociaci?n</div>
+                <div style="font-size:14px;font-weight:800;color:var(--txt);margin-top:2px" id="ardSimBoxOpen">$72,174</div>
+              </div>
+              <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:11px;padding:9px 11px">
+                <div style="font-size:10px;color:var(--dim)">Total proyectado</div>
+                <div style="font-size:14px;font-weight:800;color:var(--txt);margin-top:2px" id="ardSimBoxTotal">$508,800</div>
+              </div>
+            </div>
+
+            <!-- Green / Orange Split Bar -->
+            <div style="display:flex;height:8px;border-radius:999px;overflow:hidden;background:rgba(255,255,255,.08);gap:3px;margin-bottom:7px">
+              <div id="ardSimSplitGreen" style="width:63%;background:#22c55e;border-radius:999px;transition:width .25s ease"></div>
+              <div id="ardSimSplitOrange" style="width:37%;background:#f05a28;border-radius:999px;transition:width .25s ease"></div>
+            </div>
+            <div style="display:flex;gap:14px;font-size:11px;color:var(--dim)">
+              <span><b style="color:#22c55e">?</b> <span id="ardSimLegendGreen">Ingreso operativo 63%</span></span>
+              <span><b style="color:#f05a28">?</b> <span id="ardSimLegendOrange">Pipeline por cerrar 37%</span></span>
+            </div>
+          </div>
+
+          <!-- Bottom Right Card ("Every five years / Evoluci?n por Trimestre") -->
+          <div class="card" style="background:rgba(22,23,20,.72)!important;padding:16px 20px;flex:1;display:flex;flex-direction:column;justify-content:space-between">
+            <div>
+              <div style="font-size:13.5px;font-weight:800;color:var(--txt)">Evoluci?n por Trimestre (Ingreso Cerrado vs Pipeline Total)</div>
+              <div style="font-size:11px;color:var(--dim);margin-top:2px">Barra verde: ingresos consolidados ? Barra oscura: capacidad total proyectada</div>
+            </div>
+            <div id="ardSimBarChart" style="display:flex;align-items:flex-end;justify-content:space-between;height:110px;padding-top:16px;gap:10px;border-bottom:1px solid rgba(255,255,255,.08)"></div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- 2-Column CTO Deep Dive: Detailed Text Analytics + Visual Graphics -->
@@ -1909,6 +2403,8 @@ function applySingleFocusView() {
     if (show && span) el.style.gridColumn = 'span ' + span;
   };
 
+  if (typeof syncArdenaSidebarAndBreadcrumb === 'function') syncArdenaSidebarAndBreadcrumb();
+  setTimeout(() => { if (typeof triggerArdenaPageAnimation === 'function') triggerArdenaPageAnimation(); }, 20);
   // 1) If user clicked a non-overview Category (Settings/Conexiones, Bandeja IA, Resultados, Cerebro, Blogs, Super Asistente)
   if (activeTab !== 'overview') {
     if (greetEl) greetEl.style.display = 'none';
@@ -4444,6 +4940,187 @@ function syncAllLiveNow() {
 }
 
 loadMasterFunctionsCatalog();
+
+
+/* ??????????????????????????????????????????????????????????????????????????
+   src/motion.ts ? landCards() Staggered Reading-Order Card Animation Engine
+   + Ardena Interactive Simulator & Breadcrumb Synchronization
+   ?????????????????????????????????????????????????????????????????????????? */
+function landCards(cards, opts = {}) {
+  const stagger = opts.stagger !== undefined ? opts.stagger : 0.06;
+  const delay = opts.delay !== undefined ? opts.delay : 0;
+  const list = Array.from(cards || []).filter(el => el && el.offsetParent !== null);
+  list.forEach((el, idx) => {
+    el.classList.remove('ardena-land-anim');
+    void el.offsetWidth;
+    el.style.animationDelay = `${(delay + idx * stagger).toFixed(3)}s`;
+    el.classList.add('ardena-land-anim');
+  });
+}
+
+function triggerArdenaPageAnimation() {
+  const visibleCards = document.querySelectorAll(
+    '#ljActiveViewBanner > div, #ljCtoExecutiveHub .card, #allCompaniesSummaryGrid > div, #ardenaInteractiveShowcase .card, #ctoTextAnalyticsBox, #ctoGraphicAnalyticsBox, .tab-pane.active .card, #ljAnythingNewSection .card'
+  );
+  landCards(visibleCards, { y: 26, stagger: 0.055, delay: 0.02 });
+}
+
+const ARDENA_PRESETS = {
+  all:      { pipe: 104600, conv: 31, sla: 96.4, months: 12, baseMonthly: 42400, nwSub: '53 de 55 c?maras en vivo ? 5 empresas' },
+  unitec:   { pipe: 58400,  conv: 35, sla: 98.3, months: 12, baseMonthly: 24500, nwSub: '4,665 sesiones ? 25 tel?fonos capturados' },
+  building: { pipe: 28700,  conv: 28, sla: 100,  months: 12, baseMonthly: 9500,  nwSub: '21 miembros ? 621 renders IA (100% ?xito)' },
+  cameras:  { pipe: 55000,  conv: 96, sla: 96.4, months: 12, baseMonthly: 11040, nwSub: '53/55 canales online ? 11.04 TB HDD' },
+  espacios: { pipe: 45000,  conv: 30, sla: 100,  months: 12, baseMonthly: 15000, nwSub: '45/45 c?maras activas ? Muelles 1?4' },
+  saleinn:  { pipe: 104600, conv: 31, sla: 95.0, months: 12, baseMonthly: 28000, nwSub: '14 oportunidades B2B ? $28k cerrados' }
+};
+
+function _syncRangeFill(inp) {
+  if (!inp) return;
+  const min = parseFloat(inp.min || 0);
+  const max = parseFloat(inp.max || 100);
+  const val = parseFloat(inp.value || 0);
+  const pct = Math.max(0, Math.min(100, ((val - min) / Math.max(1, max - min)) * 100));
+  inp.style.setProperty('--pct', pct.toFixed(1) + '%');
+}
+
+function updateArdenaSimulator() {
+  const pEl = document.getElementById('ardSimPipe');
+  const cEl = document.getElementById('ardSimConv');
+  const sEl = document.getElementById('ardSimSla');
+  const mEl = document.getElementById('ardSimMonths');
+  if (!pEl || !cEl || !sEl || !mEl) return;
+
+  [_syncRangeFill(pEl), _syncRangeFill(cEl), _syncRangeFill(sEl), _syncRangeFill(mEl)];
+
+  const pipe = parseFloat(pEl.value || 104600);
+  const conv = parseFloat(cEl.value || 31);
+  const sla = parseFloat(sEl.value || 96.4);
+  const months = parseInt(mEl.value || 12, 10);
+
+  const closedVal = Math.round(pipe * (conv / 100));
+  const openVal = Math.max(0, Math.round(pipe - closedVal));
+  const slaBoost = 0.85 + (sla / 100) * 0.30;
+  const monthlyEst = Math.round((closedVal * 1.25) * slaBoost);
+  const totalProjected = Math.round(monthlyEst * months);
+
+  const greenPct = Math.max(15, Math.min(88, Math.round((closedVal / Math.max(1, pipe)) * 100 + 28)));
+  const orangePct = 100 - greenPct;
+
+  const setTxt = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
+  setTxt('ardSimPipeLbl', '$' + pipe.toLocaleString('en-US'));
+  setTxt('ardSimConvLbl', `${conv}% ? $${closedVal.toLocaleString('en-US')}`);
+  setTxt('ardSimSlaLbl', `${sla}%`);
+  setTxt('ardSimMonthsLbl', `${months} ${months === 1 ? 'mes' : 'meses'}`);
+
+  setTxt('ardSimMonthlyHero', '$' + monthlyEst.toLocaleString('en-US'));
+  setTxt('ardSimHorizonSub', `proyecci?n a ${months} meses ? SLA operativo ${sla}%`);
+  setTxt('ardSimBoxClosed', '$' + closedVal.toLocaleString('en-US'));
+  setTxt('ardSimBoxOpen', '$' + openVal.toLocaleString('en-US'));
+  setTxt('ardSimBoxTotal', '$' + totalProjected.toLocaleString('en-US'));
+
+  const gBar = document.getElementById('ardSimSplitGreen');
+  const oBar = document.getElementById('ardSimSplitOrange');
+  if (gBar) gBar.style.width = greenPct + '%';
+  if (oBar) oBar.style.width = orangePct + '%';
+  setTxt('ardSimLegendGreen', `Ingreso consolidado ${greenPct}%`);
+  setTxt('ardSimLegendOrange', `Pipeline en cierre ${orangePct}%`);
+
+  const chartEl = document.getElementById('ardSimBarChart');
+  if (chartEl) {
+    const quarters = ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'];
+    chartEl.innerHTML = quarters.map((q, i) => {
+      const factor = 0.55 + (i * 0.14);
+      const hTotal = Math.min(96, Math.max(28, Math.round(42 * factor * (sla / 90))));
+      const hGreen = Math.min(hTotal - 6, Math.max(16, Math.round(hTotal * (greenPct / 100))));
+      const valK = Math.round((monthlyEst * 3 * factor) / 1000);
+      return `
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+          <span style="font-size:9.5px;color:var(--dim);font-weight:700">$${valK}k</span>
+          <div style="width:100%;max-width:34px;height:${hTotal}px;background:rgba(255,255,255,.09);border-radius:6px 6px 0 0;display:flex;align-items:flex-end;overflow:hidden">
+            <div style="width:100%;height:${hGreen}px;background:linear-gradient(180deg,#22c55e,#16a34a);border-radius:5px 5px 0 0;transition:height .28s ease"></div>
+          </div>
+          <span style="font-size:10px;color:var(--dim);font-weight:600;padding-top:3px">${q}</span>
+        </div>
+      `;
+    }).join('');
+  }
+}
+
+function syncArdenaSidebarAndBreadcrumb() {
+  const preset = ARDENA_PRESETS[cur] || ARDENA_PRESETS.all;
+  const coMeta = COMPANIES.find(c => c.id === cur) || COMPANIES[0];
+  const nwVal = document.getElementById('sbNetWorthVal');
+  const nwSub = document.getElementById('sbNetWorthSub');
+  const nwLbl = document.getElementById('sbNetWorthLbl');
+  if (nwLbl) nwLbl.textContent = cur === 'all' ? 'Valor en Portafolio & Pipeline' : `Pipeline ? ${coMeta.name}`;
+  if (nwVal) nwVal.textContent = '$' + (preset.pipe || 104600).toLocaleString('en-US');
+  if (nwSub) nwSub.textContent = preset.nwSub;
+
+  const bcRoot = document.getElementById('ardenaBreadcrumbRoot');
+  const bcCur = document.getElementById('ardenaBreadcrumbCurrent');
+  if (activeTab !== 'overview') {
+    if (bcRoot) bcRoot.textContent = 'Categor?as';
+    const tabLabels = {
+      comms: 'Bandeja IA (Modo C)',
+      outcomes: 'Resultados & Monitoreo',
+      behavior: 'Cerebro Conductual',
+      setup: 'Conexiones & Settings',
+      blogs: 'Peri?dico PDF & Gu?as'
+    };
+    if (bcCur) bcCur.textContent = tabLabels[activeTab] || activeTab;
+  } else {
+    if (bcRoot) bcRoot.textContent = 'Proyectos';
+    if (bcCur) bcCur.textContent = cur === 'all' ? 'Todas las Empresas (Resumen)' : coMeta.name;
+  }
+
+  const selPreset = document.getElementById('ardenaSimPreset');
+  if (selPreset && selPreset.value !== cur) {
+    selPreset.value = cur || 'all';
+  }
+  const pEl = document.getElementById('ardSimPipe');
+  const cEl = document.getElementById('ardSimConv');
+  const sEl = document.getElementById('ardSimSla');
+  const mEl = document.getElementById('ardSimMonths');
+  if (pEl) pEl.value = preset.pipe;
+  if (cEl) cEl.value = preset.conv;
+  if (sEl) sEl.value = preset.sla;
+  if (mEl) mEl.value = preset.months;
+  updateArdenaSimulator();
+}
+
+function onArdenaPresetChange(coId) {
+  if (coId && coId !== cur) {
+    selectCompanyFromMenu(coId);
+  } else {
+    syncArdenaSidebarAndBreadcrumb();
+  }
+}
+
+function switchArdenaSubPill(mode) {
+  document.querySelectorAll('#ardenaSubPillsBar .ardena-sub-pill').forEach(b => {
+    b.classList.toggle('active', b.getAttribute('data-subpill') === mode);
+  });
+  const simBox = document.getElementById('ardenaInteractiveShowcase');
+  const tBox = document.getElementById('ctoTextAnalyticsBox');
+  const gBox = document.getElementById('ctoGraphicAnalyticsBox');
+  const memTitle = document.getElementById('ctoMemoryVaultTitle');
+  const memCard = memTitle ? memTitle.closest('div[style*="border-radius:16px"]') : null;
+
+  if (mode === 'all') {
+    if (simBox) simBox.style.display = 'grid';
+    if (tBox && tBox.parentElement) tBox.parentElement.style.display = 'grid';
+    if (memCard) memCard.style.display = 'block';
+  } else if (mode === 'analytics') {
+    if (simBox) simBox.style.display = 'none';
+    if (tBox && tBox.parentElement) tBox.parentElement.style.display = 'grid';
+    if (memCard) memCard.style.display = 'none';
+  } else if (mode === 'memory') {
+    if (simBox) simBox.style.display = 'none';
+    if (tBox && tBox.parentElement) tBox.parentElement.style.display = 'none';
+    if (memCard) memCard.style.display = 'block';
+  }
+  triggerArdenaPageAnimation();
+}
 
 function renderAllCompaniesSummaryCards() {
   const grid = document.getElementById('allCompaniesSummaryGrid');
