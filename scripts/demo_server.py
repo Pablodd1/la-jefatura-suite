@@ -229,7 +229,7 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
             self._send(200, knowledge_store.export_all())
             return
 
-        if path in ("/", "/index.html", "/demo", "/assistant", "/chat"):
+        if path in ("/", "/index.html", "/demo", "/demo.html", "/mock/demo.html", "/assistant", "/chat"):
             html = open(os.path.join(ROOT, "mock", "demo.html"), "rb").read()
             self._send(200, html, "text/html; charset=utf-8")
         elif path.rstrip("/") in ("/website", "/web", "/presentacion", "/site", "/website-v1", "/website-v2", "/website-v3"):
