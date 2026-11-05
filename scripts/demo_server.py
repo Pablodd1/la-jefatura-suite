@@ -668,13 +668,21 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
 
 
 if __name__ == "__main__":
-    _seed_if_empty()
-    camera_report.start_scheduler()
-    daily_brief_pusher.start_scheduler()
-    daily_company_reports.start_daily_company_scheduler()
+    import threading
+
+    def _bg_boot():
+        try:
+            _seed_if_empty()
+            camera_report.start_scheduler()
+            daily_brief_pusher.start_scheduler()
+            daily_company_reports.start_daily_company_scheduler()
+        except Exception as e:
+            print(f"[boot] background init warning: {e}", flush=True)
+
+    threading.Thread(target=_bg_boot, daemon=True).start()
     srv = __import__("http.server").server.ThreadingHTTPServer(
         ("0.0.0.0", PORT), Handler)
-    print(f"La Jefatura demo -> http://localhost:{PORT}  (Ctrl-C to stop)")
+    print(f"La Jefatura demo -> http://localhost:{PORT}  (Ctrl-C to stop)", flush=True)
     try:
         srv.serve_forever()
     except KeyboardInterrupt:
