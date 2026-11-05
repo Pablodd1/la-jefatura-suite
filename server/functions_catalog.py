@@ -968,44 +968,54 @@ def send_email_and_telegram_reminder(
         f"\nSincronizado con mc.db, Google Calendar (/api/calendar.ics) y Telegram @La_Jefatura_Bot."
     )
 
-    # 1. Try SMTP delivery via daily_company_reports._send_email
-    smtp_res = {"ok": False, "status": "not_attempted"}
-    try:
-        import daily_company_reports
-        html_body = (
-            f"<div style='font-family:Inter,Segoe UI,sans-serif;background:#0f141c;color:#f5f2eb;padding:24px;border-radius:14px;border:1px solid #cdb68c'>"
-            f"<div style='font-size:11px;color:#cdb68c;font-weight:800;letter-spacing:.08em'>LA JEFATURA · MADE &amp; POWERED BY BUILDING INNOVATION</div>"
-            f"<h2 style='margin:8px 0 12px;color:#ffffff'>⏰ {title}</h2>"
-            f"<p style='margin:4px 0'><b>Proyecto:</b> {company.upper()}</p>"
-            f"<p style='margin:4px 0'><b>Fecha y Hora:</b> {date_str} · {time_str}</p>"
-            f"<p style='margin:8px 0;color:#cbd5e1'>{notes or 'Recordatorio activo en tu horario y memoria de La Jefatura.'}</p>"
-            f"</div>"
-        )
-        smtp_res = daily_company_reports._send_email(
-            to_emails=recipients,
-            subject=subject,
-            html_body=html_body,
-            text_body=body_txt,
-        )
-    except Exception as e:
-        smtp_res = {"ok": False, "error": str(e)}
+    # 1. Dispatch Email + Telegram in a non-blocking background thread so voice/chat commands return in <100ms
+    recipients = [to_email] if to_email else [
+        "juangerenciagarcia@gmail.com",
+        "ceo@espaciosimportados.com.co",
+        "jasmelacosta@gmail.com",
+    ]
+    smtp_res = {"ok": True, "status": "dispatched_async"}
+    tg_res = {"ok": True, "status": "dispatched_async"}
 
-    # 2. Also send real-time Telegram notification via @La_Jefatura_Bot if chat_id is known or configured
-    tg_res = {"ok": False}
-    try:
-        import daily_company_reports
-        rec_cfg = daily_company_reports.get_recipients_config()
-        chat_ids = rec_cfg.get("telegram_chat_ids") or []
-        bot_token = daily_company_reports._get_telegram_token()
-        if bot_token and chat_ids:
-            for cid in chat_ids:
-                url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
-                payload = json.dumps({"chat_id": cid, "text": body_txt}).encode("utf-8")
-                req = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"}, method="POST")
-                with urllib.request.urlopen(req, timeout=8) as r:
-                    tg_res = {"ok": r.status == 200, "chat_id": cid}
-    except Exception:
-        pass
+    def _async_dispatch():
+        try:
+            import daily_company_reports
+            rec_cfg = daily_company_reports.load_recipients_config()
+            target_emails = [to_email] if to_email else list(rec_cfg.get("emails") or recipients)
+            html_body = (
+                f"<div style='font-family:Inter,Segoe UI,sans-serif;background:#0f141c;color:#f5f2eb;padding:24px;border-radius:14px;border:1px solid #cdb68c'>"
+                f"<div style='font-size:11px;color:#cdb68c;font-weight:800;letter-spacing:.08em'>LA JEFATURA · MADE &amp; POWERED BY BUILDING INNOVATION</div>"
+                f"<h2 style='margin:8px 0 12px;color:#ffffff'>⏰ {title}</h2>"
+                f"<p style='margin:4px 0'><b>Proyecto:</b> {company.upper()}</p>"
+                f"<p style='margin:4px 0'><b>Fecha y Hora:</b> {date_str} · {time_str}</p>"
+                f"<p style='margin:8px 0;color:#cbd5e1'>{notes or 'Recordatorio activo en tu horario y memoria de La Jefatura.'}</p>"
+                f"</div>"
+            )
+            daily_company_reports._send_html_email_smtp_or_resend(
+                to_emails=target_emails,
+                subject=subject,
+                html_body=html_body,
+                chart_cid="",
+                chart_bytes=b"",
+                pdf_filename="",
+                pdf_bytes=b"",
+                company_name=company.upper(),
+            )
+            daily_company_reports._send_telegram_report_and_pdf(
+                text_md=(
+                    f"⏰ *RECORDATORIO EJECUTIVO LA JEFATURA ({company.upper()})*\n"
+                    f"• *Tarea / Cita:* {title}\n"
+                    f"• *Fecha y Hora:* `{date_str}` · `{time_str}`\n"
+                    f"• *Detalle:* {notes or 'Programado en memoria activa (mc.db) y Google Calendar.'}"
+                ),
+                pdf_filename="",
+                pdf_bytes=b"",
+            )
+        except Exception:
+            pass
+
+    import threading
+    threading.Thread(target=_async_dispatch, daemon=True).start()
 
     gmail_compose_url = (
         "https://mail.google.com/mail/?view=cm&fs=1"

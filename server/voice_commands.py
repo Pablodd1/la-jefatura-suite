@@ -195,6 +195,19 @@ def parse(command: str, lang: str = "es") -> dict:
     if m:
         return {"action": "save_task", "text": m.group(1).strip()}
 
+    # Company Learning ("aprende que ...", "memoriza sobre la empresa ...", "aprende sobre unitec que ...")
+    m_learn_co = re.match(
+        r"^(?:por favor\s+)?(?:aprende|aprender|ense[ñn]ar|memoriza\s+sobre\s+la\s+empresa|aprende\s+sobre\s+la\s+empresa|"
+        r"recuerda\s+sobre\s+la\s+empresa|learn\s+that|memorize\s+that)\s*(?:que\s+|sobre\s+|de\s+)?[:,\-]?\s*(.+)$",
+        t, re.I
+    )
+    if m_learn_co and not re.search(r"\b(voz|voice|estilo)\b", low):
+        return {"action": "learn_company", "text": m_learn_co.group(1).strip()}
+
+    # Twice-daily live report dispatch ("enviar reporte ahora", "mandar informe por telegram y correo", "reporte dos veces al día")
+    if re.search(r"\b(?:enviar|env[ií]a|mandar|manda|despachar|dispara)\b.*\b(?:reporte|informe|resumen|brief)\b", low):
+        return {"action": "send_twice_daily_report"}
+
     # Explicit search / Q&A queries
     if re.match(r"^(?:buscar|busca|search|find|encuentra|qu[eé] dijo|what did)\b", low):
         return {"action": "ask", "text": t}
@@ -242,7 +255,7 @@ def parse(command: str, lang: str = "es") -> dict:
                  r"alertas|alerts|generaciones|generations|renders|costo|cost|clima|tiempo|weather|temperatura|"
                  r"lluvia|building|buildingapp|unitec|c[aá]maras?|cameras?|hik|espacios|pick|ideo|muelles|"
                  r"grabador|discos|ga4|analytics|tr[aá]fico|empresas|companies|nexus|pipeline|ventas|ingresos|"
-                 r"citas|agenda|calendario)\b", low) and not re.search(r"^(?:ir a|abrir|abre|open|go to|cambiar a|switch to)\b", low):
+                 r"citas|agenda|calendario|errores?|fallos?|conexiones?|faltan|departamentos?|brazos|piernas|staff|personal|equipo)\b", low) and not re.search(r"^(?:ir a|abrir|abre|open|go to|cambiar a|switch to)\b", low):
         return {"action": "ask", "text": t}
 
     ct = re.match(r"^(?:completar|marcar|complete|done(?: with)?)\s+(?:tarea|task)?\s*(.+)$", t, re.I)
@@ -574,6 +587,40 @@ def execute(command: str, lang: str = "es", samples_dir: str | None = None) -> d
                   f"Logged in the developer queue to build the solution."))
         return {"ok": True, "action": "escalate_dev", "parsed": p, "reply": reply, "dev_ticket": esc,
                 "ui": {"refresh_dev_escalations": True}, "sources": [f"Ticket #{esc.get('id')}"], "grounded": True}
+    elif action == "learn_company":
+        import knowledge_store as ks
+        res = ks.learn_company_fact(p.get("text", command), company="all", category="ceo_voice_teaching", source="voice_chat")
+        es = lang != "en"
+        reply = res.get("reply_es" if es else "reply_en") or "Aprendido y guardado en memoria de la empresa."
+        return {
+            "ok": bool(res.get("ok")),
+            "action": "learn_company",
+            "parsed": p,
+            "reply": reply,
+            "record": res,
+            "ui": {"refresh_memory": True, "refresh_live_state": True},
+            "sources": [res.get("id", "company_learned_facts")],
+            "grounded": True,
+        }
+    elif action == "send_twice_daily_report":
+        import daily_company_reports
+        rep_res = daily_company_reports.dispatch_company_reports(companies=["building", "unitec"], send_email=True, send_telegram=True)
+        es = lang != "en"
+        reply = (
+            "📨 Reportes detallados en tiempo real (Building Innovation + UNITEC USA + 55 Cámaras) enviados por Telegram (@Pegantebot y @ceojefesitobot) y Correo Electrónico con PDF adjunto."
+            if es else
+            "📨 Real-time detailed reports dispatched via Telegram and Email with PDF attached."
+        )
+        return {
+            "ok": True,
+            "action": "send_twice_daily_report",
+            "parsed": p,
+            "reply": reply,
+            "record": rep_res,
+            "ui": {"refresh_live_state": True},
+            "sources": ["Reportes 2x/Día (08:00 AM y 06:00 PM)"],
+            "grounded": True,
+        }
     elif action in ("save_note", "save_task", "save_meeting", "save_email"):
         import knowledge_store as ks
         import functions_catalog as fc

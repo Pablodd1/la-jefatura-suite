@@ -306,6 +306,12 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
         elif path == "/api/ceo/feedback":
             co = (qs.get("company") or ["all"])[0]
             self._send(200, {"ok": True, "items": knowledge_store.list_feedback_requests(company=co, limit=25)})
+        elif path == "/api/live/state":
+            co = (qs.get("company") or ["all"])[0]
+            self._send(200, knowledge_store.get_live_company_state(company=co))
+        elif path == "/api/ceo/company_learn":
+            co = (qs.get("company") or ["all"])[0]
+            self._send(200, {"ok": True, "facts": knowledge_store.list_company_facts(company=co, limit=30)})
         elif path == "/api/functions/catalog":
             q_match = (qs.get("q") or [""])[0].strip()
             cat = functions_catalog.get_catalog()
@@ -573,6 +579,14 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
                 lang=body.get("lang", "es"),
             )
             self._send(200 if res.get("ok") else 400, res)
+        elif path == "/api/ceo/company_learn":
+            res = knowledge_store.learn_company_fact(
+                fact=body.get("fact") or body.get("text") or body.get("message") or "",
+                company=body.get("company", "all"),
+                category=body.get("category", "general"),
+                source=body.get("source", "ceo_ui"),
+            )
+            self._send(200 if res.get("ok") else 400, res)
         elif path == "/api/ceo/email_reminder":
             raw_txt = body.get("text") or body.get("title") or ""
             parsed_dt = functions_catalog.parse_natural_datetime(raw_txt)
@@ -639,7 +653,7 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
                 "email_reminder", "save_note", "save_task", "save_meeting", "save_email",
                 "control", "read_brief", "download_report", "sync_integrations",
                 "approve_draft", "draft_reply", "complete_task", "confirm_coffee",
-                "help", "explain_plans", "escalate_dev"
+                "help", "explain_plans", "escalate_dev", "learn_company", "send_twice_daily_report"
             ) or (v_res.get("action") == "ask" and v_res.get("grounded")):
                 res = v_res
             elif action_res.get("intent") and action_res.get("intent") not in ("general_chat", "unknown"):

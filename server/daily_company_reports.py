@@ -1087,7 +1087,7 @@ _daily_scheduler_started = False
 
 
 def start_daily_company_scheduler():
-    """Background daemon that dispatches the 2 individual company reports daily at 08:00 AM EST."""
+    """Background daemon that dispatches the detailed company reports TWICE A DAY at 08:00 AM and 06:00 PM (18:00) EST."""
     global _daily_scheduler_started
     if _daily_scheduler_started:
         return
@@ -1100,18 +1100,21 @@ def start_daily_company_scheduler():
             build_company_report("unitec", lang="es")
         except Exception:
             pass
-        last_sent_day = ""
+        last_sent_slot_key = ""
         while True:
             try:
                 discover_juan_telegram_chat_id()
                 lt = time.localtime()
                 day_str = time.strftime("%Y-%m-%d", lt)
                 cfg = load_recipients_config()
-                target_h = int(cfg.get("daily_send_hour_est", 8))
+                morning_h = int(cfg.get("daily_send_hour_est", 8))
+                evening_h = int(cfg.get("evening_send_hour_est", 18))
                 target_m = int(cfg.get("daily_send_minute_est", 0))
-                if lt.tm_hour == target_h and lt.tm_min == target_m and day_str != last_sent_day:
-                    dispatch_company_reports(companies=["building", "unitec"], send_email=True, send_telegram=True)
-                    last_sent_day = day_str
+                if lt.tm_hour in (morning_h, evening_h) and lt.tm_min == target_m:
+                    slot_key = f"{day_str}-{lt.tm_hour:02d}"
+                    if slot_key != last_sent_slot_key:
+                        dispatch_company_reports(companies=["building", "unitec"], send_email=True, send_telegram=True)
+                        last_sent_slot_key = slot_key
             except Exception:
                 pass
             time.sleep(45)
