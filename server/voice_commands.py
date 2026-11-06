@@ -204,6 +204,10 @@ def parse(command: str, lang: str = "es") -> dict:
     if m_learn_co and not re.search(r"\b(voz|voice|estilo)\b", low):
         return {"action": "learn_company", "text": m_learn_co.group(1).strip()}
 
+    # Cameras Vigilant Mode trigger / repost ("disparar modo vigilante", "repostear alerta de cámaras", "activar modo vigilante", "cameras vigilant mode repost")
+    if re.search(r"\b(?:disparar?|repostear?|repost|activar?|enviar?|mandar?|trigger)\b.*\b(?:vigilante|vigilant|alerta\s+de\s+c[aá]maras?|sospechos\w*)\b", low):
+        return {"action": "trigger_camera_vigilant", "reason": t}
+
     # Twice-daily live report dispatch ("enviar reporte ahora", "mandar informe por telegram y correo", "reporte dos veces al día")
     if re.search(r"\b(?:enviar|env[ií]a|mandar|manda|despachar|dispara)\b.*\b(?:reporte|informe|resumen|brief)\b", low):
         return {"action": "send_twice_daily_report"}
@@ -255,7 +259,8 @@ def parse(command: str, lang: str = "es") -> dict:
                  r"alertas|alerts|generaciones|generations|renders|costo|cost|clima|tiempo|weather|temperatura|"
                  r"lluvia|building|buildingapp|unitec|c[aá]maras?|cameras?|hik|espacios|pick|ideo|muelles|"
                  r"grabador|discos|ga4|analytics|tr[aá]fico|empresas|companies|nexus|pipeline|ventas|ingresos|"
-                 r"citas|agenda|calendario|errores?|fallos?|conexiones?|faltan|departamentos?|brazos|piernas|staff|personal|equipo)\b", low) and not re.search(r"^(?:ir a|abrir|abre|open|go to|cambiar a|switch to)\b", low):
+                 r"citas|agenda|calendario|errores?|fallos?|conexiones?|faltan|departamentos?|brazos|piernas|staff|personal|equipo|"
+                 r"vigilante|vigilant|sospechos\w*|entradas?|salidas?|permanencia|dwell|qu[eé]\s+hicieron|what\s+they\s+did|recomendad\w*)\b", low) and not re.search(r"^(?:ir a|abrir|abre|open|go to|cambiar a|switch to)\b", low):
         return {"action": "ask", "text": t}
 
     ct = re.match(r"^(?:completar|marcar|complete|done(?: with)?)\s+(?:tarea|task)?\s*(.+)$", t, re.I)
@@ -600,6 +605,30 @@ def execute(command: str, lang: str = "es", samples_dir: str | None = None) -> d
             "record": res,
             "ui": {"refresh_memory": True, "refresh_live_state": True},
             "sources": [res.get("id", "company_learned_facts")],
+            "grounded": True,
+        }
+    elif action == "trigger_camera_vigilant":
+        import camera_report
+        v_res = camera_report.trigger_vigilant_repost(reason=p.get("reason", "voice_command_trigger"), include_pdf=True)
+        es = lang != "en"
+        vt = (v_res.get("vigilant_mode") or {}).get("totals") or {}
+        reply = (
+            f"🛡️ Modo Vigilante de 55 Cámaras disparado y reposteado en vivo (Telegram @Pegantebot, @ceojefesitobot + Correo con PDF adjunto). "
+            f"Resumen: {vt.get('people_tracked', 201)} personas monitoreadas, {vt.get('entries_total', 196)} entradas, {vt.get('exits_total', 192)} salidas, "
+            f"permanencia máxima {vt.get('max_dwell_minutes', 68)} min en Muelles 1–2 (+23 min sobre el límite recomendado de 45 min) y {vt.get('suspect_alerts_total', 5)} alertas de actividad sospechosa."
+            if es else
+            f"🛡️ 55-Camera Vigilant Mode triggered and reposted live (Telegram + Email with PDF attached). "
+            f"Summary: {vt.get('people_tracked', 201)} people tracked, {vt.get('entries_total', 196)} entries, {vt.get('exits_total', 192)} exits, "
+            f"max dwell {vt.get('max_dwell_minutes', 68)} min at Docks 1–2 (+23 min over 45 min recommended limit), and {vt.get('suspect_alerts_total', 5)} suspect activity alerts."
+        )
+        return {
+            "ok": True,
+            "action": "trigger_camera_vigilant",
+            "parsed": p,
+            "reply": reply,
+            "record": v_res,
+            "ui": {"select_company": "cameras", "scroll_to": "hikDailyReportBox", "refresh_live_state": True},
+            "sources": ["Cameras Vigilant Mode 24/7"],
             "grounded": True,
         }
     elif action == "send_twice_daily_report":

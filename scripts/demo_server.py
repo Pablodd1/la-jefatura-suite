@@ -272,6 +272,9 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
             day = (qs.get("date") or [None])[0]
             mode = (qs.get("mode") or qs.get("example") or [None])[0]
             self._send(200, camera_report.get_report(day, mode=mode))
+        elif path == "/api/cameras/vigilant":
+            day = (qs.get("date") or [None])[0]
+            self._send(200, camera_report.build_vigilant_mode_telemetry(day))
         elif path == "/api/cameras/report.pdf":
             day = (qs.get("date") or [None])[0]
             mode = (qs.get("mode") or ["example"])[0]
@@ -607,6 +610,10 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
                 self._send(200, {"ok": True, "stored": camera_report.add_agent_events(body.get("events", []))})
         elif path == "/api/cameras/poll":
             self._send(200, camera_report.poll())
+        elif path in ("/api/cameras/vigilant/trigger", "/api/cameras/vigilant/repost"):
+            reason = str(body.get("reason") or "manual_vigilant_trigger")
+            emails = body.get("emails") if isinstance(body.get("emails"), list) else None
+            self._send(200, camera_report.trigger_vigilant_repost(reason=reason, to_emails=emails, include_pdf=True))
         elif path == "/api/cameras/sync":
             self._send(200, cameras.status(os.path.join(SAMPLES, "cameras.json"), force=True))
         elif path == "/api/reports/company_daily/send":

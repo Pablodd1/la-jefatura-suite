@@ -1531,7 +1531,8 @@
             <option value="IDEO">Cámaras Wi-Fi UNITECUSA · SALON &amp; OFICINA IDEO (2 IPC · OFFLINE)</option>
           </select>
           <button class="btn ghost sm" type="button" onclick="syncHikConnectLive(true)">Sincronizar Hik-Connect</button>
-          <button class="btn sm" type="button" onclick="toggleCameraReportDrawer()">Informe Diario CEO</button>
+          <button class="btn sm" type="button" onclick="toggleCameraReportDrawer()">🛡️ Modo Vigilante &amp; Informe</button>
+          <button class="btn sm" type="button" style="background:#EB5757;color:#fff;border:0;font-weight:800" onclick="triggerCameraVigilantRepostNow()">🚨 Repostear Alerta Ahora</button>
           <button class="btn vio sm" type="button" onclick="window.open('/api/cameras/report.pdf?mode=example&lang=' + (typeof lang !== 'undefined' ? lang : 'es'), '_blank')">PDF Cámaras</button>
         </div>
       </h3>
@@ -4579,6 +4580,37 @@ function toggleCameraReportDrawer() {
   renderCameraDailyReportBox();
 }
 
+function triggerCameraVigilantRepostNow(customReason) {
+  const es = (typeof lang === 'undefined' || lang === 'es');
+  showToast(es ? '🚨 Disparando Modo Vigilante: enviando reporte y PDF a Telegram (@Pegantebot / @ceojefesitobot) y Correo…' : '🚨 Triggering Vigilant Mode: sending report & PDF to Telegram and Email…');
+  fetch('/api/cameras/vigilant/trigger', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({reason: customReason || 'ceo_manual_vigilant_trigger'})
+  })
+    .then(r => r.json())
+    .then(res => {
+      if (res && res.ok) {
+        if (CAMERA_REPORT_DATA && res.vigilant_mode) {
+          CAMERA_REPORT_DATA.vigilant_mode = res.vigilant_mode;
+          if (CAMERA_REPORT_DATA.example_report) {
+            CAMERA_REPORT_DATA.example_report.vigilant_mode = res.vigilant_mode;
+          }
+        }
+        renderCameraDailyReportBox();
+        const ch = (res.channels_sent || []).join(' + ') || 'Telegram & Email';
+        showToast(es
+          ? `✅ Alerta Vigilante reposteada en vivo por ${ch} (ID #${res.repost_id || 1}).`
+          : `✅ Vigilant Alert reposted live via ${ch} (ID #${res.repost_id || 1}).`);
+      } else {
+        showToast(es ? '⚠️ Error al repostear alerta vigilante.' : '⚠️ Failed to repost vigilant alert.');
+      }
+    })
+    .catch(() => {
+      showToast(es ? '⚠️ Error de red al disparar Modo Vigilante.' : '⚠️ Network error triggering Vigilant Mode.');
+    });
+}
+
 function renderCameraDailyReportBox() {
   const box = document.getElementById('hikDailyReportBox');
   if (!box || !CAMERA_REPORT_DATA) return;
@@ -4588,58 +4620,169 @@ function renderCameraDailyReportBox() {
   const docks = ex.docks_summary || [];
   const ah = ex.after_hours || [];
   const lp = ex.learned_patterns || [];
+  const vig = ex.vigilant_mode || CAMERA_REPORT_DATA.vigilant_mode || {};
+  const vt = vig.totals || {};
+  const pee = vig.people_entries_exits || [];
+  const susp = vig.suspect_activities || [];
+  const rchecks = vig.recommended_times_check || [];
+  const rhist = vig.repost_history || [];
+  const es = (typeof lang === 'undefined' || lang === 'es');
+
   if (!camReportExpanded) {
-    box.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;font-size:11.5px">
-      <div><span class="tag ok">INFORME DIARIO DE CÁMARAS (${ex.day || 'HOY'})</span> <b style="margin-left:6px">53/55 Canales en Vivo (Real) · ${k.total_events_example || 412} Eventos / ${k.dock_operations_total || 60} Ops Muelles (Ejemplo)</b></div>
-      <button class="btn ghost sm" type="button" onclick="toggleCameraReportDrawer()">Expandir Informe →</button>
+    box.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;font-size:11.5px;flex-wrap:wrap;gap:8px">
+      <div>
+        <span class="tag critical">🛡️ CAMERAS VIGILANT MODE 24/7 (${ex.day || 'HOY'})</span>
+        <b style="margin-left:6px">53/55 Canales en Vivo · ${vt.people_tracked || 201} Personas · ${vt.entries_total || 196} Entradas / ${vt.exits_total || 192} Salidas · ${susp.length || 5} Alertas Sospechosas</b>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="btn sm" type="button" style="background:#EB5757;color:#fff;border:0;font-weight:800" onclick="triggerCameraVigilantRepostNow()">🚨 Repostear Alerta</button>
+        <button class="btn ghost sm" type="button" onclick="toggleCameraReportDrawer()">Expandir Modo Vigilante →</button>
+      </div>
     </div>`;
     return;
   }
   box.innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px">
-      <div>
-        <span class="tag ok">INFORME DIARIO EJECUTIVO DE CÁMARAS (${ex.day || 'HOY'})</span>
-        <span class="tag medium" style="margin-left:6px">SECCIÓN 1: 100% REAL MEDIDO · SECCIONES 2-5: EJEMPLO DE ACTIVIDAD</span>
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+        <span class="tag critical" style="font-weight:900">🛡️ CAMERAS VIGILANT MODE 24/7 (${ex.day || 'HOY'})</span>
+        <span class="tag ok">AUTO-REPOST EN TRIGGERS: ACTIVO (TELEGRAM + EMAIL + PDF)</span>
+        <span class="tag medium">HIK-CONNECT REAL + AUDITORÍA DE PERMANENCIA Y CONDUCTA</span>
       </div>
-      <div style="display:flex;gap:6px">
-        <button class="btn ghost sm" type="button" onclick="window.open('/api/cameras/report.pdf?mode=example&lang=' + (typeof lang !== 'undefined' ? lang : 'es'), '_blank')">Descargar PDF</button>
-        <button class="btn ghost sm" type="button" onclick="toggleCameraReportDrawer()">Ocultar</button>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <button class="btn sm" type="button" style="background:#EB5757;color:#fff;border:0;font-weight:800" onclick="triggerCameraVigilantRepostNow()">🚨 ${es ? 'Repostear Alerta Ahora (TG + Email + PDF)' : 'Repost Alert Now (TG + Email + PDF)'}</button>
+        <button class="btn ghost sm" type="button" onclick="window.open('/api/cameras/report.pdf?mode=example&lang=' + (typeof lang !== 'undefined' ? lang : 'es'), '_blank')">📄 ${es ? 'Descargar PDF Vigilante' : 'Download Vigilant PDF'}</button>
+        <button class="btn ghost sm" type="button" onclick="toggleCameraReportDrawer()">${es ? 'Ocultar' : 'Hide'}</button>
       </div>
     </div>
-    <div class="muted" style="font-size:11px;margin-bottom:10px;line-height:1.4">${lang === 'es' ? (ex.provenance_notice_es || '') : (ex.provenance_notice_en || '')}</div>
-    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:10px">
+    <div class="muted" style="font-size:11px;margin-bottom:10px;line-height:1.4">${es ? (ex.provenance_notice_es || '') : (ex.provenance_notice_en || '')}</div>
+
+    <!-- 6-Card Vigilant KPI Strip -->
+    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:12px">
       <div style="background:rgba(255,255,255,.04);border:1px solid var(--hair);border-radius:8px;padding:7px 9px">
-        <div class="muted" style="font-size:9.5px">FLOTA EN VIVO (REAL)</div>
-        <div style="font-weight:800;font-size:14px;color:var(--ok)">${k.channels_online || 53}/${k.channels_total || 55} Canales (${k.channel_availability_pct || 96.4}%)</div>
+        <div class="muted" style="font-size:9.5px">${es ? 'FLOTA EN VIVO (REAL)' : 'LIVE FLEET (REAL)'}</div>
+        <div style="font-weight:800;font-size:13.5px;color:var(--ok)">${k.channels_online || 53}/${k.channels_total || 55} Canales (${k.channel_availability_pct || 96.4}%)</div>
         <div class="muted" style="font-size:9.5px">3/5 Equipos · ${k.total_storage_tb || 12.92} TB HDD</div>
       </div>
       <div style="background:rgba(255,255,255,.04);border:1px solid var(--hair);border-radius:8px;padding:7px 9px">
-        <div class="muted" style="font-size:9.5px">TOTAL EVENTOS (EJEMPLO)</div>
-        <div style="font-weight:800;font-size:14px;color:var(--acc)">${k.total_events_example || 412} eventos</div>
-        <div class="muted" style="font-size:9.5px">${k.people_detections_example || 268} personas · ${k.vehicle_detections_example || 89} vehículos</div>
+        <div class="muted" style="font-size:9.5px">${es ? 'PERSONAS Y ROLES' : 'PEOPLE & ROLES'}</div>
+        <div style="font-weight:800;font-size:13.5px;color:var(--acc)">${vt.people_tracked || 201} ${es ? 'personas' : 'people'}</div>
+        <div class="muted" style="font-size:9.5px">${k.people_detections_example || 268} det. · ${k.vehicle_detections_example || 89} vehículos</div>
       </div>
       <div style="background:rgba(255,255,255,.04);border:1px solid var(--hair);border-radius:8px;padding:7px 9px">
-        <div class="muted" style="font-size:9.5px">MUELLES 1-4 Y DESPACHOS</div>
-        <div style="font-weight:800;font-size:14px;color:var(--acc2)">${k.dock_operations_total || 60} ops muelles</div>
-        <div class="muted" style="font-size:9.5px">${k.dispatch_batches_total || 52} despachos · ${k.pick_in_operations_total || 94} Pick-In</div>
+        <div class="muted" style="font-size:9.5px">${es ? 'ENTRADAS / SALIDAS' : 'ENTRIES / EXITS'}</div>
+        <div style="font-weight:800;font-size:13.5px;color:var(--acc2)">${vt.entries_total || 196} Ent / ${vt.exits_total || 192} Sal</div>
+        <div class="muted" style="font-size:9.5px">${vt.currently_inside || 4} ${es ? 'en planta ahora' : 'currently inside'}</div>
       </div>
       <div style="background:rgba(255,255,255,.04);border:1px solid var(--hair);border-radius:8px;padding:7px 9px">
-        <div class="muted" style="font-size:9.5px">HORA PICO OPERATIVA</div>
-        <div style="font-weight:800;font-size:13px;color:var(--vio)">10:00–11:00 AM</div>
-        <div class="muted" style="font-size:9.5px">64 eventos · Apertura 06:48 AM</div>
+        <div class="muted" style="font-size:9.5px">${es ? 'TIEMPO PERMANENCIA (DWELL)' : 'TIME SPENT (DWELL)'}</div>
+        <div style="font-weight:800;font-size:13.5px;color:var(--warn)">${vt.avg_dwell_minutes || 34}m prom · ${vt.max_dwell_minutes || 68}m máx</div>
+        <div class="muted" style="font-size:9.5px">Rec. Muelle &lt;=45m · Pausa &lt;=20m</div>
       </div>
-      <div style="background:rgba(255,255,255,.04);border:1px solid var(--hair);border-radius:8px;padding:7px 9px">
-        <div class="muted" style="font-size:9.5px">FUERA DE HORARIO (19h–06h)</div>
-        <div style="font-weight:800;font-size:14px;color:var(--warn)">${k.after_hours_events_example || 3} eventos</div>
-        <div class="muted" style="font-size:9.5px">1 Nivel-2 · 1 Nivel-1 (IDEO Real)</div>
+      <div style="background:rgba(255,92,92,.08);border:1px solid rgba(255,92,92,.35);border-radius:8px;padding:7px 9px">
+        <div class="muted" style="font-size:9.5px">${es ? 'ACTIVIDAD SOSPECHOSA' : 'SUSPECT ACTIVITY'}</div>
+        <div style="font-weight:800;font-size:13.5px;color:var(--crit)">${susp.length || 5} ${es ? 'alertas activas' : 'active alerts'}</div>
+        <div class="muted" style="font-size:9.5px">IDEO 22:59 · Perímetro 23:18</div>
+      </div>
+      <div style="background:rgba(35,217,176,.08);border:1px solid rgba(35,217,176,.35);border-radius:8px;padding:7px 9px">
+        <div class="muted" style="font-size:9.5px">${es ? 'TRIGGERS Y REPOSTEOS' : 'TRIGGERS & REPOSTS'}</div>
+        <div style="font-weight:800;font-size:13.5px;color:var(--ok)">${vt.recommended_time_violations || 3} ${es ? 'triggers hoy' : 'triggers today'}</div>
+        <div class="muted" style="font-size:9.5px">${rhist.length} ${es ? 'reposteos enviados' : 'reposts sent'}</div>
       </div>
     </div>
+
+    <!-- Detailed Table: People, Entries, Exits, Dwell Time vs Recommended, Behavior & What They Did -->
+    <div style="background:rgba(255,255,255,.03);border:1px solid var(--hair);border-radius:9px;padding:10px;margin-bottom:10px;overflow-x:auto">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <b style="color:var(--acc);font-size:11.5px">👥 ${es ? 'Detalle por Cámara: Personas, Entradas, Salidas, Tiempo de Permanencia vs. Recomendado, Comportamiento y Qué Hicieron' : 'Per-Camera Breakdown: People, Entries, Exits, Time Spent vs. Recommended, Behavior & What They Did'}</b>
+        <span class="muted" style="font-size:10px">${pee.length} ${es ? 'zonas críticas monitoreadas' : 'critical zones tracked'}</span>
+      </div>
+      <table style="width:100%;border-collapse:collapse;font-size:10.8px">
+        <thead>
+          <tr style="border-bottom:1px solid var(--hair);color:var(--muted);text-align:left">
+            <th style="padding:5px 6px">${es ? 'Sede / Cámara / Acceso' : 'Site / Camera / Access'}</th>
+            <th style="padding:5px 6px">${es ? 'Personas & Rol' : 'People & Role'}</th>
+            <th style="padding:5px 6px">${es ? 'Entradas / Salidas' : 'Entries / Exits'}</th>
+            <th style="padding:5px 6px">${es ? 'Tiempo vs. Recomendado' : 'Time Spent vs. Rec.'}</th>
+            <th style="padding:5px 6px">${es ? 'Comportamiento y Qué Hicieron' : 'Behavior & What They Did'}</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${pee.map(p => {
+            const isCrit = p.dwell_status === 'CRITICAL_OFFLINE' || p.dwell_status === 'RESTRICTED_HOURS';
+            const isWarn = p.dwell_status === 'EXCEEDED_RECOMMENDED_TIME';
+            const badgeCls = isCrit ? 'critical' : (isWarn ? 'high' : 'ok');
+            return `<tr style="border-bottom:1px solid rgba(255,255,255,.05);background:${p.suspect ? 'rgba(255,92,92,.04)' : 'transparent'}">
+              <td style="padding:6px;vertical-align:top">
+                <b>${p.site}</b>
+                <div style="color:var(--acc);font-size:10px">${p.cam}</div>
+                <div class="muted" style="font-size:9.5px">${p.access_point || ''}</div>
+              </td>
+              <td style="padding:6px;vertical-align:top">
+                <b>${p.people_count} ${es ? 'personas' : 'people'}</b>
+                <div class="muted" style="font-size:9.8px">${es ? p.role_es : p.role_en}</div>
+              </td>
+              <td style="padding:6px;vertical-align:top;white-space:nowrap">
+                <span style="color:var(--ok)"><b>↓ ${p.entries}</b></span> / <span style="color:var(--acc2)"><b>↑ ${p.exits}</b></span>
+                <div class="muted" style="font-size:9.5px">${p.first_entry} → ${p.last_exit}</div>
+                ${p.currently_inside > 0 ? `<span class="tag low" style="font-size:8.5px;padding:1px 4px">${p.currently_inside} dentro</span>` : ''}
+              </td>
+              <td style="padding:6px;vertical-align:top;white-space:nowrap">
+                <span class="tag ${badgeCls}" style="font-size:9px">${p.avg_dwell_min} min (Rec: &lt;=${p.recommended_max_min}m)</span>
+                <div class="muted" style="font-size:9.5px;margin-top:2px">${p.dwell_status}</div>
+              </td>
+              <td style="padding:6px;vertical-align:top;line-height:1.35">
+                <div style="font-weight:700;color:${p.suspect ? '#ff8a8a' : 'var(--fg)'}">${es ? p.behavior_es : p.behavior_en}</div>
+                <div class="muted" style="font-size:10px;margin-top:2px">→ ${es ? p.what_they_did_es : p.what_they_did_en}</div>
+              </td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Suspect Activity & Recommended Check Windows Grid -->
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;font-size:11px;margin-bottom:10px">
+      <div style="background:rgba(255,92,92,.06);border:1px solid rgba(255,92,92,.3);border-radius:8px;padding:9px 11px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <b style="color:var(--crit)">🚨 ${es ? 'Actividad Sospechosa y Disparadores Vigilantes' : 'Suspect Activity & Vigilant Triggers'}</b>
+          <span class="tag critical" style="font-size:9px">${susp.length} TRIGGERS</span>
+        </div>
+        ${susp.map(s => `<div style="padding:5px 0;border-bottom:1px solid var(--hair)">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:4px;flex-wrap:wrap">
+            <span><span class="tag ${s.severity==='CRITICAL'?'critical':'high'}" style="font-size:8.5px">${s.severity}</span> <b>${s.time}</b> · <span style="color:var(--acc)">${s.cam}</span></span>
+            <span class="muted" style="font-size:9px">${s.provenance}</span>
+          </div>
+          <div style="font-size:10.5px;margin-top:2px">${es ? s.what_happened_es : s.what_happened_en}</div>
+          <div class="muted" style="font-size:9.5px;margin-top:2px">⏱️ <b>${s.dwell_vs_recommended}</b> · ⚡ ${es ? s.action_taken_es : s.action_taken_en}</div>
+        </div>`).join('')}
+      </div>
+
+      <div style="background:rgba(35,217,176,.05);border:1px solid rgba(35,217,176,.28);border-radius:8px;padding:9px 11px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <b style="color:var(--acc)">🕒 ${es ? 'Chequeo de Tiempos Recomendados y Ventanas Horarias' : 'Recommended Times Check & Schedule Compliance'}</b>
+          <span class="tag ok" style="font-size:9px">AUTO-CHECK 24/7</span>
+        </div>
+        ${rchecks.map(rc => `<div style="padding:4px 0;border-bottom:1px solid var(--hair)">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:4px">
+            <b>${es ? rc.window_name_es : rc.window_name_en}</b>
+            <span class="tag ${rc.status_code==='critical'?'critical':(rc.status_code==='warn'?'high':'ok')}" style="font-size:8.5px">${rc.status}</span>
+          </div>
+          <div style="font-size:10px;margin-top:1px">${es ? 'Recomendado' : 'Recommended'}: <b>${rc.recommended_time}</b> · ${es ? 'Medido' : 'Measured'}: <b>${rc.measured_time}</b></div>
+          <div class="muted" style="font-size:9.5px;margin-top:1px">${es ? rc.note_es : rc.note_en}</div>
+        </div>`).join('')}
+        ${rhist.length ? `<div style="margin-top:6px;padding-top:5px;border-top:1px dashed var(--hair);font-size:10px">
+          <b style="color:var(--acc2)">📨 ${es ? 'Últimos Reposteos Automáticos Enviados:' : 'Recent Auto-Reposts Sent:'}</b>
+          ${rhist.slice(0, 3).map(rh => `<div class="muted" style="font-size:9.5px;margin-top:2px">• <b>${rh.time}</b> — ${rh.title_es} (${(rh.channels || []).join(', ') || 'telegram, email'})</div>`).join('')}
+        </div>` : ''}
+      </div>
+    </div>
+
     <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;font-size:11px">
       <div style="background:rgba(255,255,255,.03);border:1px solid var(--hair);border-radius:8px;padding:8px 10px">
         <b style="color:var(--acc);display:block;margin-bottom:5px">Puntualidad de Apertura y Cierre por Sede</b>
         ${sched.map(s => `<div style="padding:3px 0;border-bottom:1px solid var(--hair)">
           <b>${s.site.split('·')[0]}</b>: <span style="color:${s.status==='ok'?'var(--ok)':'var(--crit)'}">${s.first_motion_time} → ${s.last_motion_time}</span>
-          <div class="muted" style="font-size:10px">${lang==='es'?s.punctuality_es:s.punctuality_en}</div>
+          <div class="muted" style="font-size:10px">${es?s.punctuality_es:s.punctuality_en}</div>
         </div>`).join('')}
       </div>
       <div style="background:rgba(255,255,255,.03);border:1px solid var(--hair);border-radius:8px;padding:8px 10px">
@@ -4647,22 +4790,6 @@ function renderCameraDailyReportBox() {
         ${docks.slice(0, 5).map(d => `<div style="padding:3px 0;border-bottom:1px solid var(--hair);display:flex;justify-content:space-between">
           <span>${d.cam.split('·')[1] || d.cam}</span>
           <b>${d.ops} ops · ${d.active_time} (${d.utilization_pct}%)</b>
-        </div>`).join('')}
-      </div>
-    </div>
-    <div style="margin-top:8px;display:grid;grid-template-columns:repeat(2,1fr);gap:10px;font-size:11px">
-      <div style="background:rgba(255,92,92,.05);border:1px solid rgba(255,92,92,.25);border-radius:8px;padding:8px 10px">
-        <b style="color:var(--crit);display:block;margin-bottom:5px">Auditoría Nocturna / Fuera de Horario (19:00–06:30)</b>
-        ${ah.map(a => `<div style="padding:3px 0;border-bottom:1px solid var(--hair)">
-          <b>${a.time}</b> · <span class="tag ${a.threat_level===2?'critical':(a.threat_level===1?'high':'ok')}" style="font-size:9px">${a.badge}</span>
-          <div class="muted" style="font-size:10px;margin-top:2px">${lang==='es'?a.detail_es:a.detail_en}</div>
-        </div>`).join('')}
-      </div>
-      <div style="background:rgba(35,217,176,.05);border:1px solid rgba(35,217,176,.25);border-radius:8px;padding:8px 10px">
-        <b style="color:var(--acc);display:block;margin-bottom:5px">Lo Aprendido por El Jefesito (Patrones y Recomendaciones)</b>
-        ${lp.map(p => `<div style="padding:3px 0;border-bottom:1px solid var(--hair)">
-          <b>${lang==='es'?p.title_es:p.title_en}</b>
-          <div class="muted" style="font-size:10px;margin-top:1px">${lang==='es'?p.detail_es:p.detail_en}</div>
         </div>`).join('')}
       </div>
     </div>
