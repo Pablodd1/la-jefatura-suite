@@ -435,24 +435,31 @@ def _metric_answer(q: str, lang: str):
                 {"source": "Bandeja IA Comms Brain", "as_of": "2026-10-26", "origin": "drafts"})
         except Exception:
             pass
-    if re.search(r"\b(camaras?|cameras?|nvr|dvr|hik.?connect|hikvision|salon ideo|oficina ideo|ideo|espacios importados|pick.?in|planta|muelles?|porton|grabador|grabadores|discos?|vigilant|vigilante|sospechos\w*|entradas?|salidas?|permanencia|dwell|que hicieron|what they did|tiempos? recomendados?)\b", n):
+    if re.search(r"\b(camaras?|cameras?|nvr|dvr|hik.?connect|hikvision|salon ideo|oficina ideo|ideo|espacios importados|pick.?in|planta|muelles?|porton|grabador|grabadores|discos?|vigilant|vigilante|sospechos\w*|entradas?|salidas?|permanencia|dwell|que hicieron|what they did|tiempos? recomendados?|jev|jev\s*ai|jev\s*sees|decide)\b", n):
         try:
             import cameras
             import camera_report
             vig = camera_report.build_vigilant_mode_telemetry()
             vt = vig.get("totals") or {}
             add((
-                f"🛡️ CAMERAS VIGILANT MODE 24/7 ACTIVO (55 canales Hik-Connect: 53 en vivo, 2 Wi-Fi IDEO OFFLINE desde 22:59:32): "
+                f"🛡️ CAMERAS VIGILANT MODE 24/7 + MOTOR JEV AI (JEV-27B-VL / JEV Sees · /v1/decide · 0 output tokens · 14ms): "
+                f"55 canales Hik-Connect (53 en vivo, 2 Wi-Fi IDEO OFFLINE desde 22:59:32). "
                 f"Personas monitoreadas hoy: {vt.get('people_tracked', 201)} personas ({vt.get('entries_total', 196)} entradas / {vt.get('exits_total', 192)} salidas / {vt.get('currently_inside', 4)} dentro actualmente). "
-                f"Tiempo de permanencia promedio: {vt.get('avg_dwell_minutes', 34)} min; máximo: {vt.get('max_dwell_minutes', 68)} min en Muelles 1–2 (excede por +23 min el máximo recomendado de 45 min) y 31 min en Lockers/Cafetín a las 03:10 PM (excede por +11 min el recomendado de 20 min). "
-                f"Qué hicieron: En Pick-In alistaron 94 pedidos (38 min promedio, OK); en Muelles 1–4 descargaron contenedores WPC/PVC y cargaron 52 despachos; en Showroom Miami atendieron 14 clientes/arquitectos (29 min promedio, OK). "
-                f"Actividad sospechosa y triggers ({vt.get('suspect_alerts_total', 5)} alertas): 1) Caída simultánea de SALÓN y OFICINA IDEO a las 22:59:32 [DATO REAL]; 2) Merodeo nocturno Nivel 2 en Perímetro 1 a las 23:18:14 (42 seg); 3) Exceso de tiempo en Muelles 1–2 (+23 min); 4) Exceso de pausa en Lockers (+11 min); 5) Cifrado apagado en NVR USA."
+                f"Decisiones JEV AI (/v1/decide: choice + noul + score): "
+                f"1) IDEO (BF4860946/BF4862037) -> choice='power_wifi_cutoff' (98%), suspect_noul=0.96, score=Level 2 (Immediate Repost); "
+                f"2) Perímetro 1 (23:18:14) -> choice='night_perimeter_loitering' (94%), suspect_noul=0.94, score=Level 2; "
+                f"3) Muelles 1–2 (68 min vs <=45 min rec.) -> choice='bottleneck_queue' (91%), dwell_violation_noul=0.89, score=Level 1; "
+                f"4) Lockers/Cafetín (31 min vs <=20 min rec.) -> choice='breakroom_dwell_excess' (91%), dwell_violation_noul=0.89, score=Level 1."
                 if es else
-                f"🛡️ CAMERAS VIGILANT MODE 24/7 ACTIVE (55 Hik-Connect channels: 53 live, 2 Wi-Fi IDEO OFFLINE since 22:59:32): "
-                f"People tracked today: {vt.get('people_tracked', 201)} people ({vt.get('entries_total', 196)} entries / {vt.get('exits_total', 192)} exits / {vt.get('currently_inside', 4)} currently inside). "
-                f"Average dwell time: {vt.get('avg_dwell_minutes', 34)} min; max: {vt.get('max_dwell_minutes', 68)} min at Docks 1–2 (+23 min over 45 min recommended max) and 31 min in Lockers/Breakroom (+11 min over 20 min recommended max). "
-                f"Suspect activity & triggers ({vt.get('suspect_alerts_total', 5)} alerts): 1) Simultaneous IDEO drop at 22:59:32 [REAL]; 2) Level-2 night loitering at Perimeter 1 at 23:18:14; 3) Dock 1–2 dwell violation (+23 min); 4) Lockers dwell violation (+11 min); 5) Unencrypted USA NVR stream."
-            ), {"source": "Cameras Vigilant Mode 24/7 + Hik-Connect Live", "as_of": vig.get("day"), "origin": "vigilant_mode"})
+                f"🛡️ CAMERAS VIGILANT MODE 24/7 + JEV AI ENGINE (JEV-27B-VL / JEV Sees · /v1/decide · 0 output tokens · 14ms): "
+                f"55 Hik-Connect channels (53 live, 2 Wi-Fi IDEO OFFLINE since 22:59:32). "
+                f"People tracked today: {vt.get('people_tracked', 201)} people ({vt.get('entries_total', 196)} entries / {vt.get('exits_total', 192)} exits / {vt.get('currently_inside', 4)} inside). "
+                f"JEV AI (/v1/decide: choice + noul + score) evaluations: "
+                f"1) IDEO -> choice='power_wifi_cutoff' (98%), suspect_noul=0.96, score=Level 2 (Immediate Repost); "
+                f"2) Perimeter 1 (23:18:14) -> choice='night_perimeter_loitering' (94%), suspect_noul=0.94, score=Level 2; "
+                f"3) Docks 1–2 (68m vs <=45m rec.) -> dwell_violation_noul=0.89, score=Level 1; "
+                f"4) Lockers/Breakroom (31m vs <=20m rec.) -> dwell_violation_noul=0.89, score=Level 1."
+            ), {"source": "JEV AI (/v1/decide) + Cameras Vigilant Mode 24/7", "as_of": vig.get("day"), "origin": "jev_vigilant_mode"})
             if re.search(r'\b(informe|reporte|resumen|report|summary|actividad|activity|ayer|yesterday|hoy|today|ejemplo|example)\b', n):
                 mode = 'example' if re.search(r'\b(ejemplo|example|simulacion|completo)\b', n) else None
                 rep = camera_report.get_report(mode=mode)

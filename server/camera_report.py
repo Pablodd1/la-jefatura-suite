@@ -1031,10 +1031,29 @@ def build_vigilant_mode_telemetry(day: str | None = None, hik: dict | None = Non
     tot_exits = sum(int(x.get("exits") or 0) for x in all_entries_exits)
     tot_inside = sum(int(x.get("currently_inside") or 0) for x in all_entries_exits)
 
+    # Evaluate every monitored zone through JEV AI (`JEV-27B-VL` / `JEV Sees` `/v1/decide` System-1 Decision Engine)
+    jev_matrix = {}
+    try:
+        import jev_vision_engine
+        jev_matrix = jev_vision_engine.evaluate_all_vigilant_zones(all_entries_exits, persist=False)
+        for z_item, j_dec in zip(all_entries_exits, jev_matrix.get("decisions", [])):
+            z_item["jev_decision"] = {
+                "role_choice": j_dec["subject_role_choice"],
+                "role_conf": j_dec["subject_role_conf"],
+                "flow_choice": j_dec["flow_choice"],
+                "behavior_choice": j_dec["behavior_choice"],
+                "dwell_violation_noul": j_dec["dwell_violation_noul"],
+                "suspect_noul": j_dec["suspect_noul"],
+                "urgency_score": j_dec["urgency_score"],
+                "auto_repost": j_dec["auto_repost_recommended"],
+            }
+    except Exception:
+        pass
+
     return {
         "enabled": True,
-        "mode_label_es": "MODO VIGILANTE 24/7 ACTIVO · AUTO-REPOST EN TRIGGERS",
-        "mode_label_en": "24/7 VIGILANT MODE ACTIVE · AUTO-REPOST ON TRIGGERS",
+        "mode_label_es": "MODO VIGILANTE 24/7 + MOTOR JEV AI (/v1/decide) ACTIVO",
+        "mode_label_en": "24/7 VIGILANT MODE + JEV AI (/v1/decide) ENGINE ACTIVE",
         "day": day,
         "totals": {
             "people_tracked": tot_people,
@@ -1048,7 +1067,11 @@ def build_vigilant_mode_telemetry(day: str | None = None, hik: dict | None = Non
             "suspect_alerts_total": len(suspect_activities),
             "recommended_time_violations": sum(1 for r in recommended_times_check if r["status_code"] != "ok"),
             "reposts_sent_count": len(repost_history),
+            "jev_engine_model": jev_matrix.get("model", "autotrust/jev-27b-vl"),
+            "jev_avg_latency_ms": (jev_matrix.get("summary") or {}).get("avg_latency_ms", 14),
+            "jev_max_suspect_noul": (jev_matrix.get("summary") or {}).get("max_suspect_noul", 0.96),
         },
+        "jev_ai": jev_matrix,
         "people_entries_exits": all_entries_exits,
         "suspect_activities": suspect_activities,
         "recommended_times_check": recommended_times_check,

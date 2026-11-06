@@ -260,7 +260,7 @@ def parse(command: str, lang: str = "es") -> dict:
                  r"lluvia|building|buildingapp|unitec|c[aá]maras?|cameras?|hik|espacios|pick|ideo|muelles|"
                  r"grabador|discos|ga4|analytics|tr[aá]fico|empresas|companies|nexus|pipeline|ventas|ingresos|"
                  r"citas|agenda|calendario|errores?|fallos?|conexiones?|faltan|departamentos?|brazos|piernas|staff|personal|equipo|"
-                 r"vigilante|vigilant|sospechos\w*|entradas?|salidas?|permanencia|dwell|qu[eé]\s+hicieron|what\s+they\s+did|recomendad\w*)\b", low) and not re.search(r"^(?:ir a|abrir|abre|open|go to|cambiar a|switch to)\b", low):
+                 r"vigilante|vigilant|sospechos\w*|entradas?|salidas?|permanencia|dwell|qu[eé]\s+hicieron|what\s+they\s+did|recomendad\w*|jev)\b", low) and not re.search(r"^(?:ir a|abrir|abre|open|go to|cambiar a|switch to)\b", low):
         return {"action": "ask", "text": t}
 
     ct = re.match(r"^(?:completar|marcar|complete|done(?: with)?)\s+(?:tarea|task)?\s*(.+)$", t, re.I)

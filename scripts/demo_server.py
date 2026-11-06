@@ -275,6 +275,10 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
         elif path == "/api/cameras/vigilant":
             day = (qs.get("date") or [None])[0]
             self._send(200, camera_report.build_vigilant_mode_telemetry(day))
+        elif path in ("/api/cameras/jev/decide", "/api/cameras/jev"):
+            day = (qs.get("date") or [None])[0]
+            vig = camera_report.build_vigilant_mode_telemetry(day)
+            self._send(200, vig.get("jev_ai") or {"ok": False})
         elif path == "/api/cameras/report.pdf":
             day = (qs.get("date") or [None])[0]
             mode = (qs.get("mode") or ["example"])[0]
@@ -614,6 +618,16 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
             reason = str(body.get("reason") or "manual_vigilant_trigger")
             emails = body.get("emails") if isinstance(body.get("emails"), list) else None
             self._send(200, camera_report.trigger_vigilant_repost(reason=reason, to_emails=emails, include_pdf=True))
+        elif path == "/api/cameras/jev/decide":
+            import jev_vision_engine
+            if body.get("zone"):
+                res = jev_vision_engine.evaluate_zone_with_jev(body["zone"], persist=True)
+            else:
+                vig = camera_report.build_vigilant_mode_telemetry()
+                res = jev_vision_engine.evaluate_all_vigilant_zones(vig.get("people_entries_exits", []), persist=True)
+            if body.get("auto_repost") and (res.get("auto_repost_recommended") or (res.get("summary") or {}).get("level_2_immediate_repost_count", 0) > 0):
+                res["repost_dispatch"] = camera_report.trigger_vigilant_repost(reason="jev_ai_v1_decide_trigger", include_pdf=True)
+            self._send(200, res)
         elif path == "/api/cameras/sync":
             self._send(200, cameras.status(os.path.join(SAMPLES, "cameras.json"), force=True))
         elif path == "/api/reports/company_daily/send":

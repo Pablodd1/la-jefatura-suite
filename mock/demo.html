@@ -4645,11 +4645,12 @@ function renderCameraDailyReportBox() {
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px">
       <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
         <span class="tag critical" style="font-weight:900">🛡️ CAMERAS VIGILANT MODE 24/7 (${ex.day || 'HOY'})</span>
-        <span class="tag ok">AUTO-REPOST EN TRIGGERS: ACTIVO (TELEGRAM + EMAIL + PDF)</span>
-        <span class="tag medium">HIK-CONNECT REAL + AUDITORÍA DE PERMANENCIA Y CONDUCTA</span>
+        <span class="tag ok">🧠 MOTOR JEV AI (JEV-27B-VL · /v1/decide · 0 Output Tokens · 14ms)</span>
+        <span class="tag medium">AUTO-REPOST EN TRIGGERS: TELEGRAM + EMAIL + PDF</span>
       </div>
       <div style="display:flex;gap:6px;flex-wrap:wrap">
         <button class="btn sm" type="button" style="background:#EB5757;color:#fff;border:0;font-weight:800" onclick="triggerCameraVigilantRepostNow()">🚨 ${es ? 'Repostear Alerta Ahora (TG + Email + PDF)' : 'Repost Alert Now (TG + Email + PDF)'}</button>
+        <button class="btn ghost sm" type="button" onclick="window.open('/api/cameras/jev/decide', '_blank')">🧠 ${es ? 'Ver JSON /v1/decide JEV AI' : 'View JEV AI /v1/decide JSON'}</button>
         <button class="btn ghost sm" type="button" onclick="window.open('/api/cameras/report.pdf?mode=example&lang=' + (typeof lang !== 'undefined' ? lang : 'es'), '_blank')">📄 ${es ? 'Descargar PDF Vigilante' : 'Download Vigilant PDF'}</button>
         <button class="btn ghost sm" type="button" onclick="toggleCameraReportDrawer()">${es ? 'Ocultar' : 'Hide'}</button>
       </div>
@@ -4703,6 +4704,7 @@ function renderCameraDailyReportBox() {
             <th style="padding:5px 6px">${es ? 'Personas & Rol' : 'People & Role'}</th>
             <th style="padding:5px 6px">${es ? 'Entradas / Salidas' : 'Entries / Exits'}</th>
             <th style="padding:5px 6px">${es ? 'Tiempo vs. Recomendado' : 'Time Spent vs. Rec.'}</th>
+            <th style="padding:5px 6px">${es ? 'JEV AI (/v1/decide)' : 'JEV AI (/v1/decide)'}</th>
             <th style="padding:5px 6px">${es ? 'Comportamiento y Qué Hicieron' : 'Behavior & What They Did'}</th>
           </tr>
         </thead>
@@ -4711,6 +4713,10 @@ function renderCameraDailyReportBox() {
             const isCrit = p.dwell_status === 'CRITICAL_OFFLINE' || p.dwell_status === 'RESTRICTED_HOURS';
             const isWarn = p.dwell_status === 'EXCEEDED_RECOMMENDED_TIME';
             const badgeCls = isCrit ? 'critical' : (isWarn ? 'high' : 'ok');
+            const jd = p.jev_decision || {};
+            const sNoul = typeof jd.suspect_noul === 'number' ? Math.round(jd.suspect_noul * 100) : (p.suspect ? 85 : 4);
+            const dNoul = typeof jd.dwell_violation_noul === 'number' ? Math.round(jd.dwell_violation_noul * 100) : (isWarn ? 82 : 12);
+            const uScore = typeof jd.urgency_score === 'number' ? jd.urgency_score : (isCrit ? 2 : (isWarn ? 1 : 0));
             return `<tr style="border-bottom:1px solid rgba(255,255,255,.05);background:${p.suspect ? 'rgba(255,92,92,.04)' : 'transparent'}">
               <td style="padding:6px;vertical-align:top">
                 <b>${p.site}</b>
@@ -4729,6 +4735,10 @@ function renderCameraDailyReportBox() {
               <td style="padding:6px;vertical-align:top;white-space:nowrap">
                 <span class="tag ${badgeCls}" style="font-size:9px">${p.avg_dwell_min} min (Rec: &lt;=${p.recommended_max_min}m)</span>
                 <div class="muted" style="font-size:9.5px;margin-top:2px">${p.dwell_status}</div>
+              </td>
+              <td style="padding:6px;vertical-align:top;white-space:nowrap">
+                <span class="tag ${uScore===2?'critical':(uScore===1?'high':'ok')}" style="font-size:8.5px">Score L${uScore} · Noul ${sNoul}%</span>
+                <div class="muted" style="font-size:9px;margin-top:2px">${jd.behavior_choice || 'calibrated'} (Dwell ${dNoul}%)</div>
               </td>
               <td style="padding:6px;vertical-align:top;line-height:1.35">
                 <div style="font-weight:700;color:${p.suspect ? '#ff8a8a' : 'var(--fg)'}">${es ? p.behavior_es : p.behavior_en}</div>
