@@ -3,7 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <script>try{document.documentElement.dataset.theme='sand';localStorage.setItem('ljTheme','sand')}catch(e){}</script>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="La Jefatura">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#121311">
 <title>La Jefatura — Made & Powered by Building Innovation</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
@@ -304,8 +309,8 @@
   }
   /* Collapsed Auto-Hide State: Narrow 60px Icon Rail so the Page Underneath is 100% Visible */
   body.sidebar-collapsed .lj-glass-sidebar {
-    width: 60px !important;
-    padding: 12px 7px !important;
+    width: 48px !important;
+    padding: 10px 5px !important;
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45) !important;
   }
   body.sidebar-collapsed .lj-glass-sidebar .lj-sb-text,
@@ -318,7 +323,7 @@
   }
   body.sidebar-collapsed .lj-glass-sidebar .lj-sb-brand {
     justify-content: center !important;
-    padding: 4px 0 10px !important;
+    padding: 4px 0 8px !important;
   }
   body.sidebar-collapsed .lj-glass-sidebar .ardena-brand-box {
     justify-content: center !important;
@@ -326,11 +331,11 @@
   }
   body.sidebar-collapsed .lj-glass-sidebar .lj-sb-btn {
     justify-content: center !important;
-    padding: 9px 0 !important;
+    padding: 7px 0 !important;
     gap: 0 !important;
   }
   body.sidebar-collapsed .lj-glass-sidebar .lj-sb-ico {
-    font-size: 17px !important;
+    font-size: 12px !important;
     margin: 0 auto !important;
   }
   .lj-sb-brand {
@@ -398,8 +403,8 @@
     box-shadow: 0 6px 16px rgba(205, 182, 140, 0.38);
   }
   .lj-sb-ico {
-    font-size: 15px;
-    min-width: 20px;
+    font-size: 10.5px;
+    min-width: 15px;
     text-align: center;
     line-height: 1;
   }
@@ -495,10 +500,10 @@
     --txt: #f5f4f0 !important;
     --txt2: #d6d4ce !important;
     --dim: #8e8d87 !important;
-    --acc: #22c55e !important;
-    --acc2: #34d399 !important;
+    --acc: #34a866 !important;
+    --acc2: #52b788 !important;
     --ok: #22c55e !important;
-    --warn: #4ade80 !important;
+    --warn: #52b788 !important;
     --crit: #ef4444 !important;
     --inset: rgba(18, 19, 17, 0.62) !important;
     --onacc: #ffffff !important;
@@ -521,27 +526,28 @@
 
   body {
     background:
-      radial-gradient(circle at 18% 12%, rgba(34, 197, 94, 0.12), transparent 38%),
-      radial-gradient(circle at 82% 24%, rgba(34, 197, 94, 0.08), transparent 42%),
+      radial-gradient(circle at 18% 12%, rgba(52, 168, 102, 0.08), transparent 38%),
+      radial-gradient(circle at 82% 24%, rgba(34, 197, 94, 0.06), transparent 42%),
       radial-gradient(circle at 50% 85%, rgba(255, 255, 255, 0.04), transparent 45%),
       linear-gradient(160deg, #171815 0%, #111210 55%, #161714 100%) !important;
     background-attachment: fixed !important;
     color: var(--txt) !important;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif !important;
-    padding-left: 84px !important;
+    padding-left: 72px !important;
     letter-spacing: -0.01em;
+    -webkit-tap-highlight-color: transparent;
   }
   body:not(.sidebar-collapsed) {
-    padding-left: 266px !important;
+    padding-left: 256px !important;
   }
   body.sidebar-collapsed {
-    padding-left: 84px !important;
+    padding-left: 72px !important;
   }
 
   body.ardena-light-glass {
     background:
-      radial-gradient(circle at 18% 12%, rgba(34, 197, 94, 0.10), transparent 38%),
-      radial-gradient(circle at 82% 24%, rgba(34, 197, 94, 0.08), transparent 42%),
+      radial-gradient(circle at 18% 12%, rgba(52, 168, 102, 0.07), transparent 38%),
+      radial-gradient(circle at 82% 24%, rgba(34, 197, 94, 0.06), transparent 42%),
       linear-gradient(160deg, #efede7 0%, #e3e0d8 100%) !important;
   }
 
@@ -574,17 +580,17 @@
   }
   .card.kpi-card h3 { color: var(--dim) !important; font-size: 11px !important; text-transform: none !important; letter-spacing: 0.01em !important; }
   .card.kpi-card:nth-of-type(1) .kpi { color: #f5f4f0 !important; }
-  .card.kpi-card:nth-of-type(2) .kpi { color: #22c55e !important; }
-  .card.kpi-card:nth-of-type(3) .kpi { color: #22c55e !important; }
-  .card.kpi-card:nth-of-type(4) .kpi { color: #34d399 !important; }
+  .card.kpi-card:nth-of-type(2) .kpi { color: #e2e8f0 !important; }
+  .card.kpi-card:nth-of-type(3) .kpi { color: #34a866 !important; }
+  .card.kpi-card:nth-of-type(4) .kpi { color: #cbd5e1 !important; }
   .card.kpi-card .kpi small { color: var(--dim) !important; }
 
-  /* Ardena Buttons */
+  /* Ardena Buttons (20% toned-down refined green) */
   .btn:not(.ghost) {
-    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%) !important;
+    background: linear-gradient(135deg, #2d9659 0%, #1e7342 100%) !important;
     color: #ffffff !important;
-    border: 1px solid rgba(255, 255, 255, 0.16) !important;
-    box-shadow: 0 8px 22px rgba(34, 197, 94, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    box-shadow: 0 6px 18px rgba(45, 150, 89, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.20) !important;
     border-radius: 999px !important;
     font-weight: 700 !important;
   }
@@ -596,74 +602,75 @@
   }
   .btn.ghost:hover {
     background: rgba(255, 255, 255, 0.11) !important;
-    border-color: rgba(34, 197, 94, 0.45) !important;
+    border-color: rgba(52, 168, 102, 0.35) !important;
   }
 
-  /* Ardena Left Floating Glass Sidebar (Expanded when hovered, collapses to 60px when body.sidebar-collapsed) */
+  /* Ardena Left Floating Glass Sidebar (Expanded when hovered, collapses to 48px when body.sidebar-collapsed) */
   .lj-glass-sidebar {
     background: linear-gradient(180deg, rgba(36, 37, 34, 0.94) 0%, rgba(22, 23, 21, 0.96) 100%) !important;
     border: 1px solid rgba(255, 255, 255, 0.11) !important;
     box-shadow: 0 28px 68px rgba(0, 0, 0, 0.72), inset 0 1px 0 rgba(255, 255, 255, 0.10) !important;
     border-radius: 22px !important;
-    padding: 16px 13px;
-    width: 246px;
-    gap: 8px !important;
+    padding: 14px 11px;
+    width: 236px;
+    gap: 6px !important;
   }
   body.sidebar-collapsed .lj-glass-sidebar {
-    width: 60px !important;
-    padding: 12px 7px !important;
+    width: 48px !important;
+    padding: 10px 5px !important;
   }
   .lj-sb-brand {
     border-bottom: 1px solid rgba(255, 255, 255, 0.07) !important;
-    padding: 4px 6px 12px !important;
+    padding: 4px 6px 10px !important;
   }
   .ardena-brand-box {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
   }
   .ardena-logo-sq {
-    width: 34px;
-    height: 34px;
-    border-radius: 10px;
-    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    width: 24px;
+    height: 24px;
+    border-radius: 7px;
+    background: linear-gradient(135deg, #2d9659 0%, #1e7342 100%);
     display: inline-flex;
     align-items: center;
     justify-content: center;
     color: #fff;
-    font-size: 16px;
+    font-size: 11.5px;
     font-weight: 900;
-    box-shadow: 0 6px 16px rgba(34, 197, 94, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 12px rgba(45, 150, 89, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.25);
     flex-shrink: 0;
   }
   .lj-sb-brand-title {
-    font-size: 15px !important;
+    font-size: 14px !important;
     font-weight: 800 !important;
     letter-spacing: -0.01em !important;
     color: #f5f4f0 !important;
   }
   .lj-sb-sub {
-    font-size: 10.5px !important;
+    font-size: 10px !important;
     font-weight: 500 !important;
     color: #8e8d87 !important;
     letter-spacing: 0 !important;
   }
   .lj-sb-sec-title {
-    font-size: 9.5px !important;
+    font-size: 9px !important;
     font-weight: 700 !important;
     text-transform: uppercase !important;
     letter-spacing: 0.08em !important;
     color: #7b7a75 !important;
-    padding: 8px 8px 3px !important;
+    padding: 6px 7px 2px !important;
   }
   .lj-sb-btn {
     background: transparent !important;
     border: 1px solid transparent !important;
     color: #c7c5be !important;
-    border-radius: 11px !important;
-    padding: 8px 10px !important;
-    font-size: 12.5px !important;
+    border-radius: 10px !important;
+    padding: 7px 9px !important;
+    font-size: 12px !important;
     font-weight: 600 !important;
+    gap: 7px !important;
     transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1) !important;
   }
   .lj-sb-btn:hover {
@@ -672,22 +679,22 @@
     transform: translateX(2px);
   }
   .lj-sb-btn.active {
-    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%) !important;
+    background: linear-gradient(135deg, #2d9659 0%, #1e7342 100%) !important;
     color: #ffffff !important;
     font-weight: 700 !important;
-    border: 1px solid rgba(255, 255, 255, 0.18) !important;
-    box-shadow: 0 8px 20px rgba(34, 197, 94, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+    border: 1px solid rgba(255, 255, 255, 0.16) !important;
+    box-shadow: 0 6px 16px rgba(45, 150, 89, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.20) !important;
   }
   .lj-sb-badge {
-    background: rgba(34, 197, 94, 0.22) !important;
-    color: #4ade80 !important;
-    font-size: 10px !important;
-    font-weight: 800 !important;
-    padding: 1px 7px !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: #b8dbd0 !important;
+    font-size: 9.5px !important;
+    font-weight: 700 !important;
+    padding: 1px 6px !important;
     border-radius: 999px !important;
   }
   .lj-sb-btn.active .lj-sb-badge {
-    background: rgba(0, 0, 0, 0.24) !important;
+    background: rgba(0, 0, 0, 0.26) !important;
     color: #ffffff !important;
   }
 
@@ -791,10 +798,10 @@
     color: #ffffff;
   }
   .ardena-sub-pill.active {
-    background: linear-gradient(135deg, #22c55e, #16a34a);
+    background: linear-gradient(135deg, #2d9659, #1e7342);
     color: #ffffff;
     font-weight: 700;
-    box-shadow: 0 4px 14px rgba(34, 197, 94, 0.38);
+    box-shadow: 0 4px 12px rgba(45, 150, 89, 0.26);
   }
 
   /* Ardena Custom Range Sliders (Exact Match to Screenshot) */
@@ -820,7 +827,7 @@
     width: 100%;
     height: 5px;
     border-radius: 999px;
-    background: linear-gradient(90deg, #22c55e var(--pct, 50%), rgba(255, 255, 255, 0.12) var(--pct, 50%));
+    background: linear-gradient(90deg, #34a866 var(--pct, 50%), rgba(255, 255, 255, 0.12) var(--pct, 50%));
     outline: none;
     cursor: pointer;
   }
@@ -831,7 +838,7 @@
     height: 16px;
     border-radius: 50%;
     background: #ffffff;
-    border: 3px solid #22c55e;
+    border: 3px solid #34a866;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.55);
     cursor: grab;
     transition: transform 0.15s ease;
@@ -853,6 +860,90 @@
   }
   .ardena-land-anim {
     animation: ardenaLandCard 0.72s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  /* ══════════════════════════════════════════════════════════════════════════
+     LATEST iPHONE (iOS 17/18 Dynamic Island) & ANDROID 14/15 MOBILE WEBAPP UX
+     ══════════════════════════════════════════════════════════════════════════ */
+  @media (max-width: 768px) {
+    html, body {
+      overflow-x: hidden !important;
+      max-width: 100vw !important;
+    }
+    body,
+    body.sidebar-collapsed,
+    body:not(.sidebar-collapsed) {
+      padding-left: calc(52px + env(safe-area-inset-left, 0px)) !important;
+      padding-right: env(safe-area-inset-right, 0px) !important;
+      padding-bottom: calc(82px + env(safe-area-inset-bottom, 0px)) !important;
+    }
+    .lj-glass-sidebar,
+    body.sidebar-collapsed .lj-glass-sidebar {
+      left: max(4px, env(safe-area-inset-left, 4px)) !important;
+      top: max(8px, env(safe-area-inset-top, 8px)) !important;
+      bottom: max(8px, env(safe-area-inset-bottom, 8px)) !important;
+      width: 42px !important;
+      padding: 8px 4px !important;
+      border-radius: 16px !important;
+    }
+    body:not(.sidebar-collapsed) .lj-glass-sidebar,
+    body.sidebar-expanded .lj-glass-sidebar {
+      width: min(232px, 78vw) !important;
+      padding: 12px 10px !important;
+    }
+    .ardena-logo-sq {
+      width: 22px !important;
+      height: 22px !important;
+      font-size: 10.5px !important;
+      border-radius: 6px !important;
+    }
+    .lj-sb-ico,
+    body.sidebar-collapsed .lj-glass-sidebar .lj-sb-ico {
+      font-size: 10.5px !important;
+      min-width: 14px !important;
+    }
+    header {
+      padding: 8px 10px !important;
+      gap: 6px !important;
+    }
+    .lj-world-strip {
+      margin: 8px 10px 0 !important;
+      padding: 8px 10px !important;
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 6px !important;
+    }
+    #mcVoiceChatBarSection,
+    #ljCtoExecutiveHub,
+    .tab-pane {
+      padding-left: 10px !important;
+      padding-right: 10px !important;
+    }
+    .card {
+      padding: 12px 13px !important;
+      border-radius: 15px !important;
+    }
+    .grid > .card,
+    #overviewMainGrid > .card {
+      grid-column: 1 / -1 !important;
+    }
+    #ctoConnectedToolsBar,
+    #allCompaniesSummaryGrid,
+    #selectedCompanyDepartmentsGrid,
+    #ardenaInteractiveShowcase,
+    #ctoMemoryItemsGrid {
+      grid-template-columns: 1fr !important;
+    }
+    /* Prevent iOS Safari auto-zoom on input focus */
+    input, select, textarea {
+      font-size: 16px !important;
+    }
+    /* Responsive scrollable camera and vigilant tables on phone screens */
+    table {
+      display: block;
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
   }
 
 </style>
@@ -1116,24 +1207,24 @@
 
     <!-- Connected Daily Channels Strip (Telegram, Gmail, Google Calendar, GA4, Hik-Connect, Firestore) -->
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(195px,1fr));gap:8px;margin-bottom:14px" id="ctoConnectedToolsBar">
-      <div style="background:var(--inset);border:1px solid rgba(16,185,129,.35);border-radius:12px;padding:9px 12px;display:flex;justify-content:space-between;align-items:center">
-        <div><div style="font-size:10.5px;font-weight:800;color:#10b981">✈️ TELEGRAM BOTS</div><div style="font-size:11.5px;font-weight:700">@Pegantebot &amp; @ceojefesitobot</div><div class="muted" style="font-size:10px">155/157 alertas (98.3%) · 2x/Día PDF</div></div>
+      <div style="background:var(--inset);border:1px solid rgba(255,255,255,.10);border-left:2.5px solid #34a866;border-radius:12px;padding:9px 12px;display:flex;justify-content:space-between;align-items:center">
+        <div><div style="font-size:10.5px;font-weight:800;color:#52b788">✈️ TELEGRAM BOTS</div><div style="font-size:11.5px;font-weight:700">@Pegantebot &amp; @ceojefesitobot</div><div class="muted" style="font-size:10px">155/157 alertas (98.3%) · 2x/Día PDF</div></div>
         <button class="btn ghost sm" onclick="switchTab('setup')">Ver</button>
       </div>
-      <div style="background:var(--inset);border:1px solid rgba(16,185,129,.35);border-radius:12px;padding:9px 12px;display:flex;justify-content:space-between;align-items:center">
-        <div><div style="font-size:10.5px;font-weight:800;color:#10b981">📧 CORREOS REPORTE 2X/DÍA</div><div style="font-size:11.5px;font-weight:700">juangerenciagarcia@gmail.com</div><div class="muted" style="font-size:10px">+ ceo@espaciosimportados.com.co</div></div>
+      <div style="background:var(--inset);border:1px solid rgba(255,255,255,.10);border-left:2.5px solid #34a866;border-radius:12px;padding:9px 12px;display:flex;justify-content:space-between;align-items:center">
+        <div><div style="font-size:10.5px;font-weight:800;color:#52b788">📧 CORREOS REPORTE 2X/DÍA</div><div style="font-size:11.5px;font-weight:700">juangerenciagarcia@gmail.com</div><div class="muted" style="font-size:10px">+ ceo@espaciosimportados.com.co</div></div>
         <button class="btn ghost sm" onclick="switchTab('comms')">Bandeja</button>
       </div>
-      <div style="background:var(--inset);border:1px solid rgba(16,185,129,.35);border-radius:12px;padding:9px 12px;display:flex;justify-content:space-between;align-items:center">
-        <div><div style="font-size:10.5px;font-weight:800;color:#10b981">📅 GOOGLE CALENDAR</div><div style="font-size:11.5px;font-weight:700">6 Citas + Feed .ics Activo</div><div class="muted" style="font-size:10px">Sincronizado con mc.db</div></div>
+      <div style="background:var(--inset);border:1px solid rgba(255,255,255,.10);border-left:2.5px solid #34a866;border-radius:12px;padding:9px 12px;display:flex;justify-content:space-between;align-items:center">
+        <div><div style="font-size:10.5px;font-weight:800;color:#52b788">📅 GOOGLE CALENDAR</div><div style="font-size:11.5px;font-weight:700">6 Citas + Feed .ics Activo</div><div class="muted" style="font-size:10px">Sincronizado con mc.db</div></div>
         <button class="btn ghost sm" onclick="document.getElementById('agendaPanel').classList.add('open')">Agenda</button>
       </div>
-      <div style="background:var(--inset);border:1px solid rgba(16,185,129,.35);border-radius:12px;padding:9px 12px;display:flex;justify-content:space-between;align-items:center">
-        <div><div style="font-size:10.5px;font-weight:800;color:#10b981">📹 55 CÁMARAS HIK-CONNECT</div><div style="font-size:11.5px;font-weight:700">53/55 En Vivo (96.4%)</div><div class="muted" style="font-size:10px">2 Offline en Salón/Oficina IDEO</div></div>
+      <div style="background:var(--inset);border:1px solid rgba(255,255,255,.10);border-left:2.5px solid #34a866;border-radius:12px;padding:9px 12px;display:flex;justify-content:space-between;align-items:center">
+        <div><div style="font-size:10.5px;font-weight:800;color:#52b788">📹 55 CÁMARAS HIK-CONNECT</div><div style="font-size:11.5px;font-weight:700">53/55 En Vivo (96.4%)</div><div class="muted" style="font-size:10px">2 Offline en Salón/Oficina IDEO</div></div>
         <button class="btn ghost sm" onclick="selectCompanyFromMenu('cameras')">Ver 55</button>
       </div>
-      <div style="background:var(--inset);border:1px solid rgba(16,185,129,.35);border-radius:12px;padding:9px 12px;display:flex;justify-content:space-between;align-items:center">
-        <div><div style="font-size:10.5px;font-weight:800;color:#10b981">🔥 FIRESTORE EN VIVO</div><div style="font-size:11.5px;font-weight:700">UNITEC + BuildingApp</div><div class="muted" style="font-size:10px">4,665 sesiones · 621 renders IA</div></div>
+      <div style="background:var(--inset);border:1px solid rgba(255,255,255,.10);border-left:2.5px solid #34a866;border-radius:12px;padding:9px 12px;display:flex;justify-content:space-between;align-items:center">
+        <div><div style="font-size:10.5px;font-weight:800;color:#52b788">🔥 FIRESTORE EN VIVO</div><div style="font-size:11.5px;font-weight:700">UNITEC + BuildingApp</div><div class="muted" style="font-size:10px">4,665 sesiones · 621 renders IA</div></div>
         <button class="btn ghost sm" onclick="selectCompanyFromMenu('building')">Datos</button>
       </div>
     </div>
@@ -1151,7 +1242,7 @@
     </div>
 
     <!-- SELECTED COMPANY DEPARTMENTS ("ARMS & LEGS"), LIVE ERROR & MISSING CONNECTIONS MONITOR & COMPANY LEARNING -->
-    <div id="selectedCompanyDepartmentsWrapper" style="margin-bottom:16px;background:rgba(15,16,14,.55);border:1.5px solid rgba(34,197,94,.38);border-radius:18px;padding:16px 18px">
+    <div id="selectedCompanyDepartmentsWrapper" style="margin-bottom:16px;background:rgba(15,16,14,.55);border:1px solid rgba(255,255,255,.12);border-top:2px solid rgba(52,168,102,.45);border-radius:18px;padding:16px 18px">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px">
         <div>
           <span class="tag ok" id="liveDeptCompanyBadge">DEPARTAMENTOS EN VIVO («BRAZOS Y PIERNAS»)</span>
