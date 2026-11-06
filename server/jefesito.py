@@ -434,9 +434,9 @@ def _compose_day(f, prof, prefs, lang, day, hour) -> dict:
 
     demo_note_es = f" (Además hay {f.get('notes_demo', 0)} notas y {f.get('meetings_demo', 0)} reuniones de ejemplo en memoria.)" if (f.get("notes_demo") or f.get("meetings_demo")) else ""
     demo_note_en = f" (Plus {f.get('notes_demo', 0)} demo sample notes and {f.get('meetings_demo', 0)} sample meetings.)" if (f.get("notes_demo") or f.get("meetings_demo")) else ""
-    lines = [(f"Pipeline Nexus $104,600 USD ($28,000 cerrados); {f['tasks_open']} tareas abiertas; "
+    lines = [(f"Pipeline Nexus $0 USD (VACÍO) ($0 cerrados); {f['tasks_open']} tareas abiertas; "
               f"{f.get('drafts') or 0} borradores Mode C listos para aprobar.{demo_note_es}") if es else
-             (f"Nexus Pipeline $104,600 USD ($28,000 closed); {f['tasks_open']} open tasks; "
+             (f"Nexus Pipeline $0 USD (VACÍO) ($0 closed); {f['tasks_open']} open tasks; "
               f"{f.get('drafts') or 0} Mode C drafts ready for approval.{demo_note_en}")]
     if f["task_titles"]:
         lines.append(("Pendientes: " if es else "Pending: ") + " | ".join(t[:90] for t in f["task_titles"][:4]))
