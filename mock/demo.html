@@ -27,7 +27,7 @@
     --yellow-bright:#dccaa6;
     --ar:205, 182, 140;
     --vio:#b59b6d;
-    --warn:#e2a856;
+    --warn:#22c55e;
     --crit:#f43f5e;
     --ok:#10b981;
     --inset:rgba(11, 10, 8, 0.78);
@@ -85,7 +85,7 @@
   .task:last-child{border:0}
   .tag{font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;white-space:nowrap;text-transform:uppercase;letter-spacing:.4px}
   .tag.critical{background:rgba(255,92,92,.15);color:var(--crit)}
-  .tag.high{background:rgba(255,159,67,.15);color:var(--warn)}
+  .tag.high{background:rgba(34,197,94,.15);color:var(--warn)}
   .tag.medium{background:rgba(0,212,255,.12);color:var(--acc2)}
   .tag.low{background:rgba(139,150,176,.15);color:var(--dim)}
   .tag.overdue{background:var(--crit);color:#fff}
@@ -112,7 +112,7 @@
   .alert .h{color:var(--dim);font-size:10.5px;white-space:nowrap;padding-top:2px}
   .lvl{font-size:9px;font-weight:800;padding:2px 6px;border-radius:5px;text-transform:uppercase}
   .lvl.info{background:rgba(0,212,255,.15);color:var(--acc2)}
-  .lvl.warning{background:rgba(255,159,67,.15);color:var(--warn)}
+  .lvl.warning{background:rgba(34,197,94,.15);color:var(--warn)}
   .lvl.critical{background:rgba(255,92,92,.2);color:var(--crit)}
   .muted{color:var(--dim);font-size:12px}
   .narr{border-left:3px solid var(--acc);padding:6px 0 6px 14px;font-size:13px;line-height:1.6;color:#cfd8ea;background:rgba(35,217,176,.04);border-radius:0 8px 8px 0}
@@ -495,10 +495,10 @@
     --txt: #f5f4f0 !important;
     --txt2: #d6d4ce !important;
     --dim: #8e8d87 !important;
-    --acc: #f05a28 !important;
-    --acc2: #ff7847 !important;
+    --acc: #22c55e !important;
+    --acc2: #34d399 !important;
     --ok: #22c55e !important;
-    --warn: #f59e0b !important;
+    --warn: #4ade80 !important;
     --crit: #ef4444 !important;
     --inset: rgba(18, 19, 17, 0.62) !important;
     --onacc: #ffffff !important;
@@ -521,7 +521,7 @@
 
   body {
     background:
-      radial-gradient(circle at 18% 12%, rgba(240, 90, 40, 0.11), transparent 38%),
+      radial-gradient(circle at 18% 12%, rgba(34, 197, 94, 0.12), transparent 38%),
       radial-gradient(circle at 82% 24%, rgba(34, 197, 94, 0.08), transparent 42%),
       radial-gradient(circle at 50% 85%, rgba(255, 255, 255, 0.04), transparent 45%),
       linear-gradient(160deg, #171815 0%, #111210 55%, #161714 100%) !important;
@@ -540,7 +540,7 @@
 
   body.ardena-light-glass {
     background:
-      radial-gradient(circle at 18% 12%, rgba(240, 90, 40, 0.10), transparent 38%),
+      radial-gradient(circle at 18% 12%, rgba(34, 197, 94, 0.10), transparent 38%),
       radial-gradient(circle at 82% 24%, rgba(34, 197, 94, 0.08), transparent 42%),
       linear-gradient(160deg, #efede7 0%, #e3e0d8 100%) !important;
   }
@@ -574,17 +574,17 @@
   }
   .card.kpi-card h3 { color: var(--dim) !important; font-size: 11px !important; text-transform: none !important; letter-spacing: 0.01em !important; }
   .card.kpi-card:nth-of-type(1) .kpi { color: #f5f4f0 !important; }
-  .card.kpi-card:nth-of-type(2) .kpi { color: #f05a28 !important; }
+  .card.kpi-card:nth-of-type(2) .kpi { color: #22c55e !important; }
   .card.kpi-card:nth-of-type(3) .kpi { color: #22c55e !important; }
-  .card.kpi-card:nth-of-type(4) .kpi { color: #ff7847 !important; }
+  .card.kpi-card:nth-of-type(4) .kpi { color: #34d399 !important; }
   .card.kpi-card .kpi small { color: var(--dim) !important; }
 
   /* Ardena Buttons */
   .btn:not(.ghost) {
-    background: linear-gradient(135deg, #f4602e 0%, #df4918 100%) !important;
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%) !important;
     color: #ffffff !important;
     border: 1px solid rgba(255, 255, 255, 0.16) !important;
-    box-shadow: 0 8px 22px rgba(240, 90, 40, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+    box-shadow: 0 8px 22px rgba(34, 197, 94, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
     border-radius: 999px !important;
     font-weight: 700 !important;
   }
@@ -596,7 +596,7 @@
   }
   .btn.ghost:hover {
     background: rgba(255, 255, 255, 0.11) !important;
-    border-color: rgba(240, 90, 40, 0.45) !important;
+    border-color: rgba(34, 197, 94, 0.45) !important;
   }
 
   /* Ardena Left Floating Glass Sidebar (Expanded when hovered, collapses to 60px when body.sidebar-collapsed) */
@@ -626,14 +626,14 @@
     width: 34px;
     height: 34px;
     border-radius: 10px;
-    background: linear-gradient(135deg, #f4602e 0%, #df4918 100%);
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
     display: inline-flex;
     align-items: center;
     justify-content: center;
     color: #fff;
     font-size: 16px;
     font-weight: 900;
-    box-shadow: 0 6px 16px rgba(240, 90, 40, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    box-shadow: 0 6px 16px rgba(34, 197, 94, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.3);
     flex-shrink: 0;
   }
   .lj-sb-brand-title {
@@ -672,15 +672,15 @@
     transform: translateX(2px);
   }
   .lj-sb-btn.active {
-    background: linear-gradient(135deg, #f05a28 0%, #de4918 100%) !important;
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%) !important;
     color: #ffffff !important;
     font-weight: 700 !important;
     border: 1px solid rgba(255, 255, 255, 0.18) !important;
-    box-shadow: 0 8px 20px rgba(240, 90, 40, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+    box-shadow: 0 8px 20px rgba(34, 197, 94, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
   }
   .lj-sb-badge {
-    background: rgba(240, 90, 40, 0.22) !important;
-    color: #ff8559 !important;
+    background: rgba(34, 197, 94, 0.22) !important;
+    color: #4ade80 !important;
     font-size: 10px !important;
     font-weight: 800 !important;
     padding: 1px 7px !important;
@@ -791,10 +791,10 @@
     color: #ffffff;
   }
   .ardena-sub-pill.active {
-    background: linear-gradient(135deg, #f05a28, #de4918);
+    background: linear-gradient(135deg, #22c55e, #16a34a);
     color: #ffffff;
     font-weight: 700;
-    box-shadow: 0 4px 14px rgba(240, 90, 40, 0.38);
+    box-shadow: 0 4px 14px rgba(34, 197, 94, 0.38);
   }
 
   /* Ardena Custom Range Sliders (Exact Match to Screenshot) */
@@ -820,7 +820,7 @@
     width: 100%;
     height: 5px;
     border-radius: 999px;
-    background: linear-gradient(90deg, #f05a28 var(--pct, 50%), rgba(255, 255, 255, 0.12) var(--pct, 50%));
+    background: linear-gradient(90deg, #22c55e var(--pct, 50%), rgba(255, 255, 255, 0.12) var(--pct, 50%));
     outline: none;
     cursor: pointer;
   }
@@ -831,7 +831,7 @@
     height: 16px;
     border-radius: 50%;
     background: #ffffff;
-    border: 3px solid #f05a28;
+    border: 3px solid #22c55e;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.55);
     cursor: grab;
     transition: transform 0.15s ease;
@@ -1064,7 +1064,7 @@
         <span style="color:var(--dim);font-size:13px">🎙️</span>
         <input id="masterControlChatInput" placeholder="Habla o escribe a La Jefatura (ej. «cam», «uni», «qué errores hay», «aprende que...», «recordatorio por correo...»)" style="flex:1;background:transparent;border:0;color:var(--txt);font-size:12.5px;outline:none;padding:6px 4px" onkeydown="if(event.key==='Enter'){event.preventDefault();runMasterControlChatCommand();}">
         <button type="button" id="mcVoiceMicBtn" onclick="window.LJ && window.LJ.startMic ? window.LJ.startMic(document.getElementById('masterControlChatInput')) : (window.LJSuper && window.LJSuper.toggleMic())" style="background:rgba(34,197,94,.18);color:#4ade80;border:1px solid rgba(34,197,94,.35);border-radius:999px;padding:6px 12px;font-size:11.5px;font-weight:800;cursor:pointer;white-space:nowrap" title="Hablar por micrófono">🎤 Voz</button>
-        <button type="button" id="mcSendCmdBtn" onclick="runMasterControlChatCommand()" style="background:linear-gradient(135deg,#f05a28,#de4918);color:#fff;border:0;border-radius:999px;padding:6px 14px;font-size:11.5px;font-weight:800;cursor:pointer;white-space:nowrap">+ Ejecutar</button>
+        <button type="button" id="mcSendCmdBtn" onclick="runMasterControlChatCommand()" style="background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;border:0;border-radius:999px;padding:6px 14px;font-size:11.5px;font-weight:800;cursor:pointer;white-space:nowrap">+ Ejecutar</button>
         <button type="button" class="lj-stop-voice-btn" onclick="window.stopAllBotVoice && window.stopAllBotVoice()" style="background:rgba(239,68,68,.2);color:#fca5a5;border:1px solid rgba(239,68,68,.4);border-radius:999px;padding:6px 10px;font-size:11px;font-weight:800;cursor:pointer" title="Callar Voz (ESC)">🛑</button>
       </div>
 
@@ -1090,7 +1090,7 @@
     </div>
 
     <!-- Single Unified Bot Inline Response Box -->
-    <div id="masterControlChatFeedbackBox" style="display:none;margin-top:11px;padding:12px 15px;border-radius:14px;background:var(--inset);border:1px solid rgba(240,90,40,.45)"></div>
+    <div id="masterControlChatFeedbackBox" style="display:none;margin-top:11px;padding:12px 15px;border-radius:14px;background:var(--inset);border:1px solid rgba(34,197,94,.45)"></div>
   </div>
 </section>
 
@@ -1151,7 +1151,7 @@
     </div>
 
     <!-- SELECTED COMPANY DEPARTMENTS ("ARMS & LEGS"), LIVE ERROR & MISSING CONNECTIONS MONITOR & COMPANY LEARNING -->
-    <div id="selectedCompanyDepartmentsWrapper" style="margin-bottom:16px;background:rgba(15,16,14,.55);border:1.5px solid rgba(240,90,40,.38);border-radius:18px;padding:16px 18px">
+    <div id="selectedCompanyDepartmentsWrapper" style="margin-bottom:16px;background:rgba(15,16,14,.55);border:1.5px solid rgba(34,197,94,.38);border-radius:18px;padding:16px 18px">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px">
         <div>
           <span class="tag ok" id="liveDeptCompanyBadge">DEPARTAMENTOS EN VIVO («BRAZOS Y PIERNAS»)</span>
@@ -1268,14 +1268,14 @@
               </div>
             </div>
 
-            <!-- Green / Orange Split Bar -->
+            <!-- Green / Emerald Split Bar -->
             <div style="display:flex;height:8px;border-radius:999px;overflow:hidden;background:rgba(255,255,255,.08);gap:3px;margin-bottom:7px">
               <div id="ardSimSplitGreen" style="width:96.4%;background:#22c55e;border-radius:999px;transition:width .25s ease"></div>
-              <div id="ardSimSplitOrange" style="width:3.6%;background:#f05a28;border-radius:999px;transition:width .25s ease"></div>
+              <div id="ardSimSplitOrange" style="width:3.6%;background:#10b981;border-radius:999px;transition:width .25s ease"></div>
             </div>
             <div style="display:flex;gap:14px;font-size:11px;color:var(--dim)">
               <span><b style="color:#22c55e">●</b> <span id="ardSimLegendGreen">Sistemas Online 96.4% (53/55 Cám · 155/157 TG)</span></span>
-              <span><b style="color:#f05a28">●</b> <span id="ardSimLegendOrange">Errores Activos 3.6% (2 Cám IDEO · 2 Fallos Email/SMS)</span></span>
+              <span><b style="color:#4ade80">●</b> <span id="ardSimLegendOrange">Errores Activos 3.6% (2 Cám IDEO · 2 Fallos Email/SMS)</span></span>
             </div>
           </div>
 
@@ -1397,7 +1397,7 @@
     <div class="card v12-side-cal-card" id="v12RightCalendarDock" style="grid-column:span 4">
       <h3>
         <span class="lhs">
-          <span class="dot" style="background:#FF6B2B"></span>
+          <span class="dot" style="background:#22c55e"></span>
           <span>Calendario Visual, Citas y Tareas</span>
           <span class="tag ok" id="dockSyncBadge">SYNC 9 APPS</span>
         </span>
@@ -3932,7 +3932,7 @@ const CTO_PROJECT_SPECS = {
     bars: [
       {label: '55 Cámaras CCTV Online (53/55)', pct: 96.4, val: '96.4% (53 Cám)', color: '#10b981'},
       {label: 'UNITEC USA · SLA Alertas Telegram (155/157)', pct: 98.3, val: '98.3% SLA', color: '#0ea5e9'},
-      {label: 'BuildingApp.us · Tasa Éxito Renders IA (621)', pct: 100, val: '100% (621 IA)', color: '#f59e0b'},
+      {label: 'BuildingApp.us · Tasa Éxito Renders IA (621)', pct: 100, val: '100% (621 IA)', color: '#22c55e'},
       {label: 'Espacios Importados · Muelles & Pick-In (45/45)', pct: 100, val: '100% (45 Cám)', color: '#8b5cf6'},
       {label: 'Nexus CRM · Contactos Verificados en Vivo (46)', pct: 92, val: '46 Contactos', color: '#ec4899'}
     ],
@@ -3974,8 +3974,8 @@ const CTO_PROJECT_SPECS = {
       '<b>Google Analytics 4 (Web Marketing):</b> Propiedad <code>543661675</code> vinculada para monitoreo de sesiones, países, fuentes y conversiones en <code>buildinginnovation.us</code>.'
     ],
     bars: [
-      {label: 'Renders IA Totales Generados (621)', pct: 100, val: '621 renders', color: '#f59e0b'},
-      {label: 'Gemini 2.5 Pro Preview (519 renders)', pct: 83.6, val: '519 (83.6%)', color: '#eab308'},
+      {label: 'Renders IA Totales Generados (621)', pct: 100, val: '621 renders', color: '#22c55e'},
+      {label: 'Gemini 2.5 Pro Preview (519 renders)', pct: 83.6, val: '519 (83.6%)', color: '#4ade80'},
       {label: 'Gemini 3.1 Flash Image (102 renders)', pct: 32, val: '102 (16.4%)', color: '#10b981'},
       {label: 'Proyectos Creados por Usuarios (54)', pct: 54, val: '54 proyectos', color: '#3b82f6'},
       {label: 'Usuarios Registrados Activos (21)', pct: 42, val: '21 miembros', color: '#8b5cf6'}
@@ -4021,7 +4021,7 @@ const CTO_PROJECT_SPECS = {
       {label: 'Sede Principal Espacios Importados (29/29 Cám)', pct: 100, val: '100% (29 Cám)', color: '#8b5cf6'},
       {label: 'Planta Pick-In & Portones (16/16 Cám)', pct: 100, val: '100% (16 Cám)', color: '#10b981'},
       {label: 'Capacidad de Grabación Medellín (10.0 TB)', pct: 91, val: '10.0 TB HDD', color: '#0ea5e9'},
-      {label: 'Trazabilidad Muelles 1–4 y Despachos', pct: 100, val: '4 Muelles Live', color: '#f59e0b'}
+      {label: 'Trazabilidad Muelles 1–4 y Despachos', pct: 100, val: '4 Muelles Live', color: '#22c55e'}
     ],
     trendTitle: 'Actividad Operativa en Muelles 1–4 y Planta Pick-In (Eventos Auditados)',
     trendPoints: [32, 38, 41, 44, 39, 45, 45]
@@ -4042,7 +4042,7 @@ const CTO_PROJECT_SPECS = {
       {label: 'Contactos Reales Verificados (46 totales)', pct: 100, val: '46 Contactos', color: '#0ea5e9'},
       {label: 'Leads Telefónicos UNITEC USA (25)', pct: 54.3, val: '25 Teléfonos', color: '#10b981'},
       {label: 'Cuentas Registradas BuildingApp (21)', pct: 45.7, val: '21 Usuarios', color: '#8b5cf6'},
-      {label: 'Pipeline Externo IndexedDB (Sin conexión)', pct: 4, val: 'VACÍO ($0)', color: '#f59e0b'}
+      {label: 'Pipeline Externo IndexedDB (Sin conexión)', pct: 4, val: 'VACÍO ($0)', color: '#22c55e'}
     ],
     trendTitle: 'Crecimiento de Contactos Verificados en Vivo (UNITEC + BuildingApp = 46)',
     trendPoints: [19, 24, 29, 34, 39, 43, 46]
@@ -4152,7 +4152,7 @@ function loadProjectMemoryVault(companySlug) {
           ${events.map(ev => `<div style="font-size:11.5px;padding:4px 0;border-bottom:1px solid var(--hair)"><b>${ev.date} ${ev.time||''}</b> — ${ev.title}</div>`).join('') || '<div class="muted" style="font-size:11px">Sin citas en este filtro.</div>'}
         </div>
         <div style="background:rgba(255,255,255,.03);border:1px solid var(--hair);border-radius:11px;padding:10px 12px">
-          <div style="font-size:11px;font-weight:800;color:#f59e0b;margin-bottom:6px">⏰ RECORDATORIOS ACTIVOS (${(d.counts&&d.counts.reminders)||reminders.length})</div>
+          <div style="font-size:11px;font-weight:800;color:#22c55e;margin-bottom:6px">⏰ RECORDATORIOS ACTIVOS (${(d.counts&&d.counts.reminders)||reminders.length})</div>
           ${reminders.map(rm => `<div style="font-size:11.5px;padding:4px 0;border-bottom:1px solid var(--hair)"><b>${rm.trigger_time||''}</b> — ${rm.title}</div>`).join('') || '<div class="muted" style="font-size:11px">Sin recordatorios activos.</div>'}
         </div>
         <div style="background:rgba(255,255,255,.03);border:1px solid var(--hair);border-radius:11px;padding:10px 12px">
@@ -5470,18 +5470,18 @@ function loadLiveCompanyDepartmentsState(companyOverride, toastOnDone) {
             const isEmpty = !!dep.empty;
             const statusStr = String(dep.status || (isEmpty ? 'VACÍO' : 'LIVE'));
             const isAlert = /OFFLINE|ERROR|ALERTA/i.test(statusStr) && !isEmpty;
-            const statusColor = isEmpty ? '#f59e0b' : (isAlert ? '#ef4444' : '#10b981');
+            const statusColor = isEmpty ? '#22c55e' : (isAlert ? '#ef4444' : '#10b981');
             const nameText = dep.name || dep.name_es || 'Departamento';
             const iconText = dep.icon ? (dep.icon + ' ') : '';
             const itemsList = dep.items || [];
             const bodyHtml = isEmpty
-              ? `<div style="padding:10px 12px;border-radius:10px;background:rgba(245,158,11,.08);border:1px dashed rgba(245,158,11,.35);font-size:11.5px;color:#fcd34d;margin:6px 0">
+              ? `<div style="padding:10px 12px;border-radius:10px;background:rgba(34,197,94,.08);border:1px dashed rgba(34,197,94,.35);font-size:11.5px;color:#4ade80;margin:6px 0">
                    <b>🕳️ Departamento Vacío:</b> ${dep.empty_message || dep.summary || dep.summary_es || 'Sin conexión ni registros en vivo ($0 / vacío).'}
                  </div>`
               : `<div class="muted" style="font-size:11.5px;line-height:1.42;margin:6px 0;color:var(--txt);font-weight:600">${dep.summary || dep.summary_es || ''}</div>
                  ${itemsList.length ? `<ul style="margin:6px 0 0;padding-left:16px;font-size:10.5px;color:#cbd5e1;line-height:1.45">${itemsList.map(it => `<li>${it}</li>`).join('')}</ul>` : ''}`;
             return `
-              <div style="background:rgba(255,255,255,.03);border:1.5px solid ${isEmpty ? 'rgba(245,158,11,.32)' : 'var(--hair)'};border-top:3px solid ${statusColor};border-radius:13px;padding:12px 14px;display:flex;flex-direction:column;justify-content:space-between">
+              <div style="background:rgba(255,255,255,.03);border:1.5px solid ${isEmpty ? 'rgba(34,197,94,.32)' : 'var(--hair)'};border-top:3px solid ${statusColor};border-radius:13px;padding:12px 14px;display:flex;flex-direction:column;justify-content:space-between">
                 <div>
                   <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:6px;margin-bottom:4px">
                     <strong style="font-size:12.5px;color:var(--txt)">${iconText}${nameText}</strong>
@@ -5503,7 +5503,7 @@ function loadLiveCompanyDepartmentsState(companyOverride, toastOnDone) {
         } else {
           errListEl.innerHTML = combined.map(item => {
             const sev = String(item.severity || 'medium').toLowerCase();
-            const col = sev === 'high' ? '#ef4444' : (sev === 'medium' ? '#f59e0b' : '#60a5fa');
+            const col = sev === 'high' ? '#ef4444' : (sev === 'medium' ? '#22c55e' : '#60a5fa');
             return `
               <div style="background:rgba(0,0,0,.28);border:1px solid ${col}44;border-left:3px solid ${col};border-radius:10px;padding:8px 10px">
                 <div style="display:flex;justify-content:space-between;align-items:center;gap:6px">
@@ -5850,10 +5850,10 @@ setTimeout(() => {
       const ek = 'ev:' + e.id;
       if (editingKey === ek) {
         L += '<div class="ag-item"><div class="t">'
-          + '<input class="ag-edit-in" data-edit-title="'+esc(e.id)+'" value="'+esc(e.title)+'" style="width:100%;margin-bottom:4px;padding:4px 6px;border-radius:6px;border:1px solid #FF6B2B;background:rgba(0,0,0,.25);color:inherit;font-size:11.5px">'
+          + '<input class="ag-edit-in" data-edit-title="'+esc(e.id)+'" value="'+esc(e.title)+'" style="width:100%;margin-bottom:4px;padding:4px 6px;border-radius:6px;border:1px solid #22c55e;background:rgba(0,0,0,.25);color:inherit;font-size:11.5px">'
           + '<div style="display:flex;gap:4px">'
           + '<input type="time" data-edit-time="'+esc(e.id)+'" value="'+esc(e.time || '10:00')+'" style="padding:3px 5px;border-radius:6px;border:1px solid rgba(255,255,255,.2);background:rgba(0,0,0,.25);color:inherit;font-size:10.5px">'
-          + '<button type="button" class="act-btn" data-save-ev="'+esc(e.id)+'" style="background:#FF6B2B;color:#fff">Guardar</button>'
+          + '<button type="button" class="act-btn" data-save-ev="'+esc(e.id)+'" style="background:#22c55e;color:#fff">Guardar</button>'
           + '<button type="button" class="act-btn" data-cancel-edit="1">Cancelar</button>'
           + '</div></div></div>';
       } else {
