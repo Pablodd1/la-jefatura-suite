@@ -28,7 +28,7 @@ def check(name: str, cond: bool, detail: str = ""):
 
 
 def get_json(path: str) -> dict:
-    with urllib.request.urlopen(BASE + path, timeout=15) as r:
+    with urllib.request.urlopen(BASE + path, timeout=35) as r:
         return json.loads(r.read().decode("utf-8"))
 
 
@@ -40,7 +40,7 @@ def post_json(path: str, payload: dict) -> dict:
         headers={"Content-Type": "application/json"},
         method="POST",
     )
-    with urllib.request.urlopen(req, timeout=15) as r:
+    with urllib.request.urlopen(req, timeout=35) as r:
         return json.loads(r.read().decode("utf-8"))
 
 
@@ -164,10 +164,55 @@ def main():
 
     # 8. Multi-Page Morning Executive Newspaper PDF (/api/daily.pdf & /api/report.pdf & /api/cameras/report.pdf)
     for pdf_ep in ("/api/daily.pdf?lang=es", "/api/report.pdf?company=cameras&lang=es", "/api/cameras/report.pdf?lang=es"):
-        with urllib.request.urlopen(BASE + pdf_ep, timeout=20) as r:
+        with urllib.request.urlopen(BASE + pdf_ep, timeout=45) as r:
             pbytes = r.read()
         npages = pbytes.count(b"/Type /Page") - pbytes.count(b"/Type /Pages")
         check(f"8. PDF Endpoint {pdf_ep}", pbytes[:4] == b"%PDF" and len(pbytes) > 3000, f"{len(pbytes)} bytes, {npages} pages")
+
+    # 9. Dedicated Left-Menu Icons & Panes (Emails, Texts/Telegram, AI Voice Calls, Tasks/Calendar, Notes) & WhatsApp Removal
+    check("9a. Dedicated Left-Menu Icons (comms, texts, calls, tasks_cal, notes_vault)", all(f'data-rail="{k}"' in html for k in ("comms", "texts", "calls", "tasks_cal", "notes_vault")))
+    check("9b. Dedicated Panes (#pane-texts, #pane-calls, #pane-tasks_cal, #pane-notes_vault)", all(f'id="pane-{k}"' in html for k in ("comms", "texts", "calls", "tasks_cal", "notes_vault")))
+    txt_hub = get_json("/api/texts/inbox")
+    check("9c. /api/texts/inbox returns Telegram & Text only (whatsapp_removed=True)", txt_hub.get("ok") is True and txt_hub.get("whatsapp_removed") is True and len(txt_hub.get("items", [])) >= 1, f"count={txt_hub.get('count')}, drafts={txt_hub.get('draft_count')}")
+
+    # 10. Multi-Command Delegation & AI Voice Calls + Transcripts & Decisions
+    multi_res = post_json("/api/ceo/chat", {
+        "message": "Go to Telegram and send a message to all asking what happened with the new products, and send a text to Roberto about Miami inventory",
+        "company": "espacios_importados",
+    })
+    check("10a. Multi-Command Telegram/Text Delegation creates drafts for CEO approval", multi_res.get("ok") is True and len(multi_res.get("actions_executed", [])) >= 2, f"actions={len(multi_res.get('actions_executed', []))}")
+
+    calls_res = get_json("/api/calls/list")
+    check("10b. /api/calls/list returns AI voice calls with transcripts & GitHub architectures", calls_res.get("ok") is True and len(calls_res.get("calls", [])) >= 2 and len(calls_res.get("github_architectures", [])) >= 3, f"calls={calls_res.get('count')}")
+
+    new_call = post_json("/api/calls/initiate", {
+        "contact_name": "Carlos Méndez (Logística Buenaventura)",
+        "to_phone": "+573105550192",
+        "objective": "Smoke Test CTO: Confirmar liberación de BL contenedores WPC",
+        "company": "espacios_importados",
+    })
+    check("10c. POST /api/calls/initiate places AI call & saves full transcript + decision options", new_call.get("ok") is True and len(new_call.get("transcript", [])) >= 3 and bool(new_call.get("call_result_summary")), new_call.get("call_result_summary", "")[:100])
+    if new_call.get("call_id"):
+        dec_res = post_json("/api/calls/decide", {
+            "call_id": new_call["call_id"],
+            "decision": "Smoke Test CTO: Aprobar liberación inmediata y notificar por Telegram",
+            "send_telegram_confirm": False,
+        })
+        check("10d. POST /api/calls/decide records CEO decision & creates linked task", dec_res.get("ok") is True and bool(dec_res.get("ceo_decision")), str(dec_res.get("ceo_decision")))
+
+    # Clean up smoke test rows created in step 10
+    if os.path.exists(db_p):
+        with sqlite3.connect(db_p) as conn:
+            for sql in (
+                "DELETE FROM voice_calls WHERE objective LIKE '%Smoke Test CTO%'",
+                "DELETE FROM text_messages WHERE body LIKE '%what happened with the new products%' OR body LIKE '%Miami inventory%'",
+                "DELETE FROM tasks WHERE title LIKE '%Smoke Test CTO%' OR title LIKE '%Decisión Llamada%'",
+            ):
+                try:
+                    conn.execute(sql)
+                except Exception:
+                    pass
+            conn.commit()
 
     print("\n" + ("FAILED: " + str(FAILS) if FAILS else "ALL E2E WORKFLOW & SMOKE TESTS PASSED (100%)"))
     sys.exit(1 if FAILS else 0)

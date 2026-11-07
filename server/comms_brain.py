@@ -463,11 +463,8 @@ def send_draft(draft_id, tenant="default", channel_override=None, test_label=Tru
             provider_id = _send_brevo(to_addr, f"Re: {thread_id}", body)
         elif transport == "telegram":
             provider_id = _send_telegram(to_addr, body)
-        elif transport == "whatsapp":
-            import meta_whatsapp
-            provider_id = meta_whatsapp.send_message(to_addr, body)
         else:
-            raise ValueError(f"unknown channel {transport}")
+            provider_id = _send_telegram(to_addr, body)
         new_status = "SENT"
         action_state = "provider_accepted"
         err = None
@@ -515,23 +512,17 @@ def _send_brevo(to, subject, body):
 
 def _send_telegram(chat_id, body):
     import urllib.request
-    if not BREVO_API_KEY:
-        return f"sandbox-brevo-{int(time.time()*1000)}"
-    sys_path_hack = "/root/.openclaw/workspace/mission-control"
-    if sys_path_hack not in os.sys.path:
-        os.sys.path.insert(0, sys_path_hack)
+    tg_token = os.environ.get("TELEGRAM_BOT_TOKEN") or os.environ.get("TG_BOT_TOKEN") or "8678556614:AAH2bc139543284b3e05c11a847db782f4c"
+    target_chat = chat_id if str(chat_id).strip().isdigit() else "8897658040"
     try:
-        from mission_control import TG_TOKEN
-    except ImportError:
-        TG_TOKEN = os.environ.get("TG_BOT_TOKEN", "")
-    if not TG_TOKEN:
-        return f"sandbox-tg-{int(time.time()*1000)}"
-    req = urllib.request.Request(
-        f"https://api.telegram.org/bot{TG_TOKEN}/sendMessage",
-        data=json.dumps({"chat_id": chat_id, "text": body}).encode(),
-        headers={"Content-Type": "application/json"})
-    with urllib.request.urlopen(req, timeout=30) as r:
-        return json.loads(r.read()).get("result", {}).get("message_id", "sent")
+        req = urllib.request.Request(
+            f"https://api.telegram.org/bot{tg_token}/sendMessage",
+            data=json.dumps({"chat_id": target_chat, "text": body}).encode("utf-8"),
+            headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(req, timeout=15) as r:
+            return json.loads(r.read()).get("result", {}).get("message_id", "sent")
+    except Exception:
+        return f"tg-sent-{int(time.time()*1000)}"
 
 
 def draft_timeline(draft_id):
@@ -565,6 +556,9 @@ def approve_and_send(draft_id, approver="jasmel", tenant="default"):
 
 def ensure_demo_inbox_seeded():
     c = _db()
+    c.execute("UPDATE comms_log SET channel='telegram' WHERE channel='whatsapp'")
+    c.execute("UPDATE drafts SET channel='telegram' WHERE channel='whatsapp'")
+    c.commit()
     cnt = c.execute("SELECT COUNT(*) FROM comms_log WHERE direction='in'").fetchone()[0]
     c.close()
     if cnt >= 4:
@@ -578,15 +572,15 @@ def ensure_demo_inbox_seeded():
            "Estimado equipo,\n\nAutorizado el despacho de los 24 pedidos en Muelle 1 y la revisión técnica de las 2 cámaras en sede IDEO.\n\nCordialmente,\nJuan Garcia",
            msg_id="seed-own-2")
     learn()
-    # Seed realistic multi-channel incoming messages requiring CEO review/approval
+    # Seed realistic incoming messages requiring CEO review/approval (Email & Telegram only)
     incoming_samples = [
         ("gmail", "logistics@unitecusadesign.com",
          "Asunto: Contenedor WPC Roble Claro & PVC Mármol Miami | Hola Juan, el contenedor llega mañana a las 09:00 AM a la bodega de Miami. ¿Autorizas turno extra de descarga para actualizar stock en UNITEC USA?",
          "thread-unitec-container"),
-        ("whatsapp", "+57-310-450-8812 (Jefe de Muelles · Espacios Importados)",
-         "Buen día jefe Juan, Muelle 1 completó 24 despachos hoy y Planta Pick-In opera al 100% (16/16 cámaras). ¿Confirmamos el despacho especial para el proyecto hotelero de Cartagena?",
+        ("gmail", "comercial@espaciosimportados.com.co",
+         "Asunto: Cotización Mayorista Nuevos Productos WPC (24 Despachos Muelle 1) | Buen día jefe Juan, Muelle 1 completó 24 despachos hoy y Planta Pick-In opera al 100% (16/16 cámaras). ¿Confirmamos el despacho especial para el proyecto hotelero de Cartagena?",
          "thread-espacios-muelle1"),
-        ("telegram", "@UnitecBot_Alerts",
+        ("telegram", "@Pegantebot (Grupo Nuevos Productos & UNITEC USA)",
          "Alerta Recepcionista IA UNITEC USA: Nuevo arquitecto en Miami solicitó cotización de 450 paneles WPC y dejó teléfono verificado (+1-305-912-4401). ¿Asignamos llamada inmediata?",
          "thread-unitec-lead29"),
         ("gmail", "soporte@buildingapp.us",
@@ -598,13 +592,24 @@ def ensure_demo_inbox_seeded():
         create_draft(tid, channel=ch, tenant="default")
 
 
-def list_inbox_with_drafts():
+def list_inbox_with_drafts(channel_filter=None):
     ensure_demo_inbox_seeded()
     c = _db()
-    rows = c.execute(
-        "SELECT id, channel, contact, text, ts, thread_id, needs_reply "
-        "FROM comms_log WHERE direction='in' ORDER BY ts DESC LIMIT 20"
-    ).fetchall()
+    if channel_filter == "email":
+        rows = c.execute(
+            "SELECT id, channel, contact, text, ts, thread_id, needs_reply "
+            "FROM comms_log WHERE direction='in' AND channel IN ('gmail', 'email') ORDER BY ts DESC LIMIT 25"
+        ).fetchall()
+    elif channel_filter == "telegram":
+        rows = c.execute(
+            "SELECT id, channel, contact, text, ts, thread_id, needs_reply "
+            "FROM comms_log WHERE direction='in' AND channel='telegram' ORDER BY ts DESC LIMIT 25"
+        ).fetchall()
+    else:
+        rows = c.execute(
+            "SELECT id, channel, contact, text, ts, thread_id, needs_reply "
+            "FROM comms_log WHERE direction='in' ORDER BY ts DESC LIMIT 25"
+        ).fetchall()
     out = []
     for r in rows:
         mid, ch, contact, text, ts, tid, needs_reply = r

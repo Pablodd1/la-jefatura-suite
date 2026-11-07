@@ -60,6 +60,7 @@ import voice_commands  # noqa: E402
 import ceo_action_brain  # noqa: E402
 import text_messaging  # noqa: E402
 import functions_catalog  # noqa: E402
+import voice_calls_engine  # noqa: E402
 
 PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 8931
 SAMPLES = os.path.join(ROOT, "data", "samples")
@@ -290,9 +291,26 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
             force = (qs.get("refresh") or ["0"])[0] == "1"
             self._send(200, cameras.status(os.path.join(SAMPLES, "cameras.json"), force=force))
         elif path == "/api/comms/inbox":
-            self._send(200, comms_brain.list_inbox_with_drafts())
-        elif path == "/api/whatsapp/status":
-            self._send(200, meta_whatsapp.get_status())
+            ch_f = (qs.get("channel") or [None])[0]
+            self._send(200, comms_brain.list_inbox_with_drafts(channel_filter=ch_f))
+        elif path in ("/api/texts/inbox", "/api/telegram/inbox"):
+            co = (qs.get("company") or ["all"])[0]
+            msgs = text_messaging.list_messages(company=co)
+            self._send(200, {
+                "ok": True,
+                "messages": msgs,
+                "items": msgs,
+                "count": len(msgs),
+                "draft_count": sum(1 for m in msgs if m.get("status") not in ("sent", "replied")),
+                "whatsapp_removed": True,
+                "watchlist": text_messaging.list_watchlist(),
+                "status": text_messaging.get_meta_status(),
+            })
+        elif path in ("/api/calls/list", "/api/calls"):
+            co = (qs.get("company") or ["all"])[0]
+            self._send(200, voice_calls_engine.list_voice_calls(company=co))
+        elif path in ("/api/whatsapp/status", "/api/telegram/status"):
+            self._send(200, text_messaging.get_meta_status())
         elif path == "/api/whatsapp/webhook":
             code, challenge = meta_whatsapp.verify_webhook(qs)
             self._send(code, challenge.encode("utf-8"), "text/plain; charset=utf-8")
@@ -509,6 +527,47 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
             did = int(body.get("draft_id", 0))
             behavior_brain.record_event("click", f"approve_send_draft_{did}", {"draft_id": did})
             self._send(200, comms_brain.approve_and_send(did, approver="jasmel"))
+        elif path in ("/api/texts/draft", "/api/telegram/draft"):
+            self._send(200, text_messaging.create_outgoing_text_draft(
+                contact_name=body.get("contact_name", "Grupo General Telegram (@Pegantebot)"),
+                message_text=body.get("message_text") or body.get("body") or "",
+                to_phone=body.get("to_phone") or body.get("to") or "8897658040",
+                company=body.get("company", "espacios_importados"),
+                channel=body.get("channel", "telegram"),
+                auto_send=bool(body.get("auto_send", False)),
+            ))
+        elif path in ("/api/texts/edit", "/api/telegram/edit"):
+            mid = int(body.get("id") or body.get("message_id") or 0)
+            self._send(200, text_messaging.update_text_draft(mid, body.get("body") or body.get("ai_draft_reply") or ""))
+        elif path in ("/api/texts/approve_send", "/api/telegram/approve_send"):
+            mid = int(body.get("id") or body.get("message_id") or 0)
+            edited = body.get("body") if "body" in body else None
+            self._send(200, text_messaging.approve_text_draft(mid, edited_text=edited))
+        elif path in ("/api/texts/send", "/api/telegram/send"):
+            self._send(200, text_messaging.send_text_message(
+                to_phone=body.get("to_phone") or body.get("to") or "8897658040",
+                message=body.get("message") or body.get("body") or "",
+                company=body.get("company", "espacios_importados"),
+                channel=body.get("channel", "telegram"),
+                contact_name=body.get("contact_name", "Telegram Grupo Ejecutivo"),
+            ))
+        elif path == "/api/calls/initiate":
+            self._send(200, voice_calls_engine.initiate_ai_phone_call(
+                contact_name=body.get("contact_name", "Contacto Ejecutivo"),
+                to_phone=body.get("to_phone") or body.get("phone") or "",
+                objective=body.get("objective") or body.get("message") or "",
+                company=body.get("company", "espacios_importados"),
+                script_prompt=body.get("script_prompt", ""),
+                auto_execute=bool(body.get("auto_execute", True)),
+            ))
+        elif path == "/api/calls/decide":
+            cid = int(body.get("call_id") or body.get("id") or 0)
+            self._send(200, voice_calls_engine.record_call_decision(
+                call_id=cid,
+                decision=body.get("decision", ""),
+                create_task=bool(body.get("create_task", True)),
+                send_telegram_confirm=bool(body.get("send_telegram_confirm", True)),
+            ))
         elif path == "/api/behavior/event":
             et = body.get("event_type", "click")
             tg = body.get("target", "ui")

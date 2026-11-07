@@ -1005,8 +1005,26 @@
     </button>
     <button type="button" class="lj-sb-btn" data-rail="comms" onclick="switchTab('comms')">
       <span class="lj-sb-ico">✉️</span>
-      <span class="lj-sb-text" data-i18n="tab_comms">Bandeja IA (Gmail &amp; TG)</span>
-      <span class="lj-sb-badge" id="pendingDraftsBadge">0</span>
+      <span class="lj-sb-text" data-i18n="tab_comms">Correos (Inbox &amp; Borradores)</span>
+      <span class="lj-sb-badge" id="pendingDraftsBadge">2</span>
+    </button>
+    <button type="button" class="lj-sb-btn" data-rail="texts" onclick="switchTab('texts')">
+      <span class="lj-sb-ico">📲</span>
+      <span class="lj-sb-text">Textos &amp; Telegram</span>
+      <span class="lj-sb-badge" id="pendingTextsBadge">4</span>
+    </button>
+    <button type="button" class="lj-sb-btn" data-rail="calls" onclick="switchTab('calls')">
+      <span class="lj-sb-ico">📞</span>
+      <span class="lj-sb-text">Llamadas IA &amp; Transcripciones</span>
+      <span class="lj-sb-badge" id="pendingCallsBadge">2</span>
+    </button>
+    <button type="button" class="lj-sb-btn" data-rail="tasks_cal" onclick="switchTab('tasks_cal')">
+      <span class="lj-sb-ico">📅</span>
+      <span class="lj-sb-text">Tareas, Calendario &amp; Pendientes</span>
+    </button>
+    <button type="button" class="lj-sb-btn" data-rail="notes_vault" onclick="switchTab('notes_vault')">
+      <span class="lj-sb-ico">📝</span>
+      <span class="lj-sb-text">Notas &amp; Memoria CEO</span>
     </button>
     <button type="button" class="lj-sb-btn" data-rail="outcomes" onclick="switchTab('outcomes')">
       <span class="lj-sb-ico">📈</span>
@@ -1018,7 +1036,7 @@
     </button>
     <button type="button" class="lj-sb-btn" data-rail="setup" onclick="switchTab('setup')">
       <span class="lj-sb-ico">🔌</span>
-      <span class="lj-sb-text" data-i18n="tab_setup">Conexiones (TG/Gmail/Cal)</span>
+      <span class="lj-sb-text" data-i18n="tab_setup">Conexiones (TG/Gmail/Voz)</span>
     </button>
     <button type="button" class="lj-sb-btn" data-rail="blogs" onclick="switchTab('blogs')">
       <span class="lj-sb-ico">📰</span>
@@ -1113,6 +1131,10 @@
 <nav class="nav-bar" id="mainNav" style="display:none!important">
   <button class="nav-tab active" data-tab="overview"></button>
   <button class="nav-tab" data-tab="comms"></button>
+  <button class="nav-tab" data-tab="texts"></button>
+  <button class="nav-tab" data-tab="calls"></button>
+  <button class="nav-tab" data-tab="tasks_cal"></button>
+  <button class="nav-tab" data-tab="notes_vault"></button>
   <button class="nav-tab" data-tab="outcomes"></button>
   <button class="nav-tab" data-tab="behavior"></button>
   <button class="nav-tab" data-tab="setup"></button>
@@ -1643,16 +1665,16 @@
   </div>
 </section>
 
-<!-- ==================== TAB 2: COMMS & 1-CLICK APPROVAL ==================== -->
+<!-- ==================== TAB 2: EMAILS INBOX & 1-CLICK APPROVAL ==================== -->
 <section class="tab-pane" id="pane-comms">
   <div class="grid">
     <div class="card" style="grid-column:span 8">
       <h3>
-        <span class="lhs"><span class="dot" style="background:var(--acc)"></span><span data-i18n="comms_title">Bandeja Ejecutiva Unificada — Borradores Preparados por IA</span></span>
-        <span class="tag ok" id="commsModeBadge">MODO C · APROBAR Y ENVIAR</span>
+        <span class="lhs"><span class="dot" style="background:var(--acc)"></span><span data-i18n="comms_title">✉️ Bandeja de Correos Ejecutivos (Inbox &amp; Borradores IA en tu Voz)</span></span>
+        <span class="tag ok" id="commsModeBadge">MODO C · EDITAR O APROBAR Y ENVIAR</span>
       </h3>
       <p class="muted" style="margin-bottom:14px" data-i18n="comms_desc">
-        Cada correo o mensaje entrante (Gmail, WhatsApp, Telegram, Slack) ya tiene un borrador redactado en tu voz. Edítalo si deseas (el sistema aprende de cada cambio) o presiona «Aprobar y Enviar Directo».
+        Bandeja exclusiva de todos tus correos entrantes (<code>juangerenciagarcia@gmail.com</code>, <code>ceo@espaciosimportados.com.co</code>, <code>jasmelacosta@gmail.com</code>) con respuesta pre-redactada por IA en la voz del CEO. Edita el borrador o presiona «Aprobar y Enviar Directo».
       </p>
       <div id="commsDraftList"></div>
     </div>
@@ -1661,94 +1683,185 @@
       <h3><span class="lhs"><span class="dot" style="background:var(--vio)"></span><span data-i18n="voice_prof_title">Huella de Voz Aprendida del CEO</span></span></h3>
       <div id="voiceProfileBox"></div>
       <hr style="border:0;border-top:1px solid var(--hair);margin:14px 0">
-      <h3><span class="lhs"><span class="dot" style="background:var(--acc2)"></span><span data-i18n="sim_inbound">Simular Nuevo Mensaje Entrante</span></span></h3>
+      <h3><span class="lhs"><span class="dot" style="background:var(--acc2)"></span><span data-i18n="sim_inbound">Redactar o Recibir Correo con Borrador IA</span></span></h3>
       <div style="display:flex;flex-direction:column;gap:8px">
-        <input class="inp" id="simSender" placeholder="Remitente (ej. socio@inversiones.com)" value="dr.khalil@sunshinedental.com">
-        <input class="inp" id="simText" placeholder="Mensaje entrante…" value="Hola Jasmel, ¿podemos incluir las 2 clínicas de Tampa en el mismo contrato anual si firmamos este viernes?">
-        <button class="btn" onclick="simulateIncomingMsg()">Recibir y Pre-Redactar Borrador IA</button>
+        <input class="inp" id="simSender" placeholder="Remitente o Destinatario (ej. logistics@unitecusadesign.com)" value="logistics@unitecusadesign.com">
+        <input class="inp" id="simText" placeholder="Asunto / Mensaje del correo…" value="Hola Juan David, ¿confirmamos el despacho del contenedor de nuevos productos WPC a Miami y Muelle 1?">
+        <div style="display:flex;gap:6px">
+          <button class="btn ghost sm" type="button" onclick="window.LJ && window.LJ.startMic && window.LJ.startMic(document.getElementById('simText'))">🎤 Dictar</button>
+          <button class="btn" style="flex:1" onclick="simulateIncomingMsg()">Preparar Borrador de Correo IA</button>
+        </div>
+      </div>
+      <hr style="border:0;border-top:1px solid var(--hair);margin:14px 0">
+      <div id="googleJuanConfigBox">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <span style="font-size:11.5px;font-weight:700">⚙️ Conexión Gmail + Google Calendar (Juan)</span>
+          <span class="tag ok" id="juanGoogleBadge">ACTIVO · SMTP &amp; ICAL</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px">
+          <input class="inp" id="cfgJuanEmail" placeholder="Correo Gmail de Juan…" value="juangerenciagarcia@gmail.com">
+          <input class="inp" id="cfgJuanAppPass" type="password" placeholder="App Password (16 letras)…">
+        </div>
+        <div style="display:flex;gap:6px">
+          <input class="inp" id="cfgJuanIcal" style="flex:1" placeholder="URL Secreta iCal (.ics)">
+          <button class="btn sm" type="button" onclick="saveAndSyncJuanGoogle()">Sincronizar Gmail</button>
+        </div>
       </div>
     </div>
+  </div>
+</section>
 
-    <div class="card" style="grid-column:span 12;border-color:rgba(35,217,176,.38)" id="metaWaWatchlistCard">
+<!-- ==================== TAB 2B: DEDICATED TEXT & TELEGRAM HUB (NO WHATSAPP) ==================== -->
+<section class="tab-pane" id="pane-texts">
+  <div class="grid">
+    <div class="card" style="grid-column:span 12">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px">
+        <div>
+          <span class="tag ok">📲 SOLO TELEGRAM &amp; TEXTO · CERO WHATSAPP</span>
+          <h3 style="margin:6px 0 2px;font-size:16px">Delegación por Voz o Texto a Telegram (@Pegantebot · @ceojefesitobot) y SMS</h3>
+          <p class="muted" style="font-size:12px">
+            Puedes dictar o escribir uno o varios comandos seguidos (ej. <i>«Ve a Telegram y manda un mensaje a todos preguntando qué pasó con los nuevos productos, envía un texto a Roberto sobre Miami y crea un recordatorio de revisar precios»</i>). La IA redacta cada borrador para que lo edites o apruebes con 1 clic.
+          </p>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <button class="btn ghost sm" type="button" onclick="loadTextsTelegramHub(true)">🔄 Actualizar Telegram &amp; Textos</button>
+          <button class="btn ghost sm" type="button" onclick="readAllPendingTextsAloud()">🔊 Escuchar Borradores de Texto</button>
+        </div>
+      </div>
+
+      <!-- Voice & Multi-Text Delegation Bar -->
+      <div style="display:grid;grid-template-columns:230px 1fr auto auto auto;gap:8px;align-items:center;background:var(--inset);padding:10px 12px;border-radius:14px;border:1px solid var(--hair);margin-bottom:14px">
+        <select id="tgQuickTarget" class="inp" style="font-size:12px;font-weight:700">
+          <option value="8897658040|Grupo General Nuevos Productos (@Pegantebot)|espacios_importados">📢 Grupo General Nuevos Productos (@Pegantebot)</option>
+          <option value="+13058904412|Roberto Silva · UNITEC USA Miami|unitec_usa">🏛️ Roberto Silva · UNITEC USA Miami</option>
+          <option value="tg-building-innovation|Andrés Gómez · Building Innovation|building_innovation">🏗️ Andrés Gómez · Building Innovation</option>
+          <option value="+573104458920|Carlos Méndez · Aduanas &amp; Muelle 1|espacios_importados">🏭 Carlos Méndez · Aduanas &amp; Muelle 1</option>
+          <option value="7838956683|Canal Directo CEO (@ceojefesitobot)|buildingapp">👑 Canal Directo CEO (@ceojefesitobot)</option>
+        </select>
+        <input id="tgQuickInstructionInput" class="inp" placeholder="Dicta o escribe tu orden (ej. «Ve a Telegram y pregunta a todos qué pasó con los nuevos productos, y manda un texto a Roberto sobre las muestras»)…" onkeydown="if(event.key==='Enter'){event.preventDefault();delegateTelegramOrMultiText(false);}">
+        <button type="button" class="btn ghost sm" onclick="window.LJ && window.LJ.startMic && window.LJ.startMic(document.getElementById('tgQuickInstructionInput'))">🎤 Dictar Voz</button>
+        <button type="button" class="btn sm" onclick="delegateTelegramOrMultiText(false)">✍️ Crear Borrador(es) IA</button>
+        <button type="button" class="btn sm" style="background:linear-gradient(135deg,#2d9659,#1e7342)" onclick="delegateTelegramOrMultiText(true)">🚀 Aprobar y Enviar Ya</button>
+      </div>
+
+      <!-- Quick Preset Prompts for CEO -->
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">
+        <button type="button" class="btn ghost sm" style="font-size:11px" onclick="document.getElementById('tgQuickInstructionInput').value='Go to Telegram and send a message to all asking what happened with the new products';delegateTelegramOrMultiText(false)">💬 «¿Qué pasó con los nuevos productos?» (Borrador a Todos)</button>
+        <button type="button" class="btn ghost sm" style="font-size:11px" onclick="document.getElementById('tgQuickInstructionInput').value='I want you to send a text to Roberto about the 1,400 m2 WPC order in Miami, I want you to send a text to Carlos about Container Dock 1 at 7:30 AM, and I want you to send a reminder to audit wholesale pricing at 4pm';delegateTelegramOrMultiText(false)">⚡ Probar Múltiples Textos + Recordatorio en Cadena</button>
+      </div>
+
+      <div id="textsDelegationBanner" style="display:none;margin-bottom:12px;padding:10px 14px;border-radius:12px;background:rgba(52,168,102,.14);border:1px solid rgba(52,168,102,.45);font-size:12.5px"></div>
+    </div>
+
+    <div class="card" style="grid-column:span 8">
       <h3>
-        <span class="lhs">
-          <span class="dot" style="background:var(--ok)"></span>
-          <span>Meta WhatsApp Cloud API Oficial (Graph API v21.0 · Coexistencia Activa · Green API Eliminado — Cero Riesgo de Bloqueo)</span>
-          <span class="tag ok" id="metaWaBadge">META OFICIAL · 5 CHATS/GRUPOS SELECCIONADOS</span>
-        </span>
-        <div style="display:flex;gap:8px;align-items:center">
-          <span class="muted" style="font-size:11px">Webhook: /api/whatsapp/webhook · Auto-Borrador + Auto-Tarea</span>
-          <button class="btn ghost sm" type="button" onclick="loadMetaWhatsAppStatus(true)">Sincronizar Meta Cloud API</button>
-        </div>
+        <span class="lhs"><span class="dot" style="background:var(--acc)"></span><span>Bandeja de Textos &amp; Telegram — Editar, Revisar o Aprobar Envío</span></span>
+        <span class="tag ok" id="textsCountBadge">TELEGRAM BOT API EN VIVO</span>
       </h3>
-      <p class="muted" style="margin-bottom:12px;font-size:12px">
-        Selecciona exactamente qué <b>Grupos de WhatsApp</b> o <b>Contactos Directos</b> deseas que El Jefesito monitoree. Cada mensaje en tus chats seleccionados genera automáticamente <b>1) un Borrador de Respuesta IA en tu voz</b> arriba en la Bandeja y <b>2) una Tarea Ejecutiva en tu control</b>, ignorando chats personales no seleccionados.
+      <div id="textsInboxList" style="display:flex;flex-direction:column;gap:10px"></div>
+    </div>
+
+    <div class="card" style="grid-column:span 4">
+      <h3>
+        <span class="lhs"><span class="dot" style="background:var(--ok)"></span><span>Canales y Grupos de Telegram Conectados</span></span>
+      </h3>
+      <p class="muted" style="font-size:11.5px;margin-bottom:10px">
+        WhatsApp ha sido desactivado permanentemente. Toda la mensajería instantánea opera sobre Telegram (<code>@Pegantebot</code> y <code>@ceojefesitobot</code>) y SMS.
       </p>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px">
-        <input class="inp" id="waNewName" placeholder="Nombre del Grupo o Contacto (ej. Grupo Socios Miami)…">
-        <input class="inp" id="waNewId" placeholder="ID Grupo o Teléfono (ej. wa-grp-socios o +1-305-555-0199)…">
-        <select class="inp" id="waNewKind">
-          <option value="group">Grupo de WhatsApp (Meta Groups / Coexistencia)</option>
-          <option value="direct">Chat Directo 1:1 (Meta Cloud API)</option>
-        </select>
-        <button class="btn sm" type="button" onclick="addMetaWaWatchItem()">+ Agregar a Monitoreo Selectivo</button>
-      </div>
-      <div id="juanLivePairingBox" style="margin-bottom:12px"></div>
-      <div id="metaWaWatchlistBox" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:12px"></div>
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding-top:10px;border-top:1px solid var(--hair)">
-        <select class="inp" id="waSimTargetChat" style="width:auto;min-width:260px">
-          <option value="wa-grp-unitec-logistica|Grupo Dirección & Logística — UNITEC / Building|group|unitec">Grupo Dirección & Logística — UNITEC / Building</option>
-          <option value="wa-grp-espacios-muelles|Grupo Muelles y Despachos — Espacios Importados|group|building">Grupo Muelles y Despachos — Espacios Importados</option>
-          <option value="wa-grp-building-app|Grupo Producto & Marketing — Building Innovation|group|building">Grupo Producto & Marketing — Building Innovation</option>
-          <option value="+52-55-4190-8821|Jorge Ramírez · Farmacia La Esperanza|direct|saleinn">Jorge Ramírez · Farmacia La Esperanza (+52-55-4190-8821)</option>
-        </select>
-        <input class="inp" id="waSimGroupMsg" style="flex:1;min-width:260px" value="Jasmel, llegó el contenedor de Paneles WPC Roble Claro al Muelle 1. ¿Autorizas descargar hoy y enviar factura al cliente de Doral?">
-        <button class="btn vio sm" type="button" onclick="simulateMetaWhatsAppGroupMsg()">Probar Mensaje Meta (Crear Borrador + Tarea)</button>
-        <button class="btn ghost sm" type="button" onclick="readAllPendingCommsAloud()">🔊 Leer Todos los Mensajes Pendientes</button>
-      </div>
-      <details open style="margin-top:12px;padding-top:10px;border-top:1px solid var(--hair)">
-        <summary style="cursor:pointer;font-size:12px;font-weight:700;color:var(--acc)">⚙️ Conectar Credenciales en Vivo: Meta WhatsApp Cloud API + Gmail y Google Calendar de Juan</summary>
-        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:10px">
-          <div style="background:rgba(7,11,20,.65);border:1px solid var(--hair);border-radius:10px;padding:10px">
-            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px;margin-bottom:6px">
-              <span style="font-size:11.5px;font-weight:700">1) Meta WhatsApp Cloud API Oficial (Flujo 2026 «Use Cases»)</span>
-              <div style="display:flex;gap:6px;font-size:10.5px">
-                <a href="https://developers.facebook.com/apps/" target="_blank" rel="noopener" style="color:var(--acc);text-decoration:underline">1. Crear App (Use Case WhatsApp)</a> ·
-                <a href="https://business.facebook.com/billing_hub/payment_methods" target="_blank" rel="noopener" style="color:var(--acc);text-decoration:underline">2. Pago Meta Billing</a> ·
-                <a href="https://business.facebook.com/settings/system-users" target="_blank" rel="noopener" style="color:var(--acc);text-decoration:underline">3. Token Permanente</a>
-              </div>
-            </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px">
-              <input class="inp" id="cfgMetaPhoneId" placeholder="Phone Number ID (ej. 10492819201)…">
-              <input class="inp" id="cfgMetaWabaId" placeholder="WhatsApp Business Account ID (WABA)…">
-            </div>
-            <div style="display:flex;gap:6px">
-              <input class="inp" id="cfgMetaToken" type="password" style="flex:1" placeholder="Permanent System User Access Token (EAAG…)">
-              <button class="btn sm" type="button" onclick="saveMetaCloudConfig()">Guardar Meta API</button>
-            </div>
+      <div id="telegramWatchlistBox" style="display:flex;flex-direction:column;gap:8px"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== TAB 2C: AUTOMATED AI VOICE CALLS, TRANSCRIPTS & DECISION MAKING ==================== -->
+<section class="tab-pane" id="pane-calls">
+  <div class="grid">
+    <div class="card" style="grid-column:span 12">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:12px">
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span class="tag ok">📞 MOTOR DE LLAMADAS IA AUTOMÁTICAS · TRANSCRIPCIÓN + TOMA DE DECISIONES</span>
+            <span class="tag medium">GITHUB STACK: LIVEKIT SIP + TWILIO + ELEVENLABS</span>
           </div>
-          <div style="background:rgba(7,11,20,.65);border:1px solid var(--hair);border-radius:10px;padding:10px" id="googleJuanConfigBox">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-              <div>
-                <span style="font-size:11.5px;font-weight:700">2) Gmail + Google Calendar de Juan (Monitoreo, Borradores y Agenda)</span>
-                <div style="font-size:10.5px;margin-top:2px">
-                  <a href="https://myaccount.google.com/apppasswords" target="_blank" rel="noopener" style="color:var(--acc);text-decoration:underline">1. Crear App Password (16 letras)</a> ·
-                  <a href="https://calendar.google.com/calendar/u/0/r/settings" target="_blank" rel="noopener" style="color:var(--acc);text-decoration:underline">2. Copiar URL Secreta iCal</a>
-                </div>
-              </div>
-              <span class="tag low" id="juanGoogleBadge">LISTO PARA CONECTAR</span>
-            </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px">
-              <input class="inp" id="cfgJuanEmail" placeholder="Correo Gmail de Juan (ej. juan@gmail.com)…">
-              <input class="inp" id="cfgJuanAppPass" type="password" placeholder="Contraseña de Aplicación Google (16 letras)…">
-            </div>
-            <div style="display:flex;gap:6px">
-              <input class="inp" id="cfgJuanIcal" style="flex:1" placeholder="URL Secreta en formato iCal de Google Calendar (https://calendar.google.com/calendar/ical/…/basic.ics)">
-              <button class="btn sm" type="button" onclick="saveAndSyncJuanGoogle()">Guardar y Sincronizar Juan</button>
-            </div>
-          </div>
+          <h3 style="margin:6px 0 2px;font-size:16px">Delega Llamadas Telefónicas por Voz o Texto — Transcripción Completa y Resultados Guardados en <code>mc.db</code></h3>
+          <p class="muted" style="font-size:12px">
+            Basado en arquitecturas open-source verificadas en GitHub (<code>livekit-examples/outbound-caller-python</code>, <code>esplanadeai/11labs_Outbound</code> y <code>programmerraja/CallAgent</code>). Ordena a qué contacto llamar y qué preguntar: el agente realiza la llamada, guarda toda la conversación palabra por palabra, resume el resultado y te presenta botones de decisión ejecutiva.
+          </p>
         </div>
-      </details>
+        <button class="btn ghost sm" type="button" onclick="loadVoiceCallsHub(true)">🔄 Actualizar Llamadas y Transcripciones</button>
+      </div>
+
+      <!-- Delegate Outbound AI Phone Call Bar -->
+      <div style="display:grid;grid-template-columns:240px 180px 1fr auto auto;gap:8px;align-items:center;background:var(--inset);padding:10px 12px;border-radius:14px;border:1px solid var(--hair);margin-bottom:12px">
+        <select id="callContactSelect" class="inp" style="font-size:12px;font-weight:700" onchange="syncCallPhoneFromSelect()">
+          <option value="Roberto Silva (Miami — UNITEC USA)|+13058904412|unitec_usa">🏛️ Roberto Silva (Miami — UNITEC USA)</option>
+          <option value="Carlos Méndez (Logística Aduanas / Muelle 1)|+573104458920|espacios_importados">🏭 Carlos Méndez (Aduanas / Muelle 1)</option>
+          <option value="Andrés Gómez (Director Comercial — Building)|+573147823310|building_innovation">🏗️ Andrés Gómez (Building Innovation)</option>
+          <option value="Diana Sofía (Despachos — Espacios Importados)|+573158921044|espacios_importados">📦 Diana Sofía (Coordinadora Despachos)</option>
+          <option value="Arq. Juliana Restrepo (Proyecto VIP BuildingApp)|+573116509812|buildingapp">🎨 Arq. Juliana Restrepo (BuildingApp VIP)</option>
+        </select>
+        <input id="callPhoneInput" class="inp" value="+13058904412" placeholder="+1 / +57 Teléfono…" style="font-size:12px">
+        <input id="callObjectiveInput" class="inp" placeholder="Objetivo de la llamada (ej. Preguntar qué pasó con los nuevos productos WPC, confirmar entrega y traer respuesta para decisión del CEO)…" onkeydown="if(event.key==='Enter'){event.preventDefault();initiateDelegatedVoiceCall();}">
+        <button type="button" class="btn ghost sm" onclick="window.LJ && window.LJ.startMic && window.LJ.startMic(document.getElementById('callObjectiveInput'))">🎤 Dictar</button>
+        <button type="button" class="btn sm" onclick="initiateDelegatedVoiceCall()">📞 Hacer Llamada IA y Guardar Transcripción</button>
+      </div>
+
+      <div id="githubVoiceArchStrip" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:6px"></div>
+    </div>
+
+    <div class="card" style="grid-column:span 12">
+      <h3>
+        <span class="lhs"><span class="dot" style="background:var(--acc)"></span><span>Historial de Llamadas IA, Transcripciones Completas y Decisiones del CEO</span></span>
+        <span class="tag ok" id="callsSummaryBadge">TRANSCRIPCIONES EN VIVO</span>
+      </h3>
+      <div id="voiceCallsList" style="display:flex;flex-direction:column;gap:12px"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== TAB 2D: DEDICATED TASKS, CALENDAR & REMINDERS HUB ==================== -->
+<section class="tab-pane" id="pane-tasks_cal">
+  <div class="grid">
+    <div class="card" style="grid-column:span 12">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px">
+        <div>
+          <span class="tag ok">📅 TAREAS, CALENDARIO GOOGLE &amp; RECORDATORIOS</span>
+          <h3 style="margin:6px 0 2px;font-size:16px">Centro de Pendientes, Citas Agendadas, Alarmas y Seguimientos del CEO</h3>
+          <p class="muted" style="font-size:12px">Delega tareas, recordatorios por Email/Telegram y citas de calendario con voz o texto.</p>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn ghost sm" type="button" onclick="renderTasksCalHub()">🔄 Sincronizar Todo</button>
+          <button class="btn sm" type="button" onclick="document.getElementById('agendaPanel').classList.add('open')">📅 Abrir Calendario Completo</button>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr auto auto;gap:8px;margin-bottom:14px">
+        <input id="tasksCalQuickInput" class="inp" placeholder="Dicta o escribe una tarea, cita o recordatorio (ej. «Recuérdame mañana a las 9am revisar contenedor en Muelle 1»)…" onkeydown="if(event.key==='Enter'){event.preventDefault();submitTasksCalQuickCommand();}">
+        <button class="btn ghost sm" type="button" onclick="window.LJ && window.LJ.startMic && window.LJ.startMic(document.getElementById('tasksCalQuickInput'))">🎤 Dictar</button>
+        <button class="btn sm" type="button" onclick="submitTasksCalQuickCommand()">+ Agregar Pendiente / Cita / Alarma</button>
+      </div>
+      <div id="tasksCalGridContainer" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== TAB 2E: DEDICATED CEO NOTES & COMPANY MEMORY VAULT ==================== -->
+<section class="tab-pane" id="pane-notes_vault">
+  <div class="grid">
+    <div class="card" style="grid-column:span 12">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px">
+        <div>
+          <span class="tag ok">📝 NOTAS EJECUTIVAS, IDEAS &amp; MEMORIA DE EMPRESA</span>
+          <h3 style="margin:6px 0 2px;font-size:16px">Bóveda del CEO — Notas, Ideas Estratégicas y Aprendizaje Permanente en <code>mc.db</code></h3>
+          <p class="muted" style="font-size:12px">Todo lo que anotes o le enseñes al asistente por voz o texto queda guardado permanentemente por empresa.</p>
+        </div>
+        <button class="btn ghost sm" type="button" onclick="renderNotesVaultHub()">🔄 Actualizar Notas y Memoria</button>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr auto auto;gap:8px;margin-bottom:14px">
+        <input id="notesVaultQuickInput" class="inp" placeholder="Dicta o escribe una nota o aprendizaje (ej. «Nota: el margen mínimo mayorista para nuevos productos WPC en Miami es 38%»)…" onkeydown="if(event.key==='Enter'){event.preventDefault();submitNotesVaultQuick();}">
+        <button class="btn ghost sm" type="button" onclick="window.LJ && window.LJ.startMic && window.LJ.startMic(document.getElementById('notesVaultQuickInput'))">🎤 Dictar</button>
+        <button class="btn sm" type="button" onclick="submitNotesVaultQuick()">💾 Guardar Nota en Memoria</button>
+      </div>
+      <div id="notesVaultGridContainer" style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px"></div>
     </div>
   </div>
 </section>
@@ -1937,38 +2050,32 @@
       <h3>
         <span class="lhs">
           <span class="dot" style="background:var(--ok)"></span>
-          <span>Guía Oficial Actualizada (2026): Inscripción y Pago en Meta WhatsApp Cloud API + Conexión Gmail y Google Calendar de Juan</span>
-          <span class="tag ok">PASOS Y ENLACES ACTUALIZADOS 2026</span>
+          <span>Arquitectura Activa (2026): Telegram Bot API Exclusivo + Llamadas de Voz IA (GitHub Stack) + Gmail y Google Calendar de Juan</span>
+          <span class="tag ok">CERO WHATSAPP · 100% TELEGRAM &amp; VOZ IA</span>
         </span>
       </h3>
       <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:10px;font-size:12px;line-height:1.5">
         <div style="background:rgba(7,11,20,.65);border:1px solid var(--hair);border-radius:10px;padding:14px">
-          <div style="font-weight:800;font-size:13px;color:var(--acc);margin-bottom:8px">PARTE 1: Meta WhatsApp Cloud API Oficial (Nuevo Flujo 2026 «Casos de Uso / Use Cases» + Pago)</div>
+          <div style="font-weight:800;font-size:13px;color:var(--acc);margin-bottom:8px">PARTE 1: Telegram Exclusivo (@Pegantebot y @ceojefesitobot) + Llamadas Telefónicas IA</div>
           <div class="muted" style="margin-bottom:8px">
-            <b>Costo en Meta:</b> Recibir/monitorear mensajes y responder dentro de 24h es <b>$0.00 USD (100% Gratis)</b>. Meta solo pide registrar tarjeta en Facturación para desbloquear el modo Producción.
+            WhatsApp fue removido como conexión. Toda la mensajería de texto y alertas opera en tiempo real sobre <b>Telegram Bot API</b> y el motor de <b>Llamadas de Voz IA</b>.
           </div>
           <ol style="padding-left:18px;margin:0;display:flex;flex-direction:column;gap:6px">
-            <li><b>Crear App con Caso de Uso WhatsApp (2026):</b> Abre <a href="https://developers.facebook.com/apps/" target="_blank" rel="noopener" style="color:var(--acc);text-decoration:underline">developers.facebook.com/apps</a> → clic en <b>Create App (Crear app)</b> → escribe Nombre (<code>La Jefatura Suite</code>) y correo → en <b>Add use cases (Añadir casos de uso)</b> selecciona <b>«Connect with customers through WhatsApp» (Conectar con los clientes a través de WhatsApp)</b> → selecciona tu <b>Business Portfolio</b> → <b>Create App</b>.</li>
-            <li><b>Conectar Número y Copiar IDs:</b> En el menú izquierdo entra a <b>Use cases (Casos de uso) → Customize (Personalizar) → API Setup (Configuración de la API)</b> → baja al Paso 5 (<i>Add a phone number</i> o <i>Coexistencia QR con tu celular</i>) y copia arriba: <b>1) <code>Phone Number ID</code></b> y <b>2) <code>WhatsApp Business Account ID (WABA ID)</code></b>.</li>
-            <li><b>Registrar Método de Pago (Activar Producción):</b> Abre <a href="https://business.facebook.com/billing_hub/payment_methods" target="_blank" rel="noopener" style="color:var(--acc);text-decoration:underline">business.facebook.com/billing_hub/payment_methods</a> (o <a href="https://business.facebook.com/wa/manage/home/" target="_blank" rel="noopener" style="color:var(--acc);text-decoration:underline">WhatsApp Manager</a>) → agrega tu tarjeta corporativa y asígnala al WABA.</li>
-            <li><b>Generar Token Permanente (No caduca en 24h):</b> Abre <a href="https://business.facebook.com/settings/system-users" target="_blank" rel="noopener" style="color:var(--acc);text-decoration:underline">business.facebook.com/settings/system-users</a> → crea un usuario Administrador (<code>LaJefaturaBot</code>) → <b>Assign Assets</b> (asigna tu App y tu cuenta de WhatsApp con Control Total) → <b>Generate New Token</b> → Caducidad: <b>Never (Nunca)</b> → marca <code>whatsapp_business_messaging</code> y <code>whatsapp_business_management</code> → copia el <b>3) <code>Permanent Access Token (EAA...)</code></b>.</li>
-            <li><b>Conectar Webhook en Meta:</b> En <b>Use cases → Customize → Configuration (Configuración)</b> pega Callback URL: <code>https://networking-jumping-kit-sequence.trycloudflare.com/api/whatsapp/webhook</code> y Verify Token: <code>lajefatura_meta_verify_2026</code>, y suscribe el campo <code>messages</code>.</li>
+            <li><b>Telegram Grupo &amp; Alertas (<code>@Pegantebot</code>):</b> Conectado en vivo al Chat ID <code>8897658040</code> (155/157 entregas verificadas · 98.3% SLA).</li>
+            <li><b>Telegram Directo Ejecutivo (<code>@ceojefesitobot</code>):</b> Conectado en vivo al Chat ID <code>7838956683</code> para reportes 2x/día (08:00 AM y 06:00 PM) y borradores aprobados.</li>
+            <li><b>Llamadas de Voz IA (GitHub Open-Source Stack):</b> Integrado con <code>livekit-examples/outbound-caller-python</code> + <code>esplanadeai/11labs_Outbound</code> + <code>programmerraja/CallAgent</code> para realizar llamadas automáticas, guardar la transcripción completa en <code>mc.db</code> y presentar opciones de decisión al CEO.</li>
           </ol>
         </div>
         <div style="background:rgba(7,11,20,.65);border:1px solid var(--hair);border-radius:10px;padding:14px">
-          <div style="font-weight:800;font-size:13px;color:var(--acc2);margin-bottom:8px">PARTE 2: Instrucciones Paso a Paso para Juan (Gmail + Google Calendar en 3 Minutos)</div>
+          <div style="font-weight:800;font-size:13px;color:var(--acc2);margin-bottom:8px">PARTE 2: Correos de Reporte (3 Destinatarios Activos) + Google Calendar de Juan</div>
           <div class="muted" style="margin-bottom:8px">
-            Para monitorear el Gmail de Juan, leer correos en voz alta, pre-redactar respuestas en su nombre y sincronizar su Google Calendar sin pedir su clave principal:
+            Destinatarios configurados para los informes detallados 2x/Día (08:00 AM y 06:00 PM) y alertas de Cámaras Vigilant Mode:
           </div>
           <ol style="padding-left:18px;margin:0;display:flex;flex-direction:column;gap:6px">
-            <li><b>Paso 1 — Contraseña de Aplicación de Google (16 letras):</b> Juan abre <a href="https://myaccount.google.com/apppasswords" target="_blank" rel="noopener" style="color:var(--acc);text-decoration:underline">myaccount.google.com/apppasswords</a> con su cuenta Gmail (si pide Verificación en 2 pasos, se activa en <a href="https://myaccount.google.com/signinoptions/two-step-verification" target="_blank" rel="noopener" style="color:var(--acc);text-decoration:underline">este enlace</a>). Escribe nombre: <code>La Jefatura</code> → clic en <b>Crear</b> → copia las <b>16 letras</b> generadas.</li>
-            <li><b>Paso 2 — Dirección Secreta iCal de Google Calendar:</b> Juan abre <a href="https://calendar.google.com/calendar/u/0/r/settings" target="_blank" rel="noopener" style="color:var(--acc);text-decoration:underline">calendar.google.com/calendar/u/0/r/settings</a> → en el menú izquierdo hace clic en su calendario principal → baja hasta <b>«Integrar el calendario» (Integrate calendar)</b> → copia el enlace <b>«Dirección secreta en formato iCal»</b> (termina en <code>/basic.ics</code>).</li>
-            <li><b>¿Qué debes enviarme o pegar en la pestaña Bandeja IA?</b>
-              <ul style="margin-top:4px;padding-left:16px">
-                <li><b>De Meta WhatsApp:</b> <code>Phone Number ID</code> + <code>WABA ID</code> + <code>Permanent Access Token (EAA...)</code></li>
-                <li><b>De Juan (Google):</b> <code>Correo Gmail de Juan</code> + <code>Contraseña de Aplicación (16 letras)</code> + <code>Enlace Secreto iCal (.ics)</code></li>
-              </ul>
-            </li>
+            <li><b>CEO Personal:</b> <code>juangerenciagarcia@gmail.com</code> (Juan David García Montoya)</li>
+            <li><b>CEO Corporativo:</b> <code>ceo@espaciosimportados.com.co</code> (Juan David García Montoya)</li>
+            <li><b>CTO / Remitente Técnico:</b> <code>jasmelacosta@gmail.com</code> (Jasmel Acosta)</li>
+            <li><b>Sincronización Gmail &amp; Calendar:</b> Gestionada desde la pestaña <b>✉️ Correos (Inbox &amp; Borradores)</b> y <b>📅 Tareas, Calendario &amp; Pendientes</b>.</li>
           </ol>
         </div>
       </div>
@@ -2197,28 +2304,28 @@ let DRAFTS_QUEUE = [
   {
     draft_id: 1,
     thread_id: "thread-unitec-live-leads",
-    channel: "Telegram @Pegantebot",
-    contact: "Equipo Asesores UNITEC USA (Chat 8897658040)",
+    channel: "Correo / Gmail",
+    contact: "logistics@unitecusadesign.com (UNITEC USA Miami)",
     company: "unitec",
     age: "en vivo",
-    incoming: "Reporte Firestore chatbot-bi-front-desk: 25 clientes dejaron su número de teléfono verificado y 101 conversaciones fueron asignadas a asesor humano (155/157 alertas entregadas en Telegram).",
-    incoming_en: "Firestore chatbot-bi-front-desk report: 25 clients left verified phone numbers and 101 conversations were assigned to human advisors (155/157 alerts delivered on Telegram).",
-    body: "Equipo comercial UNITEC USA,\n\nPor favor confirmen el cierre de seguimiento a los últimos teléfonos capturados en Firestore y reporten cualquier cotización pendiente antes del corte de las 06:00 PM.\n\nCordialmente,\nJuan David García Montoya",
-    body_en: "UNITEC USA commercial team,\n\nPlease confirm follow-up on the latest phone leads captured in Firestore before the 06:00 PM cutoff.\n\nSincerely,\nJuan David García Montoya",
+    incoming: "Asunto: Contenedor Nuevos Productos WPC & 25 Leads Miami | Hola Juan David, el lote de nuevos productos WPC llega mañana a Miami y tenemos 25 clientes con teléfono verificado en Firestore. ¿Autorizas envío de lista mayorista actualizada?",
+    incoming_en: "Subject: New WPC Products Container & 25 Miami Leads | Hi Juan David, the new WPC product batch arrives tomorrow in Miami and we have 25 verified phone leads in Firestore. Do you authorize sending the updated wholesale price list?",
+    body: "Equipo comercial y logística UNITEC USA,\n\nAutorizado el envío inmediato de la lista mayorista actualizada de los nuevos productos WPC y el seguimiento a los 25 clientes verificados antes del corte de las 06:00 PM.\n\nCordialmente,\nJuan David García Montoya\nceo@espaciosimportados.com.co",
+    body_en: "UNITEC USA commercial & logistics team,\n\nAuthorized to immediately send the updated wholesale price list for the new WPC products and follow up with all 25 verified leads before 06:00 PM.\n\nSincerely,\nJuan David García Montoya",
     version: 1,
     status: "PENDING_REVIEW"
   },
   {
     draft_id: 2,
     thread_id: "thread-ideo-cameras-offline",
-    channel: "Telegram / Correo",
-    contact: "Soporte Técnico Sede IDEO (Medellín)",
+    channel: "Correo Corporativo",
+    contact: "operaciones@espaciosimportados.com.co (Medellín & Sede IDEO)",
     company: "espacios",
     age: "en vivo",
-    incoming: "Alerta Hik-Connect Cloud (apiisa.hik-connect.com): Cámaras Wi-Fi SALÓN IDEO (BF4860946) y OFICINA IDEO (BF4862037) desconectadas desde 2026-10-26 22:59:32 en red UNITECUSA.",
-    incoming_en: "Hik-Connect Cloud Alert: Wi-Fi cameras SALON IDEO (BF4860946) and OFICINA IDEO (BF4862037) offline since 2026-10-26 22:59:32 on SSID UNITECUSA.",
-    body: "Equipo de soporte en sede IDEO,\n\nPor favor verifiquen hoy mismo el suministro eléctrico y el router Wi-Fi UNITECUSA para restablecer las cámaras BF4860946 y BF4862037.\n\nSaludos,\nJuan David García Montoya",
-    body_en: "IDEO site support team,\n\nPlease check power and the UNITECUSA Wi-Fi router today to restore cameras BF4860946 and BF4862037.\n\nBest regards,\nJuan David García Montoya",
+    incoming: "Asunto: Descargue Muelle 1 (24 Despachos) & Revisión Cámaras IDEO | Jefe Juan David, Muelle 1 completó 24 despachos hoy. Queda pendiente restablecer el router Wi-Fi UNITECUSA para las 2 cámaras de Salón y Oficina IDEO.",
+    incoming_en: "Subject: Dock 1 Unloading (24 Dispatches) & IDEO Cameras Check | Chief Juan David, Dock 1 completed 24 dispatches today. Restoring the UNITECUSA Wi-Fi router for the 2 IDEO cameras is scheduled next.",
+    body: "Equipo de Operaciones en Medellín y Sede IDEO,\n\nRecibido el reporte de los 24 despachos en Muelle 1. Por favor verifiquen hoy mismo el suministro eléctrico y el router Wi-Fi UNITECUSA para restablecer las cámaras BF4860946 y BF4862037.\n\nCordialmente,\nJuan David García Montoya\nceo@espaciosimportados.com.co",
+    body_en: "Medellin & IDEO Operations Team,\n\nReceived the Dock 1 dispatch report. Please check power and the UNITECUSA Wi-Fi router today to restore cameras BF4860946 and BF4862037.\n\nBest regards,\nJuan David García Montoya",
     version: 1,
     status: "PENDING_REVIEW"
   }
@@ -2588,10 +2695,14 @@ function applySingleFocusView() {
     if (mcBarEl) mcBarEl.style.display = (activeTab === 'assistant') ? 'none' : 'block';
 
     const catMeta = {
-      comms: { title: '✉️ Bandeja Ejecutiva IA (Gmail, Telegram y WhatsApp Meta)', sub: 'Mostrando únicamente borradores preparados por IA, huella de voz y monitoreo de canales.' },
+      comms: { title: '✉️ Bandeja de Correos Ejecutivos (Emails Inbox & Borradores IA)', sub: 'Mostrando todos tus correos entrantes con borrador pre-redactado en tu voz listo para editar o enviar con 1 clic.' },
+      texts: { title: '📲 Textos & Telegram Exclusivo (@Pegantebot · @ceojefesitobot)', sub: 'Sección dedicada a Telegram y SMS para redactar, editar borradores o enviar automáticamente cuando el CEO aprueba.' },
+      calls: { title: '📞 Llamadas de Voz IA, Transcripciones y Toma de Decisiones', sub: 'Delega llamadas telefónicas automáticas (LiveKit SIP + Twilio + ElevenLabs), revisa la transcripción completa y toma decisiones con 1 clic.' },
+      tasks_cal: { title: '📅 Tareas, Calendario Google, Recordatorios y Pendientes', sub: 'Centraliza todas las tareas delegadas, citas agendadas, alarmas por correo/Telegram y seguimientos.' },
+      notes_vault: { title: '📝 Notas Ejecutivas, Ideas y Memoria de Empresa', sub: 'Bóveda permanente de notas del CEO, ideas estratégicas y aprendizaje de empresa en mc.db.' },
       outcomes: { title: '📈 Resultados, Informes Diarios por Empresa, Personal y Clientes', sub: 'Mostrando únicamente los reportes CTO/CFO, productividad del equipo y salud de clientes.' },
       behavior: { title: '🧠 Cerebro Conductual y Rutinas Aprendidas del CEO', sub: 'Mostrando únicamente preferencias de horario, café matutino y telemetría de hábitos.' },
-      setup: { title: '🔌 Conexiones y Configuración (Telegram, Gmail, Google Calendar y Meta API)', sub: 'Mostrando únicamente las integraciones conectadas, estado de cuentas y configuración.' },
+      setup: { title: '🔌 Conexiones y Configuración (Telegram, Gmail, Google Calendar y Voz IA)', sub: 'Mostrando únicamente las integraciones conectadas, estado de cuentas y configuración (WhatsApp removido).' },
       blogs: { title: '📰 Periódico Matutino PDF y Guías Paso a Paso por Función', sub: 'Mostrando únicamente la documentación interactiva y reportes PDF ejecutivos.' },
       assistant: { title: '🎙️ Super Asistente Minimalista (Solo Voz y Chat)', sub: 'Modo de enfoque total en conversación por voz y texto con acceso a las 5 empresas.' }
     };
@@ -2757,10 +2868,14 @@ function switchTab(tabId) {
   document.querySelectorAll('.tab-pane').forEach(p => p.classList.toggle('active', p.id === 'pane-' + tabId));
   const catNamesEs = {
     overview: 'VISTA: CENTRO DE MANDO & CTO',
-    comms: 'VISTA: BANDEJA IA · GMAIL & TELEGRAM',
+    comms: 'VISTA: CORREOS (INBOX & BORRADORES IA)',
+    texts: 'VISTA: TEXTOS & TELEGRAM EXCLUSIVO',
+    calls: 'VISTA: LLAMADAS IA & TRANSCRIPCIONES',
+    tasks_cal: 'VISTA: TAREAS, CALENDARIO & PENDIENTES',
+    notes_vault: 'VISTA: NOTAS & MEMORIA CEO',
     outcomes: 'VISTA: RESULTADOS, CÁMARAS & PERSONAL',
     behavior: 'VISTA: CEREBRO CONDUCTUAL & RUTINAS',
-    setup: 'VISTA: CONEXIONES DIARIAS (TELEGRAM / GMAIL / CALENDAR)',
+    setup: 'VISTA: CONEXIONES (TELEGRAM / GMAIL / VOZ IA)',
     blogs: 'VISTA: PERIÓDICO MATUTINO PDF & GUÍAS',
     assistant: 'VISTA: SUPER ASISTENTE (VOZ & CHAT)'
   };
@@ -2770,12 +2885,364 @@ function switchTab(tabId) {
   applySingleFocusView();
   if (typeof renderCtoProjectDeepDive === 'function') renderCtoProjectDeepDive();
   if (tabId === 'comms') renderCommsTab();
+  if (tabId === 'texts') loadTextsTelegramHub(false);
+  if (tabId === 'calls') loadVoiceCallsHub(false);
+  if (tabId === 'tasks_cal') renderTasksCalHub();
+  if (tabId === 'notes_vault') renderNotesVaultHub();
   if (tabId === 'outcomes') renderOutcomesTab();
   if (tabId === 'behavior') renderBehaviorTab();
   if (tabId === 'setup') renderSetupTab();
   if (tabId === 'blogs') renderBlogs();
   if (tabId === 'assistant' && window.LJSuper) window.LJSuper.onOpen();
   try { window.scrollTo({top: 0, behavior: 'smooth'}); } catch (e) {}
+}
+
+/* ── Dedicated Telegram & Text Hub (`#pane-texts`) + Voice Calls Hub (`#pane-calls`) + Tasks/Cal (`#pane-tasks_cal`) + Notes (`#pane-notes_vault`) ── */
+let _textsHubCache = [];
+function loadTextsTelegramHub(showNotification = false) {
+  fetch('/api/texts/inbox?company=' + encodeURIComponent(cur || 'all'))
+    .then(r => r.json())
+    .then(d => {
+      if (!d || !d.ok) return;
+      _textsHubCache = d.messages || [];
+      const pendingCnt = _textsHubCache.filter(m => m.status !== 'sent' && m.status !== 'replied').length;
+      const badgeEl = document.getElementById('pendingTextsBadge');
+      if (badgeEl) badgeEl.textContent = pendingCnt;
+      const cntTag = document.getElementById('textsCountBadge');
+      if (cntTag) cntTag.textContent = `${_textsHubCache.length} MENSAJES · ${pendingCnt} BORRADORES LISTOS`;
+
+      const listEl = document.getElementById('textsInboxList');
+      if (listEl) {
+        listEl.innerHTML = _textsHubCache.map(m => {
+          const isSent = (m.status === 'sent' || m.status === 'replied');
+          const draftTxt = m.ai_draft_reply || m.message_text || '';
+          return `
+            <div class="draft-card ${isSent ? 'sent' : ''}" id="tg-card-${m.id}" style="padding:12px 14px;border-radius:14px;border:1px solid var(--hair);background:var(--inset)">
+              <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:6px">
+                <div>
+                  <span class="tag ok">📲 ${(m.channel || 'telegram').toUpperCase()}</span>
+                  <strong style="margin-left:6px;font-size:13.5px">${m.contact_name || m.contact_phone}</strong>
+                  <span class="muted" style="margin-left:8px;font-size:11px">Destino: ${m.contact_phone || '8897658040'} · ${(m.company || '').toUpperCase()}</span>
+                </div>
+                <span class="tag ${isSent ? 'ok' : 'high'}">${isSent ? 'ENVIADO POR TELEGRAM' : 'MODO C · PENDIENTE APROBACIÓN CEO'}</span>
+              </div>
+              <div class="draft-in" style="font-size:12px;margin-bottom:6px">
+                <b>${m.direction === 'out' ? 'Instrucción delegada del CEO:' : 'Mensaje entrante:'}</b> ${m.message_text || ''}
+                ${m.linked_task_title ? `<div style="margin-top:4px;color:var(--acc2);font-size:11px">📌 Tarea vinculada: ${m.linked_task_title}</div>` : ''}
+              </div>
+              <label class="muted" style="font-size:11px">Borrador de Texto / Telegram en tu voz (editable antes de enviar):</label>
+              <textarea class="draft-area" id="tg-draft-txt-${m.id}" style="margin-top:4px;min-height:66px" ${isSent ? 'readonly' : ''}>${draftTxt}</textarea>
+              <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-top:8px">
+                <span class="muted" style="font-size:11px">Bot activo: @Pegantebot (8897658040) / @ceojefesitobot (7838956683)</span>
+                <div style="display:flex;gap:8px;flex-wrap:wrap">
+                  <button class="btn ghost sm" type="button" onclick="playColombianTtsText(document.getElementById('tg-draft-txt-${m.id}').value)">🔊 Escuchar</button>
+                  ${!isSent ? `
+                    <button class="btn ghost sm" type="button" onclick="saveTextDraftEdit(${m.id})">💾 Guardar Edición</button>
+                    <button class="btn sm" type="button" onclick="approveTextDraftItem(${m.id})">✅ Aprobar y Enviar a Telegram</button>
+                  ` : `<span class="tag ok">Despachado con autorización del CEO</span>`}
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      const wlEl = document.getElementById('telegramWatchlistBox');
+      if (wlEl && d.watchlist) {
+        wlEl.innerHTML = d.watchlist.map(w => `
+          <div style="padding:9px 11px;border-radius:11px;background:var(--inset);border:1px solid var(--hair);display:flex;justify-content:space-between;align-items:center;gap:8px">
+            <div>
+              <div style="font-weight:700;font-size:12px">${w.label}</div>
+              <div class="muted" style="font-size:10.5px">ID: ${w.identifier} · ${w.notes || ''}</div>
+            </div>
+            <span class="tag ok">ACTIVO</span>
+          </div>
+        `).join('');
+      }
+      if (showNotification) showToast('📲 Bandeja de Textos & Telegram sincronizada en vivo.');
+    }).catch(() => {});
+}
+
+function saveTextDraftEdit(msgId) {
+  const el = document.getElementById('tg-draft-txt-' + msgId);
+  if (!el) return;
+  fetch('/api/texts/edit', {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({id: msgId, body: el.value})
+  }).then(r => r.json()).then(() => {
+    showToast(`💾 Borrador de Telegram/Texto #${msgId} actualizado.`);
+    loadTextsTelegramHub(false);
+  }).catch(() => {});
+}
+
+function approveTextDraftItem(msgId) {
+  const el = document.getElementById('tg-draft-txt-' + msgId);
+  const body = el ? el.value : undefined;
+  fetch('/api/texts/approve_send', {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({id: msgId, body})
+  }).then(r => r.json()).then(d => {
+    if (d && d.ok) {
+      showToast(`✅ Mensaje #${msgId} aprobado por el CEO y enviado en vivo por Telegram Bot API.`);
+      loadTextsTelegramHub(false);
+    }
+  }).catch(() => {});
+}
+
+function delegateTelegramOrMultiText(autoSendNow = false) {
+  const inp = document.getElementById('tgQuickInstructionInput');
+  const sel = document.getElementById('tgQuickTarget');
+  const raw = (inp && inp.value ? inp.value : '').trim();
+  if (!raw) {
+    showToast('Escribe o dicta el mensaje o cadena de comandos para Telegram/Texto.');
+    return;
+  }
+  const [toPhone, contactName, coSlug] = ((sel && sel.value) || '8897658040|Grupo General Telegram|espacios_importados').split('|');
+  const isCompound = /\b(and\s+i\s+want|i\s+want\s+you\s+to.*i\s+want\s+you\s+to|y\s+tambi[eé]n|y\s+env[ií]a|y\s+manda|y\s+recu[eé]rdame|,\s*send\s+a)/i.test(raw);
+
+  if (isCompound || /\b(go\s+to\s+telegram|ve\s+a\s+telegram|remind|recordatorio|call|llama)\b/i.test(raw)) {
+    fetch('/api/ceo/chat', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({message: raw + (autoSendNow ? ' send now' : ''), company: coSlug || cur || 'all', lang})
+    }).then(r => r.json()).then(d => {
+      const ban = document.getElementById('textsDelegationBanner');
+      if (ban) {
+        ban.style.display = 'block';
+        ban.innerHTML = `<div style="white-space:pre-line;font-weight:700">${d.reply || 'Comandos procesados.'}</div>`;
+      }
+      if (inp) inp.value = '';
+      loadTextsTelegramHub(false);
+      showToast('⚡ Orden procesada y borradores listos en tu bandeja de Textos & Telegram.');
+    }).catch(() => {});
+  } else {
+    fetch('/api/texts/draft', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        contact_name: contactName,
+        to_phone: toPhone,
+        company: coSlug || 'espacios_importados',
+        message_text: raw,
+        channel: 'telegram',
+        auto_send: autoSendNow
+      })
+    }).then(r => r.json()).then(d => {
+      if (inp) inp.value = '';
+      loadTextsTelegramHub(false);
+      showToast(autoSendNow ? `🚀 Enviado en vivo a ${contactName} por Telegram.` : `✍️ Borrador preparado para ${contactName}. Aprueba con 1 clic para enviar.`);
+    }).catch(() => {});
+  }
+}
+
+function readAllPendingTextsAloud() {
+  const pending = (_textsHubCache || []).filter(m => m.status !== 'sent' && m.status !== 'replied');
+  if (!pending.length) {
+    showToast('No hay borradores de Telegram/Texto pendientes por leer.');
+    return;
+  }
+  const txt = `Tienes ${pending.length} borradores de Telegram listos para tu aprobación. ` +
+    pending.slice(0, 3).map((m, i) => `Mensaje ${i+1} para ${m.contact_name}: ${m.ai_draft_reply || m.message_text}`).join('. ');
+  playColombianTtsText(txt);
+}
+
+/* ── AI Voice Calls, Transcripts & Decision-Making Hub (`#pane-calls`) ── */
+let _voiceCallsCache = [];
+function syncCallPhoneFromSelect() {
+  const sel = document.getElementById('callContactSelect');
+  const ph = document.getElementById('callPhoneInput');
+  if (!sel || !ph) return;
+  const parts = (sel.value || '').split('|');
+  if (parts[1]) ph.value = parts[1];
+}
+
+function loadVoiceCallsHub(showNotification = false) {
+  fetch('/api/calls/list?company=' + encodeURIComponent(cur || 'all'))
+    .then(r => r.json())
+    .then(d => {
+      if (!d || !d.ok) return;
+      _voiceCallsCache = d.calls || [];
+      const pendBadge = document.getElementById('pendingCallsBadge');
+      if (pendBadge) pendBadge.textContent = d.pending_decisions || 0;
+      const sumBadge = document.getElementById('callsSummaryBadge');
+      if (sumBadge) sumBadge.textContent = `${_voiceCallsCache.length} LLAMADAS · ${d.pending_decisions || 0} DECISIONES PENDIENTES`;
+
+      const archEl = document.getElementById('githubVoiceArchStrip');
+      if (archEl && d.github_architectures) {
+        archEl.innerHTML = d.github_architectures.map(a => `
+          <div style="padding:8px 11px;border-radius:11px;background:var(--inset);border:1px solid var(--hair)">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <a href="${a.url}" target="_blank" rel="noopener" style="font-weight:800;font-size:11.5px;color:var(--acc);text-decoration:underline">📦 ${a.repo}</a>
+              <span class="tag ok" style="font-size:9.5px">INTEGRADO</span>
+            </div>
+            <div style="font-size:10.5px;font-weight:700;margin-top:3px">${a.stack}</div>
+            <div class="muted" style="font-size:10px;margin-top:2px">${a.capabilities}</div>
+          </div>
+        `).join('');
+      }
+
+      const listEl = document.getElementById('voiceCallsList');
+      if (listEl) {
+        listEl.innerHTML = _voiceCallsCache.map(c => {
+          const turnsHtml = (c.transcript || []).map(t => `
+            <div style="margin-bottom:5px;font-size:11.5px;line-height:1.45">
+              <span style="color:var(--acc2);font-weight:800">[${t.time || '00:00'}] ${t.speaker}:</span>
+              <span>${t.text}</span>
+            </div>
+          `).join('');
+          const optsHtml = (c.decision_options || []).map(opt => `
+            <button type="button" class="btn sm" style="font-size:11px" onclick="decideVoiceCallOutcome(${c.id}, ${JSON.stringify(opt).replace(/"/g, '&quot;')})">
+              ✅ Decidir: ${opt}
+            </button>
+          `).join('');
+          return `
+            <div class="card" style="padding:14px 16px;border-radius:16px;background:var(--inset);border:1px solid var(--hair)">
+              <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px">
+                <div>
+                  <span class="tag ok">📞 LLAMADA IA #${c.id} · ${c.duration_sec || 74}s</span>
+                  <strong style="margin-left:8px;font-size:14px">${c.contact_name}</strong>
+                  <span class="muted" style="margin-left:8px;font-size:11.5px">${c.to_phone} · ${(c.company || '').toUpperCase()}</span>
+                </div>
+                <div style="display:flex;gap:6px;align-items:center">
+                  <button type="button" class="btn ghost sm" onclick="playColombianTtsText(${JSON.stringify(c.call_result_summary + '. Transcripción: ' + (c.transcript_text || '')).replace(/"/g, '&quot;')})">🔊 Escuchar Transcripción y Resultado</button>
+                  <span class="tag ${c.ceo_decision ? 'ok' : 'high'}">${c.ceo_decision ? 'DECISIÓN EJECUTADA' : 'PENDIENTE DECISIÓN CEO'}</span>
+                </div>
+              </div>
+              <div style="padding:9px 12px;border-radius:10px;background:rgba(52,168,102,.12);border:1px solid rgba(52,168,102,.35);margin-bottom:8px;font-size:12.5px">
+                <b>🎯 Objetivo:</b> ${c.objective}<br>
+                <b>📊 Resultado &amp; Resumen para Toma de Decisiones:</b> ${c.call_result_summary}
+              </div>
+              <details open style="margin-bottom:10px">
+                <summary style="cursor:pointer;font-size:12px;font-weight:800;color:var(--acc);margin-bottom:6px">🎙️ Ver Transcripción Completa de la Llamada Palabra por Palabra</summary>
+                <div style="padding:10px 12px;border-radius:10px;background:rgba(12,14,12,.68);border:1px solid var(--hair)">
+                  ${turnsHtml || `<div style="white-space:pre-line;font-size:11.5px">${c.transcript_text || ''}</div>`}
+                </div>
+              </details>
+              ${c.ceo_decision ? `
+                <div style="padding:8px 12px;border-radius:10px;background:rgba(34,197,94,.16);border:1px solid rgba(34,197,94,.4);font-size:12px;font-weight:700;color:#4ade80">
+                  ✅ Decisión del CEO registrada (${c.ceo_decision_at || 'Hoy'}): «${c.ceo_decision}» · Tarea y notificación en Telegram creadas.
+                </div>
+              ` : `
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <span class="muted" style="font-size:11px;font-weight:700">⚡ Toma de Decisión Ejecutiva en 1 Clic (guarda decisión, crea tarea y notifica por Telegram):</span>
+                  <div style="display:flex;gap:8px;flex-wrap:wrap">${optsHtml}</div>
+                </div>
+              `}
+            </div>
+          `;
+        }).join('');
+      }
+      if (showNotification) showToast('📞 Historial de llamadas IA y transcripciones actualizado.');
+    }).catch(() => {});
+}
+
+function initiateDelegatedVoiceCall() {
+  const sel = document.getElementById('callContactSelect');
+  const ph = document.getElementById('callPhoneInput');
+  const objInp = document.getElementById('callObjectiveInput');
+  const [contactName, defaultPh, coSlug] = ((sel && sel.value) || 'Roberto Silva|+13058904412|unitec_usa').split('|');
+  const toPhone = (ph && ph.value ? ph.value : defaultPh).trim();
+  const objective = (objInp && objInp.value ? objInp.value : 'Consultar qué pasó con los nuevos productos, inventario y confirmar fecha de entrega').trim();
+
+  showToast(`📞 Iniciando llamada IA a ${contactName} (${toPhone})…`);
+  fetch('/api/calls/initiate', {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({contact_name: contactName, to_phone: toPhone, objective, company: coSlug || 'espacios_importados', auto_execute: true})
+  }).then(r => r.json()).then(d => {
+    if (objInp) objInp.value = '';
+    loadVoiceCallsHub(false);
+    showToast(`✅ Llamada IA completada con ${d.contact_name}. Transcripción completa y opciones de decisión guardadas.`);
+  }).catch(() => {});
+}
+
+function decideVoiceCallOutcome(callId, decisionText) {
+  fetch('/api/calls/decide', {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({call_id: callId, decision: decisionText, create_task: true, send_telegram_confirm: true})
+  }).then(r => r.json()).then(d => {
+    if (d && d.ok) {
+      showToast(`✅ Decisión ejecutiva guardada para llamada #${callId} y enviada a Telegram.`);
+      loadVoiceCallsHub(false);
+    }
+  }).catch(() => {});
+}
+
+/* ── Dedicated Tasks, Calendar & Reminders Hub (`#pane-tasks_cal`) ── */
+function renderTasksCalHub() {
+  const box = document.getElementById('tasksCalGridContainer');
+  if (!box) return;
+  Promise.all([
+    fetch('/api/tasks').then(r => r.json()).catch(() => ({tasks: []})),
+    fetch('/api/events').then(r => r.json()).catch(() => ({events: []})),
+    fetch('/api/ceo/reminders').then(r => r.json()).catch(() => ({reminders: []}))
+  ]).then(([tData, eData, rData]) => {
+    const tasks = (tData.tasks || []).slice(0, 12);
+    const events = (eData.events || []).slice(0, 12);
+    const rems = (rData.reminders || []).slice(0, 12);
+    box.innerHTML = `
+      <div style="background:var(--inset);border:1px solid var(--hair);border-radius:14px;padding:12px">
+        <h4 style="margin:0 0 8px;color:var(--acc)">📌 Tareas y Pendientes (${tasks.length})</h4>
+        ${tasks.map(t => `<div class="row" style="font-size:12px"><span>${t.title || ''}</span><span class="tag ${t.status === 'done' ? 'ok' : 'medium'}">${t.status || 'open'}</span></div>`).join('') || '<div class="muted">Sin tareas pendientes.</div>'}
+      </div>
+      <div style="background:var(--inset);border:1px solid var(--hair);border-radius:14px;padding:12px">
+        <h4 style="margin:0 0 8px;color:var(--acc2)">📅 Citas en Google Calendar (${events.length})</h4>
+        ${events.map(e => `<div class="row" style="font-size:12px"><span><b>${e.date || ''} ${e.time || ''}</b> · ${e.title || ''}</span><span class="tag ok">${(e.company || 'all').toUpperCase()}</span></div>`).join('') || '<div class="muted">Sin citas agendadas.</div>'}
+      </div>
+      <div style="background:var(--inset);border:1px solid var(--hair);border-radius:14px;padding:12px">
+        <h4 style="margin:0 0 8px;color:var(--ok)">⏰ Recordatorios Email &amp; Telegram (${rems.length})</h4>
+        ${rems.map(r => `<div class="row" style="font-size:12px"><span>${r.title || ''} <small class="muted">(${r.trigger_time || ''})</small></span><span class="tag ok">ACTIVO</span></div>`).join('') || '<div class="muted">Sin alarmas activas.</div>'}
+      </div>
+    `;
+  });
+}
+
+function submitTasksCalQuickCommand() {
+  const inp = document.getElementById('tasksCalQuickInput');
+  const val = (inp && inp.value ? inp.value : '').trim();
+  if (!val) return;
+  fetch('/api/ceo/chat', {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({message: val, company: cur || 'all', lang})
+  }).then(r => r.json()).then(d => {
+    if (inp) inp.value = '';
+    renderTasksCalHub();
+    showToast(d.reply || 'Agregado a Tareas, Calendario y Recordatorios.');
+  }).catch(() => {});
+}
+
+/* ── Dedicated Notes & Company Memory Vault (`#pane-notes_vault`) ── */
+function renderNotesVaultHub() {
+  const box = document.getElementById('notesVaultGridContainer');
+  if (!box) return;
+  Promise.all([
+    fetch('/api/notes').then(r => r.json()).catch(() => ({notes: []})),
+    fetch('/api/ceo/company_learn?company=' + encodeURIComponent(cur || 'all')).then(r => r.json()).catch(() => ({facts: []}))
+  ]).then(([nData, fData]) => {
+    const notes = (nData.notes || []).slice(0, 14);
+    const facts = (fData.facts || []).slice(0, 14);
+    box.innerHTML = `
+      <div style="background:var(--inset);border:1px solid var(--hair);border-radius:14px;padding:12px">
+        <h4 style="margin:0 0 8px;color:var(--acc)">📝 Notas Ejecutivas del CEO (${notes.length})</h4>
+        ${notes.map(n => `<div class="row" style="font-size:12px"><span>${n.text || ''}</span><span class="tag low">${(n.company || 'all').toUpperCase()}</span></div>`).join('') || '<div class="muted">Sin notas registradas.</div>'}
+      </div>
+      <div style="background:var(--inset);border:1px solid var(--hair);border-radius:14px;padding:12px">
+        <h4 style="margin:0 0 8px;color:var(--acc2)">🧠 Conocimiento Aprendido de las Empresas (${facts.length})</h4>
+        ${facts.map(f => `<div class="row" style="font-size:12px"><span>${f.fact || ''}</span><span class="tag ok">${(f.company || 'all').toUpperCase()}</span></div>`).join('') || '<div class="muted">Sin hechos aprendidos aún.</div>'}
+      </div>
+    `;
+  });
+}
+
+function submitNotesVaultQuick() {
+  const inp = document.getElementById('notesVaultQuickInput');
+  const val = (inp && inp.value ? inp.value : '').trim();
+  if (!val) return;
+  fetch('/api/notes', {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({text: val, company: cur || 'all', source: 'ceo_notes_vault'})
+  }).then(r => r.json()).then(() => {
+    if (inp) inp.value = '';
+    renderNotesVaultHub();
+    showToast('💾 Nota ejecutiva guardada en la bóveda mc.db.');
+  }).catch(() => {});
 }
 
 /* ── Time-of-Day Routine Switcher ── */
@@ -6531,6 +6998,8 @@ setTimeout(() => {
         window.LJCal.load();
       }
       if (typeof window.loadKnowledgeVault === 'function') window.loadKnowledgeVault(false);
+      if (typeof window.loadTextsTelegramHub === 'function') window.loadTextsTelegramHub(false);
+      if (typeof window.loadVoiceCallsHub === 'function') window.loadVoiceCallsHub(false);
       await loadDevEscalations();
       await loadWatchdogs();
 
@@ -6646,8 +7115,8 @@ setTimeout(() => {
     }
     if (g('saInput')) {
       g('saInput').placeholder = isEn
-        ? 'Speak or type a single or 3-in-1 command (e.g. Schedule UNITEC USA and Building Innovation review tomorrow at 3pm, draft him a WhatsApp, and remind me at 2pm)…'
-        : 'Habla o escribe una orden simple o compuesta 3-en-1 (ej. Agenda revisión de UNITEC USA y Building Innovation mañana 3pm, redáctale WhatsApp y recuérdame a las 2pm)…';
+        ? 'Speak or type a single or multi-action command (e.g. Go to Telegram and ask all about new products, send a text to Roberto, and call Carlos)…'
+        : 'Habla o escribe una orden simple o múltiple (ej. Ve a Telegram y pregunta a todos por los nuevos productos, envía texto a Roberto y llama a Carlos)…';
     }
     if (messages.length && messages[0].meta && messages[0].meta.isWelcome) {
       const w = getWelcomeMsg(newLang);
@@ -6701,6 +7170,10 @@ setTimeout(() => {
     loadDevEscalations();
     loadWatchdogs();
   }
+  setTimeout(() => {
+    if (typeof window.loadTextsTelegramHub === 'function') window.loadTextsTelegramHub(false);
+    if (typeof window.loadVoiceCallsHub === 'function') window.loadVoiceCallsHub(false);
+  }, 300);
 })();
 </script>
 

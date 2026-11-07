@@ -208,71 +208,63 @@ def draft_or_send_email(
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# 3. TEXT & WHATSAPP ACTIONS (Supports Mode C Pre-Drafting + Immediate Dispatch)
+# 3. TEXT & TELEGRAM ACTIONS (Supports Mode C Pre-Drafting + Immediate Dispatch)
 # ─────────────────────────────────────────────────────────────────────────────
 def send_text_or_whatsapp(
     to_phone: str,
     message_text: str,
-    channel: str = "whatsapp",
-    company: str = "all",
+    channel: str = "telegram",
+    company: str = "espacios_importados",
     contact_name: str = "",
-    draft_only: bool = False,
+    draft_only: bool = True,
 ) -> dict:
     import text_messaging
 
+    clean_ch = "sms" if str(channel).lower() == "sms" else "telegram"
+    target = to_phone or "8897658040"
+    c_label = contact_name or ("Grupo General Telegram (@Pegantebot)" if target == "8897658040" else target)
+
     if draft_only:
-        text_messaging.ensure_seeded()
-        c = _con()
-        now = time.time()
-        cur = c.execute(
-            """INSERT INTO text_messages
-               (company, channel, direction, contact_name, contact_phone, chat_type,
-                message_text, ai_draft_reply, linked_task_id, linked_task_title, status, ts)
-               VALUES (?, ?, 'out', ?, ?, 'contact', ?, ?, '', '', 'pending_approval', ?)""",
-            (
-                company,
-                channel,
-                contact_name or to_phone,
-                to_phone,
-                f"[Mode C Staged {channel.upper()}] To {contact_name or to_phone}",
-                message_text,
-                now,
-            ),
+        res = text_messaging.create_outgoing_text_draft(
+            contact_name=c_label,
+            message_text=message_text,
+            to_phone=target,
+            company=company if company != "all" else "espacios_importados",
+            channel=clean_ch,
+            auto_send=False,
         )
-        mid = cur.lastrowid
-        c.commit()
-        c.close()
+        mid = res.get("id")
         return {
             "ok": True,
-            "channel": channel,
-            "to": to_phone,
-            "contact_name": contact_name or to_phone,
+            "channel": clean_ch,
+            "to": target,
+            "contact_name": c_label,
             "company": company,
             "message_id": mid,
-            "status": "pending_approval",
+            "status": "drafted",
             "draft_only": True,
             "draft_body": message_text,
-            "message": f"{channel.upper()} draft #{mid} staged for {contact_name or to_phone} ({to_phone}): '{message_text[:80]}' [Awaiting 1-Click CEO Approval].",
+            "message": f"Borrador de {clean_ch.upper()} #{mid} preparado para {c_label}: «{message_text[:90]}» [Pendiente aprobación CEO 1-Clic].",
         }
 
     res = text_messaging.send_text_message(
-        to_phone=to_phone,
+        to_phone=target,
         message=message_text,
-        company=company,
-        channel=channel,
-        contact_name=contact_name,
+        company=company if company != "all" else "espacios_importados",
+        channel=clean_ch,
+        contact_name=c_label,
     )
     return {
         "ok": res.get("ok", True),
-        "channel": channel,
-        "to": to_phone,
-        "contact_name": contact_name or to_phone,
+        "channel": clean_ch,
+        "to": target,
+        "contact_name": c_label,
         "company": company,
         "message_id": res.get("id"),
         "status": res.get("status", "sent"),
         "draft_only": False,
         "draft_body": message_text,
-        "message": f"{channel.upper()} to {contact_name or to_phone} ({to_phone}) ('{message_text[:60]}...'): Status {res.get('status', 'sent')}.",
+        "message": f"{clean_ch.upper()} enviado a {c_label} ({target}): «{message_text[:70]}».",
     }
 
 
@@ -742,9 +734,11 @@ def _extract_time_from_text(text: str, default_time: str = "10:00") -> str:
 
 # Action trigger regex for splitting multi-intent compound sentences
 _CLAUSE_SPLIT_PATTERN = re.compile(
-    r"(?:\s*;\s*|\s*,\s*(?:and\s+also|and\s+then|and|then|also|y\s+tambi[ée]n|y\s+luego|y\s+adem[áa]s|y|luego)\s+(?=(?:schedule|book|set|remind|draft|write|send|email|text|whatsapp|save|note|add|follow\s*up|brainstorm|agendar|agenda|programa|redactar|redacta|red[áa]ctale|enviar|env[íi]a|env[íi]ale|mandar|manda|m[áa]ndale|recordar|recu[ée]rdame|recuerdame|alarma|guardar|guarda|anotar|anota|tengo\s+una\s+idea|dar\s+seguimiento|seguimiento)\b)"
-    r"|\s+(?:and\s+also|and\s+then|and|y\s+tambi[ée]n|y\s+luego|y)\s+(?=(?:schedule\s+a|schedule\s+call|schedule\s+meeting|set\s+a\s+reminder|set\s+an\s+alarm|remind\s+me|draft\s+him|draft\s+her|draft\s+a|send\s+a\s+whatsapp|send\s+whatsapp|send\s+an\s+email|save\s+a\s+note|follow\s+up|agendar|agenda|redacta|red[áa]ctale|env[íi]a|env[íi]ale|manda|m[áa]ndale|recu[ée]rdame|recuerdame|guarda\s+nota|dar\s+seguimiento)\b)"
-    r"|\s*,\s*(?=(?:schedule\s+a|schedule\s+call|schedule\s+meeting|set\s+a\s+reminder|remind\s+me|draft\s+him|draft\s+her|draft\s+a|send\s+whatsapp|send\s+an\s+email|save\s+note|agendar|agenda\s+una|redacta|red[áa]ctale|env[íi]ale|m[áa]ndale|recu[ée]rdame|recuerdame|guarda\s+nota|dar\s+seguimiento)\b))",
+    r"(?:\s*;\s*"
+    r"|\s*(?:,\s*)?(?:and\s+also|and\s+then|and|then|also|y\s+tambi[ée]n|y\s+luego|y\s+adem[áa]s|tambi[ée]n|adem[áa]s)\s+(?=(?:i\s+want\s+you\s+to|quiero\s+que|necesito\s+que|go\s+to\s+telegram|ve\s+a\s+telegram|schedule|book|set|remind|draft|write|send|email|text|telegram|call|make\s+a\s+call|phone|save|note|add|follow\s*up|brainstorm|agendar|agenda|programa|redactar|redacta|red[áa]ctale|enviar|env[íi]a|env[íi]ale|mandar|manda|m[áa]ndale|llamar|llama|ll[áa]male|recordar|recu[ée]rdame|recuerdame|alarma|guardar|guarda|anotar|anota|tengo\s+una\s+idea|dar\s+seguimiento|seguimiento)\b)"
+    r"|\s*(?:,\s*)?(?=(?:i\s+want\s+you\s+to\s+(?:send|draft|call|schedule|remind|go\s+to)|quiero\s+que\s+(?:env[íi]es|mandes|redactes|llames|agendes|recuerdes|vayas\s+a\s+telegram))\b)"
+    r"|\s+(?:and|y)\s+(?=(?:schedule\s+a|schedule\s+call|schedule\s+meeting|set\s+a\s+reminder|set\s+an\s+alarm|remind\s+me|draft\s+him|draft\s+her|draft\s+a|send\s+a\s+telegram|send\s+telegram|send\s+a\s+text|send\s+this\s+text|send\s+a\s+message|send\s+a\s+reminder|send\s+an\s+email|make\s+a\s+call|call\s+|save\s+a\s+note|follow\s+up|agendar|agenda|redacta|red[áa]ctale|env[íi]a|env[íi]ale|manda|m[áa]ndale|llama\s+a|hacer\s+llamada|recu[ée]rdame|recuerdame|guarda\s+nota|dar\s+seguimiento)\b)"
+    r"|\s*,\s*(?=(?:schedule\s+a|schedule\s+call|schedule\s+meeting|set\s+a\s+reminder|remind\s+me|draft\s+him|draft\s+her|draft\s+a|send\s+telegram|send\s+a\s+text|send\s+this\s+text|send\s+a\s+reminder|send\s+an\s+email|make\s+a\s+call|save\s+note|agendar|agenda\s+una|redacta|red[áa]ctale|env[íi]ale|m[áa]ndale|llama\s+a|recu[ée]rdame|recuerdame|guarda\s+nota|dar\s+seguimiento)\b))",
     re.IGNORECASE,
 )
 
@@ -752,13 +746,8 @@ _CLAUSE_SPLIT_PATTERN = re.compile(
 def split_compound_commands(message: str) -> list[str]:
     """
     Split a single CEO utterance into atomic action clauses when multiple executive verbs are chained.
-    Example:
-      "Schedule a call with Dr. Molina tomorrow at 3pm, draft him a confirmation WhatsApp, and remind me at 2pm to check his Medicaid report"
-      -> [
-           "Schedule a call with Dr. Molina tomorrow at 3pm",
-           "draft him a confirmation WhatsApp",
-           "remind me at 2pm to check his Medicaid report"
-         ]
+    Supports multi-delegation patterns like:
+      "I want you to send a text to Roberto about X, I want you to send this text about Y, I want you to send a reminder about Z"
     """
     raw = (message or "").strip()
     if not raw:
@@ -802,21 +791,38 @@ def _build_inline_card(intent: str, action_result: dict, company: str) -> dict |
             ],
         }
     if intent == "send_text":
-        is_draft = bool(action_result.get("draft_only")) or action_result.get("status") == "pending_approval"
-        ch = (action_result.get("channel") or "whatsapp").upper()
+        is_draft = bool(action_result.get("draft_only")) or action_result.get("status") in ("pending_approval", "drafted")
+        ch = (action_result.get("channel") or "telegram").upper()
         return {
-            "card_type": "whatsapp_draft",
+            "card_type": "telegram_draft",
             "id": str(action_result.get("message_id", "")),
-            "title": f"📱 {ch} → {action_result.get('contact_name') or action_result.get('to', '')}",
-            "subtitle": f"Tel: {action_result.get('to', '')} · Canal: {ch}",
+            "title": f"📲 {ch} → {action_result.get('contact_name') or action_result.get('to', '')}",
+            "subtitle": f"Destino: {action_result.get('to', '')} · Canal: {ch}",
             "body": action_result.get("draft_body", ""),
             "company": co_badge,
-            "status": "MODE C · PENDING 1-CLICK APPROVAL" if is_draft else "SENT VIA META CLOUD API",
+            "status": "MODE C · BORRADOR PENDIENTE APROBACIÓN CEO" if is_draft else "ENVIADO VÍA TELEGRAM BOT API",
             "editable": is_draft,
             "buttons": [
-                {"action": "approve_whatsapp", "label_es": f"✅ Aprobar y Enviar {ch}", "label_en": f"✅ Approve & Send {ch}", "style": "primary"},
-                {"action": "edit_inline", "label_es": "✏️ Editar Mensaje", "label_en": "✏️ Edit Message", "style": "ghost"},
+                {"action": "approve_telegram", "label_es": f"✅ Aprobar y Enviar {ch}", "label_en": f"✅ Approve & Send {ch}", "style": "primary"},
+                {"action": "edit_inline", "label_es": "✏️ Editar Texto", "label_en": "✏️ Edit Text", "style": "ghost"},
             ] if is_draft else [],
+        }
+    if intent == "make_voice_call":
+        opts = action_result.get("decision_options") or []
+        btns = [
+            {"action": "decide_call", "decision": opt, "label_es": f"⚡ Decisión: {opt[:42]}...", "label_en": f"⚡ Decide: {opt[:42]}...", "style": "primary" if idx == 0 else "ghost"}
+            for idx, opt in enumerate(opts[:2])
+        ]
+        return {
+            "card_type": "voice_call",
+            "id": str(action_result.get("call_id", "")),
+            "title": f"📞 Llamada IA → {action_result.get('contact_name', 'Contacto')}",
+            "subtitle": f"Tel: {action_result.get('to_phone', '')} · Objetivo: {action_result.get('objective', '')[:65]}",
+            "body": f"📋 Resultado: {action_result.get('call_result_summary', '')}\n\n🎙️ Transcripción:\n{action_result.get('transcript_text', '')}",
+            "company": co_badge,
+            "status": "LLAMADA COMPLETADA · TRANSCRIPCIÓN GUARDADA EN MC.DB",
+            "editable": False,
+            "buttons": btns,
         }
     if intent == "set_reminder":
         return {
@@ -899,7 +905,7 @@ def approve_inline_action(card_type: str, item_id: str, edited_text: str = "", a
             "message": f"Email Draft {item_id} approved and dispatched directly by CEO Jasmel.",
         }
 
-    if ctype == "whatsapp_draft" or act == "approve_whatsapp":
+    if ctype in ("whatsapp_draft", "telegram_draft") or act in ("approve_whatsapp", "approve_telegram"):
         import text_messaging
         mid_raw = str(item_id or "").strip()
         if mid_raw.isdigit():
@@ -909,19 +915,36 @@ def approve_inline_action(card_type: str, item_id: str, edited_text: str = "", a
             res = text_messaging.approve_text_draft(mid)
             return {
                 "ok": bool(res.get("ok", True)),
-                "card_type": "whatsapp_draft",
+                "card_type": "telegram_draft",
                 "id": item_id,
                 "status": "SENT",
-                "message": f"WhatsApp Draft #{mid} approved and dispatched via Official Meta Cloud API.",
+                "message": f"Borrador de Telegram/Texto #{mid} aprobado y enviado vía Telegram Bot API.",
                 "detail": res,
             }
         return {
             "ok": True,
-            "card_type": "whatsapp_draft",
+            "card_type": "telegram_draft",
             "id": item_id,
             "status": "SENT",
-            "message": f"WhatsApp message {item_id} approved and sent.",
+            "message": f"Mensaje de Telegram/Texto {item_id} aprobado y enviado.",
         }
+
+    if ctype == "voice_call" or act == "decide_call":
+        try:
+            import voice_calls_engine
+        except ImportError:
+            from server import voice_calls_engine
+        cid_raw = str(item_id or "").strip()
+        if cid_raw.isdigit():
+            res = voice_calls_engine.record_call_decision(int(cid_raw), edited_text or "Aprobado por el CEO")
+            return {
+                "ok": bool(res.get("ok", True)),
+                "card_type": "voice_call",
+                "id": item_id,
+                "status": "DECISION_LOGGED",
+                "message": f"Decisión registrada para llamada #{cid_raw}: {res.get('ceo_decision', '')}",
+                "detail": res,
+            }
 
     if ctype == "reminder" or act in ("dismiss_reminder", "snooze_reminder"):
         if act == "snooze_reminder":
@@ -1048,15 +1071,16 @@ Shared Context from earlier in the sentence: {json.dumps(shared_ctx, ensure_asci
 Jasmel's Companies: mbmb, cedexx, aidyn, unitec, jmm, 305biz, personal, all.
 
 Analyze the clause and determine the PRIMARY INTENT from:
-["schedule_calendar", "send_email", "send_text", "set_reminder", "save_note", "save_idea", "add_followup", "brainstorm", "query_status", "general_chat"]
+["schedule_calendar", "send_email", "send_text", "make_voice_call", "set_reminder", "save_note", "save_idea", "add_followup", "brainstorm", "query_status", "general_chat"]
 
 Output STRICT JSON ONLY:
 {{
   "intent": "<one of the intents above>",
-  "company": "<mbmb|cedexx|aidyn|unitec|jmm|305biz|personal|all>",
+  "company": "<unitec_usa|building_innovation|espacios_importados|buildingapp|saleinn|all>",
   "calendar": {{ "title": "...", "date": "YYYY-MM-DD", "time": "HH:MM", "duration_min": 30, "attendees": "..." }},
   "email": {{ "to": "...", "subject": "...", "body": "...", "send_now": false }},
-  "text": {{ "to": "...", "contact_name": "...", "message": "...", "channel": "whatsapp|sms", "draft_only": true }},
+  "text": {{ "to": "...", "contact_name": "...", "message": "...", "channel": "telegram|sms", "draft_only": true }},
+  "voice_call": {{ "contact_name": "...", "to_phone": "...", "objective": "..." }},
   "reminder": {{ "title": "...", "trigger_time": "YYYY-MM-DD HH:MM", "recurrence": "once" }},
   "note": {{ "text": "..." }},
   "idea": {{ "title": "...", "description": "...", "potential": "high" }},
@@ -1139,22 +1163,45 @@ Output STRICT JSON ONLY:
         t_args = extracted_json.get("text", {})
         contact_info = _lookup_contact_from_text(msg, shared_ctx.get("contact"))
         shared_ctx["contact"] = contact_info
-        to_ph = t_args.get("to") or contact_info.get("phone", "+17866432099")
-        c_name = t_args.get("contact_name") or contact_info.get("name", "")
-        is_draft = bool(
-            t_args.get("draft_only", False)
-            or re.search(r"\b(draft|borrador|redactar|redacta|red[áa]ctale|prepara|preparar)\b", msg.lower())
-        )
+        to_ph = t_args.get("to") or contact_info.get("phone", "8897658040")
+        c_name = t_args.get("contact_name") or contact_info.get("name", "Grupo General Telegram (@Pegantebot)")
+        send_now = bool(re.search(r"\b(send\s+now|enviar\s+ahora|manda\s+ya|env[íi]a\s+ya)\b", msg.lower()))
+        is_draft = not send_now and bool(t_args.get("draft_only", True))
+        ch_raw = t_args.get("channel", "telegram")
+        clean_ch = "sms" if str(ch_raw).lower() == "sms" else "telegram"
         action_result = send_text_or_whatsapp(
             to_phone=to_ph,
             message_text=t_args.get("message") or msg,
-            channel=t_args.get("channel", "whatsapp"),
+            channel=clean_ch,
             company=target_co,
             contact_name=c_name,
             draft_only=is_draft,
         )
         if not exec_reply:
             exec_reply = action_result.get("message")
+
+    elif intent == "make_voice_call":
+        try:
+            import voice_calls_engine
+        except ImportError:
+            from server import voice_calls_engine
+        v_args = extracted_json.get("voice_call", {})
+        contact_info = _lookup_contact_from_text(msg, shared_ctx.get("contact"))
+        c_name = v_args.get("contact_name") or contact_info.get("name") or "Contacto Ejecutivo"
+        to_ph = v_args.get("to_phone") or contact_info.get("phone") or ""
+        obj = v_args.get("objective") or msg
+        action_result = voice_calls_engine.initiate_ai_phone_call(
+            contact_name=c_name,
+            to_phone=to_ph,
+            objective=obj,
+            company=target_co if target_co != "all" else "espacios_importados",
+            auto_execute=True,
+        )
+        if not exec_reply:
+            exec_reply = (
+                f"📞 Llamada IA realizada a {action_result.get('contact_name')} ({action_result.get('to_phone')}). "
+                f"Transcripción completa y opciones de decisión guardadas: {action_result.get('call_result_summary')}"
+            )
 
     elif intent == "set_reminder":
         r_args = extracted_json.get("reminder", {})
@@ -1330,26 +1377,55 @@ def _rule_based_fallback_intent(msg: str, company: str, lang: str, shared_ctx: d
             ),
         }
 
-    # 2. WhatsApp / SMS (Checked before Calendar so "draft him a confirmation WhatsApp" is never misclassified)
-    if re.search(r"\b(whatsapp|whats app|sms|texto|text message|mensaje de whatsapp|mandar whatsapp|enviar whatsapp)\b", low):
-        is_draft = bool(re.search(r"\b(draft|borrador|redactar|redacta|red[áa]ctale|prepara|preparar)\b", low))
-        c_name = contact_info.get("name", "Contacto Ejecutivo")
-        to_ph = contact_info.get("phone", "+17866432099")
+    # 2. Automated AI Voice Calls (e.g. "make a call to...", "llama por teléfono a...", "call Roberto about...")
+    if re.search(r"\b(make\s+a?\s*(?:phone\s+)?call|phone\s+call|call\s+(?:roberto|carlos|andres|diana|client|architect|supplier)|llamar\s+por\s+tel[ée]fono|llama\s+a|ll[áa]male\s+a|hacer\s+una?\s*llamada|haz\s+una?\s*llamada)\b", low) and not re.search(r"\b(schedule|agendar|agenda)\b", low):
+        c_name = contact_info.get("name", "Roberto Silva (Miami — UNITEC USA)")
+        to_ph = contact_info.get("phone", "+13058904412")
+        return {
+            "intent": "make_voice_call",
+            "company": inferred_co,
+            "voice_call": {
+                "contact_name": c_name,
+                "to_phone": to_ph,
+                "objective": msg,
+            },
+            "executive_reply": (
+                f"📞 Llamada IA iniciada a {c_name} ({to_ph}). Transcripción y resultados guardados para tu decisión."
+                if es
+                else f"📞 AI Voice Call placed to {c_name} ({to_ph}). Full transcript and decision options saved."
+            ),
+        }
+
+    # 3. Telegram & Text Messages (Telegram Only — WhatsApp removed)
+    if re.search(r"\b(telegram|sms|texto|text\s+message|send\s+a?\s*text|send\s+this\s+text|send\s+a?\s*message|go\s+to\s+telegram|mensaje\s+de\s+texto|manda\s+un\s+telegram|enviar\s+telegram|mandar\s+texto|enviar\s+texto|whatsapp)\b", low):
+        send_now = bool(re.search(r"\b(send\s+now|enviar\s+ahora|manda\s+ya|env[íi]a\s+ya)\b", low))
+        is_draft = not send_now
+        c_name = contact_info.get("name", "Grupo General Telegram (@Pegantebot)")
+        to_ph = contact_info.get("phone", "8897658040")
+        if re.search(r"\b(all|todos|grupo|group|nuevos\s+productos|new\s+products)\b", low):
+            c_name = "Grupo General Nuevos Productos (@Pegantebot)"
+            to_ph = "8897658040"
         ev_time_ctx = ctx.get("time", "15:00")
         ev_date_ctx = ctx.get("date", target_date)
         if re.search(r"\b(confirm|confirmaci[óo]n)\b", low):
             if es:
-                wa_body = f"Hola {c_name}, te confirmo nuestra llamada ejecutiva para el {ev_date_ctx} a las {ev_time_ctx}. Quedo atento. — Jasmel Acosta"
+                wa_body = f"Hola {c_name}, te confirmo nuestra reunión ejecutiva para el {ev_date_ctx} a las {ev_time_ctx}. Quedo atento. — Juan David García"
             else:
-                wa_body = f"Hi {c_name}, confirming our executive call scheduled for {ev_date_ctx} at {ev_time_ctx}. Looking forward to speaking. — Jasmel Acosta"
+                wa_body = f"Hi {c_name}, confirming our executive session scheduled for {ev_date_ctx} at {ev_time_ctx}. — Juan David García"
+        elif re.search(r"\b(new\s+products|nuevos\s+productos)\b", low):
+            wa_body = (
+                "Equipo, por favor infórmenme de inmediato qué pasó con los nuevos productos, estatus de ingreso a bodega, precios mayoristas y muestras pendientes. — Juan David García (CEO)"
+                if es
+                else "Team, please report immediately on what happened with the new products, warehouse arrival status, wholesale pricing, and pending samples. — Juan David García (CEO)"
+            )
         else:
             clean_msg = re.sub(
-                r"^(?:enviar|env[íi]a|mandar|manda|redactar|redacta|draft|send)\s+(?:un\s+|a\s+)?(?:whatsapp|sms|mensaje)\s*(?:a\s+|to\s+)?(?:\+?\d[\d\s\-]{7,15}\d|[a-zA-Z0-9_.\s]+)?\s*(?:avisando\s+que|diciendo\s+que|saying\s+that|:)?\s*",
+                r"^(?:hey\s+)?(?:i\s+want\s+you\s+to\s+|quiero\s+que\s+)?(?:go\s+to\s+telegram\s+and\s+|ve\s+a\s+telegram\s+y\s+)?(?:enviar|env[íi]a|env[íi]es|mandar|manda|mandes|redactar|redacta|draft|send)\s+(?:un\s+|a\s+|this\s+)?(?:telegram|sms|texto|text|message|mensaje|whatsapp)\s*(?:a\s+|to\s+)?(?:all|todos|this\s+person|[a-zA-Z0-9_.\s]{1,25})?\s*(?:about|asking|sobre|preguntando|avisando\s+que|diciendo\s+que|saying\s+that|:)?\s*",
                 "",
                 msg.strip(),
                 flags=re.I,
             ).strip() or msg
-            wa_body = f"Hola {c_name}, {clean_msg} — Jasmel Acosta" if es else f"Hi {c_name}, {clean_msg} — Jasmel Acosta"
+            wa_body = f"Hola {c_name.split('(')[0].strip()}, {clean_msg} — Juan David García" if es else f"Hi {c_name.split('(')[0].strip()}, {clean_msg} — Juan David García"
         return {
             "intent": "send_text",
             "company": inferred_co,
@@ -1357,19 +1433,19 @@ def _rule_based_fallback_intent(msg: str, company: str, lang: str, shared_ctx: d
                 "to": to_ph,
                 "contact_name": c_name,
                 "message": wa_body,
-                "channel": "whatsapp",
+                "channel": "telegram",
                 "draft_only": is_draft,
             },
             "executive_reply": (
-                f"Borrador de WhatsApp preparado para {c_name} ({to_ph}) listo para aprobar con 1 clic."
+                f"📲 Borrador de Telegram/Texto preparado para {c_name} listo para revisar, editar o aprobar con 1 clic."
                 if (es and is_draft)
                 else (
-                    f"WhatsApp confirmation draft staged for {c_name} ({to_ph}) — ready for 1-click approval."
+                    f"📲 Telegram/Text draft staged for {c_name} — ready for CEO review or 1-click approval."
                     if is_draft
                     else (
-                        f"WhatsApp enviado a {c_name} ({to_ph})."
+                        f"📲 Telegram enviado a {c_name} ({to_ph})."
                         if es
-                        else f"WhatsApp dispatched to {c_name} ({to_ph})."
+                        else f"📲 Telegram dispatched to {c_name} ({to_ph})."
                     )
                 )
             ),

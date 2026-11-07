@@ -212,6 +212,16 @@ def parse(command: str, lang: str = "es") -> dict:
     if re.search(r"\b(?:enviar|env[ií]a|mandar|manda|despachar|dispara)\b.*\b(?:reporte|informe|resumen|brief)\b", low):
         return {"action": "send_twice_daily_report"}
 
+    # Delegated Telegram / Text / Voice Call / Multi-Intent commands
+    if re.search(
+        r"\b(?:go\s+to\s+telegram|ve\s+a\s+telegram|send\s+a?\s*(?:text|telegram|message)|send\s+this\s+text|"
+        r"manda(?:r)?\s+un?\s*(?:telegram|texto|mensaje)|env[íi]a(?:r)?\s+un?\s*(?:telegram|texto|mensaje)|"
+        r"i\s+want\s+you\s+to|quiero\s+que\s+(?:env[íi]es|mandes|redactes|llames)|"
+        r"make\s+a?\s*(?:phone\s+)?call|llamar\s+por\s+tel[ée]fono|llama\s+a|haz\s+una\s+llamada)\b",
+        low,
+    ):
+        return {"action": "ceo_delegation", "text": t}
+
     # Explicit search / Q&A queries
     if re.match(r"^(?:buscar|busca|search|find|encuentra|qu[eé] dijo|what did)\b", low):
         return {"action": "ask", "text": t}
@@ -224,7 +234,9 @@ def parse(command: str, lang: str = "es") -> dict:
     tab_match = re.search(
         r"\b(blogs?|gu[ií]as?|funciones|setup|configuraci[oó]n|onboarding|integraciones|"
         r"cerebro|behavior|conductual|hábitos|habitos|resultados|outcomes|monitoreo|estudios|"
-        r"bandeja|comms|correos|mensajes|borradores|inbox|mando|overview|consola|dashboard|inicio)\b",
+        r"textos?|telegram|sms|llamadas?|calls?|transcripciones?|tel[ée]fono|"
+        r"tareas?|calendario|pendientes|notas?|memoria|"
+        r"bandeja|comms|correos?|emails?|borradores|inbox|mando|overview|consola|dashboard|inicio)\b",
         low
     )
     if re.search(r"^(?:ir a|abrir|abre|open|go to|ver|mostrar|show|tab|pestaña)\b", low) and tab_match:
@@ -237,7 +249,15 @@ def parse(command: str, lang: str = "es") -> dict:
             return {"action": "open_tab", "tab": "behavior"}
         if w in ("resultados", "outcomes", "monitoreo", "estudios"):
             return {"action": "open_tab", "tab": "outcomes"}
-        if w in ("bandeja", "comms", "correos", "mensajes", "borradores", "inbox"):
+        if w in ("texto", "textos", "telegram", "sms"):
+            return {"action": "open_tab", "tab": "texts"}
+        if w in ("llamada", "llamadas", "call", "calls", "transcripcion", "transcripciones", "telefono", "teléfono"):
+            return {"action": "open_tab", "tab": "calls"}
+        if w in ("tarea", "tareas", "calendario", "pendientes"):
+            return {"action": "open_tab", "tab": "tasks_cal"}
+        if w in ("nota", "notas", "memoria"):
+            return {"action": "open_tab", "tab": "notes_vault"}
+        if w in ("bandeja", "comms", "correo", "correos", "email", "emails", "borradores", "inbox"):
             return {"action": "open_tab", "tab": "comms"}
         return {"action": "open_tab", "tab": "overview"}
 
@@ -648,6 +668,22 @@ def execute(command: str, lang: str = "es", samples_dir: str | None = None) -> d
             "record": rep_res,
             "ui": {"refresh_live_state": True},
             "sources": ["Reportes 2x/Día (08:00 AM y 06:00 PM)"],
+            "grounded": True,
+        }
+    elif action == "ceo_delegation":
+        import ceo_action_brain
+        del_res = ceo_action_brain.execute_ceo_chat(p.get("text", command), company="all", lang=lang)
+        primary = del_res.get("intent", "send_text")
+        open_tab = "texts" if primary == "send_text" else ("calls" if primary == "make_voice_call" else ("comms" if primary == "send_email" else "assistant"))
+        return {
+            "ok": True,
+            "action": "ceo_delegation",
+            "parsed": p,
+            "reply": del_res.get("reply", ""),
+            "record": del_res,
+            "inline_cards": del_res.get("inline_cards", []),
+            "ui": {"open_tab": open_tab, "refresh_live_state": True, "refresh_texts": True, "refresh_calls": True},
+            "sources": ["CEO Delegation Engine · Telegram & AI Voice Calls"],
             "grounded": True,
         }
     elif action in ("save_note", "save_task", "save_meeting", "save_email"):

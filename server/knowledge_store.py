@@ -1295,7 +1295,7 @@ def get_live_company_state(company: str = "all") -> dict:
             },
         ]
         errors_missing = [
-            {"type": "ERROR EN VIVO", "severity": "high", "company": "UNITEC USA", "detail": "2 escalaciones de clientes fallaron en Vercel porque faltan las variables RESEND_API_KEY (correo) y TWILIO (SMS/WhatsApp)."},
+            {"type": "ERROR EN VIVO", "severity": "high", "company": "UNITEC USA", "detail": "2 escalaciones de clientes fallaron en Vercel porque faltan las variables RESEND_API_KEY (correo) y TWILIO (SMS/Voz SIP)."},
             {"type": "CONEXIÓN FALTANTE", "severity": "medium", "company": "UNITEC USA", "detail": "Permiso Viewer pendiente en Google Analytics 4 propiedad #533522460 (unitecusadesign) para lectura automática de sesiones web."},
             {"type": "CONEXIÓN FALTANTE", "severity": "medium", "company": "UNITEC USA", "detail": "ERP de facturación / ventas cerradas no conectado ($0 USD registrados en vivo)."},
         ]
@@ -1672,7 +1672,7 @@ def get_live_company_state(company: str = "all") -> dict:
         ]
         errors_missing = [
             {"type": "ERROR CRÍTICO EN VIVO", "severity": "high", "company": "55 Cámaras CCTV / IDEO", "detail": "2 cámaras Wi-Fi OFFLINE desde 2026-10-26 22:59:32: SALÓN IDEO (BF4860946) y OFICINA IDEO (BF4862037) en red Wi-Fi UNITECUSA."},
-            {"type": "ERROR EN VIVO", "severity": "high", "company": "UNITEC USA (Vercel)", "detail": "2 escalaciones fallidas porque faltan RESEND_API_KEY (correo) y TWILIO (SMS/WhatsApp) en Vercel; Telegram @Pegantebot opera al 98.3% (155/157)."},
+            {"type": "ERROR EN VIVO", "severity": "high", "company": "UNITEC USA (Vercel)", "detail": "2 escalaciones fallidas porque faltan RESEND_API_KEY (correo) y TWILIO (SMS/Voz SIP) en Vercel; Telegram @Pegantebot opera al 98.3% (155/157)."},
             {"type": "CONEXIÓN FALTANTE", "severity": "medium", "company": "Google Analytics 4", "detail": "Permiso Viewer pendiente en propiedades GA4 #533522460 (UNITEC) y #543661675 (Building Innovation) para el service account."},
             {"type": "CONEXIÓN FALTANTE", "severity": "medium", "company": "Facturación / ERP / Nexus", "detail": "Sin ERP de facturación conectado en Espacios Importados / UNITEC / BuildingApp ($0 USD registrados) y bridge IndexedDB de Nexus CRM sin push activo."},
             {"type": "CONEXIÓN FALTANTE", "severity": "low", "company": "Gmail SMTP / Telegram Directo", "detail": "Pendiente App Password SMTP de Gmail y primer mensaje /start de Juan (+1 786 657 5441) a @ceojefesitobot para chat directo personal (actualmente entregando en grupo 8897658040 y chat 7838956683)."},
