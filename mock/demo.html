@@ -1780,12 +1780,12 @@
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:12px">
         <div>
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-            <span class="tag ok">📞 MOTOR DE LLAMADAS IA AUTOMÁTICAS · TRANSCRIPCIÓN + TOMA DE DECISIONES</span>
-            <span class="tag medium">GITHUB STACK: LIVEKIT SIP + TWILIO + ELEVENLABS</span>
+            <span class="tag ok">📞 MOTOR DE LLAMADAS IA AUTOMÁTICAS · GROK VOICE 3.0 + PIPECAT + KOKORO-82M</span>
+            <span class="tag medium">ULTRA BAJO COSTO (~$0.01–$0.05/MIN) · LATENCIA 780ms</span>
           </div>
-          <h3 style="margin:6px 0 2px;font-size:16px">Delega Llamadas Telefónicas por Voz o Texto — Transcripción Completa y Resultados Guardados en <code>mc.db</code></h3>
+          <h3 style="margin:6px 0 2px;font-size:16px">Delega Llamadas Telefónicas con xAI Grok Voice Realtime &amp; Open-Source GitHub Stack — Transcripción y Decisiones en <code>mc.db</code></h3>
           <p class="muted" style="font-size:12px">
-            Basado en arquitecturas open-source verificadas en GitHub (<code>livekit-examples/outbound-caller-python</code>, <code>esplanadeai/11labs_Outbound</code> y <code>programmerraja/CallAgent</code>). Ordena a qué contacto llamar y qué preguntar: el agente realiza la llamada, guarda toda la conversación palabra por palabra, resume el resultado y te presenta botones de decisión ejecutiva.
+            Integrado con las nuevas arquitecturas open-source de GitHub que usa Grok Bot: <code>jeffhuber/twilio-grok-voice-bridge</code> (<code>wss://api.x.ai/v1/realtime</code> · <code>grok-voice-3.0</code> Speech-to-Speech nativo), <code>pipecat-ai/pipecat</code> (<code>GrokRealtimeLLMService</code>), <code>bolna-ai/bolna</code> + <code>hexgrad/kokoro</code> (Kokoro-82M TTS open-weights a $0 costo) y <code>livekit/agents</code> (<code>livekit-plugins-xai</code>).
           </p>
         </div>
         <button class="btn ghost sm" type="button" onclick="loadVoiceCallsHub(true)">🔄 Actualizar Llamadas y Transcripciones</button>
@@ -1812,7 +1812,7 @@
       </div>
 
       <!-- Delegate Outbound AI Phone Call Bar -->
-      <div style="display:grid;grid-template-columns:230px 155px 1fr auto auto auto;gap:8px;align-items:center;background:var(--inset);padding:10px 12px;border-radius:14px;border:1px solid var(--hair);margin-bottom:12px">
+      <div style="display:grid;grid-template-columns:215px 140px 150px 1fr auto auto auto;gap:8px;align-items:center;background:var(--inset);padding:10px 12px;border-radius:14px;border:1px solid var(--hair);margin-bottom:12px">
         <select id="callContactSelect" class="inp" style="font-size:12px;font-weight:700" onchange="syncCallPhoneFromSelect()">
           <option value="Roberto Silva (Miami — UNITEC USA)|+13058904412|unitec_usa">🏛️ Roberto Silva (Miami — UNITEC USA)</option>
           <option value="Carlos Méndez (Logística Aduanas / Muelle 1)|+573104458920|espacios_importados">🏭 Carlos Méndez (Aduanas / Muelle 1)</option>
@@ -1822,6 +1822,14 @@
           <option value="Juan David García (Prueba en Celular CEO)|+17866575441|unitec_usa">📱 Probar en Celular de Juan (+1 786 657 5441)</option>
         </select>
         <input id="callPhoneInput" class="inp" value="+13058904412" placeholder="+1 / +57 Teléfono…" style="font-size:12px">
+        <select id="callVoiceSelect" class="inp" style="font-size:11.5px;font-weight:700" title="Voz de xAI Grok Voice 3.0 / Kokoro-82M Open-Source">
+          <option value="ara">🎙️ Grok Voice: Ara (Cálida Ejecutiva)</option>
+          <option value="rex">🎙️ Grok Voice: Rex (Directivo Firme)</option>
+          <option value="eve">🎙️ Grok Voice: Eve (Clara &amp; Natural)</option>
+          <option value="sal">🎙️ Grok Voice: Sal (Dinámico)</option>
+          <option value="leo">🎙️ Grok Voice: Leo (Corporativo)</option>
+          <option value="kokoro-82m">⚡ Kokoro-82M (Open-Weights $0)</option>
+        </select>
         <input id="callObjectiveInput" class="inp" placeholder="Objetivo de la llamada (ej. Preguntar qué pasó con los nuevos productos WPC, confirmar entrega y traer respuesta para decisión del CEO)…" onkeydown="if(event.key==='Enter'){event.preventDefault();initiateDelegatedVoiceCall();}">
         <button type="button" class="btn ghost sm" onclick="window.LJ && window.LJ.startMic && window.LJ.startMic(document.getElementById('callObjectiveInput'))">🎤 Dictar</button>
         <button type="button" class="btn sm" onclick="initiateDelegatedVoiceCall()">📞 Hacer Llamada IA</button>
@@ -1845,7 +1853,7 @@
         </div>
       </div>
 
-      <div id="githubVoiceArchStrip" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:6px"></div>
+      <div id="githubVoiceArchStrip" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:8px;margin-bottom:6px"></div>
     </div>
 
     <div class="card" style="grid-column:span 12">
@@ -3177,15 +3185,17 @@ function loadVoiceCallsHub(showNotification = false) {
 function initiateDelegatedVoiceCall() {
   const sel = document.getElementById('callContactSelect');
   const ph = document.getElementById('callPhoneInput');
+  const vSel = document.getElementById('callVoiceSelect');
   const objInp = document.getElementById('callObjectiveInput');
   const [contactName, defaultPh, coSlug] = ((sel && sel.value) || 'Roberto Silva|+13058904412|unitec_usa').split('|');
   const toPhone = (ph && ph.value ? ph.value : defaultPh).trim();
+  const voice = (vSel && vSel.value ? vSel.value : 'ara').trim();
   const objective = (objInp && objInp.value ? objInp.value : 'Consultar qué pasó con los nuevos productos, inventario y confirmar fecha de entrega').trim();
 
-  showToast(`📞 Iniciando llamada IA a ${contactName} (${toPhone})…`);
+  showToast(`📞 Iniciando llamada IA (Grok Voice 3.0 · ${voice.toUpperCase()}) a ${contactName} (${toPhone})…`);
   fetch('/api/calls/initiate', {
     method: 'POST', headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({contact_name: contactName, to_phone: toPhone, objective, company: coSlug || 'espacios_importados', auto_execute: true})
+    body: JSON.stringify({contact_name: contactName, to_phone: toPhone, objective, company: coSlug || 'espacios_importados', voice, auto_execute: true})
   }).then(r => r.json()).then(d => {
     if (objInp) objInp.value = '';
     loadVoiceCallsHub(false);

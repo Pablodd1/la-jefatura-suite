@@ -558,6 +558,7 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
                 objective=body.get("objective") or body.get("message") or "",
                 company=body.get("company", "espacios_importados"),
                 script_prompt=body.get("script_prompt", ""),
+                voice=body.get("voice", "ara"),
                 auto_execute=bool(body.get("auto_execute", True)),
             ))
         elif path == "/api/calls/decide":
