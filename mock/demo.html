@@ -31,10 +31,10 @@
     --yellow:#cdb68c;
     --yellow-bright:#dccaa6;
     --ar:205, 182, 140;
-    --vio:#b59b6d;
-    --warn:#22c55e;
-    --crit:#f43f5e;
-    --ok:#10b981;
+    --vio:#7ea88f;
+    --warn:#52b788;
+    --crit:#8fa893;
+    --ok:#34a866;
     --inset:rgba(11, 10, 8, 0.78);
     --onacc:#0b0a08;
     --hdr:rgba(18, 16, 13, 0.92);
@@ -65,7 +65,7 @@
   .nav-tab{background:transparent;border:1px solid transparent;color:var(--dim);padding:8px 14px;border-radius:9px;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap;transition:.15s;display:flex;align-items:center;gap:7px}
   .nav-tab:hover{color:var(--txt);background:rgba(255,255,255,.04)}
   .nav-tab.active{background:rgba(205,182,140,.18);color:var(--acc);border-color:rgba(205,182,140,.42);font-weight:700}
-  .nav-tab .cnt{background:rgba(255,92,92,.2);color:var(--crit);font-size:10px;padding:1px 6px;border-radius:10px;font-weight:800}
+  .nav-tab .cnt{background:rgba(82,183,136,.18);color:var(--acc2);font-size:10px;padding:1px 6px;border-radius:10px;font-weight:800}
 
   /* Layout & Cards */
   .tab-pane{display:none;max-width:1520px;margin:0 auto;padding:18px 22px}
@@ -89,12 +89,12 @@
   .task{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--hair);font-size:13px;align-items:center}
   .task:last-child{border:0}
   .tag{font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;white-space:nowrap;text-transform:uppercase;letter-spacing:.4px}
-  .tag.critical{background:rgba(255,92,92,.15);color:var(--crit)}
-  .tag.high{background:rgba(34,197,94,.15);color:var(--warn)}
-  .tag.medium{background:rgba(0,212,255,.12);color:var(--acc2)}
+  .tag.critical{background:rgba(143,168,147,.16);color:#b8cfc0;border:1px solid rgba(143,168,147,.28)}
+  .tag.high{background:rgba(52,168,102,.15);color:var(--warn)}
+  .tag.medium{background:rgba(82,183,136,.12);color:var(--acc2)}
   .tag.low{background:rgba(139,150,176,.15);color:var(--dim)}
-  .tag.overdue{background:var(--crit);color:#fff}
-  .tag.ok{background:rgba(61,220,132,.15);color:var(--ok)}
+  .tag.overdue{background:rgba(82,183,136,.22);color:#d8f3dc}
+  .tag.ok{background:rgba(52,168,102,.15);color:var(--ok)}
 
   /* Foreseen / Proactive Banner */
   .foreseen-strip{background:linear-gradient(90deg,rgba(35,217,176,.1),rgba(124,108,255,.1));border:1px solid rgba(35,217,176,.28);border-radius:14px;padding:14px 18px;margin-bottom:16px}
@@ -116,9 +116,9 @@
   .alert:last-child{border:0}
   .alert .h{color:var(--dim);font-size:10.5px;white-space:nowrap;padding-top:2px}
   .lvl{font-size:9px;font-weight:800;padding:2px 6px;border-radius:5px;text-transform:uppercase}
-  .lvl.info{background:rgba(0,212,255,.15);color:var(--acc2)}
-  .lvl.warning{background:rgba(34,197,94,.15);color:var(--warn)}
-  .lvl.critical{background:rgba(255,92,92,.2);color:var(--crit)}
+  .lvl.info{background:rgba(82,183,136,.15);color:var(--acc2)}
+  .lvl.warning{background:rgba(52,168,102,.15);color:var(--warn)}
+  .lvl.critical{background:rgba(143,168,147,.18);color:#b8cfc0}
   .muted{color:var(--dim);font-size:12px}
   .narr{border-left:3px solid var(--acc);padding:6px 0 6px 14px;font-size:13px;line-height:1.6;color:#cfd8ea;background:rgba(35,217,176,.04);border-radius:0 8px 8px 0}
 
@@ -235,8 +235,8 @@
     font-weight: 700 !important;
   }
   .card.kpi-card:nth-of-type(1) .kpi { color: #8e734b !important; }
-  .card.kpi-card:nth-of-type(2) .kpi { color: #e11d48 !important; }
-  .card.kpi-card:nth-of-type(3) .kpi { color: #10b981 !important; }
+  .card.kpi-card:nth-of-type(2) .kpi { color: #52b788 !important; }
+  .card.kpi-card:nth-of-type(3) .kpi { color: #34a866 !important; }
   .card.kpi-card:nth-of-type(4) .kpi { color: #2563eb !important; }
   .card.kpi-card .kpi small { color: #71717a !important; }
 
@@ -502,9 +502,9 @@
     --dim: #8e8d87 !important;
     --acc: #34a866 !important;
     --acc2: #52b788 !important;
-    --ok: #22c55e !important;
+    --ok: #34a866 !important;
     --warn: #52b788 !important;
-    --crit: #ef4444 !important;
+    --crit: #8fa893 !important;
     --inset: rgba(18, 19, 17, 0.62) !important;
     --onacc: #ffffff !important;
     --hdr: rgba(28, 29, 26, 0.78) !important;
@@ -1086,7 +1086,7 @@
   <div class="sp"></div>
   <div class="pill" id="slotPill" style="cursor:pointer" title="Click to cycle Morning / Afternoon / Evening"><span id="slotLabel">Rutina Mañana</span></div>
   <div class="pill" id="clock"></div>
-  <button type="button" class="btn sm lj-stop-voice-btn" id="headerStopVoiceBtn" onclick="window.stopAllBotVoice && window.stopAllBotVoice()" style="background:#EB5757;color:#fff;border:1px solid #ff7b7b;font-weight:900;letter-spacing:.04em;padding:7px 13px;border-radius:999px;box-shadow:0 4px 14px rgba(235,87,87,.35)" title="Callar la voz inmediatamente (Tecla ESC)">🛑 CALLAR VOZ (ESC)</button>
+  <button type="button" class="btn ghost sm lj-stop-voice-btn" id="headerStopVoiceBtn" onclick="window.stopAllBotVoice && window.stopAllBotVoice()" style="font-weight:800;letter-spacing:.03em;padding:7px 13px;border-radius:999px" title="Silenciar la voz inmediatamente (Tecla ESC)">⏹️ SILENCIAR VOZ (ESC)</button>
   <button type="button" class="btn ghost sm" id="headerPlayBriefBtn" onclick="toggleOrStopVoiceBrief()" title="Si está hablando la calla; si está en silencio lee el Resumen + Clima">🔊 Escuchar Resumen</button>
   <div class="pill" id="jfGreetPill" style="cursor:pointer" title="Saludo automático al entrar: activar / desactivar" onclick="toggleGreeting()"><span id="jfGreetLbl">Saludo: ON</span></div>
   <button class="btn ghost" id="langBtn" style="font-weight:800;border-color:var(--acc);color:var(--acc)">ES / EN</button>
@@ -1122,9 +1122,9 @@
 </div>
 
 <!-- Floating Instant Voice Stop Bar (Visible automatically whenever bot is talking) -->
-<div id="ljGlobalStopBar" style="display:none;position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:10001;background:linear-gradient(135deg,#b91c1c,#ef4444);color:#ffffff;padding:10px 20px;border-radius:999px;box-shadow:0 14px 36px rgba(185,28,28,.55);border:2px solid #fecaca;align-items:center;gap:14px;font-weight:800;font-size:13px;">
+<div id="ljGlobalStopBar" style="display:none;position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:10001;background:linear-gradient(135deg,#1e7342,#2d9659);color:#ffffff;padding:10px 20px;border-radius:999px;box-shadow:0 14px 36px rgba(30,115,66,.45);border:1.5px solid rgba(167,215,188,.55);align-items:center;gap:14px;font-weight:800;font-size:13px;">
   <span>🔊 La Jefatura está hablando (Resumen Diario + Clima)…</span>
-  <button type="button" onclick="window.stopAllBotVoice && window.stopAllBotVoice()" style="background:#ffffff;color:#991b1b;border:0;padding:6px 16px;border-radius:999px;font-weight:900;font-size:12.5px;cursor:pointer;letter-spacing:.04em;box-shadow:0 2px 8px rgba(0,0,0,.2)">🛑 CALLAR AHORA (ESC)</button>
+  <button type="button" onclick="window.stopAllBotVoice && window.stopAllBotVoice()" style="background:#ffffff;color:#143824;border:0;padding:6px 16px;border-radius:999px;font-weight:900;font-size:12.5px;cursor:pointer;letter-spacing:.04em;box-shadow:0 2px 8px rgba(0,0,0,.2)">⏹️ SILENCIAR AHORA (ESC)</button>
 </div>
 
 <!-- Hidden legacy nav for DOM compatibility (No Menu Mirror) -->
@@ -1178,7 +1178,7 @@
         <input id="masterControlChatInput" placeholder="Habla o escribe a La Jefatura (ej. «cam», «uni», «qué errores hay», «aprende que...», «recordatorio por correo...»)" style="flex:1;background:transparent;border:0;color:var(--txt);font-size:12.5px;outline:none;padding:6px 4px" onkeydown="if(event.key==='Enter'){event.preventDefault();runMasterControlChatCommand();}">
         <button type="button" id="mcVoiceMicBtn" onclick="window.LJ && window.LJ.startMic ? window.LJ.startMic(document.getElementById('masterControlChatInput')) : (window.LJSuper && window.LJSuper.toggleMic())" style="background:rgba(34,197,94,.18);color:#4ade80;border:1px solid rgba(34,197,94,.35);border-radius:999px;padding:6px 12px;font-size:11.5px;font-weight:800;cursor:pointer;white-space:nowrap" title="Hablar por micrófono">🎤 Voz</button>
         <button type="button" id="mcSendCmdBtn" onclick="runMasterControlChatCommand()" style="background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;border:0;border-radius:999px;padding:6px 14px;font-size:11.5px;font-weight:800;cursor:pointer;white-space:nowrap">+ Ejecutar</button>
-        <button type="button" class="lj-stop-voice-btn" onclick="window.stopAllBotVoice && window.stopAllBotVoice()" style="background:rgba(239,68,68,.2);color:#fca5a5;border:1px solid rgba(239,68,68,.4);border-radius:999px;padding:6px 10px;font-size:11px;font-weight:800;cursor:pointer" title="Callar Voz (ESC)">🛑</button>
+        <button type="button" class="lj-stop-voice-btn" onclick="window.stopAllBotVoice && window.stopAllBotVoice()" style="background:rgba(143,168,147,.16);color:#c8ded0;border:1px solid rgba(143,168,147,.32);border-radius:999px;padding:6px 10px;font-size:11px;font-weight:800;cursor:pointer" title="Silenciar Voz (ESC)">⏹️</button>
       </div>
 
       <!-- Right: Quick Actions & + New Pill -->
@@ -1281,9 +1281,9 @@
 
       <!-- Live Errors & Missing Connections Monitor + Company Learning Box -->
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:12px">
-        <div style="background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.35);border-radius:14px;padding:12px 14px">
+        <div style="background:rgba(143,168,147,.07);border:1px solid rgba(143,168,147,.26);border-radius:14px;padding:12px 14px">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-            <b style="font-size:12.5px;color:#fca5a5">⚠️ MONITOR EN VIVO DE ERRORES Y CONEXIONES FALTANTES</b>
+            <b style="font-size:12.5px;color:#b8cfc0">📡 MONITOR EN VIVO DE ESTADO Y CONEXIONES FALTANTES</b>
             <span class="tag critical" id="liveErrorsCountBadge">AUDITANDO</span>
           </div>
           <div id="liveErrorsAndMissingList" style="display:flex;flex-direction:column;gap:7px;font-size:11.5px"></div>
@@ -1573,7 +1573,7 @@
           <h4 style="font-size:11px;text-transform:uppercase;color:var(--dim);margin-bottom:10px">Intenciones y Últimas Conversaciones Reales (Sin PII)</h4>
           <div id="unitecIntentsBox"></div>
         </div>
-        <div style="grid-column:span 4;background:rgba(255,92,92,.05);border:1px solid rgba(255,92,92,.28);border-radius:11px;padding:12px 14px">
+        <div style="grid-column:span 4;background:rgba(143,168,147,.06);border:1px solid rgba(143,168,147,.24);border-radius:11px;padding:12px 14px">
           <h4 style="font-size:11px;text-transform:uppercase;color:var(--crit);margin-bottom:10px">Auditoría de Seguridad y Reporte a Juan (Building Innovation)</h4>
           <div id="unitecSecurityBox"></div>
         </div>
@@ -1645,7 +1645,7 @@
           </select>
           <button class="btn ghost sm" type="button" onclick="syncHikConnectLive(true)">Sincronizar Hik-Connect</button>
           <button class="btn sm" type="button" onclick="toggleCameraReportDrawer()">🛡️ Modo Vigilante &amp; Informe</button>
-          <button class="btn sm" type="button" style="background:#EB5757;color:#fff;border:0;font-weight:800" onclick="triggerCameraVigilantRepostNow()">🚨 Repostear Alerta Ahora</button>
+          <button class="btn sm" type="button" style="font-weight:800" onclick="triggerCameraVigilantRepostNow()">📡 Repostear Alerta Ahora</button>
           <button class="btn vio sm" type="button" onclick="window.open('/api/cameras/report.pdf?mode=example&lang=' + (typeof lang !== 'undefined' ? lang : 'es'), '_blank')">PDF Cámaras</button>
         </div>
       </h3>
@@ -1791,19 +1791,58 @@
         <button class="btn ghost sm" type="button" onclick="loadVoiceCallsHub(true)">🔄 Actualizar Llamadas y Transcripciones</button>
       </div>
 
+      <!-- How the Call Command Works & 1-Click Live Testing Bar -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px;margin-bottom:12px">
+        <div style="padding:10px 12px;border-radius:12px;background:var(--inset);border:1px solid var(--hair)">
+          <div style="font-size:11px;font-weight:800;color:var(--acc)">1️⃣ ORDENA POR VOZ O TEXTO</div>
+          <div class="muted" style="font-size:11px;margin-top:3px">Di: <i>«Call Roberto and ask what happened with the new products»</i> o <i>«Llama a Carlos sobre el contenedor»</i>.</div>
+        </div>
+        <div style="padding:10px 12px;border-radius:12px;background:var(--inset);border:1px solid var(--hair)">
+          <div style="font-size:11px;font-weight:800;color:var(--acc)">2️⃣ MARCACIÓN IA (SIP / TWILIO / WEB)</div>
+          <div class="muted" style="font-size:11px;margin-top:3px">El motor arma el guion del CEO, marca al número por LiveKit SIP / Twilio o Simulador de Voz en Vivo y conversa.</div>
+        </div>
+        <div style="padding:10px 12px;border-radius:12px;background:var(--inset);border:1px solid var(--hair)">
+          <div style="font-size:11px;font-weight:800;color:var(--acc)">3️⃣ TRANSCRIPCIÓN PALABRA POR PALABRA</div>
+          <div class="muted" style="font-size:11px;margin-top:3px">Guarda cada turno de voz con marca de tiempo y extrae el resultado ejecutivo en <code>mc.db</code>.</div>
+        </div>
+        <div style="padding:10px 12px;border-radius:12px;background:var(--inset);border:1px solid var(--hair)">
+          <div style="font-size:11px;font-weight:800;color:var(--acc)">4️⃣ DECISIÓN DEL CEO EN 1 CLIC</div>
+          <div class="muted" style="font-size:11px;margin-top:3px">Eliges la decisión con 1 clic o por voz → crea la tarea y envía confirmación a Telegram (<code>@Pegantebot</code>).</div>
+        </div>
+      </div>
+
       <!-- Delegate Outbound AI Phone Call Bar -->
-      <div style="display:grid;grid-template-columns:240px 180px 1fr auto auto;gap:8px;align-items:center;background:var(--inset);padding:10px 12px;border-radius:14px;border:1px solid var(--hair);margin-bottom:12px">
+      <div style="display:grid;grid-template-columns:230px 155px 1fr auto auto auto;gap:8px;align-items:center;background:var(--inset);padding:10px 12px;border-radius:14px;border:1px solid var(--hair);margin-bottom:12px">
         <select id="callContactSelect" class="inp" style="font-size:12px;font-weight:700" onchange="syncCallPhoneFromSelect()">
           <option value="Roberto Silva (Miami — UNITEC USA)|+13058904412|unitec_usa">🏛️ Roberto Silva (Miami — UNITEC USA)</option>
           <option value="Carlos Méndez (Logística Aduanas / Muelle 1)|+573104458920|espacios_importados">🏭 Carlos Méndez (Aduanas / Muelle 1)</option>
           <option value="Andrés Gómez (Director Comercial — Building)|+573147823310|building_innovation">🏗️ Andrés Gómez (Building Innovation)</option>
           <option value="Diana Sofía (Despachos — Espacios Importados)|+573158921044|espacios_importados">📦 Diana Sofía (Coordinadora Despachos)</option>
           <option value="Arq. Juliana Restrepo (Proyecto VIP BuildingApp)|+573116509812|buildingapp">🎨 Arq. Juliana Restrepo (BuildingApp VIP)</option>
+          <option value="Juan David García (Prueba en Celular CEO)|+17866575441|unitec_usa">📱 Probar en Celular de Juan (+1 786 657 5441)</option>
         </select>
         <input id="callPhoneInput" class="inp" value="+13058904412" placeholder="+1 / +57 Teléfono…" style="font-size:12px">
         <input id="callObjectiveInput" class="inp" placeholder="Objetivo de la llamada (ej. Preguntar qué pasó con los nuevos productos WPC, confirmar entrega y traer respuesta para decisión del CEO)…" onkeydown="if(event.key==='Enter'){event.preventDefault();initiateDelegatedVoiceCall();}">
         <button type="button" class="btn ghost sm" onclick="window.LJ && window.LJ.startMic && window.LJ.startMic(document.getElementById('callObjectiveInput'))">🎤 Dictar</button>
-        <button type="button" class="btn sm" onclick="initiateDelegatedVoiceCall()">📞 Hacer Llamada IA y Guardar Transcripción</button>
+        <button type="button" class="btn sm" onclick="initiateDelegatedVoiceCall()">📞 Hacer Llamada IA</button>
+        <button type="button" class="btn ghost sm" style="border-color:rgba(52,168,102,.55);color:var(--acc2);font-weight:800" onclick="startInteractiveBrowserCallTest()">🎧 Probar Llamada Interactiva con Voz</button>
+      </div>
+
+      <!-- Interactive Browser/Phone Live Call Simulator Box (Hidden until triggered) -->
+      <div id="interactiveLiveCallSimulatorBox" style="display:none;margin-bottom:12px;padding:14px 16px;border-radius:16px;background:rgba(24,28,25,.92);border:1.5px solid rgba(52,168,102,.55)">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+          <div>
+            <span class="tag ok">🎧 PRUEBA DE LLAMADA IA EN VIVO (ALTAVOZ + MICRÓFONO)</span>
+            <strong id="simCallHeaderTitle" style="margin-left:8px;font-size:13.5px">Conectando llamada saliente…</strong>
+          </div>
+          <button type="button" class="btn ghost sm" onclick="document.getElementById('interactiveLiveCallSimulatorBox').style.display='none';if(window.stopAllBotVoice)window.stopAllBotVoice();">✕ Cerrar Simulador</button>
+        </div>
+        <div id="simCallLiveTranscriptBox" style="padding:10px 12px;border-radius:10px;background:var(--inset);border:1px solid var(--hair);font-size:12px;line-height:1.5;margin-bottom:10px"></div>
+        <div style="display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center">
+          <input id="simCallUserReplyInput" class="inp" placeholder="Responde como el contacto (por micrófono o texto, ej. «Los nuevos productos WPC ya llegaron a bodega Miami y despachamos mañana a las 8am»)…" onkeydown="if(event.key==='Enter'){event.preventDefault();submitInteractiveBrowserCallReply();}">
+          <button type="button" class="btn ghost sm" onclick="window.LJ && window.LJ.startMic && window.LJ.startMic(document.getElementById('simCallUserReplyInput'))">🎤 Hablar Respuesta</button>
+          <button type="button" class="btn sm" onclick="submitInteractiveBrowserCallReply()">✅ Enviar Respuesta y Guardar Transcripción</button>
+        </div>
       </div>
 
       <div id="githubVoiceArchStrip" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:6px"></div>
@@ -2119,7 +2158,7 @@
         </div>
       </div>
       <div class="sa-actions">
-        <button type="button" class="btn sm lj-stop-voice-btn" onclick="window.stopAllBotVoice && window.stopAllBotVoice()" style="background:#EB5757;color:#fff;font-weight:900;border:0">🛑 CALLAR VOZ (ESC)</button>
+        <button type="button" class="btn ghost sm lj-stop-voice-btn" onclick="window.stopAllBotVoice && window.stopAllBotVoice()" style="font-weight:800">⏹️ SILENCIAR VOZ (ESC)</button>
         <button type="button" class="btn ghost sm" id="saVoiceToggleBtn" onclick="window.LJSuper && window.LJSuper.toggleAutoSpeak()">Voz Respuesta: ON</button>
         <button type="button" class="btn ghost sm" id="saWatchdogBtn" onclick="window.LJSuper && window.LJSuper.toggleWatchdogDrawer()">
           🛡️ Radar &amp; Alarmas <span class="cnt" id="saWatchdogBadge" style="margin-left:5px;background:rgba(16,185,129,.22);color:#34D399">5</span>
@@ -2160,10 +2199,11 @@
 
     <!-- Minimalist 1-Click Command & Question Starters -->
     <div class="sa-chips" id="saQuickChips">
-      <button type="button" class="sa-chip" style="border-color:#EB5757;color:#EB5757;font-weight:900" onclick="window.stopAllBotVoice && window.stopAllBotVoice()">🛑 Callar Voz Ahora</button>
+      <button type="button" class="sa-chip" style="border-color:rgba(143,168,147,.45);color:#b8cfc0;font-weight:800" onclick="window.stopAllBotVoice && window.stopAllBotVoice()">⏹️ Silenciar Voz Ahora</button>
       <button type="button" class="sa-chip" onclick="window.LJSuper.send('leer resumen del día')">🔊 Resumen del Día + Clima</button>
       <button type="button" class="sa-chip" onclick="window.LJSuper.send('cómo está el clima hoy en Miami y Colombia')">🌤️ Clima en Vivo (Miami &amp; Colombia)</button>
-      <button type="button" class="sa-chip warn" onclick="window.LJSuper.send('Agendar reunión con Juan mañana a las 3pm, redactarle un WhatsApp de confirmación y recordarme a las 2pm revisar el reporte de cámaras de UNITEC')">⚡ Orden Compuesta 3-en-1 (UNITEC & Cámaras)</button>
+      <button type="button" class="sa-chip warn" onclick="window.LJSuper.send('Ve a Telegram y envía un mensaje a todos preguntando qué pasó con los nuevos productos, envía un texto a Roberto sobre inventario Miami y llama a Carlos')">⚡ Orden Múltiple: Telegram + Texto + Llamada IA</button>
+      <button type="button" class="sa-chip" onclick="window.LJSuper.send('Llama a Roberto al +13058904412 y pregúntale qué pasó con los nuevos productos WPC en Miami')">📞 Probar Comando de Llamada IA</button>
       <button type="button" class="sa-chip" onclick="window.LJSuper.send('qué citas tengo hoy')">Citas y Agenda Hoy</button>
       <button type="button" class="sa-chip" onclick="window.LJSuper.send('cuál es el ingreso proyectado y pipeline de todas las empresas')">Ingresos y Pipeline (5 Empresas)</button>
       <button type="button" class="sa-chip" onclick="window.LJSuper.send('cuántos miembros nuevos hay en BuildingApp y conversaciones en UNITEC')">Métricas BuildingApp &amp; UNITEC</button>
@@ -2180,8 +2220,8 @@
       <button type="button" class="sa-mic-btn" id="saMicBtn" onclick="window.stopAllBotVoice && window.stopAllBotVoice(); window.LJSuper && window.LJSuper.toggleMic()" title="Dictar orden o pregunta por voz (silencia la voz actual automáticamente)">
         <span id="saMicLabel">🎤 VOZ</span>
       </button>
-      <button type="button" class="sa-mic-btn" onclick="window.stopAllBotVoice && window.stopAllBotVoice()" title="Callar voz inmediatamente (ESC)" style="background:#EB5757;color:#fff;border-color:#EB5757;font-weight:900">
-        🛑 PARAR VOZ
+      <button type="button" class="sa-mic-btn" onclick="window.stopAllBotVoice && window.stopAllBotVoice()" title="Silenciar voz inmediatamente (ESC)" style="background:rgba(143,168,147,.16);color:#c8ded0;border-color:rgba(143,168,147,.35);font-weight:800">
+        ⏹️ PARAR VOZ
       </button>
       <input id="saInput" class="sa-input" autocomplete="off" placeholder="Pregunta o pide lo que quieras por voz o texto sobre cualquiera de las empresas, clima, cámaras, renders o tareas…" />
       <button type="submit" class="sa-send-btn" id="saSendBtn">EJECUTAR</button>
@@ -3162,6 +3202,64 @@ function decideVoiceCallOutcome(callId, decisionText) {
       showToast(`✅ Decisión ejecutiva guardada para llamada #${callId} y enviada a Telegram.`);
       loadVoiceCallsHub(false);
     }
+  }).catch(() => {});
+}
+
+let _activeSimCallState = null;
+function startInteractiveBrowserCallTest() {
+  const sel = document.getElementById('callContactSelect');
+  const ph = document.getElementById('callPhoneInput');
+  const objInp = document.getElementById('callObjectiveInput');
+  const [contactName, defaultPh, coSlug] = ((sel && sel.value) || 'Roberto Silva (Miami — UNITEC USA)|+13058904412|unitec_usa').split('|');
+  const toPhone = (ph && ph.value ? ph.value : defaultPh).trim();
+  const objective = (objInp && objInp.value ? objInp.value : 'Consultar qué pasó con los nuevos productos WPC y confirmar fecha de entrega').trim();
+  const shortName = contactName.split('(')[0].trim();
+
+  const greetingLine = `Hola ${shortName}, te habla el Asistente de Voz de Juan David García, CEO de La Jefatura. Te llamo directamente con el siguiente objetivo: ${objective}. ¿Me confirmas el estado actual y qué decisión necesitas del CEO?`;
+  _activeSimCallState = {
+    contact_name: contactName,
+    to_phone: toPhone,
+    company: coSlug || 'unitec_usa',
+    objective,
+    greeting: greetingLine
+  };
+
+  const box = document.getElementById('interactiveLiveCallSimulatorBox');
+  const titleEl = document.getElementById('simCallHeaderTitle');
+  const transEl = document.getElementById('simCallLiveTranscriptBox');
+  if (box) box.style.display = 'block';
+  if (titleEl) titleEl.textContent = `📞 En llamada activa con ${contactName} (${toPhone})`;
+  if (transEl) {
+    transEl.innerHTML = `
+      <div><b style="color:var(--acc2)">[00:02] Asistente Voz IA (La Jefatura):</b> «${greetingLine}»</div>
+      <div class="muted" style="margin-top:6px">🎙️ <i>Escuchando tu respuesta como ${shortName}… (habla con el botón 🎤 o escribe abajo y presiona Enviar)</i></div>
+    `;
+  }
+  playColombianTtsText(greetingLine);
+}
+
+function submitInteractiveBrowserCallReply() {
+  if (!_activeSimCallState) return;
+  const inp = document.getElementById('simCallUserReplyInput');
+  const replyText = (inp && inp.value ? inp.value : 'Los nuevos productos WPC ya quedaron inspeccionados en Miami y estamos listos para despachar mañana a las 8:00 AM con autorización de Juan David.').trim();
+  const st = _activeSimCallState;
+  fetch('/api/calls/initiate', {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      contact_name: st.contact_name,
+      to_phone: st.to_phone,
+      company: st.company,
+      objective: `${st.objective} | Respuesta en vivo del contacto: ${replyText}`,
+      auto_execute: true
+    })
+  }).then(r => r.json()).then(d => {
+    if (inp) inp.value = '';
+    const box = document.getElementById('interactiveLiveCallSimulatorBox');
+    if (box) box.style.display = 'none';
+    loadVoiceCallsHub(false);
+    const closingSpeech = `Perfecto. He guardado la transcripción completa y el resultado de la llamada con ${st.contact_name} para la decisión del CEO.`;
+    playColombianTtsText(closingSpeech);
+    showToast(`✅ Llamada interactiva guardada en mc.db (#${d.call_id || ''}) con transcripción y opciones de decisión.`);
   }).catch(() => {});
 }
 
@@ -4558,7 +4656,7 @@ const CTO_PROJECT_SPECS = {
       {label: 'Planta Pick-In · DVR AF5246237 (16/16)', pct: 100, val: '16/16 ONLINE (4 TB)', color: '#0ea5e9'},
       {label: 'USA Miami · NVR GC5348382 (8/8)', pct: 100, val: '8/8 ONLINE (1 TB)', color: '#3b82f6'},
       {label: 'Disponibilidad Global de Video (53/55)', pct: 96.4, val: '96.4% Uptime', color: '#22c55e'},
-      {label: 'Salón & Oficina IDEO · Wi-Fi (0/2 Offline)', pct: 8, val: '0/2 OFFLINE (Wi-Fi)', color: '#ef4444'}
+      {label: 'Salón & Oficina IDEO · Wi-Fi (0/2 Offline)', pct: 8, val: '0/2 OFFLINE (Wi-Fi)', color: '#8fa893'}
     ],
     trendTitle: 'Disponibilidad de Canales de Video en Vivo (53/55 Canales · 11.04 TB Activos)',
     trendPoints: [53, 53, 52, 53, 53, 53, 53]
@@ -5064,7 +5162,7 @@ function renderHikConnectCameras() {
 
   if (stripEl) {
     stripEl.innerHTML = devs.map(d => `
-      <div style="background:rgba(7,11,20,.65);border:1px solid ${d.online ? 'rgba(16,185,129,.35)' : 'rgba(255,92,92,.35)'};padding:8px 10px;border-radius:10px;cursor:pointer" onclick="document.getElementById('hikDeviceFilter').value='${d.serial.startsWith('BF') ? 'IDEO' : d.serial}';renderHikConnectCameras()">
+      <div style="background:rgba(7,11,20,.65);border:1px solid ${d.online ? 'rgba(52,168,102,.35)' : 'rgba(143,168,147,.32)'};padding:8px 10px;border-radius:10px;cursor:pointer" onclick="document.getElementById('hikDeviceFilter').value='${d.serial.startsWith('BF') ? 'IDEO' : d.serial}';renderHikConnectCameras()">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:4px">
           <b style="font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${d.name}</b>
           <span class="tag ${d.online ? 'ok' : 'critical'}" style="font-size:9px;padding:1px 5px">${d.online ? 'ONLINE' : 'OFFLINE'}</span>
@@ -5094,7 +5192,7 @@ function renderHikConnectCameras() {
       camsBox.innerHTML = preview4.map((c, i) => `
         <div class="cam"><canvas id="cv${i}" width="320" height="180"></canvas>
           <span class="lbl">${c.id} · ${c.name} (${c.device_name})</span>
-          <span class="rec" style="background:${c.active ? '#10B981' : '#ff5c5c'}">${c.active ? 'LIVE OK' : 'OFFLINE'}</span>
+          <span class="rec" style="background:${c.active ? '#34a866' : '#64748b'};color:#fff;padding:2px 6px;border-radius:6px">${c.active ? 'LIVE OK' : 'OFFLINE'}</span>
           <span class="stamp" id="st${i}"></span>
         </div>
       `).join('');
@@ -5193,7 +5291,7 @@ function renderCameraDailyReportBox() {
         <b style="margin-left:6px">53/55 Canales en Vivo · ${vt.people_tracked || 201} Personas · ${vt.entries_total || 196} Entradas / ${vt.exits_total || 192} Salidas · ${susp.length || 5} Alertas Sospechosas</b>
       </div>
       <div style="display:flex;gap:6px">
-        <button class="btn sm" type="button" style="background:#EB5757;color:#fff;border:0;font-weight:800" onclick="triggerCameraVigilantRepostNow()">🚨 Repostear Alerta</button>
+        <button class="btn sm" type="button" style="font-weight:800" onclick="triggerCameraVigilantRepostNow()">📡 Repostear Alerta</button>
         <button class="btn ghost sm" type="button" onclick="toggleCameraReportDrawer()">Expandir Modo Vigilante →</button>
       </div>
     </div>`;
@@ -5207,7 +5305,7 @@ function renderCameraDailyReportBox() {
         <span class="tag medium">AUTO-REPOST EN TRIGGERS: TELEGRAM + EMAIL + PDF</span>
       </div>
       <div style="display:flex;gap:6px;flex-wrap:wrap">
-        <button class="btn sm" type="button" style="background:#EB5757;color:#fff;border:0;font-weight:800" onclick="triggerCameraVigilantRepostNow()">🚨 ${es ? 'Repostear Alerta Ahora (TG + Email + PDF)' : 'Repost Alert Now (TG + Email + PDF)'}</button>
+        <button class="btn sm" type="button" style="font-weight:800" onclick="triggerCameraVigilantRepostNow()">📡 ${es ? 'Repostear Alerta Ahora (TG + Email + PDF)' : 'Repost Alert Now (TG + Email + PDF)'}</button>
         <button class="btn ghost sm" type="button" onclick="window.open('/api/cameras/jev/decide', '_blank')">🧠 ${es ? 'Ver JSON /v1/decide JEV AI' : 'View JEV AI /v1/decide JSON'}</button>
         <button class="btn ghost sm" type="button" onclick="window.open('/api/cameras/report.pdf?mode=example&lang=' + (typeof lang !== 'undefined' ? lang : 'es'), '_blank')">📄 ${es ? 'Descargar PDF Vigilante' : 'Download Vigilant PDF'}</button>
         <button class="btn ghost sm" type="button" onclick="toggleCameraReportDrawer()">${es ? 'Ocultar' : 'Hide'}</button>
@@ -5237,7 +5335,7 @@ function renderCameraDailyReportBox() {
         <div style="font-weight:800;font-size:13.5px;color:var(--warn)">${vt.avg_dwell_minutes || 34}m prom · ${vt.max_dwell_minutes || 68}m máx</div>
         <div class="muted" style="font-size:9.5px">Rec. Muelle &lt;=45m · Pausa &lt;=20m</div>
       </div>
-      <div style="background:rgba(255,92,92,.08);border:1px solid rgba(255,92,92,.35);border-radius:8px;padding:7px 9px">
+      <div style="background:rgba(143,168,147,.08);border:1px solid rgba(143,168,147,.28);border-radius:8px;padding:7px 9px">
         <div class="muted" style="font-size:9.5px">${es ? 'ACTIVIDAD SOSPECHOSA' : 'SUSPECT ACTIVITY'}</div>
         <div style="font-weight:800;font-size:13.5px;color:var(--crit)">${susp.length || 5} ${es ? 'alertas activas' : 'active alerts'}</div>
         <div class="muted" style="font-size:9.5px">IDEO 22:59 · Perímetro 23:18</div>
@@ -5275,7 +5373,7 @@ function renderCameraDailyReportBox() {
             const sNoul = typeof jd.suspect_noul === 'number' ? Math.round(jd.suspect_noul * 100) : (p.suspect ? 85 : 4);
             const dNoul = typeof jd.dwell_violation_noul === 'number' ? Math.round(jd.dwell_violation_noul * 100) : (isWarn ? 82 : 12);
             const uScore = typeof jd.urgency_score === 'number' ? jd.urgency_score : (isCrit ? 2 : (isWarn ? 1 : 0));
-            return `<tr style="border-bottom:1px solid rgba(255,255,255,.05);background:${p.suspect ? 'rgba(255,92,92,.04)' : 'transparent'}">
+            return `<tr style="border-bottom:1px solid rgba(255,255,255,.05);background:${p.suspect ? 'rgba(143,168,147,.06)' : 'transparent'}">
               <td style="padding:6px;vertical-align:top">
                 <b>${p.site}</b>
                 <div style="color:var(--acc);font-size:10px">${p.cam}</div>
@@ -5299,7 +5397,7 @@ function renderCameraDailyReportBox() {
                 <div class="muted" style="font-size:9px;margin-top:2px">${jd.behavior_choice || 'calibrated'} (Dwell ${dNoul}%)</div>
               </td>
               <td style="padding:6px;vertical-align:top;line-height:1.35">
-                <div style="font-weight:700;color:${p.suspect ? '#ff8a8a' : 'var(--fg)'}">${es ? p.behavior_es : p.behavior_en}</div>
+                <div style="font-weight:700;color:${p.suspect ? '#b8cfc0' : 'var(--fg)'}">${es ? p.behavior_es : p.behavior_en}</div>
                 <div class="muted" style="font-size:10px;margin-top:2px">→ ${es ? p.what_they_did_es : p.what_they_did_en}</div>
               </td>
             </tr>`;
@@ -5310,7 +5408,7 @@ function renderCameraDailyReportBox() {
 
     <!-- Suspect Activity & Recommended Check Windows Grid -->
     <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;font-size:11px;margin-bottom:10px">
-      <div style="background:rgba(255,92,92,.06);border:1px solid rgba(255,92,92,.3);border-radius:8px;padding:9px 11px">
+      <div style="background:rgba(143,168,147,.06);border:1px solid rgba(143,168,147,.26);border-radius:8px;padding:9px 11px">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
           <b style="color:var(--crit)">🚨 ${es ? 'Actividad Sospechosa y Disparadores Vigilantes' : 'Suspect Activity & Vigilant Triggers'}</b>
           <span class="tag critical" style="font-size:9px">${susp.length} TRIGGERS</span>
@@ -5472,7 +5570,7 @@ async function renderGreeting(doSpeak) {
           <div class="muted" style="margin-top:3px">${b.label} · ${es ? 'Clima & Horas en Vivo (Miami, Colombia, Chile y Sudamérica) + 5 Proyectos + 55 Cámaras' : 'Live Weather & Clocks (Miami, Colombia, Chile & South America) + 5 Projects + 55 Cameras'}</div>
         </div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
-          <button type="button" class="btn sm lj-stop-voice-btn" style="background:#EB5757;color:#fff;border:0;font-weight:900;padding:6px 14px" onclick="window.stopAllBotVoice && window.stopAllBotVoice(); showToast(lang==='es'?'Voz detenida.':'Voice stopped.')">🛑 ${es ? 'CALLAR VOZ (ESC)' : 'STOP VOICE (ESC)'}</button>
+          <button type="button" class="btn ghost sm lj-stop-voice-btn" style="font-weight:800;padding:6px 14px" onclick="window.stopAllBotVoice && window.stopAllBotVoice(); showToast(lang==='es'?'Voz detenida.':'Voice stopped.')">⏹️ ${es ? 'SILENCIAR VOZ (ESC)' : 'STOP VOICE (ESC)'}</button>
           <button type="button" class="btn ghost sm" onclick="toggleOrStopVoiceBrief()">🔊 ${es ? 'Escuchar / Callar Resumen' : 'Listen / Stop Summary'}</button>
           <button type="button" class="btn ghost sm" onclick="switchTab('assistant'); setTimeout(()=>{const el=document.getElementById('saInput'); if(el) el.focus();},120)">💬 ${es ? 'Preguntar por Voz / Chat' : 'Ask by Voice / Chat'}</button>
           <button type="button" class="btn ghost sm" onclick="toggleGreeting()">${es ? (PREFS.greeting_enabled ? 'Auto-Saludo: ON' : 'Auto-Saludo: OFF') : (PREFS.greeting_enabled ? 'Auto-Greet: ON' : 'Auto-Greet: OFF')}</button>
@@ -6028,7 +6126,7 @@ function loadLiveCompanyDepartmentsState(companyOverride, toastOnDone) {
             const isEmpty = !!dep.empty;
             const statusStr = String(dep.status || (isEmpty ? 'VACÍO' : 'LIVE'));
             const isAlert = /OFFLINE|ERROR|ALERTA/i.test(statusStr) && !isEmpty;
-            const statusColor = isEmpty ? '#22c55e' : (isAlert ? '#ef4444' : '#10b981');
+            const statusColor = isEmpty ? '#52b788' : (isAlert ? '#8fa893' : '#34a866');
             const nameText = dep.name || dep.name_es || 'Departamento';
             const iconText = dep.icon ? (dep.icon + ' ') : '';
             const itemsList = dep.items || [];
@@ -6061,7 +6159,7 @@ function loadLiveCompanyDepartmentsState(companyOverride, toastOnDone) {
         } else {
           errListEl.innerHTML = combined.map(item => {
             const sev = String(item.severity || 'medium').toLowerCase();
-            const col = sev === 'high' ? '#ef4444' : (sev === 'medium' ? '#22c55e' : '#60a5fa');
+            const col = sev === 'high' ? '#8fa893' : (sev === 'medium' ? '#52b788' : '#7ea88f');
             return `
               <div style="background:rgba(0,0,0,.28);border:1px solid ${col}44;border-left:3px solid ${col};border-radius:10px;padding:8px 10px">
                 <div style="display:flex;justify-content:space-between;align-items:center;gap:6px">
@@ -6283,7 +6381,7 @@ setTimeout(() => {
   .ag-item.done .t b{text-decoration:line-through;opacity:.55}
   .ag-item .act-btn{border:0;background:rgba(205,182,140,.12);color:inherit;font-size:10px;font-weight:700;padding:3px 7px;border-radius:6px}
   .ag-item .x{border:0;background:transparent;color:var(--dim);font-weight:800;padding:2px 6px}
-  .ag-item .x:hover{color:#ff5c5c}
+  .ag-item .x:hover{color:#8fa893}
   .ag-form{display:grid;grid-template-columns:1fr auto;gap:6px}
   .ag-form input{border:1px solid rgba(205,182,140,.2);border-radius:10px;padding:7px 9px;font:inherit;min-width:0;background:rgba(0,0,0,.28);color:inherit;font-size:11.5px}
   .ag-form .row{grid-column:1/3;display:flex;gap:6px;padding:0;border:0}
@@ -6904,7 +7002,7 @@ setTimeout(() => {
       }
       box.innerHTML = list.map(a => {
         const sev = String(a.severity || 'HIGH').toUpperCase();
-        const col = sev === 'CRITICAL' ? '#EB5757' : (sev === 'HIGH' ? '#F2994A' : '#27AE60');
+        const col = sev === 'CRITICAL' ? '#8fa893' : (sev === 'HIGH' ? '#52b788' : '#34a866');
         const title = (isEn ? a.title_en : a.title_es) || a.title || '';
         const detail = a.metric || a.detail || '';
         const cmd = (isEn ? a.quick_command_en : a.quick_command_es) || a.suggested_command || '';
