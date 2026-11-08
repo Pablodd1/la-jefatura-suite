@@ -1,0 +1,681 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>La Jefatura & El Jefesito — Presentación Ejecutiva Minimalista para el CEO</title>
+<style>
+  :root {
+    --bg: #080d0b;
+    --card: #0f1713;
+    --card-soft: #131e19;
+    --border: rgba(82, 183, 136, 0.22);
+    --border-strong: rgba(82, 183, 136, 0.45);
+    --fg: #f1f7f4;
+    --muted: #95aba0;
+    --sage: #34a866;
+    --sage-light: #52b788;
+    --sage-pale: #b8cfc0;
+    --amber-soft: #c9b47c;
+    --slate-soft: #8fa893;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 18% 12%, rgba(52, 168, 102, 0.12), transparent 55%), var(--bg);
+    color: var(--fg);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+  }
+
+  /* Top Bar */
+  .top-bar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 58px;
+    background: rgba(8, 13, 11, 0.88);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    z-index: 100;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 800;
+    font-size: 15px;
+    letter-spacing: -0.3px;
+  }
+  .brand-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--sage);
+    box-shadow: 0 0 12px var(--sage);
+  }
+  .brand-sub {
+    color: var(--sage-light);
+    font-weight: 600;
+    font-size: 12.5px;
+    padding-left: 8px;
+    border-left: 1px solid var(--border);
+  }
+  @media (max-width: 720px) {
+    .brand-sub { display: none; }
+  }
+
+  .top-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn {
+    background: rgba(52, 168, 102, 0.14);
+    color: var(--fg);
+    border: 1px solid var(--border-strong);
+    padding: 7px 13px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn:hover {
+    background: var(--sage);
+    color: #06100b;
+  }
+  .btn.primary {
+    background: var(--sage);
+    color: #06100b;
+  }
+  .btn.primary:hover {
+    background: var(--sage-light);
+  }
+
+  /* Slide Viewport */
+  .deck-viewport {
+    position: absolute;
+    top: 58px;
+    bottom: 64px;
+    left: 0;
+    right: 0;
+    overflow-y: auto;
+    padding: 28px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .slide {
+    display: none;
+    width: 100%;
+    max-width: 1060px;
+    margin: auto;
+    animation: fadeIn 0.28s ease;
+  }
+  .slide.active {
+    display: block;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: rgba(52, 168, 102, 0.12);
+    border: 1px solid var(--border-strong);
+    color: var(--sage-light);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  h1 {
+    font-size: clamp(26px, 4vw, 44px);
+    line-height: 1.12;
+    letter-spacing: -0.8px;
+    font-weight: 800;
+    margin-bottom: 14px;
+  }
+  h1 span {
+    color: var(--sage-light);
+  }
+
+  .lead {
+    font-size: clamp(14.5px, 1.8vw, 18px);
+    line-height: 1.55;
+    color: var(--muted);
+    max-width: 850px;
+    margin-bottom: 24px;
+  }
+
+  /* Grid Cards */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+  @media (max-width: 900px) {
+    .grid-3, .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 640px) {
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .deck-viewport { align-items: flex-start; padding: 18px 14px; }
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 18px 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  }
+  .card.highlight {
+    background: linear-gradient(145deg, rgba(52, 168, 102, 0.13), rgba(15, 23, 19, 0.95));
+    border-color: var(--border-strong);
+  }
+
+  .card-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: rgba(52, 168, 102, 0.18);
+    color: var(--sage-light);
+    font-weight: 800;
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+  .card h3 {
+    font-size: 16.5px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--fg);
+  }
+  .card p {
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+  .bullet-list {
+    list-style: none;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .bullet-list li {
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--fg);
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .bullet-list li::before {
+    content: "✓";
+    color: var(--sage-light);
+    font-weight: 900;
+    flex-shrink: 0;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 6px;
+    font-size: 11.5px;
+    font-weight: 700;
+    background: rgba(52, 168, 102, 0.16);
+    color: var(--sage-light);
+    border: 1px solid var(--border);
+  }
+  .badge.pending {
+    background: rgba(201, 180, 124, 0.15);
+    color: var(--amber-soft);
+    border-color: rgba(201, 180, 124, 0.35);
+  }
+
+  /* Flow Banner */
+  .flow-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-top: 18px;
+  }
+  @media (max-width: 780px) {
+    .flow-strip { grid-template-columns: 1fr; }
+  }
+  .flow-step {
+    background: var(--card-soft);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 15px 16px;
+    position: relative;
+  }
+  .flow-step b {
+    display: block;
+    color: var(--sage-light);
+    font-size: 12.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-bottom: 5px;
+  }
+  .flow-step span {
+    font-size: 13.5px;
+    line-height: 1.45;
+    color: var(--fg);
+  }
+
+  /* Bottom Navigation */
+  .bottom-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 64px;
+    background: rgba(8, 13, 11, 0.92);
+    backdrop-filter: blur(16px);
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    z-index: 100;
+  }
+  .dots {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .dot {
+    width: 28px;
+    height: 7px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.16);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .dot.active {
+    width: 44px;
+    background: var(--sage);
+  }
+  .slide-counter {
+    font-size: 12.5px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  @media print {
+    html, body { overflow: visible; height: auto; background: #080d0b; }
+    .top-bar, .bottom-bar { display: none !important; }
+    .deck-viewport { position: static; padding: 0; display: block; }
+    .slide { display: block !important; page-break-after: always; padding: 30px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top-bar">
+  <div class="brand">
+    <span class="brand-dot"></span>
+    <span>LA JEFATURA & EL JEFESITO</span>
+    <span class="brand-sub" id="brandSub">Presentación Ejecutiva Minimalista · Modo CEO Cero-Manos</span>
+  </div>
+  <div class="top-actions">
+    <button class="btn" type="button" onclick="toggleLang()" id="langBtn">🌐 EN / ES</button>
+    <button class="btn" type="button" onclick="window.print()">🖨️ PDF</button>
+    <a class="btn primary" href="/">🚀 <span data-es="Abrir WebApp en Vivo" data-en="Open Live WebApp">Abrir WebApp en Vivo</span></a>
+  </div>
+</header>
+
+<main class="deck-viewport">
+
+  <!-- SLIDE 1: THE ZERO-HANDS CEO VISION -->
+  <section class="slide active" data-index="0">
+    <div class="eyebrow" data-es="Lámina 1 de 6 · Filosofía Ejecutiva" data-en="Slide 1 of 6 · Executive Philosophy">Lámina 1 de 6 · Filosofía Ejecutiva</div>
+    <h1 data-es="El CEO no opera herramientas.<br><span>Recibe el panorama, aprueba y pone a todos en movimiento.</span>"
+        data-en="The CEO doesn't operate software.<br><span>You see the big picture, approve, and set everyone in motion.</span>">
+      El CEO no opera herramientas.<br><span>Recibe el panorama, aprueba y pone a todos en movimiento.</span>
+    </h1>
+    <p class="lead" data-es="La Jefatura (El Jefesito) es tu Centro de Mando Ejecutivo para iPhone, Android y Desktop. No tienes que redactar desde cero, ni buscar en 4 sistemas, ni hacer seguimiento manual: el asistente entiende, analiza, pre-redacta y ejecuta por ti."
+       data-en="La Jefatura (El Jefesito) is your Executive Command Center for iPhone, Android, and Desktop. You never write from scratch, dig through 4 systems, or chase people manually: the assistant understands, analyzes, pre-drafts, and executes for you.">
+      La Jefatura (El Jefesito) es tu Centro de Mando Ejecutivo para iPhone, Android y Desktop. No tienes que redactar desde cero, ni buscar en 4 sistemas, ni hacer seguimiento manual: el asistente entiende, analiza, pre-redacta y ejecuta por ti.
+    </p>
+
+    <div class="flow-strip">
+      <div class="flow-step">
+        <b data-es="1. Recibes el Panorama" data-en="1. Get the Big Picture">1. Recibes el Panorama</b>
+        <span data-es="Resumen matutino y vespertino con razones claras: ventas, cartera, obras, 55 cámaras y alertas críticas."
+              data-en="Morning & evening executive brief with clear reasons: sales, AR, projects, 55 cameras, and critical alerts.">Resumen matutino y vespertino con razones claras: ventas, cartera, obras, 55 cámaras y alertas críticas.</span>
+      </div>
+      <div class="flow-step">
+        <b data-es="2. Revisas Borradores" data-en="2. Review Pre-Drafts">2. Revisas Borradores</b>
+        <span data-es="Cada correo y cada mensaje de Telegram ya tiene su respuesta redactada con tu tono ejecutivo lista para 1 clic."
+              data-en="Every email and Telegram message already has a reply drafted in your executive voice, ready for 1-click approval.">Cada correo y cada mensaje de Telegram ya tiene su respuesta redactada con tu tono ejecutivo lista para 1 clic.</span>
+      </div>
+      <div class="flow-step">
+        <b data-es="3. Hablas y Delegas" data-en="3. Speak & Delegate">3. Hablas y Delegas</b>
+        <span data-es="Dictas varios comandos en una sola frase (Telegram, Correos, Tareas, Recordatorios y Llamadas IA) y pones a todo el equipo en marcha."
+              data-en="Dictate multiple commands in a single sentence (Telegram, Emails, Tasks, Reminders & AI Calls) to set the whole team in motion.">Dictas varios comandos en una sola frase (Telegram, Correos, Tareas, Recordatorios y Llamadas IA) y pones a todo el equipo en marcha.</span>
+      </div>
+      <div class="flow-step">
+        <b data-es="4. Recibes Resultados" data-en="4. Receive Results">4. Recibes Resultados</b>
+        <span data-es="Todo queda guardado en bitácora SQLite: transcripciones de llamadas, confirmaciones, PDFs y trazabilidad."
+              data-en="Everything is logged in SQLite: call transcripts, delivery receipts, PDFs, and full audit trails.">Todo queda guardado en bitácora SQLite: transcripciones de llamadas, confirmaciones, PDFs y trazabilidad.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 2: WHAT WE UNDERSTAND & ANALYZE (THE BIG PICTURE) -->
+  <section class="slide" data-index="1">
+    <div class="eyebrow" data-es="Lámina 2 de 6 · Inteligencia y Comprensión" data-en="Slide 2 of 6 · Intelligence & Understanding">Lámina 2 de 6 · Inteligencia y Comprensión</div>
+    <h1 data-es="Qué entendemos y analizamos <span>sin que muevas un dedo</span>"
+        data-en="What we understand and analyze <span>without you lifting a finger</span>">
+      Qué entendemos y analizamos <span>sin que muevas un dedo</span>
+    </h1>
+    <p class="lead" data-es="Antes de que abras el celular, el motor ya cruzó la información de tus empresas y te explica el «por qué» detrás de cada número para que tomes decisiones en segundos."
+       data-en="Before you even unlock your phone, the engine has cross-referenced your companies and explains the 'why' behind every number so you can decide in seconds.">
+      Antes de que abras el celular, el motor ya cruzó la información de tus empresas y te explica el «por qué» detrás de cada número para que tomes decisiones en segundos.
+    </p>
+
+    <div class="grid-2">
+      <div class="card highlight">
+        <div class="card-num">01</div>
+        <h3 data-es="3 Empresas Unificadas en Tiempo Real" data-en="3 Companies Unified in Real Time">3 Empresas Unificadas en Tiempo Real</h3>
+        <ul class="bullet-list">
+          <li data-es="Building Innovation / BuildingApp (buildingapp.us): Proyectos activos, licitaciones, flujo de caja y clientes en vivo."
+              data-en="Building Innovation / BuildingApp (buildingapp.us): Active projects, bids, cashflow, and live clients.">Building Innovation / BuildingApp (buildingapp.us): Proyectos activos, licitaciones, flujo de caja y clientes en vivo.</li>
+          <li data-es="UNITEC USA (unitec.ai): Pipeline comercial, cotizaciones abiertas, inventario y embudo de conversión."
+              data-en="UNITEC USA (unitec.ai): Sales pipeline, open quotes, inventory, and conversion funnel.">UNITEC USA (unitec.ai): Pipeline comercial, cotizaciones abiertas, inventario y embudo de conversión.</li>
+          <li data-es="Espacios Importados & Planta Pick-In: Operaciones de planta, muelles de carga 1–4, despachos de láminas WPC/PVC y logística."
+              data-en="Espacios Importados & Pick-In Plant: Plant operations, loading docks 1–4, WPC/PVC dispatch, and logistics.">Espacios Importados & Planta Pick-In: Operaciones de planta, muelles de carga 1–4, despachos de láminas WPC/PVC y logística.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-num">02</div>
+        <h3 data-es="Periódico Ejecutivo y Diagnóstico con Razones" data-en="Executive Newspaper & Reasoned Diagnostics">Periódico Ejecutivo y Diagnóstico con Razones</h3>
+        <ul class="bullet-list">
+          <li data-es="No solo muestra gráficos: te entrega las razones exactas de los cuellos de botella y qué acción recomienda aprobar."
+              data-en="Not just charts: delivers the exact reasons behind bottlenecks and which action it recommends approving.">No solo muestra gráficos: te entrega las razones exactas de los cuellos de botella y qué acción recomienda aprobar.</li>
+          <li data-es="Envío automático diario por Correo (con PDF ejecutivo adjunto) y por Telegram a Juan David y Jasmel."
+              data-en="Automated daily delivery via Email (with Executive PDF attached) and Telegram to Juan David and Jasmel.">Envío automático diario por Correo (con PDF ejecutivo adjunto) y por Telegram a Juan David y Jasmel.</li>
+          <li data-es="Memoria de Hábitos del CEO: aprende tus horarios (mañana, tarde, cierre de día) y el estilo exacto con el que respondes."
+              data-en="CEO Behavioral Memory: learns your schedule (morning, afternoon, close of day) and your exact reply style.">Memoria de Hábitos del CEO: aprende tus horarios (mañana, tarde, cierre de día) y el estilo exacto con el que respondes.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 3: 55 CAMERAS VIGILANT MODE + META SAM 3.1 + JEV AI -->
+  <section class="slide" data-index="2">
+    <div class="eyebrow" data-es="Lámina 3 de 6 · Visión Artificial 24/7" data-en="Slide 3 of 6 · 24/7 Computer Vision">Lámina 3 de 6 · Visión Artificial 24/7</div>
+    <h1 data-es="55 Cámaras en Modo Vigilante: <span>Meta SAM 3.1 + JEV AI</span>"
+        data-en="55 Cameras in Vigilant Mode: <span>Meta SAM 3.1 + JEV AI</span>">
+      55 Cámaras en Modo Vigilante: <span>Meta SAM 3.1 + JEV AI</span>
+    </h1>
+    <p class="lead" data-es="Conectado en vivo a tu cuenta Hik-Connect (il6usm · 5 equipos · 55 canales · 12.92 TB). Combinamos dos motores de IA open-source de última generación y guardamos absolutamente todo en el Log SQLite."
+       data-en="Connected live to your Hik-Connect cloud (il6usm · 5 devices · 55 channels · 12.92 TB). Combines two state-of-the-art open-source AI engines and saves everything in the permanent SQLite log.">
+      Conectado en vivo a tu cuenta Hik-Connect (il6usm · 5 equipos · 55 canales · 12.92 TB). Combinamos dos motores de IA open-source de última generación y guardamos absolutamente todo en el Log SQLite.
+    </p>
+
+    <div class="grid-3">
+      <div class="card highlight">
+        <span class="badge">Meta Open-Source · Gratis</span>
+        <h3 style="margin-top:8px" data-es="🎯 Meta SAM 3.1 (Rastreo y Trazabilidad)" data-en="🎯 Meta SAM 3.1 (Tracking & Tracing)">🎯 Meta SAM 3.1 (Rastreo y Trazabilidad)</h3>
+        <ul class="bullet-list">
+          <li data-es="Promptable Concept Segmentation (PCS): Escribes o dictas cualquier concepto («montacargas», «estiba WPC», «camión en Muelle 1») y lo segmenta en video."
+              data-en="Promptable Concept Segmentation (PCS): Type or speak any concept ('forklift', 'WPC pallet', 'truck in Dock 1') to segment and track it across video.">Promptable Concept Segmentation (PCS): Escribes o dictas cualquier concepto («montacargas», «estiba WPC», «camión en Muelle 1») y lo segmenta en video.</li>
+          <li data-es="Trazabilidad Multi-Cámara (7× Object Multiplex): Sigue la ruta exacta desde que entra hasta que sale y mide el tiempo de permanencia (Dwell Time)."
+              data-en="Multi-Camera Trajectory Tracing (7× Object Multiplex): Follows the exact path from entry to exit and measures dwell time.">Trazabilidad Multi-Cámara (7× Object Multiplex): Sigue la ruta exacta desde que entra hasta que sale y mide el tiempo de permanencia (Dwell Time).</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <span class="badge">14ms · 0 Output Tokens</span>
+        <h3 style="margin-top:8px" data-es="🧠 Motor JEV AI (/v1/decide)" data-en="🧠 JEV AI Engine (/v1/decide)">🧠 Motor JEV AI (/v1/decide)</h3>
+        <ul class="bullet-list">
+          <li data-es="Evalúa entradas, salidas, comportamiento de operarios/clientes y excesos sobre el tiempo recomendado (ej. >45 min en muelle o >20 min en cafetín)."
+              data-en="Evaluates entries, exits, staff/client behavior, and violations of recommended times (e.g., >45m at dock or >20m break).">Evalúa entradas, salidas, comportamiento de operarios/clientes y excesos sobre el tiempo recomendado (ej. >45 min en muelle o >20 min en cafetín).</li>
+          <li data-es="Detecta anomalías reales al instante (como las 2 cámaras IDEO apagadas simultáneamente a las 22:59:32)."
+              data-en="Instantly flags real anomalies (such as the 2 IDEO cameras powered off simultaneously at 22:59:32).">Detecta anomalías reales al instante (como las 2 cámaras IDEO apagadas simultáneamente a las 22:59:32).</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <span class="badge">SQLite data/mc.db</span>
+        <h3 style="margin-top:8px" data-es="🗄️ Bitácora Permanente y Auto-Reposteo" data-en="🗄️ Permanent Audit Log & Auto-Repost">🗄️ Bitácora Permanente y Auto-Reposteo</h3>
+        <ul class="bullet-list">
+          <li data-es="Cada objeto rastreado, ruta, métrica e incidente queda grabado en sam3_object_traces y sam3_audit_log."
+              data-en="Every tracked object, trajectory, metric, and incident is permanently saved in sam3_object_traces and sam3_audit_log.">Cada objeto rastreado, ruta, métrica e incidente queda grabado en sam3_object_traces y sam3_audit_log.</li>
+          <li data-es="Cuando se activa un Trigger, repostea automáticamente la alerta con PDF a Telegram (@Pegantebot / @ceojefesitobot) y Correo."
+              data-en="Whenever a Trigger fires, it automatically reposts the alert + PDF to Telegram and Email.">Cuando se activa un Trigger, repostea automáticamente la alerta con PDF a Telegram (@Pegantebot / @ceojefesitobot) y Correo.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 4: DELEGATE, REVIEW & PUT EVERYONE IN MOTION -->
+  <section class="slide" data-index="3">
+    <div class="eyebrow" data-es="Lámina 4 de 6 · Delegación sin Fricción" data-en="Slide 4 of 6 · Frictionless Delegation">Lámina 4 de 6 · Delegación sin Fricción</div>
+    <h1 data-es="4 Canales de Acción para <span>poner a todos en movimiento</span>"
+        data-en="4 Action Channels to <span>set everyone in motion</span>">
+      4 Canales de Acción para <span>poner a todos en movimiento</span>
+    </h1>
+    <p class="lead" data-es="Desde el menú lateral compacto (optimizado para celular) o hablando por voz, el CEO solo revisa borradores, edita si desea, o aprueba con 1 clic."
+       data-en="From the compact mobile-first sidebar or by speaking out loud, the CEO simply reviews drafts, edits if needed, or approves with 1 click.">
+      Desde el menú lateral compacto (optimizado para celular) o hablando por voz, el CEO solo revisa borradores, edita si desea, o aprueba con 1 clic.
+    </p>
+
+    <div class="grid-4">
+      <div class="card highlight">
+        <div class="card-num">💬</div>
+        <h3 data-es="1. Textos y Telegram" data-en="1. Texts & Telegram">1. Textos y Telegram</h3>
+        <p data-es="100% enfocado en Telegram (@Pegantebot y @ceojefesitobot, sin WhatsApp). Ves los mensajes entrantes, revisas la respuesta sugerida por IA, la editas o la envías con 1 clic."
+           data-en="100% focused on Telegram (@Pegantebot & @ceojefesitobot, WhatsApp removed). View incoming messages, review AI-drafted replies, edit, or send in 1 click.">
+          100% enfocado en Telegram (@Pegantebot y @ceojefesitobot, sin WhatsApp). Ves los mensajes entrantes, revisas la respuesta sugerida por IA, la editas o la envías con 1 clic.
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="card-num">✉️</div>
+        <h3 data-es="2. Bandeja de Correos" data-en="2. Email Inbox & Drafts">2. Bandeja de Correos</h3>
+        <p data-es="Todos tus correos importantes con un borrador ejecutivo ya preparado. Solo tocas «Aprobar y Enviar» o dictas un cambio rápido."
+           data-en="All your important emails paired with a ready-made executive draft. Just tap 'Approve & Send' or dictate a quick adjustment.">
+          Todos tus correos importantes con un borrador ejecutivo ya preparado. Solo tocas «Aprobar y Enviar» o dictas un cambio rápido.
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="card-num">📅</div>
+        <h3 data-es="3. Tareas, Agenda y Recordatorios" data-en="3. Tasks, Calendar & Reminders">3. Tareas, Agenda y Recordatorios</h3>
+        <p data-es="Dices: «Mándale un texto a logística sobre los nuevos productos, un correo a contabilidad y ponme un recordatorio a las 4 PM» — y crea las 3 acciones de una vez."
+           data-en="Say: 'Send a Telegram to logistics about the new products, an email to accounting, and set a reminder for 4 PM' — and it creates all 3 at once.">
+          Dices: «Mándale un texto a logística sobre los nuevos productos, un correo a contabilidad y ponme un recordatorio a las 4 PM» — y crea las 3 acciones de una vez.
+        </p>
+      </div>
+
+      <div class="card highlight">
+        <div class="card-num">📞</div>
+        <h3 data-es="4. Llamadas de Voz IA (Grok Voice)" data-en="4. AI Voice Calls (Grok Voice)">4. Llamadas de Voz IA (Grok Voice)</h3>
+        <p data-es="El asistente hace llamadas telefónicas por ti (Grok Voice Realtime + Kokoro 82M + Simulador en Navegador), conversa, guarda la transcripción completa y te entrega el resultado para decidir."
+           data-en="The assistant places phone calls for you (Grok Voice Realtime + Kokoro 82M + Browser Simulator), speaks, saves the full transcript, and delivers the outcome for your decision.">
+          El asistente hace llamadas telefónicas por ti (Grok Voice Realtime + Kokoro 82M + Simulador en Navegador), conversa, guarda la transcripción completa y te entrega el resultado para decidir.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 5: CLOSED-LOOP RESULTS & DECISION MAKING -->
+  <section class="slide" data-index="4">
+    <div class="eyebrow" data-es="Lámina 5 de 6 · Resultados y Cierre de Ciclo" data-en="Slide 5 of 6 · Closed-Loop Results">Lámina 5 de 6 · Resultados y Cierre de Ciclo</div>
+    <h1 data-es="Cómo regresan los resultados al CEO <span>para tomar la decisión final</span>"
+        data-en="How results come back to the CEO <span>for final decision-making</span>">
+      Cómo regresan los resultados al CEO <span>para tomar la decisión final</span>
+    </h1>
+    <p class="lead" data-es="Ninguna orden queda en el aire. Cada acción delegada regresa al CEO como un resumen estructurado con opciones de decisión de 1 clic."
+       data-en="No delegated order ever gets lost. Every action returns to the CEO as a structured outcome summary with 1-click decision buttons.">
+      Ninguna orden queda en el aire. Cada acción delegada regresa al CEO como un resumen estructurado con opciones de decisión de 1 clic.
+    </p>
+
+    <div class="grid-3">
+      <div class="card">
+        <div class="card-num">A</div>
+        <h3 data-es="Transcripción y Resumen de Llamadas" data-en="Call Transcripts & Outcome Summary">Transcripción y Resumen de Llamadas</h3>
+        <p data-es="Al terminar una llamada IA, ves qué respondió el proveedor o gerente, el sentimiento detectado y la recomendación ejecutiva lista para aprobar."
+           data-en="When an AI call finishes, you see exactly what the vendor or manager answered, detected sentiment, and the recommended next step.">
+          Al terminar una llamada IA, ves qué respondió el proveedor o gerente, el sentimiento detectado y la recomendación ejecutiva lista para aprobar.
+        </p>
+      </div>
+
+      <div class="card highlight">
+        <div class="card-num">B</div>
+        <h3 data-es="Rastreo de Seguimientos (24h / 48h)" data-en="Automated Follow-Up Watchdog (24h / 48h)">Rastreo de Seguimientos (24h / 48h)</h3>
+        <p data-es="Si alguien del equipo no responde o una tarea delegada se retrasa, el Watchdog te avisa y te prepara el mensaje de recordatorio para enviarlo con 1 toque."
+           data-en="If a team member doesn't reply or a delegated task slips, the Watchdog alerts you and pre-drafts the nudge message for 1-tap dispatch.">
+          Si alguien del equipo no responde o una tarea delegada se retrasa, el Watchdog te avisa y te prepara el mensaje de recordatorio para enviarlo con 1 toque.
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="card-num">C</div>
+        <h3 data-es="Auditoría Total en Base de Datos" data-en="Full SQLite Database Audit Trail">Auditoría Total en Base de Datos</h3>
+        <p data-es="Correos enviados, mensajes de Telegram, llamadas de voz, reportes PDF y trazas de cámaras SAM 3.1 quedan guardados permanentemente en data/mc.db."
+           data-en="Sent emails, Telegram messages, voice calls, PDF reports, and SAM 3.1 camera traces are permanently stored in data/mc.db.">
+          Correos enviados, mensajes de Telegram, llamadas de voz, reportes PDF y trazas de cámaras SAM 3.1 quedan guardados permanentemente en data/mc.db.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 6: WHAT IS ALREADY LIVE VS. WHAT WE ARE MISSING TO CONNECT -->
+  <section class="slide" data-index="5">
+    <div class="eyebrow" data-es="Lámina 6 de 6 · Estado de Conexiones y Pendientes" data-en="Slide 6 of 6 · Live Connections vs. Remaining Checklist">Lámina 6 de 6 · Estado de Conexiones y Pendientes</div>
+    <h1 data-es="Qué está 100% conectado hoy y <span>qué nos falta conectar</span>"
+        data-en="What is 100% connected today vs. <span>what remains to connect</span>">
+      Qué está 100% conectado hoy y <span>qué nos falta conectar</span>
+    </h1>
+    <p class="lead" data-es="Transparencia total sin suposiciones: esto es lo que ya funciona en vivo ahora mismo y los 4 puntos puntuales que faltan para cerrar el 100% de conexiones externas."
+       data-en="Complete transparency with zero guessing: here is what is running live right now and the 4 specific items remaining to complete all external connections.">
+      Transparencia total sin suposiciones: esto es lo que ya funciona en vivo ahora mismo y los 4 puntos puntuales que faltan para cerrar el 100% de conexiones externas.
+    </p>
+
+    <div class="grid-2">
+      <div class="card highlight">
+        <span class="badge">✅ 100% EN VIVO HOY</span>
+        <h3 style="margin-top:8px" data-es="Conectado y Operando en Producción" data-en="Connected & Operating Live Today">Conectado y Operando en Producción</h3>
+        <ul class="bullet-list">
+          <li data-es="Telegram Bots en Vivo: @Pegantebot (Chat 8897658040) y @ceojefesitobot (Chat 7838956683) enviando mensajes y PDFs reales."
+              data-en="Live Telegram Bots: @Pegantebot (Chat 8897658040) & @ceojefesitobot (Chat 7838956683) sending real messages and PDFs.">Telegram Bots en Vivo: @Pegantebot (Chat 8897658040) y @ceojefesitobot (Chat 7838956683) enviando mensajes y PDFs reales.</li>
+          <li data-es="Despacho de Correos + PDFs: Configurado para juangerenciagarcia@gmail.com, ceo@espaciosimportados.com.co y jasmelacosta@gmail.com."
+              data-en="Email + PDF Dispatch: Configured for juangerenciagarcia@gmail.com, ceo@espaciosimportados.com.co, and jasmelacosta@gmail.com.">Despacho de Correos + PDFs: Configurado para juangerenciagarcia@gmail.com, ceo@espaciosimportados.com.co y jasmelacosta@gmail.com.</li>
+          <li data-es="Hik-Connect Cloud Real (il6usm): 5 equipos, 53/55 cámaras en vivo + Motor Meta SAM 3.1 + JEV AI + Log SQLite (data/mc.db)."
+              data-en="Live Hik-Connect Cloud (il6usm): 5 devices, 53/55 live cameras + Meta SAM 3.1 + JEV AI + SQLite Log (data/mc.db).">Hik-Connect Cloud Real (il6usm): 5 equipos, 53/55 cámaras en vivo + Motor Meta SAM 3.1 + JEV AI + Log SQLite (data/mc.db).</li>
+          <li data-es="Simulador de Llamadas en Navegador + Datos en Vivo de BuildingApp y UNITEC USA."
+              data-en="In-Browser Voice Call Simulator + Live Data from BuildingApp & UNITEC USA.">Simulador de Llamadas en Navegador + Datos en Vivo de BuildingApp y UNITEC USA.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <span class="badge pending">🔌 PENDIENTE POR CONECTAR (4 PUNTOS)</span>
+        <h3 style="margin-top:8px" data-es="Lo Único que Falta Conectar para el 100%" data-en="The Only 4 Items Left to Connect">Lo Único que Falta Conectar para el 100%</h3>
+        <ul class="bullet-list">
+          <li data-es="1. Telefonía Saliente Real (PSTN): Agregar llaves TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER y XAI_API_KEY en .env para que Grok Voice llame a números celulares reales fuera del simulador."
+              data-en="1. Live Outbound PSTN Telephony: Add TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER, and XAI_API_KEY in .env so Grok Voice dials real mobile numbers outside the browser simulator.">1. Telefonía Saliente Real (PSTN): Agregar llaves TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER y XAI_API_KEY en .env para que Grok Voice llame a números celulares reales fuera del simulador.</li>
+          <li data-es="2. Reconectar las 2 Cámaras Wi-Fi de IDEO (BF4860946 y BF4862037) y marcar «Notificar al Centro de Vigilancia» en los DVR/NVR para recibir eventos push en tiempo real."
+              data-en="2. Reconnect the 2 Offline IDEO Wi-Fi Cameras (BF4860946 & BF4862037) and check 'Notify Surveillance Center' on the DVRs/NVRs for real-time push events.">2. Reconectar las 2 Cámaras Wi-Fi de IDEO (BF4860946 y BF4862037) y marcar «Notificar al Centro de Vigilancia» en los DVR/NVR para recibir eventos push en tiempo real.</li>
+          <li data-es="3. Autorización OAuth de Google Workspace (1 Clic): Iniciar sesión en /api/google/auth_url con la cuenta de Juan para lectura bidireccional en vivo de su bandeja Gmail y Google Calendar."
+              data-en="3. 1-Click Google Workspace OAuth: Sign in at /api/google/auth_url with Juan's account for live two-way Gmail inbox & Google Calendar sync.">3. Autorización OAuth de Google Workspace (1 Clic): Iniciar sesión en /api/google/auth_url con la cuenta de Juan para lectura bidireccional en vivo de su bandeja Gmail y Google Calendar.</li>
+          <li data-es="4. Dominio Fijo con Cloudflare Named Tunnel (ej. app.buildinginnovation.us) para que el enlace público nunca cambie al reiniciar el PC."
+              data-en="4. Permanent Custom Domain via Cloudflare Named Tunnel (e.g., app.buildinginnovation.us) so the public link never changes when the PC restarts.">4. Dominio Fijo con Cloudflare Named Tunnel (ej. app.buildinginnovation.us) para que el enlace público nunca cambie al reiniciar el PC.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="bottom-bar">
+  <button class="btn" type="button" onclick="prevSlide()" id="prevBtn">← <span data-es="Anterior" data-en="Previous">Anterior</span></button>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+    <div class="dots" id="dotsBox"></div>
+    <div class="slide-counter" id="slideCounter">1 / 6</div>
+  </div>
+  <button class="btn primary" type="button" onclick="nextSlide()" id="nextBtn"><span data-es="Siguiente" data-en="Next">Siguiente</span> →</button>
+</footer>
+
+<script>
+  let curSlide = 0;
+  let curLang = 'es';
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const dotsBox = document.getElementById('dotsBox');
+  const counterEl = document.getElementById('slideCounter');
+
+  function buildDots() {
+    dotsBox.innerHTML = slides.map((_, i) =>
+      `<div class="dot ${i === curSlide ? 'active' : ''}" onclick="goToSlide(${i})"></div>`
+    ).join('');
+    counterEl.textContent = `${curSlide + 1} / ${slides.length}`;
+  }
+
+  function goToSlide(idx) {
+    if (idx < 0) idx = slides.length - 1;
+    if (idx >= slides.length) idx = 0;
+    curSlide = idx;
+    slides.forEach((s, i) => s.classList.toggle('active', i === curSlide));
+    buildDots();
+  }
+
+  function nextSlide() { goToSlide(curSlide + 1); }
+  function prevSlide() { goToSlide(curSlide - 1); }
+
+  function toggleLang() {
+    curLang = curLang === 'es' ? 'en' : 'es';
+    document.querySelectorAll('[data-es]').forEach(el => {
+      el.innerHTML = el.getAttribute('data-' + curLang);
+    });
+    document.getElementById('brandSub').textContent = curLang === 'es'
+      ? 'Presentación Ejecutiva Minimalista · Modo CEO Cero-Manos'
+      : 'Minimalist Executive Deck · Zero-Hands CEO Mode';
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+    if (e.key === 'ArrowLeft') prevSlide();
+  });
+
+  buildDots();
+</script>
+</body>
+</html>

@@ -244,6 +244,9 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
         if path in ("/", "/index.html", "/demo", "/demo.html", "/mock/demo.html", "/assistant", "/chat"):
             html = open(os.path.join(ROOT, "mock", "demo.html"), "rb").read()
             self._send(200, html, "text/html; charset=utf-8")
+        elif path.rstrip("/") in ("/ceo-deck", "/deck", "/pitch", "/ceo-presentation"):
+            html = open(os.path.join(ROOT, "mock", "ceo_deck.html"), "rb").read()
+            self._send(200, html, "text/html; charset=utf-8")
         elif path.rstrip("/") in ("/website", "/web", "/presentacion", "/site", "/website-v1", "/website-v2", "/website-v3"):
             html = open(os.path.join(ROOT, "mock", "website.html"), "rb").read()
             self._send(200, html, "text/html; charset=utf-8")
