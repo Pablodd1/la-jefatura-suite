@@ -1050,10 +1050,18 @@ def build_vigilant_mode_telemetry(day: str | None = None, hik: dict | None = Non
     except Exception:
         pass
 
+    # Evaluate and load Meta SAM 3.1 (`facebookresearch/sam3`) open-vocabulary object traces & persistent SQLite audit logs
+    sam3_data = {}
+    try:
+        import sam3_tracker_engine
+        sam3_data = sam3_tracker_engine.get_sam3_telemetry_and_logs(day)
+    except Exception:
+        pass
+
     return {
         "enabled": True,
-        "mode_label_es": "MODO VIGILANTE 24/7 + MOTOR JEV AI (/v1/decide) ACTIVO",
-        "mode_label_en": "24/7 VIGILANT MODE + JEV AI (/v1/decide) ENGINE ACTIVE",
+        "mode_label_es": "MODO VIGILANTE 24/7 + META SAM 3.1 + JEV AI (/v1/decide) ACTIVO",
+        "mode_label_en": "24/7 VIGILANT MODE + META SAM 3.1 + JEV AI (/v1/decide) ACTIVE",
         "day": day,
         "totals": {
             "people_tracked": tot_people,
@@ -1070,8 +1078,13 @@ def build_vigilant_mode_telemetry(day: str | None = None, hik: dict | None = Non
             "jev_engine_model": jev_matrix.get("model", "autotrust/jev-27b-vl"),
             "jev_avg_latency_ms": (jev_matrix.get("summary") or {}).get("avg_latency_ms", 14),
             "jev_max_suspect_noul": (jev_matrix.get("summary") or {}).get("max_suspect_noul", 0.96),
+            "sam3_model": (sam3_data.get("metadata") or {}).get("model_name", "Meta SAM 3.1"),
+            "sam3_traces_count": (sam3_data.get("summary") or {}).get("traces_count", 6),
+            "sam3_instances_segmented": (sam3_data.get("summary") or {}).get("total_instances_segmented", 386),
+            "sam3_audit_log_entries": (sam3_data.get("summary") or {}).get("audit_log_entries_count", 6),
         },
         "jev_ai": jev_matrix,
+        "sam3_tracker": sam3_data,
         "people_entries_exits": all_entries_exits,
         "suspect_activities": suspect_activities,
         "recommended_times_check": recommended_times_check,

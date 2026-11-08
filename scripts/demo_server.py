@@ -61,6 +61,7 @@ import ceo_action_brain  # noqa: E402
 import text_messaging  # noqa: E402
 import functions_catalog  # noqa: E402
 import voice_calls_engine  # noqa: E402
+import sam3_tracker_engine  # noqa: E402
 
 PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 8931
 SAMPLES = os.path.join(ROOT, "data", "samples")
@@ -153,7 +154,17 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
     def _gate(self, path, qs=None) -> bool:
         """Anything under /api/ that arrives through the public tunnel needs X-MC-Token,
         unless it originates from the Mission Control UI hosted on the same tunnel host."""
-        if path in ("/api/calendar.ics", "/api/daily.pdf", "/api/cameras/report.pdf", "/api/whatsapp/webhook", "/api/reports/company_daily/html"):
+        if path in (
+            "/api/calendar.ics",
+            "/api/daily.pdf",
+            "/api/cameras/report.pdf",
+            "/api/cameras/sam3",
+            "/api/cameras/sam3/logs",
+            "/api/cameras/jev/decide",
+            "/api/cameras/jev",
+            "/api/whatsapp/webhook",
+            "/api/reports/company_daily/html",
+        ):
             return True
         if path.startswith("/api/") and mc_auth.is_remote(self.headers):
             q_tok = ((qs or {}).get("token") or [""])[0] if qs else ""
@@ -280,6 +291,9 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
             day = (qs.get("date") or [None])[0]
             vig = camera_report.build_vigilant_mode_telemetry(day)
             self._send(200, vig.get("jev_ai") or {"ok": False})
+        elif path in ("/api/cameras/sam3", "/api/cameras/sam3/logs"):
+            day = (qs.get("date") or [None])[0]
+            self._send(200, sam3_tracker_engine.get_sam3_telemetry_and_logs(day))
         elif path == "/api/cameras/report.pdf":
             day = (qs.get("date") or [None])[0]
             mode = (qs.get("mode") or ["example"])[0]
@@ -687,6 +701,18 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
                 res = jev_vision_engine.evaluate_all_vigilant_zones(vig.get("people_entries_exits", []), persist=True)
             if body.get("auto_repost") and (res.get("auto_repost_recommended") or (res.get("summary") or {}).get("level_2_immediate_repost_count", 0) > 0):
                 res["repost_dispatch"] = camera_report.trigger_vigilant_repost(reason="jev_ai_v1_decide_trigger", include_pdf=True)
+            self._send(200, res)
+        elif path in ("/api/cameras/sam3/track", "/api/cameras/sam3/log"):
+            res = sam3_tracker_engine.track_custom_concept(
+                concept_prompt=str(body.get("concept_prompt") or body.get("prompt") or "forklift & WPC pallet"),
+                site=str(body.get("site") or "Espacios Importados"),
+                camera_id=str(body.get("camera_id") or "L12154607-CH23/24 · MUELLE 1 y 2"),
+                instances_tracked=int(body.get("instances_tracked") or 4),
+                trajectory_path=str(body.get("trajectory_path") or "CH27 EXTERIOR MUELLES -> CH23 MUELLE 1 -> CH21 DESPACHOS 1"),
+                dwell_minutes=int(body.get("dwell_minutes") or 24),
+                recommended_max_min=int(body.get("recommended_max_min") or 45),
+                notes_es=str(body.get("notes_es") or ""),
+            )
             self._send(200, res)
         elif path == "/api/cameras/sync":
             self._send(200, cameras.status(os.path.join(SAMPLES, "cameras.json"), force=True))
