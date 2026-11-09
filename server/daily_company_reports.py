@@ -62,7 +62,6 @@ RECIPIENTS_FILE = os.path.join(ROOT, "data", "daily_report_recipients.json")
 DEFAULT_RECIPIENTS = {
     "emails": [
         "juangerenciagarcia@gmail.com",
-        "ceo@espaciosimportados.com.co",
         "jasmelacosta@gmail.com",
     ],
     "juan_telegram_phone": "+17866575441",

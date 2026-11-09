@@ -1364,7 +1364,7 @@ def get_live_company_state(company: str = "all") -> dict:
                 "status": "LIVE · 2X/DÍA ACTIVO",
                 "summary": "Reporte HTML + PDF de Building Innovation programado a las 08:00 AM y 06:00 PM vía Email y Telegram.",
                 "items": [
-                    "Destinatarios Email: juangerenciagarcia@gmail.com, ceo@espaciosimportados.com.co, jasmelacosta@gmail.com",
+                    "Destinatarios Email: juangerenciagarcia@gmail.com, jasmelacosta@gmail.com",
                     "Destinatarios Telegram: @Pegantebot (8897658040) y @ceojefesitobot (7838956683)",
                 ],
             },
@@ -1511,10 +1511,10 @@ def get_live_company_state(company: str = "all") -> dict:
                 "name": "6. Comunicaciones & Reportes 2x/Día",
                 "icon": "📨",
                 "empty": False,
-                "status": "LIVE · CORREO CORPORATIVO",
-                "summary": "Reportes diarios 08:00 AM y 06:00 PM configurados hacia ceo@espaciosimportados.com.co y Telegram.",
+                "status": "LIVE · CORREO Y TELEGRAM",
+                "summary": "Reportes diarios 08:00 AM y 06:00 PM configurados hacia juangerenciagarcia@gmail.com, jasmelacosta@gmail.com y Telegram.",
                 "items": [
-                    "Correo corporativo activo en lista de distribución: ceo@espaciosimportados.com.co",
+                    "Correos activos en lista de distribución: juangerenciagarcia@gmail.com, jasmelacosta@gmail.com",
                 ],
             },
         ]
@@ -1665,7 +1665,7 @@ def get_live_company_state(company: str = "all") -> dict:
                 "status": "LIVE · 08:00 AM & 06:00 PM",
                 "summary": "Envío automático 2 veces al día (08:00 AM y 06:00 PM) + recordatorios en tiempo real por Email y Telegram.",
                 "items": [
-                    "Correos: juangerenciagarcia@gmail.com, ceo@espaciosimportados.com.co, jasmelacosta@gmail.com",
+                    "Correos: juangerenciagarcia@gmail.com, jasmelacosta@gmail.com",
                     "Telegram: @Pegantebot (8897658040 UNITEC USA DESIGN) y @ceojefesitobot (7838956683)",
                 ],
             },
@@ -1709,7 +1709,7 @@ def get_live_company_state(company: str = "all") -> dict:
         "errors_and_missing_connections": errors_missing,
         "twice_daily_reports": {
             "schedule": ["08:00 AM EST (Reporte Matutino)", "06:00 PM / 18:00 EST (Reporte Vespertino)"],
-            "emails": ["juangerenciagarcia@gmail.com", "ceo@espaciosimportados.com.co", "jasmelacosta@gmail.com"],
+            "emails": ["juangerenciagarcia@gmail.com", "jasmelacosta@gmail.com"],
             "telegram_bots": ["@Pegantebot (8897658040 · UNITEC USA DESIGN)", "@ceojefesitobot (7838956683 · La Jefatura)"],
         },
         "learned_facts": list_company_facts(company=co, limit=25),

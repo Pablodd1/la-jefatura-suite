@@ -94,7 +94,7 @@ SLIDE 5 — CLOSED-LOOP RESULTS & DECISION MAKING
 SLIDE 6 — WHAT IS 100% CONNECTED TODAY VS. THE 4 ITEMS LEFT TO CONNECT
 ✅ 100% Connected & Live Today:
 - Live Telegram Bots (@Pegantebot Chat 8897658040 & @ceojefesitobot Chat 7838956683) sending real messages and PDFs.
-- Live Email + PDF Dispatch (juangerenciagarcia@gmail.com, ceo@espaciosimportados.com.co, jasmelacosta@gmail.com).
+- Live Email + PDF Dispatch (juangerenciagarcia@gmail.com, jasmelacosta@gmail.com).
 - Live 55-Camera Hik-Connect Cloud (il6usm · 53/55 online) + Meta SAM 3.1 + JEV AI + SQLite Audit Log.
 - Live BuildingApp & UNITEC USA telemetry + In-Browser Voice Call Simulator.
 
@@ -235,7 +235,7 @@ La Jefatura & El Jefesito — Made & Powered by Building Innovation
           <div style="font-size:12.5px;font-weight:800;color:#52b788;margin-bottom:4px;">✅ 100% CONNECTED &amp; OPERATING LIVE TODAY:</div>
           <ul style="margin:0;padding-left:18px;font-size:12.8px;color:#f1f7f4;line-height:1.55;">
             <li><b>Live Telegram Bots:</b> <code>@Pegantebot</code> (Chat <code>8897658040</code>) &amp; <code>@ceojefesitobot</code> (Chat <code>7838956683</code>) sending real messages and PDFs.</li>
-            <li><b>Live Email + PDF Dispatch:</b> Active for <code>juangerenciagarcia@gmail.com</code>, <code>ceo@espaciosimportados.com.co</code>, and <code>jasmelacosta@gmail.com</code>.</li>
+            <li><b>Live Email + PDF Dispatch:</b> Active for <code>juangerenciagarcia@gmail.com</code> and <code>jasmelacosta@gmail.com</code>.</li>
             <li><b>Live Hik-Connect Cloud (<code>il6usm</code>):</b> 5 recorders, 53/55 live cameras + Meta SAM 3.1 + JEV AI + SQLite Log (<code>data/mc.db</code>).</li>
             <li><b>Live Company Telemetry &amp; Call Simulator:</b> BuildingApp (<code>buildingapp.us</code>), UNITEC USA (<code>unitec.ai</code>), and In-Browser Voice Call Simulator.</li>
           </ul>

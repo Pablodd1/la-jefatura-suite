@@ -1037,7 +1037,6 @@ def send_email_and_telegram_reminder(
     # 1. Dispatch Email + Telegram in a non-blocking background thread so voice/chat commands return in <100ms
     recipients = [to_email] if to_email else [
         "juangerenciagarcia@gmail.com",
-        "ceo@espaciosimportados.com.co",
         "jasmelacosta@gmail.com",
     ]
     smtp_res = {"ok": True, "status": "dispatched_async"}
