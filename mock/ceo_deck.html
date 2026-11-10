@@ -8,27 +8,27 @@
 <title>La Jefatura & El Jefesito — Presentación Ejecutiva Minimalista para el CEO</title>
 <style>
   :root {
-    --bg: #080d0b;
-    --card: #0f1713;
-    --card-soft: #131e19;
-    --border: rgba(82, 183, 136, 0.22);
-    --border-strong: rgba(82, 183, 136, 0.45);
-    --fg: #f1f7f4;
-    --muted: #95aba0;
-    --sage: #34a866;
-    --sage-light: #52b788;
-    --sage-pale: #b8cfc0;
-    --amber-soft: #c9b47c;
-    --slate-soft: #8fa893;
+    --bg: #0b0d0e;
+    --card: #121518;
+    --card-soft: #161a1e;
+    --border: rgba(255, 255, 255, 0.08);
+    --border-strong: rgba(255, 255, 255, 0.16);
+    --fg: #f4f5f6;
+    --muted: #828a93;
+    --sage: #2e8b57;
+    --sage-light: #68b888;
+    --sage-pale: #c8cdd2;
+    --amber-soft: #94a3b8;
+    --slate-soft: #828a93;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body {
     width: 100%;
     height: 100%;
-    background: radial-gradient(circle at 18% 12%, rgba(52, 168, 102, 0.12), transparent 55%), var(--bg);
+    background: var(--bg);
     color: var(--fg);
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", "Segoe UI", Roboto, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
     -webkit-font-smoothing: antialiased;
     overflow: hidden;
   }
@@ -197,12 +197,12 @@
   .card {
     background: var(--card);
     border: 1px solid var(--border);
-    border-radius: 16px;
+    border-radius: 12px;
     padding: 18px 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.22);
   }
   .card.highlight {
-    background: linear-gradient(145deg, rgba(52, 168, 102, 0.13), rgba(15, 23, 19, 0.95));
+    background: var(--card-soft);
     border-color: var(--border-strong);
   }
 

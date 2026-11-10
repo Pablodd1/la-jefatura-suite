@@ -26,9 +26,9 @@
     --txt:#ffffff;
     --txt2:#dcd5c7;
     --dim:#9e9585;
-    --acc:#cdb68c;
+    --acc:#c8cdd2;
     --acc2:#dccaa6;
-    --yellow:#cdb68c;
+    --yellow:#c8cdd2;
     --yellow-bright:#dccaa6;
     --ar:205, 182, 140;
     --vio:#7ea88f;
@@ -64,7 +64,7 @@
   .nav-bar{display:flex;gap:6px;padding:10px 22px;background:var(--nav);border-bottom:1px solid var(--hair);overflow-x:auto;max-width:100%}
   .nav-tab{background:transparent;border:1px solid transparent;color:var(--dim);padding:8px 14px;border-radius:9px;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap;transition:.15s;display:flex;align-items:center;gap:7px}
   .nav-tab:hover{color:var(--txt);background:rgba(255,255,255,.04)}
-  .nav-tab.active{background:rgba(205,182,140,.18);color:var(--acc);border-color:rgba(205,182,140,.42);font-weight:700}
+  .nav-tab.active{background:rgba(205,182,140,.18);color:var(--acc);border-color:rgba(255,255,255,.08);font-weight:700}
   .nav-tab .cnt{background:rgba(82,183,136,.18);color:var(--acc2);font-size:10px;padding:1px 6px;border-radius:10px;font-weight:800}
 
   /* Layout & Cards */
@@ -152,7 +152,7 @@
   @media(max-width:1050px){.grid{grid-template-columns:repeat(6,1fr)}.foreseen-cards,.blog-grid{grid-template-columns:1fr}}
   @media(max-width:680px){.grid{grid-template-columns:1fr}}
 
-  /* ══ GLOBAL ARENA (SAND #cdb68c) THEME — LOCKED FOR PRODUCTION ══ */
+  /* ══ GLOBAL ARENA (SAND #c8cdd2) THEME — LOCKED FOR PRODUCTION ══ */
   #themeSeg,
   .v12-app-switcher,
   .v12-rail-theme-box {
@@ -178,7 +178,7 @@
   .jf-sec{background:var(--inset);border:1px solid var(--hair);border-radius:10px;padding:10px 12px;font-size:12.5px;line-height:1.5;color:var(--txt2)}
   .jf-sec b{display:block;color:var(--acc);font-size:11px;text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px}
 
-  /* ══ V12 SPATIAL GLASS & ARENA (#cdb68c) UX/UI FOR MISSION CONTROL APP ══ */
+  /* ══ V12 SPATIAL GLASS & ARENA (#c8cdd2) UX/UI FOR MISSION CONTROL APP ══ */
   body {
     background: #0b0a08 url('/assets/spatial-room-bg.jpg') center center / cover fixed no-repeat !important;
     padding-left: 76px;
@@ -252,7 +252,7 @@
   #foreseenCards .f-card h4 { color: #18181b !important; font-weight: 800 !important; }
   #foreseenCards .f-card p { color: #52525b !important; }
   #foreseenCards .f-card:nth-child(2) {
-    background: linear-gradient(135deg, #cdb68c 0%, #9b8054 100%) !important;
+    background: linear-gradient(135deg, #c8cdd2 0%, #9b8054 100%) !important;
     color: #0b0a08 !important;
     box-shadow: 0 12px 28px rgba(205, 182, 140, 0.42) !important;
   }
@@ -262,7 +262,7 @@
   }
   #foreseenCards .f-card:nth-child(2) .btn {
     background: #0b0a08 !important;
-    color: #cdb68c !important;
+    color: #c8cdd2 !important;
   }
 
   /* Left Glassmorphism Full-Name Sidebar Menu (Auto-Hides to 62px Rail When Mouse Leaves) */
@@ -355,7 +355,7 @@
   .lj-sb-sub {
     font-size: 9.5px;
     font-weight: 700;
-    color: #cdb68c;
+    color: #c8cdd2;
     letter-spacing: 0.04em;
     margin-top: 2px;
     display: block;
@@ -365,7 +365,7 @@
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.09em;
-    color: #cdb68c;
+    color: #c8cdd2;
     padding: 4px 8px 2px;
     opacity: 0.9;
   }
@@ -454,7 +454,7 @@
   .lj-tz-time {
     font-size: 13px;
     font-weight: 900;
-    color: #cdb68c;
+    color: #c8cdd2;
     font-variant-numeric: tabular-nums;
   }
   .lj-tz-sub {
@@ -736,8 +736,8 @@
     width: 7px;
     height: 7px;
     border-radius: 50%;
-    background: #22c55e;
-    box-shadow: 0 0 8px #22c55e;
+    background: #2e8b57;
+    box-shadow: 0 0 8px #2e8b57;
   }
   .ardena-glass-toggle-row {
     display: flex;
@@ -761,7 +761,7 @@
     width: 30px;
     height: 30px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #22c55e, #15803d);
+    background: linear-gradient(135deg, #2e8b57, #15803d);
     color: #fff;
     font-size: 11px;
     font-weight: 800;
@@ -944,6 +944,203 @@
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
     }
+  }
+
+
+
+  /* ══════════════════════════════════════════════════════════════════════════
+     EXECUTIVE MONOCHROME + SINGLE ACCENT DESIGN SYSTEM (NO RAINBOW COLORS)
+     Strict 2-Surface Charcoal (#0B0D0E / #121518) + Crisp Zinc Typography +
+     Single Refined Sage Accent (#2E8B57)
+     ══════════════════════════════════════════════════════════════════════════ */
+  :root,
+  :root[data-theme="sand"],
+  :root[data-theme="graphite"],
+  :root[data-theme="light"],
+  :root[data-theme="yellow"] {
+    --bg: #0b0d0e !important;
+    --panel: #121518 !important;
+    --panel2: #161a1e !important;
+    --panel3: #1b2025 !important;
+    --inset: #0e1113 !important;
+    --hair: rgba(255, 255, 255, 0.08) !important;
+    --txt: #f4f5f6 !important;
+    --txt2: #c8cdd2 !important;
+    --dim: #828a93 !important;
+    --acc: #2e8b57 !important;
+    --acc2: #2e8b57 !important;
+    --vio: #273038 !important;
+    --ok: #2e8b57 !important;
+    --warn: #94a3b8 !important;
+    --crit: #94a3b8 !important;
+    --onacc: #ffffff !important;
+    --hdr: rgba(18, 21, 24, 0.96) !important;
+    --nav: rgba(18, 21, 24, 0.96) !important;
+  }
+
+  body.ardena-light-glass {
+    --bg: #f6f7f8 !important;
+    --panel: #ffffff !important;
+    --panel2: #f9fafb !important;
+    --panel3: #f1f3f5 !important;
+    --inset: #f1f3f5 !important;
+    --hair: rgba(15, 23, 42, 0.09) !important;
+    --txt: #111418 !important;
+    --txt2: #333a42 !important;
+    --dim: #646e78 !important;
+    --acc: #246b43 !important;
+    --acc2: #246b43 !important;
+    --vio: #334155 !important;
+    --ok: #246b43 !important;
+    --warn: #475569 !important;
+    --crit: #475569 !important;
+    --hdr: rgba(255, 255, 255, 0.96) !important;
+  }
+
+  html, body {
+    background: var(--bg) !important;
+    color: var(--txt) !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', sans-serif !important;
+    letter-spacing: -0.011em !important;
+  }
+
+  .card,
+  .card.kpi-card,
+  .jf-card,
+  .foreseen-strip,
+  header,
+  .lj-world-strip {
+    background: var(--panel) !important;
+    border: 1px solid var(--hair) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    color: var(--txt) !important;
+  }
+
+  header {
+    margin: 10px 18px 0 !important;
+    padding: 10px 16px !important;
+  }
+
+  /* Declutter UX: Hide decorative multi-row banners & secondary interactive sliders */
+  #ljWorldTimeWeatherStrip,
+  #companySeg,
+  #ardenaSubPillsBar,
+  #ardenaInteractiveShowcase,
+  #overviewForeseenStrip {
+    display: none !important;
+  }
+
+  /* Unified Monochrome Tags & Badges (Zero multi-color visual noise) */
+  .tag,
+  .tag.ok,
+  .tag.medium,
+  .tag.high,
+  .tag.critical,
+  .tag.low,
+  .lvl,
+  .badge-wl {
+    background: rgba(255, 255, 255, 0.04) !important;
+    color: var(--txt2) !important;
+    border: 1px solid var(--hair) !important;
+    font-weight: 600 !important;
+    font-size: 10.5px !important;
+    letter-spacing: 0.02em !important;
+    border-radius: 6px !important;
+    padding: 2px 8px !important;
+  }
+  .tag.ok {
+    background: rgba(46, 139, 87, 0.12) !important;
+    color: #68b888 !important;
+    border-color: rgba(46, 139, 87, 0.28) !important;
+  }
+  body.ardena-light-glass .tag.ok {
+    color: #1e5c39 !important;
+  }
+
+  /* Unified Professional Buttons */
+  .btn:not(.ghost),
+  #mcSendCmdBtn {
+    background: #2e8b57 !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.10) !important;
+    border-radius: 8px !important;
+    box-shadow: none !important;
+    font-weight: 600 !important;
+  }
+  .btn:not(.ghost):hover,
+  #mcSendCmdBtn:hover {
+    background: #267347 !important;
+    transform: none !important;
+  }
+  .btn.ghost,
+  .btn.vio {
+    background: var(--panel2) !important;
+    color: var(--txt2) !important;
+    border: 1px solid var(--hair) !important;
+    border-radius: 8px !important;
+    box-shadow: none !important;
+    font-weight: 500 !important;
+  }
+  .btn.ghost:hover,
+  .btn.vio:hover {
+    background: var(--panel3) !important;
+    color: var(--txt) !important;
+    border-color: rgba(255, 255, 255, 0.18) !important;
+    transform: none !important;
+  }
+
+  /* Clean Left Sidebar */
+  .lj-glass-sidebar {
+    background: var(--panel) !important;
+    border: 1px solid var(--hair) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.32) !important;
+  }
+  .lj-sb-btn {
+    border-radius: 8px !important;
+    color: var(--dim) !important;
+  }
+  .lj-sb-btn:hover {
+    background: var(--panel2) !important;
+    color: var(--txt) !important;
+    transform: none !important;
+  }
+  .lj-sb-btn.active {
+    background: rgba(46, 139, 87, 0.15) !important;
+    color: var(--txt) !important;
+    border: 1px solid rgba(46, 139, 87, 0.35) !important;
+    box-shadow: none !important;
+  }
+  .ardena-logo-sq {
+    background: #2e8b57 !important;
+    box-shadow: none !important;
+  }
+
+  /* Neutralize inline colored borders, text, and backgrounds inside cards */
+  .card [style*="border"] {
+    border-color: var(--hair) !important;
+  }
+  #ctoConnectedToolsBar > div {
+    border-left: 2px solid #2e8b57 !important;
+  }
+  #ctoConnectedToolsBar > div > div > div:first-child,
+  #selectedCompanyDepartmentsWrapper b,
+  .card b[style*="color"] {
+    color: var(--txt) !important;
+  }
+  .dot {
+    background: #2e8b57 !important;
+  }
+  .card.kpi-card .kpi {
+    color: var(--txt) !important;
+  }
+  .narr {
+    background: var(--inset) !important;
+    border-left: 2px solid #2e8b57 !important;
+    color: var(--txt2) !important;
   }
 
 </style>
@@ -1176,8 +1373,8 @@
       <div style="flex:1;min-width:290px;max-width:680px;display:flex;align-items:center;gap:6px;background:rgba(15,16,14,.68);border:1px solid rgba(255,255,255,.10);border-radius:999px;padding:5px 8px 5px 14px">
         <span style="color:var(--dim);font-size:13px">🎙️</span>
         <input id="masterControlChatInput" placeholder="Habla o escribe a La Jefatura (ej. «cam», «uni», «qué errores hay», «aprende que...», «recordatorio por correo...»)" style="flex:1;background:transparent;border:0;color:var(--txt);font-size:12.5px;outline:none;padding:6px 4px" onkeydown="if(event.key==='Enter'){event.preventDefault();runMasterControlChatCommand();}">
-        <button type="button" id="mcVoiceMicBtn" onclick="window.LJ && window.LJ.startMic ? window.LJ.startMic(document.getElementById('masterControlChatInput')) : (window.LJSuper && window.LJSuper.toggleMic())" style="background:rgba(34,197,94,.18);color:#4ade80;border:1px solid rgba(34,197,94,.35);border-radius:999px;padding:6px 12px;font-size:11.5px;font-weight:800;cursor:pointer;white-space:nowrap" title="Hablar por micrófono">🎤 Voz</button>
-        <button type="button" id="mcSendCmdBtn" onclick="runMasterControlChatCommand()" style="background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;border:0;border-radius:999px;padding:6px 14px;font-size:11.5px;font-weight:800;cursor:pointer;white-space:nowrap">+ Ejecutar</button>
+        <button type="button" id="mcVoiceMicBtn" onclick="window.LJ && window.LJ.startMic ? window.LJ.startMic(document.getElementById('masterControlChatInput')) : (window.LJSuper && window.LJSuper.toggleMic())" style="background:rgba(34,197,94,.18);color:#c8cdd2;border:1px solid rgba(34,197,94,.35);border-radius:999px;padding:6px 12px;font-size:11.5px;font-weight:800;cursor:pointer;white-space:nowrap" title="Hablar por micrófono">🎤 Voz</button>
+        <button type="button" id="mcSendCmdBtn" onclick="runMasterControlChatCommand()" style="background:linear-gradient(135deg,#2e8b57,#16a34a);color:#fff;border:0;border-radius:999px;padding:6px 14px;font-size:11.5px;font-weight:800;cursor:pointer;white-space:nowrap">+ Ejecutar</button>
         <button type="button" class="lj-stop-voice-btn" onclick="window.stopAllBotVoice && window.stopAllBotVoice()" style="background:rgba(143,168,147,.16);color:#c8ded0;border:1px solid rgba(143,168,147,.32);border-radius:999px;padding:6px 10px;font-size:11px;font-weight:800;cursor:pointer" title="Silenciar Voz (ESC)">⏹️</button>
       </div>
 
@@ -1209,7 +1406,7 @@
 
 <!-- ==================== UNIVERSAL CTO & CEO PROJECT DEEP-DIVE (TEXT + GRAPHICS + TOOLS + MEMORY VAULT) ==================== -->
 <section id="ljCtoExecutiveHub" style="max-width:1520px;margin:14px auto 0;padding:0 22px">
-  <div class="card" style="border:1px solid rgba(205,182,140,.42);padding:18px 20px;margin-bottom:14px">
+  <div class="card" style="border:1px solid rgba(255,255,255,.08);padding:18px 20px;margin-bottom:14px">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--hair);padding-bottom:12px;margin-bottom:14px">
       <div>
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
@@ -1291,7 +1488,7 @@
 
         <div style="background:rgba(34,197,94,.05);border:1px solid rgba(34,197,94,.32);border-radius:14px;padding:12px 14px">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-            <b style="font-size:12.5px;color:#4ade80">🧠 APRENDIZAJE CONTINUO DE LA EMPRESA &amp; RECORDATORIOS EMAIL/TELEGRAM</b>
+            <b style="font-size:12.5px;color:#c8cdd2">🧠 APRENDIZAJE CONTINUO DE LA EMPRESA &amp; RECORDATORIOS EMAIL/TELEGRAM</b>
             <span class="tag ok">MEMORIA ACTIVA</span>
           </div>
           <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap">
@@ -1383,12 +1580,12 @@
 
             <!-- Green / Emerald Split Bar -->
             <div style="display:flex;height:8px;border-radius:999px;overflow:hidden;background:rgba(255,255,255,.08);gap:3px;margin-bottom:7px">
-              <div id="ardSimSplitGreen" style="width:96.4%;background:#22c55e;border-radius:999px;transition:width .25s ease"></div>
-              <div id="ardSimSplitOrange" style="width:3.6%;background:#10b981;border-radius:999px;transition:width .25s ease"></div>
+              <div id="ardSimSplitGreen" style="width:96.4%;background:#2e8b57;border-radius:999px;transition:width .25s ease"></div>
+              <div id="ardSimSplitOrange" style="width:3.6%;background:#2e8b57;border-radius:999px;transition:width .25s ease"></div>
             </div>
             <div style="display:flex;gap:14px;font-size:11px;color:var(--dim)">
-              <span><b style="color:#22c55e">●</b> <span id="ardSimLegendGreen">Sistemas Online 96.4% (53/55 Cám · 155/157 TG)</span></span>
-              <span><b style="color:#4ade80">●</b> <span id="ardSimLegendOrange">Errores Activos 3.6% (2 Cám IDEO · 2 Fallos Email/SMS)</span></span>
+              <span><b style="color:#2e8b57">●</b> <span id="ardSimLegendGreen">Sistemas Online 96.4% (53/55 Cám · 155/157 TG)</span></span>
+              <span><b style="color:#c8cdd2">●</b> <span id="ardSimLegendOrange">Errores Activos 3.6% (2 Cám IDEO · 2 Fallos Email/SMS)</span></span>
             </div>
           </div>
 
@@ -1410,7 +1607,7 @@
     </div>
 
     <!-- Per-Project & Per-Category Memorized Notes, Schedule & Reminders Box -->
-    <div style="background:var(--inset);border:1px solid rgba(205,182,140,.38);border-radius:16px;padding:14px 16px">
+    <div style="background:var(--inset);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:14px 16px">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px">
         <div>
           <span class="tag ok">MEMORIA ACTIVA DEL ASISTENTE (mc.db)</span>
@@ -1510,7 +1707,7 @@
     <div class="card v12-side-cal-card" id="v12RightCalendarDock" style="grid-column:span 4">
       <h3>
         <span class="lhs">
-          <span class="dot" style="background:#22c55e"></span>
+          <span class="dot" style="background:#2e8b57"></span>
           <span>Calendario Visual, Citas y Tareas</span>
           <span class="tag ok" id="dockSyncBadge">SYNC 9 APPS</span>
         </span>
@@ -1551,7 +1748,7 @@
     </div>
 
     <!-- LIVE CONNECTED REPO: UNITEC USA & BUILDING INNOVATION AI FRONT-DESK RECEPTIONIST -->
-    <div class="card" style="grid-column:span 12;border-color:rgba(0,212,255,.35)" id="unitecLiveCard">
+    <div class="card" style="grid-column:span 12;border-color:rgba(255,255,255,.08)" id="unitecLiveCard">
       <h3>
         <span class="lhs">
           <span class="dot" style="background:var(--acc2)"></span>
@@ -1581,7 +1778,7 @@
     </div>
 
     <!-- LIVE CONNECTED APP #2: BUILDINGAPP.US (Web + Apple App Store + Google Play) -->
-    <div class="card" id="buildingAppLivePanel" style="grid-column:span 12;border-color:rgba(93,168,255,.38);background:linear-gradient(135deg,rgba(15,23,42,.95),rgba(17,28,52,.92))" onmouseenter="trackBehavior('mouse_focus','buildingapp_live_analytics')">
+    <div class="card" id="buildingAppLivePanel" style="grid-column:span 12;border-color:rgba(255,255,255,.08);background:var(--panel)" onmouseenter="trackBehavior('mouse_focus','buildingapp_live_analytics')">
       <h3>
         <span class="lhs">
           <span class="dot" style="background:var(--acc2)"></span>
@@ -2295,10 +2492,10 @@
 <script>
 /* ── 100% Real Audited Multi-Company Dataset (Zero Mock Data — We Are Live) ── */
 const COMPANIES = [
-  {id:'all', name:'Todas / All', color:'#23d9b0', rev:0, pipe:4665, leads:46, closed:621, conv:98, crit:2, kpiRevStr:'$0 (Sin ERP)', kpiPipeStr:'46 Contactos', kpiClosedStr:'621 IA · 53/55 Cám', kpiCritStr:'2 Errores Activos'},
+  {id:'all', name:'Todas / All', color:'#2e8b57', rev:0, pipe:4665, leads:46, closed:621, conv:98, crit:2, kpiRevStr:'$0 (Sin ERP)', kpiPipeStr:'46 Contactos', kpiClosedStr:'621 IA · 53/55 Cám', kpiCritStr:'2 Errores Activos'},
   {id:'unitec', name:'UNITEC USA', color:'#00e5ff', rev:0, pipe:4665, leads:25, closed:193, conv:98, crit:1, kpiRevStr:'$0 (Sin ERP)', kpiPipeStr:'25 Teléfonos', kpiClosedStr:'193 Conv · 101 Asesor', kpiCritStr:'2 Fallos Envío'},
   {id:'building', name:'BUILDING INNOVATION', color:'#feca57', rev:0, pipe:621, leads:21, closed:54, conv:100, crit:0, kpiRevStr:'$0 (Sin Stripe)', kpiPipeStr:'21 Usuarios', kpiClosedStr:'621 IA (100% Éxito)', kpiCritStr:'GA4 Pendiente'},
-  {id:'cameras', name:'55 CÁMARAS CCTV', color:'#10b981', rev:0, pipe:55, leads:53, closed:53, conv:96, crit:2, kpiRevStr:'11.04 TB HDD', kpiPipeStr:'53/55 En Vivo', kpiClosedStr:'5 Grabadores NVR', kpiCritStr:'2 Cám IDEO Offline'},
+  {id:'cameras', name:'55 CÁMARAS CCTV', color:'#2e8b57', rev:0, pipe:55, leads:53, closed:53, conv:96, crit:2, kpiRevStr:'11.04 TB HDD', kpiPipeStr:'53/55 En Vivo', kpiClosedStr:'5 Grabadores NVR', kpiCritStr:'2 Cám IDEO Offline'},
   {id:'espacios', name:'ESPACIOS IMPORTADOS', color:'#7c6cff', rev:0, pipe:45, leads:45, closed:45, conv:100, crit:1, kpiRevStr:'$0 (Sin ERP)', kpiPipeStr:'45/45 Cám Medellín', kpiClosedStr:'10.04 TB HDD', kpiCritStr:'2 Cám IDEO Offline'},
   {id:'saleinn', name:'NEXUS CRM', color:'#ff6b81', rev:0, pipe:46, leads:46, closed:25, conv:98, crit:1, kpiRevStr:'$0 (Bridge Off)', kpiPipeStr:'46 Contactos Reales', kpiClosedStr:'25 UNITEC + 21 BApp', kpiCritStr:'Bridge IndexedDB Off'}
 ];
@@ -2315,7 +2512,7 @@ const PIPE = [
   {stage_es:"UNITEC USA · Sesiones Firestore", stage_en:"UNITEC USA · Firestore Sessions", count:4665, val:4665, color:"#00D4FF"},
   {stage_es:"BuildingApp · Renders IA Gemini", stage_en:"BuildingApp · Gemini AI Renders", count:621, val:621, color:"#feca57"},
   {stage_es:"UNITEC USA · Conversaciones Reales", stage_en:"UNITEC USA · Real Conversations", count:193, val:193, color:"#7c6cff"},
-  {stage_es:"Contactos Reales (25 Tel + 21 Users)", stage_en:"Verified Contacts (25 Tel + 21 Users)", count:46, val:46, color:"#23d9b0"}
+  {stage_es:"Contactos Reales (25 Tel + 21 Users)", stage_en:"Verified Contacts (25 Tel + 21 Users)", count:46, val:46, color:"#2e8b57"}
 ];
 
 const COUNTRIES = [
@@ -3164,7 +3361,7 @@ function loadVoiceCallsHub(showNotification = false) {
                 </div>
               </details>
               ${c.ceo_decision ? `
-                <div style="padding:8px 12px;border-radius:10px;background:rgba(34,197,94,.16);border:1px solid rgba(34,197,94,.4);font-size:12px;font-weight:700;color:#4ade80">
+                <div style="padding:8px 12px;border-radius:10px;background:rgba(34,197,94,.16);border:1px solid rgba(34,197,94,.4);font-size:12px;font-weight:700;color:#c8cdd2">
                   ✅ Decisión del CEO registrada (${c.ceo_decision_at || 'Hoy'}): «${c.ceo_decision}» · Tarea y notificación en Telegram creadas.
                 </div>
               ` : `
@@ -4595,9 +4792,9 @@ const CTO_PROJECT_SPECS = {
       '<b>5. NEXUS CRM (Contactos Reales &amp; Tareas <code>mc.db</code>):</b> <b>46 contactos reales verificados</b> (25 leads telefónicos UNITEC + 21 cuentas BuildingApp) · Cero cifras inventadas.'
     ],
     bars: [
-      {label: '55 Cámaras CCTV Online (53/55)', pct: 96.4, val: '96.4% (53 Cám)', color: '#10b981'},
+      {label: '55 Cámaras CCTV Online (53/55)', pct: 96.4, val: '96.4% (53 Cám)', color: '#2e8b57'},
       {label: 'UNITEC USA · SLA Alertas Telegram (155/157)', pct: 98.3, val: '98.3% SLA', color: '#0ea5e9'},
-      {label: 'BuildingApp.us · Tasa Éxito Renders IA (621)', pct: 100, val: '100% (621 IA)', color: '#22c55e'},
+      {label: 'BuildingApp.us · Tasa Éxito Renders IA (621)', pct: 100, val: '100% (621 IA)', color: '#2e8b57'},
       {label: 'Espacios Importados · Muelles & Pick-In (45/45)', pct: 100, val: '100% (45 Cám)', color: '#8b5cf6'},
       {label: 'Nexus CRM · Contactos Verificados en Vivo (46)', pct: 92, val: '46 Contactos', color: '#ec4899'}
     ],
@@ -4620,8 +4817,8 @@ const CTO_PROJECT_SPECS = {
       {label: 'Sesiones Auditadas en Firestore (4,665)', pct: 100, val: '4,665 sesiones', color: '#38bdf8'},
       {label: 'Conversaciones Reales con Clientes (193)', pct: 68, val: '193 reales', color: '#0ea5e9'},
       {label: 'Escalaciones a Asesor Humano (101)', pct: 52, val: '101 asesores', color: '#6366f1'},
-      {label: 'Teléfonos Directos Capturados (25)', pct: 35, val: '25 teléfonos', color: '#10b981'},
-      {label: 'SLA Entrega Telegram Bot (155/157)', pct: 98.3, val: '98.3% SLA', color: '#22c55e'}
+      {label: 'Teléfonos Directos Capturados (25)', pct: 35, val: '25 teléfonos', color: '#2e8b57'},
+      {label: 'SLA Entrega Telegram Bot (155/157)', pct: 98.3, val: '98.3% SLA', color: '#2e8b57'}
     ],
     trendTitle: 'Curva de Conversaciones Reales y Leads con Teléfono — UNITEC USA',
     trendPoints: [18, 24, 29, 31, 27, 34, 38]
@@ -4639,9 +4836,9 @@ const CTO_PROJECT_SPECS = {
       '<b>Google Analytics 4 (Web Marketing):</b> Propiedad <code>543661675</code> vinculada para monitoreo de sesiones, países, fuentes y conversiones en <code>buildinginnovation.us</code>.'
     ],
     bars: [
-      {label: 'Renders IA Totales Generados (621)', pct: 100, val: '621 renders', color: '#22c55e'},
-      {label: 'Gemini 2.5 Pro Preview (519 renders)', pct: 83.6, val: '519 (83.6%)', color: '#4ade80'},
-      {label: 'Gemini 3.1 Flash Image (102 renders)', pct: 32, val: '102 (16.4%)', color: '#10b981'},
+      {label: 'Renders IA Totales Generados (621)', pct: 100, val: '621 renders', color: '#2e8b57'},
+      {label: 'Gemini 2.5 Pro Preview (519 renders)', pct: 83.6, val: '519 (83.6%)', color: '#c8cdd2'},
+      {label: 'Gemini 3.1 Flash Image (102 renders)', pct: 32, val: '102 (16.4%)', color: '#2e8b57'},
       {label: 'Proyectos Creados por Usuarios (54)', pct: 54, val: '54 proyectos', color: '#3b82f6'},
       {label: 'Usuarios Registrados Activos (21)', pct: 42, val: '21 miembros', color: '#8b5cf6'}
     ],
@@ -4661,10 +4858,10 @@ const CTO_PROJECT_SPECS = {
       '<b>4. SEDE SALÓN &amp; OFICINA IDEO (2 IPC Wi-Fi <code>DS-2CV2Q21G1-IDW</code>):</b> Series <code>BF4860946</code> y <code>BF4862037</code> · <b>0/2 OFFLINE</b> en SSID <code>UNITECUSA</code> (MicroSD 0.04 TB). Acción CTO: reconectar AP Wi-Fi.'
     ],
     bars: [
-      {label: 'Espacios Importados · NVR L12154607 (29/29)', pct: 100, val: '29/29 ONLINE (6 TB)', color: '#10b981'},
+      {label: 'Espacios Importados · NVR L12154607 (29/29)', pct: 100, val: '29/29 ONLINE (6 TB)', color: '#2e8b57'},
       {label: 'Planta Pick-In · DVR AF5246237 (16/16)', pct: 100, val: '16/16 ONLINE (4 TB)', color: '#0ea5e9'},
       {label: 'USA Miami · NVR GC5348382 (8/8)', pct: 100, val: '8/8 ONLINE (1 TB)', color: '#3b82f6'},
-      {label: 'Disponibilidad Global de Video (53/55)', pct: 96.4, val: '96.4% Uptime', color: '#22c55e'},
+      {label: 'Disponibilidad Global de Video (53/55)', pct: 96.4, val: '96.4% Uptime', color: '#2e8b57'},
       {label: 'Salón & Oficina IDEO · Wi-Fi (0/2 Offline)', pct: 8, val: '0/2 OFFLINE (Wi-Fi)', color: '#8fa893'}
     ],
     trendTitle: 'Disponibilidad de Canales de Video en Vivo (53/55 Canales · 11.04 TB Activos)',
@@ -4684,9 +4881,9 @@ const CTO_PROJECT_SPECS = {
     ],
     bars: [
       {label: 'Sede Principal Espacios Importados (29/29 Cám)', pct: 100, val: '100% (29 Cám)', color: '#8b5cf6'},
-      {label: 'Planta Pick-In & Portones (16/16 Cám)', pct: 100, val: '100% (16 Cám)', color: '#10b981'},
+      {label: 'Planta Pick-In & Portones (16/16 Cám)', pct: 100, val: '100% (16 Cám)', color: '#2e8b57'},
       {label: 'Capacidad de Grabación Medellín (10.0 TB)', pct: 91, val: '10.0 TB HDD', color: '#0ea5e9'},
-      {label: 'Trazabilidad Muelles 1–4 y Despachos', pct: 100, val: '4 Muelles Live', color: '#22c55e'}
+      {label: 'Trazabilidad Muelles 1–4 y Despachos', pct: 100, val: '4 Muelles Live', color: '#2e8b57'}
     ],
     trendTitle: 'Actividad Operativa en Muelles 1–4 y Planta Pick-In (Eventos Auditados)',
     trendPoints: [32, 38, 41, 44, 39, 45, 45]
@@ -4705,9 +4902,9 @@ const CTO_PROJECT_SPECS = {
     ],
     bars: [
       {label: 'Contactos Reales Verificados (46 totales)', pct: 100, val: '46 Contactos', color: '#0ea5e9'},
-      {label: 'Leads Telefónicos UNITEC USA (25)', pct: 54.3, val: '25 Teléfonos', color: '#10b981'},
+      {label: 'Leads Telefónicos UNITEC USA (25)', pct: 54.3, val: '25 Teléfonos', color: '#2e8b57'},
       {label: 'Cuentas Registradas BuildingApp (21)', pct: 45.7, val: '21 Usuarios', color: '#8b5cf6'},
-      {label: 'Pipeline Externo IndexedDB (Sin conexión)', pct: 4, val: 'VACÍO ($0)', color: '#22c55e'}
+      {label: 'Pipeline Externo IndexedDB (Sin conexión)', pct: 4, val: 'VACÍO ($0)', color: '#2e8b57'}
     ],
     trendTitle: 'Crecimiento de Contactos Verificados en Vivo (UNITEC + BuildingApp = 46)',
     trendPoints: [19, 24, 29, 34, 39, 43, 46]
@@ -4763,11 +4960,11 @@ function renderCtoProjectDeepDive() {
       <div style="margin-top:11px;padding-top:9px;border-top:1px solid var(--hair)">
         <div style="font-size:11px;font-weight:700;color:var(--dim);margin-bottom:4px">📈 ${spec.trendTitle}</div>
         <svg viewBox="0 0 310 68" style="width:100%;height:62px;background:rgba(0,0,0,.18);border-radius:10px;padding:4px">
-          <polyline fill="none" stroke="#10b981" stroke-width="2.6" points="${svgPts}" />
+          <polyline fill="none" stroke="#2e8b57" stroke-width="2.6" points="${svgPts}" />
           ${pts.map((v, idx) => {
             const x = Math.round((idx / (pts.length - 1)) * 280) + 15;
             const y = Math.round(58 - ((v - minPt) / Math.max(1, maxPt - minPt)) * 44);
-            return `<circle cx="${x}" cy="${y}" r="3.5" fill="#cdb68c" /><text x="${x}" y="${Math.max(11, y - 6)}" font-size="8.5" fill="#f5f2eb" text-anchor="middle" font-weight="bold">${v}</text>`;
+            return `<circle cx="${x}" cy="${y}" r="3.5" fill="#c8cdd2" /><text x="${x}" y="${Math.max(11, y - 6)}" font-size="8.5" fill="#f5f2eb" text-anchor="middle" font-weight="bold">${v}</text>`;
           }).join('')}
         </svg>
       </div>
@@ -4817,11 +5014,11 @@ function loadProjectMemoryVault(companySlug) {
           ${events.map(ev => `<div style="font-size:11.5px;padding:4px 0;border-bottom:1px solid var(--hair)"><b>${ev.date} ${ev.time||''}</b> — ${ev.title}</div>`).join('') || '<div class="muted" style="font-size:11px">Sin citas en este filtro.</div>'}
         </div>
         <div style="background:rgba(255,255,255,.03);border:1px solid var(--hair);border-radius:11px;padding:10px 12px">
-          <div style="font-size:11px;font-weight:800;color:#22c55e;margin-bottom:6px">⏰ RECORDATORIOS ACTIVOS (${(d.counts&&d.counts.reminders)||reminders.length})</div>
+          <div style="font-size:11px;font-weight:800;color:#2e8b57;margin-bottom:6px">⏰ RECORDATORIOS ACTIVOS (${(d.counts&&d.counts.reminders)||reminders.length})</div>
           ${reminders.map(rm => `<div style="font-size:11.5px;padding:4px 0;border-bottom:1px solid var(--hair)"><b>${rm.trigger_time||''}</b> — ${rm.title}</div>`).join('') || '<div class="muted" style="font-size:11px">Sin recordatorios activos.</div>'}
         </div>
         <div style="background:rgba(255,255,255,.03);border:1px solid var(--hair);border-radius:11px;padding:10px 12px">
-          <div style="font-size:11px;font-weight:800;color:#10b981;margin-bottom:6px">✅ TAREAS DEL CEO (${(d.counts&&d.counts.tasks)||tasks.length})</div>
+          <div style="font-size:11px;font-weight:800;color:#2e8b57;margin-bottom:6px">✅ TAREAS DEL CEO (${(d.counts&&d.counts.tasks)||tasks.length})</div>
           ${tasks.map(tk => `<div style="font-size:11.5px;padding:4px 0;border-bottom:1px solid var(--hair)"><span class="tag high">${tk.id}</span> ${tk.title}</div>`).join('') || '<div class="muted" style="font-size:11px">Sin tareas pendientes.</div>'}
         </div>
       `;
@@ -5820,7 +6017,7 @@ window.LJ_applyUi = function (ui) {
       const targetEl = document.getElementById(ui.scroll_to);
       if (targetEl) {
         try { targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (e) {}
-        targetEl.style.outline = '2px solid #10b981';
+        targetEl.style.outline = '2px solid #2e8b57';
         setTimeout(() => { targetEl.style.outline = ''; }, 2200);
       }
     }, 120);
@@ -5853,7 +6050,7 @@ function renderMasterFunctionsCatalog(list) {
         <b style="font-size:12.5px;color:var(--txt);display:block;margin-bottom:4px">${title}</b>
         <div style="font-size:11px;line-height:1.4;margin-bottom:4px"><b>Qué hace:</b> ${what}</div>
         <div class="muted" style="font-size:10.5px;line-height:1.38;margin-bottom:5px"><b>Cómo funciona:</b> ${how}</div>
-        <div style="font-size:10px;color:#10b981"><b>🗣️ Palabras cercanas:</b> ${cw}</div>
+        <div style="font-size:10px;color:#2e8b57"><b>🗣️ Palabras cercanas:</b> ${cw}</div>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-top:4px;padding-top:6px;border-top:1px solid var(--hair)">
         <button type="button" class="btn sm" style="font-size:10.5px;padding:4px 10px" onclick="runMasterControlChatCommand('${sampleCmd}')">⚡ Ejecutar Función</button>
@@ -5925,12 +6122,12 @@ function updateMasterControlChatFeedback(cmdText, d) {
       <div><span class="tag ok" style="font-size:9.5px">FUNCIÓN IDENTIFICADA</span> <b style="margin-left:6px;color:var(--acc)">${mf.title_es}</b></div>
       <div style="margin-top:4px"><b>Qué hace:</b> ${mf.what_it_does_es}</div>
       <div class="muted" style="margin-top:2px"><b>Cómo funciona:</b> ${mf.how_it_works_es}</div>
-      <div style="margin-top:3px;font-size:10.5px;color:#10b981"><b>Palabras cercanas activas:</b> ${(mf.close_words || []).slice(0, 10).join(', ')}</div>
+      <div style="margin-top:3px;font-size:10.5px;color:#2e8b57"><b>Palabras cercanas activas:</b> ${(mf.close_words || []).slice(0, 10).join(', ')}</div>
     </div>`;
   }
   const actionLinks = [];
   if (ui.gcal_template_url) {
-    actionLinks.push(`<a href="${ui.gcal_template_url}" target="_blank" rel="noopener" class="btn sm" style="background:#10b981;color:#fff;text-decoration:none;font-size:11px">📅 Confirmar / Ver en Google Calendar En Vivo</a>`);
+    actionLinks.push(`<a href="${ui.gcal_template_url}" target="_blank" rel="noopener" class="btn sm" style="background:#2e8b57;color:#fff;text-decoration:none;font-size:11px">📅 Confirmar / Ver en Google Calendar En Vivo</a>`);
   }
   if (ui.gmail_compose_url) {
     actionLinks.push(`<a href="${ui.gmail_compose_url}" target="_blank" rel="noopener" class="btn sm" style="background:#2563eb;color:#fff;text-decoration:none;font-size:11px">✉️ Abrir Recordatorio en Gmail</a>`);
@@ -6078,7 +6275,7 @@ function updateArdenaSimulator() {
       <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
         <span style="font-size:9.5px;color:var(--dim);font-weight:700">${p.val}</span>
         <div style="width:100%;max-width:34px;height:${p.hTotal}px;background:rgba(255,255,255,.09);border-radius:6px 6px 0 0;display:flex;align-items:flex-end;overflow:hidden">
-          <div style="width:100%;height:${p.hGreen}px;background:linear-gradient(180deg,#22c55e,#16a34a);border-radius:5px 5px 0 0;transition:height .28s ease"></div>
+          <div style="width:100%;height:${p.hGreen}px;background:linear-gradient(180deg,#2e8b57,#16a34a);border-radius:5px 5px 0 0;transition:height .28s ease"></div>
         </div>
         <span style="font-size:10px;color:var(--dim);font-weight:600;padding-top:3px">${p.label}</span>
       </div>
@@ -6192,7 +6389,7 @@ function renderAllCompaniesSummaryCards() {
       icon: '📹',
       name: '55 Cámaras CCTV',
       badge: '53/55 En Vivo (96.4%)',
-      color: '#10b981',
+      color: '#2e8b57',
       rev: '11.04 TB HDD',
       pipe: '5 Grabadores NVR',
       summary: 'USA Miami (8/8), Planta Pick-In (16/16), Espacios Importados (29/29) 100% online. 2 cámaras Wi-Fi IDEO offline por reconectar.',
@@ -6289,7 +6486,7 @@ function loadLiveCompanyDepartmentsState(companyOverride, toastOnDone) {
             const iconText = dep.icon ? (dep.icon + ' ') : '';
             const itemsList = dep.items || [];
             const bodyHtml = isEmpty
-              ? `<div style="padding:10px 12px;border-radius:10px;background:rgba(34,197,94,.08);border:1px dashed rgba(34,197,94,.35);font-size:11.5px;color:#4ade80;margin:6px 0">
+              ? `<div style="padding:10px 12px;border-radius:10px;background:rgba(34,197,94,.08);border:1px dashed rgba(34,197,94,.35);font-size:11.5px;color:#c8cdd2;margin:6px 0">
                    <b>🕳️ Departamento Vacío:</b> ${dep.empty_message || dep.summary || dep.summary_es || 'Sin conexión ni registros en vivo ($0 / vacío).'}
                  </div>`
               : `<div class="muted" style="font-size:11.5px;line-height:1.42;margin:6px 0;color:var(--txt);font-weight:600">${dep.summary || dep.summary_es || ''}</div>
@@ -6512,7 +6709,7 @@ setTimeout(() => {
 
 <style>
   #agendaToggle{position:fixed;right:0;top:50%;transform:translateY(-50%) rotate(-90deg);transform-origin:100% 100%;z-index:130;
-    background:linear-gradient(135deg,#dccaa6,#cdb68c);color:#0b0a08;border:0;padding:8px 18px;border-radius:12px 12px 0 0;font-weight:800;font-size:11.5px;letter-spacing:.08em;cursor:pointer;
+    background:linear-gradient(135deg,#dccaa6,#c8cdd2);color:#0b0a08;border:0;padding:8px 18px;border-radius:12px 12px 0 0;font-weight:800;font-size:11.5px;letter-spacing:.08em;cursor:pointer;
     box-shadow:0 8px 24px rgba(205,182,140,.35)}
   #agendaPanel{position:fixed;right:14px;top:16px;bottom:78px;width:360px;z-index:125;display:none;flex-direction:column;gap:10px;overflow:auto;
     background:rgba(18,16,13,.96);color:#f5f2eb;border:1px solid rgba(205,182,140,.22);border-radius:24px;padding:18px;box-shadow:0 26px 68px rgba(0,0,0,.65);
@@ -6526,10 +6723,10 @@ setTimeout(() => {
   .ag-grid .dow{font-size:10px;color:var(--dim);font-weight:700;padding-bottom:2px}
   .ag-day{position:relative;border:0;background:transparent;border-radius:999px;height:31px;font-size:11.5px;color:inherit;font-weight:600;transition:.12s}
   .ag-day:hover{background:rgba(205,182,140,.14)}
-  .ag-day.today{outline:1.5px solid #cdb68c}
+  .ag-day.today{outline:1.5px solid #c8cdd2}
   .ag-day.has{background:rgba(16,185,129,.18);color:#34d399;font-weight:700}
-  .ag-day.has-ev::after{content:"";position:absolute;bottom:3px;left:50%;width:4px;height:4px;margin-left:-2px;border-radius:50%;background:#cdb68c}
-  .ag-day.sel{background:linear-gradient(135deg,#dccaa6,#cdb68c) !important;color:#0b0a08 !important;font-weight:800;box-shadow:0 4px 12px rgba(205,182,140,.35)}
+  .ag-day.has-ev::after{content:"";position:absolute;bottom:3px;left:50%;width:4px;height:4px;margin-left:-2px;border-radius:50%;background:#c8cdd2}
+  .ag-day.sel{background:linear-gradient(135deg,#dccaa6,#c8cdd2) !important;color:#0b0a08 !important;font-weight:800;box-shadow:0 4px 12px rgba(205,182,140,.35)}
   .ag-day.sel::after{background:#0b0a08 !important}
   .ag-day.out{opacity:.32}
   .ag-item{display:flex;gap:8px;align-items:flex-start;padding:8px 10px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(205,182,140,.14)}
@@ -6544,7 +6741,7 @@ setTimeout(() => {
   .ag-form input{border:1px solid rgba(205,182,140,.2);border-radius:10px;padding:7px 9px;font:inherit;min-width:0;background:rgba(0,0,0,.28);color:inherit;font-size:11.5px}
   .ag-form .row{grid-column:1/3;display:flex;gap:6px;padding:0;border:0}
   .ag-form .row input{flex:1}
-  .ag-btn{border:0;border-radius:10px;padding:7px 12px;font-weight:800;font-size:11.5px;background:linear-gradient(135deg,#dccaa6,#cdb68c);color:#0b0a08}
+  .ag-btn{border:0;border-radius:10px;padding:7px 12px;font-weight:800;font-size:11.5px;background:linear-gradient(135deg,#dccaa6,#c8cdd2);color:#0b0a08}
   .ag-btn.alt{background:linear-gradient(135deg,#10B981,#059669);color:#fff}
   .ag-sync{font-size:11px;color:var(--dim);line-height:1.45;background:rgba(255,255,255,.04);border:1px solid rgba(205,182,140,.14);border-radius:12px;padding:10px}
   .ag-sync code{display:block;word-break:break-all;margin:6px 0;color:var(--acc);font-size:10.5px}
@@ -6664,10 +6861,10 @@ setTimeout(() => {
       const ek = 'ev:' + e.id;
       if (editingKey === ek) {
         L += '<div class="ag-item"><div class="t">'
-          + '<input class="ag-edit-in" data-edit-title="'+esc(e.id)+'" value="'+esc(e.title)+'" style="width:100%;margin-bottom:4px;padding:4px 6px;border-radius:6px;border:1px solid #22c55e;background:rgba(0,0,0,.25);color:inherit;font-size:11.5px">'
+          + '<input class="ag-edit-in" data-edit-title="'+esc(e.id)+'" value="'+esc(e.title)+'" style="width:100%;margin-bottom:4px;padding:4px 6px;border-radius:6px;border:1px solid #2e8b57;background:rgba(0,0,0,.25);color:inherit;font-size:11.5px">'
           + '<div style="display:flex;gap:4px">'
           + '<input type="time" data-edit-time="'+esc(e.id)+'" value="'+esc(e.time || '10:00')+'" style="padding:3px 5px;border-radius:6px;border:1px solid rgba(255,255,255,.2);background:rgba(0,0,0,.25);color:inherit;font-size:10.5px">'
-          + '<button type="button" class="act-btn" data-save-ev="'+esc(e.id)+'" style="background:#22c55e;color:#fff">Guardar</button>'
+          + '<button type="button" class="act-btn" data-save-ev="'+esc(e.id)+'" style="background:#2e8b57;color:#fff">Guardar</button>'
           + '<button type="button" class="act-btn" data-cancel-edit="1">Cancelar</button>'
           + '</div></div></div>';
       } else {
@@ -6879,7 +7076,7 @@ setTimeout(() => {
   .sa-brand { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 280px; }
   .sa-orb {
     width: 52px; height: 52px; border-radius: 50%; flex-shrink: 0;
-    background: radial-gradient(circle at 35% 35%, #dccaa6, #cdb68c 65%, #8e734b);
+    background: radial-gradient(circle at 35% 35%, #dccaa6, #c8cdd2 65%, #8e734b);
     display: flex; align-items: center; justify-content: center;
     box-shadow: 0 0 28px rgba(205, 182, 140, 0.45);
     cursor: pointer; position: relative; transition: transform .2s ease;
@@ -6932,7 +7129,7 @@ setTimeout(() => {
   }
   .sa-msg.user {
     align-self: flex-end;
-    background: linear-gradient(135deg, #dccaa6, #cdb68c);
+    background: linear-gradient(135deg, #dccaa6, #c8cdd2);
     color: #0b0a08;
     border-bottom-right-radius: 6px;
     font-weight: 700;
@@ -6973,7 +7170,7 @@ setTimeout(() => {
     cursor: pointer;
     transition: .14s;
   }
-  .sa-chip:hover { border-color: #cdb68c; background: rgba(205, 182, 140, 0.16); }
+  .sa-chip:hover { border-color: #c8cdd2; background: rgba(205, 182, 140, 0.16); }
   .sa-chip.warn { border-color: rgba(205, 182, 140, 0.45); color: #dccaa6; }
   .sa-input-bar {
     display: flex; gap: 10px; align-items: center;
@@ -6994,7 +7191,7 @@ setTimeout(() => {
   }
   .sa-send-btn {
     border: 0; border-radius: 999px; padding: 11px 22px;
-    background: linear-gradient(135deg, #dccaa6, #cdb68c);
+    background: linear-gradient(135deg, #dccaa6, #c8cdd2);
     color: #0b0a08; font-weight: 800; font-size: 12px; letter-spacing: 0.06em; cursor: pointer;
     box-shadow: 0 6px 18px rgba(205, 182, 140, 0.3);
   }
@@ -7019,7 +7216,7 @@ setTimeout(() => {
   .sa-icard-body {
     font-size: 12px; padding: 8px 10px; border-radius: 8px;
     background: rgba(255, 255, 255, 0.55); color: #1c1915;
-    border-left: 3px solid #cdb68c; white-space: pre-wrap;
+    border-left: 3px solid #c8cdd2; white-space: pre-wrap;
   }
   .sa-icard-actions {
     display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 4px;
