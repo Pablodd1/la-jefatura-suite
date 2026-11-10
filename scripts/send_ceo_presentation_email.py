@@ -34,7 +34,7 @@ def main():
 
     to_email = "jcormier2511@gmail.com"
     now_str = time.strftime("%Y-%m-%d %H:%M EST", time.localtime())
-    live_base = "https://thinkpad-domains-lined-bread.trycloudflare.com"
+    live_base = "https://lajefatura.pocketscribe.online"
     deck_url = f"{live_base}/ceo-deck"
     website_url = f"{live_base}/website"
     sam3_url = f"{live_base}/api/cameras/sam3/logs"

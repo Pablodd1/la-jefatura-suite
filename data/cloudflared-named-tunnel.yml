@@ -1,0 +1,14 @@
+tunnel: 2b047c39-9f7d-4191-a191-16d8fc6fd044
+credentials-file: C:\Users\jasme\.cloudflared\2b047c39-9f7d-4191-a191-16d8fc6fd044.json
+ingress:
+  - hostname: lajefatura.pocketscribe.online
+    service: http://127.0.0.1:8931
+  - hostname: eljefesito.pocketscribe.online
+    service: http://127.0.0.1:8931
+  - hostname: jefatura.pocketscribe.online
+    service: http://127.0.0.1:8931
+  - hostname: pocketscribe.online
+    service: http://localhost:8787
+  - hostname: www.pocketscribe.online
+    service: http://localhost:8787
+  - service: http_status:404
