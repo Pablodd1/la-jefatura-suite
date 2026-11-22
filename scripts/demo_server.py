@@ -62,6 +62,9 @@ import text_messaging  # noqa: E402
 import functions_catalog  # noqa: E402
 import voice_calls_engine  # noqa: E402
 import sam3_tracker_engine  # noqa: E402
+import llm_router  # noqa: E402
+import llm_observability  # noqa: E402
+import twenty_crm_sync  # noqa: E402
 
 PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 8931
 SAMPLES = os.path.join(ROOT, "data", "samples")
@@ -399,6 +402,12 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
         elif path == "/api/behavior/state":
             slot = (qs.get("slot") or [None])[0]
             self._send(200, behavior_brain.get_state(slot=slot))
+        elif path == "/api/crm/twenty/status":
+            self._send(200, twenty_crm_sync.get_status())
+        elif path == "/api/llm/observability":
+            hrs = int((qs.get("hours") or ["24"])[0] or 24)
+            lim = int((qs.get("limit") or ["30"])[0] or 30)
+            self._send(200, llm_observability.summary(hours=hrs, limit=lim))
         elif path == "/api/onboarding/state":
             self._send(200, _get_onboarding())
         elif path == "/api/report.pdf":
@@ -534,6 +543,14 @@ class Handler(__import__("http.server").server.BaseHTTPRequestHandler):
         elif path == "/api/google/sync":
             self._send(200, google_workspace.sync_gmail_and_calendar(
                 max_emails=int(body.get("max_emails", 10))))
+        elif path == "/api/crm/twenty/sync":
+            res = twenty_crm_sync.sync_from_twenty(
+                base_url=body.get("base_url"),
+                api_key=body.get("api_key"),
+                sample_leads=body.get("sample_leads"),
+                sample_visits=body.get("sample_visits"),
+            )
+            self._send(200 if res.get("ok") else 400, res)
         elif path == "/api/reports/dispatch_daily":
             self._send(200, daily_brief_pusher.dispatch_brief(
                 slot=body.get("slot", "morning"),
