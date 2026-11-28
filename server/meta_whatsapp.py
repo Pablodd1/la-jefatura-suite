@@ -17,6 +17,7 @@ Capabilities:
      - Official Meta Cloud API Groups: supported on Official Business Accounts (up to 8 participants, invite-link model).
 """
 
+import base64
 import hashlib
 import hmac
 import json
@@ -226,6 +227,7 @@ def save_config(payload: dict) -> dict:
 
 def ensure_seeded():
     c = _db()
+    c.executescript(SCHEMA)
     n = c.execute("SELECT COUNT(*) FROM wa_watchlist").fetchone()[0]
     if n == 0:
         now = time.time()
@@ -397,6 +399,7 @@ def ingest_message(chat_id: str, sender: str, text: str, kind: str = "direct",
     matched = bool(watch and watch.get("enabled"))
     draft_id = None
     task_id = None
+    followup_id = None
 
     if matched:
         co = watch.get("company") or company or "all"
@@ -404,24 +407,66 @@ def ingest_message(chat_id: str, sender: str, text: str, kind: str = "direct",
         thread_id = f"wa-{re.sub(r'[^a-zA-Z0-9_-]', '', chat_id)[:32]}"
         ing = comms_brain.ingest("whatsapp", "in", contact_label, text, thread_id=thread_id, auto_flag=True)
 
+        # Try Gemini 3 virtual assistant analysis for smart draft, job assignment, and follow-up extraction
+        ai_extracted = {}
+        try:
+            try:
+                import llm_router
+            except ImportError:
+                from server import llm_router
+            va_prompt = (
+                "Eres El Jefesito, Asistente Virtual Ejecutivo de Juan David García. "
+                "Analiza este mensaje de WhatsApp de un grupo/chat autorizado y responde JSON estricto:\n"
+                f"Chat: {watch['name']} ({watch['kind']})\nRemitente: {sender}\nMensaje: {text}\n\n"
+                '{"reply_draft": "respuesta corta y profesional en español lista para enviar al grupo/chat", '
+                '"has_job": true, "job_title": "tarea concreta asignada o requerida", '
+                '"assignee": "responsable (ej. Equipo Logística / Carlos / CEO)", '
+                '"due_date": "YYYY-MM-DD", '
+                '"followup_what": "qué se debe dar seguimiento después"}'
+            )
+            ai_r = llm_router.generate_text(prompt=va_prompt, task_type="fast", json_mode=True, max_tokens=320)
+            if ai_r.get("ok") and ai_r.get("text"):
+                ai_extracted = json.loads(ai_r["text"])
+        except Exception:
+            ai_extracted = {}
+
         if watch.get("auto_draft"):
             dr = comms_brain.create_draft(thread_id, channel="whatsapp", tenant="default")
             draft_id = dr.get("draft_id")
+            if draft_id and ai_extracted.get("reply_draft"):
+                try:
+                    comms_brain.revise(int(draft_id), str(ai_extracted["reply_draft"]).strip(), actor="el_jefesito_va", reason="whatsapp_group_va")
+                except Exception:
+                    pass
 
-        if watch.get("auto_task") and _should_extract_task(text):
-            short_txt = text.strip().replace("\n", " ")
-            if len(short_txt) > 88:
-                short_txt = short_txt[:85] + "..."
+        if watch.get("auto_task") and (ai_extracted.get("has_job") or _should_extract_task(text)):
+            short_txt = str(ai_extracted.get("job_title") or text).strip().replace("\n", " ")
+            if len(short_txt) > 95:
+                short_txt = short_txt[:92] + "..."
             prefix = "[WA Grupo]" if watch["kind"] == "group" else "[WA Directo]"
+            assignee = str(ai_extracted.get("assignee") or "CEO / Equipo").strip()
+            due_dt = str(ai_extracted.get("due_date") or time.strftime("%Y-%m-%d")).strip()
             tk = knowledge_store.add_task(
                 title=f"{prefix} {watch['name'].split('·')[0].strip()}: {short_txt}",
                 company=co,
-                owner="CEO / Equipo",
-                due=time.strftime("%Y-%m-%d"),
+                owner=assignee,
+                due=due_dt,
                 severity="high",
-                source="meta_whatsapp_cloud",
+                source="whatsapp_virtual_assistant",
             )
             task_id = tk.get("id")
+            try:
+                import ceo_action_brain
+                fu = ceo_action_brain.add_followup(
+                    who=f"{sender} ({watch['name'][:30]})",
+                    what=str(ai_extracted.get("followup_what") or short_txt),
+                    deadline=due_dt,
+                    company=co,
+                    notes=f"Auto-registrado por Asistente Virtual WhatsApp (Tarea {task_id or ''})",
+                )
+                followup_id = fu.get("followup_id") or fu.get("id")
+            except Exception:
+                pass
 
         c = _db()
         c.execute(
@@ -448,27 +493,140 @@ def ingest_message(chat_id: str, sender: str, text: str, kind: str = "direct",
         "kind": watch["kind"] if watch else kind,
         "draft_id": draft_id,
         "task_id": task_id,
+        "followup_id": followup_id,
     }
+
+
+def transcribe_audio_bytes(
+    audio_bytes: bytes,
+    mime_type: str = "audio/ogg",
+    lang: str = "es",
+    timeout: float = 20.0,
+) -> dict:
+    """Transcribe WhatsApp/Telegram voice note bytes via Gemini inlineData (shared helper)."""
+    if not audio_bytes:
+        return {"ok": False, "transcript": "", "error": "empty_audio"}
+    clean_b64 = base64.b64encode(audio_bytes).decode("ascii")
+    api_key = ""
+    models = ["gemini-3.1-flash-lite", "gemini-3-flash-preview", "gemini-flash-latest"]
+    try:
+        import llm_router
+        api_key = llm_router._load_env_var("GEMINI_API_KEY", "")
+        models = llm_router._gemini_models(prefer_pro=False) or models
+    except Exception:
+        api_key = os.environ.get("GEMINI_API_KEY", "").strip()
+    if not api_key:
+        return {"ok": False, "transcript": "", "error": "gemini_api_key_missing"}
+
+    lang_lbl = "English" if str(lang).lower().startswith("en") else "Spanish"
+    prompt = (
+        f"Transcribe this executive voice note accurately in {lang_lbl}. "
+        "Return ONLY the clean verbatim transcript text with proper punctuation, no extra commentary."
+    )
+    clean_mime = (mime_type or "audio/ogg").split(";", 1)[0].strip() or "audio/ogg"
+    errors = []
+    for model in models:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
+        payload = {
+            "contents": [{
+                "role": "user",
+                "parts": [
+                    {"text": prompt},
+                    {"inlineData": {"mimeType": clean_mime, "data": clean_b64}},
+                ],
+            }],
+            "generationConfig": {"temperature": 0.0, "maxOutputTokens": 512},
+        }
+        req = urllib.request.Request(
+            url,
+            data=json.dumps(payload).encode("utf-8"),
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
+                data = json.loads(resp.read().decode("utf-8", errors="replace"))
+            cands = data.get("candidates") or []
+            parts = (cands[0].get("content", {}).get("parts") or []) if cands else []
+            txt = "".join(
+                p.get("text", "") for p in parts if isinstance(p, dict) and not p.get("thought") and p.get("text")
+            ).strip()
+            if not txt and parts:
+                txt = "".join(p.get("text", "") for p in parts if isinstance(p, dict) and p.get("text")).strip()
+            if txt:
+                return {"ok": True, "transcript": txt, "model": model, "error": None}
+            errors.append(f"{model}: empty")
+        except Exception as exc:
+            errors.append(f"{model}: {type(exc).__name__}: {exc}")
+    return {"ok": False, "transcript": "", "error": " | ".join(errors[-2:]) if errors else "transcription_failed"}
+
+
+def _download_meta_media(media_id: str, access_token: str, timeout: float = 15.0) -> tuple[bytes, str]:
+    """Resolve Meta Cloud API media ID to a download URL and fetch raw audio bytes."""
+    if not media_id or not access_token:
+        return b"", "audio/ogg"
+    meta_url = f"https://graph.facebook.com/{GRAPH_API_VERSION}/{media_id}"
+    req = urllib.request.Request(
+        meta_url,
+        headers={"Authorization": f"Bearer {access_token}", "User-Agent": "LaJefatura-MetaCloudAPI/1.0"},
+        method="GET",
+    )
+    with urllib.request.urlopen(req, timeout=timeout) as resp:
+        info = json.loads(resp.read().decode("utf-8", "ignore"))
+    dl_url = info.get("url") or ""
+    mime = info.get("mime_type") or "audio/ogg"
+    if not dl_url:
+        return b"", mime
+    dl_req = urllib.request.Request(
+        dl_url,
+        headers={"Authorization": f"Bearer {access_token}", "User-Agent": "LaJefatura-MetaCloudAPI/1.0"},
+        method="GET",
+    )
+    with urllib.request.urlopen(dl_req, timeout=timeout) as dl_resp:
+        return dl_resp.read(), mime
 
 
 def handle_webhook_payload(payload: dict) -> dict:
     """
     Parses standard Meta WhatsApp Cloud API webhook payload (`object == 'whatsapp_business_account'`)
-    as well as simplified direct test payloads.
+    as well as simplified direct test payloads (including voice notes via `audio_base64` or Meta `audio.id`).
     """
     results = []
-    if payload.get("chat_id") or payload.get("text"):
+    if payload.get("chat_id") or payload.get("text") or payload.get("audio_base64"):
+        body_text = str(payload.get("text") or "").strip()
+        transcript_meta = None
+        if payload.get("audio_base64") and not body_text:
+            try:
+                raw_b64 = str(payload.get("audio_base64") or "").strip()
+                if raw_b64.startswith("data:") and "," in raw_b64:
+                    raw_b64 = raw_b64.split(",", 1)[1]
+                audio_bytes = base64.b64decode(raw_b64)
+                transcript_meta = transcribe_audio_bytes(
+                    audio_bytes,
+                    mime_type=str(payload.get("mime_type") or "audio/ogg"),
+                    lang=str(payload.get("lang") or "es"),
+                )
+                if transcript_meta.get("ok") and transcript_meta.get("transcript"):
+                    body_text = f"[Nota de Voz WhatsApp transcrita]: {transcript_meta['transcript']}"
+                else:
+                    body_text = "[Nota de Voz WhatsApp recibida]"
+            except Exception:
+                body_text = "[Nota de Voz WhatsApp recibida]"
         res = ingest_message(
             chat_id=str(payload.get("chat_id") or payload.get("from") or "+1-305-000-0000"),
             sender=str(payload.get("sender") or payload.get("name") or payload.get("chat_id") or "Contacto WhatsApp"),
-            text=str(payload.get("text") or ""),
+            text=body_text,
             kind=str(payload.get("kind") or "direct"),
             company=str(payload.get("company") or "all"),
             force_monitor=bool(payload.get("force_monitor", True)),
             raw_payload=payload,
         )
+        if transcript_meta is not None:
+            res["voice_transcription"] = transcript_meta
         return {"ok": True, "processed": 1, "results": [res]}
 
+    cfg = load_config()
+    access_token = cfg.get("access_token") or ""
     for entry in payload.get("entry") or []:
         for change in entry.get("changes") or []:
             val = change.get("value") or {}
@@ -485,6 +643,27 @@ def handle_webhook_payload(payload: dict) -> dict:
                 mtype = msg.get("type", "text")
                 if mtype == "text":
                     body = (msg.get("text") or {}).get("body") or ""
+                elif mtype in ("audio", "voice"):
+                    audio_obj = msg.get("audio") or msg.get("voice") or {}
+                    media_id = str(audio_obj.get("id") or "")
+                    inline_b64 = str(audio_obj.get("audio_base64") or "")
+                    tr_res = {"ok": False, "transcript": ""}
+                    try:
+                        if inline_b64:
+                            tr_res = transcribe_audio_bytes(
+                                base64.b64decode(inline_b64),
+                                mime_type=str(audio_obj.get("mime_type") or "audio/ogg"),
+                            )
+                        elif media_id and access_token:
+                            ab, amime = _download_meta_media(media_id, access_token)
+                            if ab:
+                                tr_res = transcribe_audio_bytes(ab, mime_type=amime)
+                    except Exception:
+                        tr_res = {"ok": False, "transcript": ""}
+                    if tr_res.get("ok") and tr_res.get("transcript"):
+                        body = f"[Nota de Voz WhatsApp transcrita]: {tr_res['transcript']}"
+                    else:
+                        body = "[Nota de Voz WhatsApp recibida]"
                 elif mtype in ("image", "document", "video"):
                     body = ((msg.get(mtype) or {}).get("caption") or f"[{mtype.upper()} adjunto en WhatsApp]")
                 elif mtype == "button":
@@ -501,17 +680,40 @@ def handle_webhook_payload(payload: dict) -> dict:
 
 def send_message(to_addr: str, body: str) -> str:
     """
-    Sends an approved reply via Official Meta WhatsApp Cloud API:
-      POST https://graph.facebook.com/v21.0/{phone_number_id}/messages
-    Falls back to a clearly labeled sandbox receipt if `access_token` or `phone_number_id`
-    has not been pasted yet into `data/meta_whatsapp.secret.json`.
+    Anti-ban safe outbound dispatch:
+      1) For WhatsApp Group JIDs (`...@g.us`) or active Multi-Device Linked Companion chats on the
+         approved `wa_watchlist`, queues into `data/wa_outbound_queue.jsonl` (human typing presence +
+         18s cooldown + max 12 msgs/hr rate guard).
+      2) For 1:1 official Meta Cloud API numbers (when `META_WA_ACCESS_TOKEN` + `phone_number_id`
+         are configured), dispatches via `https://graph.facebook.com/v21.0/{phone_number_id}/messages`.
+      3) Otherwise returns a clearly labeled sandbox receipt.
     """
+    target = (to_addr or "").strip()
+    md_file = os.path.join(ROOT, "data", "wa_multidevice_state.json")
+    md_connected = False
+    if os.path.isfile(md_file):
+        try:
+            md_connected = json.load(open(md_file, encoding="utf-8")).get("connection") == "connected"
+        except Exception:
+            pass
+
+    if ("@g.us" in target or "@s.whatsapp.net" in target or md_connected) and target:
+        watch = _match_watched_chat(target)
+        if not (watch and watch.get("enabled")):
+            raise ValueError(f"Anti-ban block: '{target}' is not enabled on wa_watchlist")
+        jid = target if "@" in target else (re.sub(r"[^\d]", "", target) + "@s.whatsapp.net")
+        q_file = os.path.join(ROOT, "data", "wa_outbound_queue.jsonl")
+        os.makedirs(os.path.dirname(q_file), exist_ok=True)
+        with open(q_file, "a", encoding="utf-8") as qf:
+            qf.write(json.dumps({"chat_id": jid, "text": body, "queued_at": time.time()}, ensure_ascii=False) + "\n")
+        return f"wa-companion-queued-{int(time.time() * 1000)}"
+
     cfg = load_config()
     token = cfg.get("access_token") or ""
     phone_id = cfg.get("phone_number_id") or ""
     # Extract phone or group recipient
-    m = re.search(r"(\+?\d[\d\s\-]{7,18}\d)", to_addr or "")
-    recipient = re.sub(r"[^\d]", "", m.group(1)) if m else to_addr.strip()
+    m = re.search(r"(\+?\d[\d\s\-]{7,18}\d)", target)
+    recipient = re.sub(r"[^\d]", "", m.group(1)) if m else target
 
     if not token or not phone_id:
         return f"meta-cloud-sandbox-{int(time.time() * 1000)}"
@@ -538,6 +740,84 @@ def send_message(to_addr: str, body: str) -> str:
         resp = json.loads(r.read().decode("utf-8", "ignore"))
     msgs = resp.get("messages") or []
     return msgs[0].get("id") if msgs else f"meta-sent-{int(time.time())}"
+
+
+def approve_and_send_reply(
+    target: str = "",
+    reply_text: str = "",
+    human_delay_sec: int = 0,
+    chat_id: str = "",
+    draft_id: int = 0,
+) -> dict:
+    """
+    Safe outbound WhatsApp reply dispatcher called by Spark Follow-Up Engine & CEO Copilot.
+    Resolves watched contacts/groups or direct E.164 numbers and dispatches via `send_message()`.
+    """
+    dest = (chat_id or target or "").strip()
+    body = (reply_text or "").strip()
+    if not dest or not body:
+        return {"ok": False, "error": "missing_target_or_text", "channel": "whatsapp"}
+
+    watch = _match_watched_chat(dest)
+    resolved_addr = watch["chat_id"] if watch else dest
+    # If target is a plain name not on watchlist and has no phone digits, don't fake-send to a name string
+    has_digits = bool(re.search(r"\d{7,}", resolved_addr))
+    if not watch and not has_digits and "@" not in resolved_addr:
+        return {"ok": False, "error": f"unwatched_or_no_phone:{dest}", "channel": "whatsapp"}
+
+    try:
+        msg_id = send_message(resolved_addr, body)
+        is_sandbox = str(msg_id).startswith("meta-cloud-sandbox-")
+        return {
+            "ok": not is_sandbox,
+            "sandbox": is_sandbox,
+            "message_id": msg_id,
+            "target": resolved_addr,
+            "draft_id": int(draft_id or 0),
+            "channel": "whatsapp",
+        }
+    except Exception as exc:
+        return {"ok": False, "error": str(exc), "target": resolved_addr, "channel": "whatsapp"}
+
+
+def send_ceo_summary(text: str, to_phone: str = "") -> dict:
+    """
+    Mirror an executive summary (call transcript, delegated task update, etc.) to the CEO on WhatsApp
+    when live Meta Cloud API credentials or a connected Multi-Device companion bridge are active.
+    Never raises; returns skipped=True cleanly when WhatsApp outbound is not yet live.
+    """
+    body = (text or "").strip()
+    if not body:
+        return {"ok": False, "skipped": True, "reason": "empty_text"}
+    cfg = load_config()
+    md_file = os.path.join(ROOT, "data", "wa_multidevice_state.json")
+    md_connected = False
+    if os.path.isfile(md_file):
+        try:
+            md_connected = json.load(open(md_file, encoding="utf-8")).get("connection") == "connected"
+        except Exception:
+            pass
+    live_cloud = bool(cfg.get("access_token") and cfg.get("phone_number_id"))
+    if not live_cloud and not md_connected:
+        return {"ok": False, "skipped": True, "reason": "whatsapp_not_live"}
+
+    target = (to_phone or os.environ.get("CEO_WHATSAPP_PHONE") or os.environ.get("CEO_DIRECT_PHONE") or "").strip()
+    if not target:
+        env_p = os.path.join(ROOT, ".env")
+        if os.path.isfile(env_p):
+            for ln in open(env_p, encoding="utf-8", errors="ignore"):
+                s = ln.strip()
+                if s.startswith(("CEO_WHATSAPP_PHONE=", "CEO_DIRECT_PHONE=")):
+                    target = s.split("=", 1)[1].strip().strip('"').strip("'")
+                    if target:
+                        break
+    if not target:
+        return {"ok": False, "skipped": True, "reason": "ceo_whatsapp_phone_missing"}
+    try:
+        msg_id = send_message(target, body)
+        return {"ok": True, "message_id": msg_id, "target": target, "channel": "whatsapp"}
+    except Exception as exc:
+        return {"ok": False, "skipped": False, "error": str(exc), "target": target, "channel": "whatsapp"}
 
 
 def get_status() -> dict:

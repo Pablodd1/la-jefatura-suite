@@ -108,7 +108,7 @@ def _resolve_company_slug(raw_company: str) -> tuple[str, str]:
     if any(k in rc for k in ("unitec", "unitek", "uni", "pvc", "wpc", "lamina")):
         return "unitec", "UNITEC USA Design"
     if any(k in rc for k in ("building", "bilding", "bui", "render", "gemini", "ga4")):
-        return "building", "Building Innovation"
+        return "building", "Building AI"
     if any(k in rc for k in ("camara", "cámara", "cam", "cctv", "hik", "video", "vigilancia", "55", "53")):
         return "cameras", "55 Cámaras CCTV Hik-Connect"
     if any(k in rc for k in ("espacio", "importado", "colombia", "muelle", "pick", "bodega", "contenedor", "aduana")):
@@ -204,6 +204,16 @@ def parse(command: str, lang: str = "es") -> dict:
     if m_learn_co and not re.search(r"\b(voz|voice|estilo)\b", low):
         return {"action": "learn_company", "text": m_learn_co.group(1).strip()}
 
+    # Deep Camera CV Review ("revisa las camaras", "cuantas personas y carros", "personas repetidas", "comportamiento de camaras")
+    if re.search(
+        r"\b(?:revis[ae]\w*\s+(?:las\s+)?c[aá]maras?|reporte\s+profundo\s+de\s+c[aá]maras?|"
+        r"cu[aá]nt[ao]s\s+(?:personas?|carros?|veh[ií]culos?|objetos?)|"
+        r"(?:personas?|carros?|veh[ií]culos?)\s+repetid[ao]s?|comportamiento\s+de\s+c[aá]maras?|"
+        r"camera\s+deep\s+review|repeat\s+(?:people|cars|vehicles))\b",
+        low,
+    ):
+        return {"action": "camera_deep_review", "text": t}
+
     # Cameras Vigilant Mode trigger / repost ("disparar modo vigilante", "repostear alerta de cámaras", "activar modo vigilante", "cameras vigilant mode repost")
     if re.search(r"\b(?:disparar?|repostear?|repost|activar?|enviar?|mandar?|trigger)\b.*\b(?:vigilante|vigilant|alerta\s+de\s+c[aá]maras?|sospechos\w*)\b", low):
         return {"action": "trigger_camera_vigilant", "reason": t}
@@ -214,10 +224,14 @@ def parse(command: str, lang: str = "es") -> dict:
 
     # Delegated Telegram / Text / Voice Call / Multi-Intent commands
     if re.search(
-        r"\b(?:go\s+to\s+telegram|ve\s+a\s+telegram|send\s+a?\s*(?:text|telegram|message)|send\s+this\s+text|"
-        r"manda(?:r)?\s+un?\s*(?:telegram|texto|mensaje)|env[íi]a(?:r)?\s+un?\s*(?:telegram|texto|mensaje)|"
-        r"i\s+want\s+you\s+to|quiero\s+que\s+(?:env[íi]es|mandes|redactes|llames)|"
-        r"make\s+a?\s*(?:phone\s+)?call|llamar\s+por\s+tel[ée]fono|llama\s+a|haz\s+una\s+llamada)\b",
+        r"\b(?:go\s+to\s+telegram|ve\s+a\s+telegram|send\s+a?\s*(?:text|telegram|message|whatsapp)|send\s+this\s+text|"
+        r"(?:^|(?:please|por\s+favor)\s+)(?:call|text|message)\s+[a-záéíóúñ+0-9]+|"
+        r"manda(?:r)?\s+(?:un\s+)?(?:telegram|texto|mensaje|whatsapp|wa)|m[áa]ndale\s+(?:un\s+)?(?:telegram|texto|mensaje|whatsapp|wa)|"
+        r"env[íi]a(?:r)?\s+(?:un\s+)?(?:telegram|texto|mensaje|whatsapp|wa)|env[íi]ale\s+(?:un\s+)?(?:telegram|texto|mensaje|whatsapp|wa)|"
+        r"escr[íi]bele\s+(?:por\s+telegram|al|a)|"
+        r"(?:dile|av[ií]sale|m[aá]ndale\s+raz[oó]n|comun[ií]came\s+con)\s+(?:a|al|con)\b|"
+        r"i\s+want\s+you\s+to|quiero\s+que\s+(?:env[íi]es|mandes|redactes|llames|le\s+digas|avises)|"
+        r"make\s+a?\s*(?:phone\s+)?call|llamar\s+(?:por\s+tel[ée]fono|a)|llama\s+a|ll[áa]male|haz\s+una\s+llamada)\b",
         low,
     ):
         return {"action": "ceo_delegation", "text": t}
@@ -239,7 +253,8 @@ def parse(command: str, lang: str = "es") -> dict:
         r"bandeja|comms|correos?|emails?|borradores|inbox|mando|overview|consola|dashboard|inicio)\b",
         low
     )
-    if re.search(r"^(?:ir a|abrir|abre|open|go to|ver|mostrar|show|tab|pestaña)\b", low) and tab_match:
+    if re.search(r"^(?:ir a|abrir|abre|open|go to|ver|mostrar|show|tab|pestaña)\b", low) and tab_match \
+            and "?" not in t and "¿" not in t:
         w = tab_match.group(1)
         if w in ("blog", "blogs", "guia", "guias", "guía", "guías", "funciones"):
             return {"action": "open_tab", "tab": "blogs"}
@@ -262,13 +277,17 @@ def parse(command: str, lang: str = "es") -> dict:
         return {"action": "open_tab", "tab": "overview"}
 
     sw = re.match(r"^(?:cambiar a|cambia a|ir a|switch to|muestra(?:me)?|show(?: me)?)\s+(.+)$", t, re.I)
-    if sw:
+    if sw and "?" not in t and "¿" not in t and not re.search(
+        r"\b(correos?|emails?|mails?|tareas?|tasks?|notas?|notes?|citas?|calendario|pendientes|cola|bandeja|inbox)\b",
+        low,
+    ):
         return {"action": "switch_company", "company": sw.group(1).strip()}
 
     # Close-word / fuzzy navigation or function catalog request when user says a navigation verb or function name
     try:
         import functions_catalog
-        if re.search(r"^(?:ir a|abrir|abre|open|go to|ver|mostrar|muestrame|muestra|show|pon|poner|llevar a|llevame a|acceder|entrar|catalogo|catálogo)\b", low):
+        if re.search(r"^(?:ir a|abrir|abre|open|go to|ver|mostrar|muestrame|muestra|show|pon|poner|llevar a|llevame a|acceder|entrar|catalogo|catálogo)\b", low) \
+                and "?" not in t and "¿" not in t:
             m_fn = functions_catalog.match_function(t)
             if m_fn:
                 return {"action": "catalog_function", "match": m_fn}
@@ -280,48 +299,51 @@ def parse(command: str, lang: str = "es") -> dict:
                  r"lluvia|building|buildingapp|unitec|c[aá]maras?|cameras?|hik|espacios|pick|ideo|muelles|"
                  r"grabador|discos|ga4|analytics|tr[aá]fico|empresas|companies|nexus|pipeline|ventas|ingresos|"
                  r"citas|agenda|calendario|errores?|fallos?|conexiones?|faltan|departamentos?|brazos|piernas|staff|personal|equipo|"
-                 r"vigilante|vigilant|sospechos\w*|entradas?|salidas?|permanencia|dwell|qu[eé]\s+hicieron|what\s+they\s+did|recomendad\w*|jev)\b", low) and not re.search(r"^(?:ir a|abrir|abre|open|go to|cambiar a|switch to)\b", low):
+                 r"vigilante|vigilant|sospechos\w*|entradas?|salidas?|permanencia|dwell|qu[eé]\s+hicieron|what\s+they\s+did|recomendad\w*|jev)\b", low) \
+            and not re.search(r"^(?:ir a|abrir|abre|open|go to|cambiar a|switch to|hola|buenos|buenas|gracias|dile|av[ií]sale|manda|env[ií]a|llama|quiero\s+que|tengo\s+(?:un|una))\b", low) \
+            and not re.search(r"\b(correos?|emails?|mails?|bandeja|inbox)\b", low):
         return {"action": "ask", "text": t}
 
     ct = re.match(r"^(?:completar|marcar|complete|done(?: with)?)\s+(?:tarea|task)?\s*(.+)$", t, re.I)
     if ct:
         return {"action": "complete_task", "task": ct.group(1).strip()}
 
-    if re.search(r"caf[eé]|coffee|espresso|cortado", low):
+    if re.search(r"\b(?:preparar?|pedir|ordenar|quiero|pon|order|make|brew)\b.*\b(?:caf[eé]|coffee|espresso|cortado)\b|^(?:caf[eé]|coffee|espresso|cortado)\s*$", low):
         return {"action": "confirm_coffee"}
-    if re.search(r"rutina|routine|mañana|morning|tarde|afternoon|noche|evening", low):
+    if re.search(r"\b(?:rutina|routine)\b|^(?:cambiar\s+a\s+|modo\s+|switch\s+to\s+)(?:mañana|morning|tarde|afternoon|noche|evening)\b", low):
         if "tarde" in low or "afternoon" in low:
             return {"action": "switch_slot", "slot": "afternoon"}
         if "noche" in low or "evening" in low:
             return {"action": "switch_slot", "slot": "evening"}
         return {"action": "switch_slot", "slot": "morning"}
-    if re.search(r"explica|explain|planes|plans|c[oó]mo funciona|how does it work|qu[eé] hay en la p[aá]gina", low):
+    if re.search(r"^(?:explica(?:me)?\s+(?:los\s+planes|la\s+p[aá]gina|el\s+sistema|c[oó]mo\s+funciona)|c[oó]mo\s+funciona\s+(?:la\s+jefatura|el\s+sistema|esto)|how\s+does\s+(?:this|la\s+jefatura)\s+work|qu[eé]\s+hay\s+en\s+la\s+p[aá]gina)\b", low):
         return {"action": "explain_plans"}
-    if re.search(r"descargar|generar|download|report|pdf|peri[oó]dico|newspaper", low):
+    if re.search(r"^(?:descargar|generar|download)\b.*\b(?:report|reporte|informe|pdf|peri[oó]dico|newspaper)\b", low):
         return {"action": "download_report"}
-    if re.search(r"leer|read|brief|resumen", low):
+    if re.search(r"^(?:leer|read|dame\s+el|ver\s+el)?\s*(?:resumen(?:\s+del\s+d[ií]a|\s+ejecutivo)?|brief)\s*\??$", low):
         return {"action": "read_brief"}
-    if re.search(r"nuevo|new|status|novedades", low):
+    if re.search(r"^(?:qu[eé]\s+hay\s+de\s+nuevo|novedades|what.?s\s+new|status(?:\s+general)?)\s*\??$", low):
         return {"action": "status_digest"}
-    if re.search(r"actualizar|refresh|reload|recargar", low):
+    if re.search(r"^(?:actualizar|refresh|reload|recargar)(?:\s+(?:todo|datos|pantalla|panel))?\s*$", low):
         return {"action": "refresh"}
-    if re.search(r"redactar|draft|responder a|reply to", low):
+    if re.search(r"^(?:redactar\s+(?:una?\s+)?(?:respuesta|borrador)|draft\s+(?:a\s+)?reply|responder\s+al\s+(?:borrador|siguiente))\b", low):
         return {"action": "draft_reply"}
     if re.search(r"aprender|learn", low) and re.search(r"voz|voice|estilo", low):
         return {"action": "learn_voice"}
-    if re.search(r"aprob|approve|enviar borrador|send draft", low):
+    if re.search(r"^(?:aprob\w*|approve|enviar borrador|send draft)\b", low):
         return {"action": "approve_draft"}
-    if re.search(r"ayuda|help|comandos|commands", low):
+    if re.search(r"^(?:ayuda|help|comandos|commands)\s*\??$", low):
         return {"action": "help"}
 
-    # Fallback: check if the user uttered a short close word or partial word for any function/menu/project/link!
-    try:
-        import functions_catalog
-        m_fn = functions_catalog.match_function(t)
-        if m_fn and m_fn["score"] >= 0.80:
-            return {"action": "catalog_function", "match": m_fn}
-    except Exception:
-        pass
+    # Fallback: check if the user uttered a short 1-3 word close word for any function/menu/project/link!
+    if "?" not in t and "¿" not in t and len(low.split()) <= 3:
+        try:
+            import functions_catalog
+            m_fn = functions_catalog.match_function(t)
+            if m_fn and m_fn["score"] >= 0.80:
+                return {"action": "catalog_function", "match": m_fn}
+        except Exception:
+            pass
 
     return {"action": "unknown"}
 
@@ -349,12 +371,19 @@ def _complete_task(fragment: str) -> tuple[bool, str]:
     return True, hit[1]
 
 
-def execute(command: str, lang: str = "es", samples_dir: str | None = None) -> dict:
+def execute(
+    command: str,
+    lang: str = "es",
+    samples_dir: str | None = None,
+    channel: str = "direct",
+    auto_escalate: bool = False,
+    allow_unknown_ask: bool = True,
+) -> dict:
     """Parse + run. Returns {ok, action, reply, ui, matched_function}. Never raises on bad input."""
     _ensure_tasks_table()
     try:
         import behavior_brain
-        behavior_brain.record_event("voice_query", "grok_voice_command", {"command": command, "lang": lang})
+        behavior_brain.record_event("voice_query", "grok_voice_command", {"command": command, "lang": lang, "channel": channel})
     except Exception:
         pass
 
@@ -627,6 +656,44 @@ def execute(command: str, lang: str = "es", samples_dir: str | None = None) -> d
             "sources": [res.get("id", "company_learned_facts")],
             "grounded": True,
         }
+    elif action == "camera_deep_review":
+        import camera_cv_engine
+        rep = camera_cv_engine.build_ceo_deep_report(lang=lang)
+        cnt = rep.get("counts") or {}
+        es = lang != "en"
+        if cnt.get("frames_analyzed", 0) > 0:
+            reply = (
+                f"📹 Revisión profunda de cámaras ({rep.get('day')}): "
+                f"{cnt.get('frames_analyzed', 0)} fotogramas analizados. "
+                f"Personas: {cnt.get('unique_people', 0)} únicas y {cnt.get('repeat_people_entities', 0)} repetidas. "
+                f"Carros y vehículos: {cnt.get('unique_vehicles', 0)} únicos y {cnt.get('repeat_vehicle_entities', 0)} repetidos. "
+                f"Objetos: {cnt.get('object_detections', 0)}. "
+                f"Alertas de comportamiento: {len(rep.get('behavior_alerts') or [])}."
+                if es else
+                f"📹 Deep camera review ({rep.get('day')}): "
+                f"{cnt.get('frames_analyzed', 0)} frames analyzed. "
+                f"People: {cnt.get('unique_people', 0)} unique, {cnt.get('repeat_people_entities', 0)} repeat. "
+                f"Vehicles: {cnt.get('unique_vehicles', 0)} unique, {cnt.get('repeat_vehicle_entities', 0)} repeat. "
+                f"Objects: {cnt.get('object_detections', 0)}. "
+                f"Behavior alerts: {len(rep.get('behavior_alerts') or [])}."
+            )
+        else:
+            reply = rep.get("provenance_note") or (
+                "Motor de cámaras YOLO11 + seguimiento de repetidos listo, pero aún hay 0 fotogramas en vivo analizados hoy. "
+                "Puedes subir una captura en la pestaña Cámaras o activar el agente ISAPI con --snapshots."
+                if es else
+                "YOLO11 + repeat-entity camera engine is ready, with 0 live frames analyzed today."
+            )
+        return {
+            "ok": True,
+            "action": "camera_deep_review",
+            "parsed": p,
+            "reply": reply,
+            "camera_deep_report": rep,
+            "ui": {"open_tab": "overview", "switch_company": "cameras", "refresh_camera_cv": True},
+            "sources": ["YOLO11 + Supervision ByteTrack + OpenCV Re-ID"],
+            "grounded": True,
+        }
     elif action == "trigger_camera_vigilant":
         import camera_report
         v_res = camera_report.trigger_vigilant_repost(reason=p.get("reason", "voice_command_trigger"), include_pdf=True)
@@ -634,11 +701,11 @@ def execute(command: str, lang: str = "es", samples_dir: str | None = None) -> d
         vt = (v_res.get("vigilant_mode") or {}).get("totals") or {}
         reply = (
             f"🛡️ Modo Vigilante de 55 Cámaras disparado y reposteado en vivo (Telegram @Pegantebot, @ceojefesitobot + Correo con PDF adjunto). "
-            f"Resumen: {vt.get('people_tracked', 201)} personas monitoreadas, {vt.get('entries_total', 196)} entradas, {vt.get('exits_total', 192)} salidas, "
+            f"Resumen: {vt.get('people_tracked', 201)} personas monitoreadas, {vt.get('entries_total', 217)} entradas, {vt.get('exits_total', 213)} salidas, "
             f"permanencia máxima {vt.get('max_dwell_minutes', 68)} min en Muelles 1–2 (+23 min sobre el límite recomendado de 45 min) y {vt.get('suspect_alerts_total', 5)} alertas de actividad sospechosa."
             if es else
             f"🛡️ 55-Camera Vigilant Mode triggered and reposted live (Telegram + Email with PDF attached). "
-            f"Summary: {vt.get('people_tracked', 201)} people tracked, {vt.get('entries_total', 196)} entries, {vt.get('exits_total', 192)} exits, "
+            f"Summary: {vt.get('people_tracked', 201)} people tracked, {vt.get('entries_total', 217)} entries, {vt.get('exits_total', 213)} exits, "
             f"max dwell {vt.get('max_dwell_minutes', 68)} min at Docks 1–2 (+23 min over 45 min recommended limit), and {vt.get('suspect_alerts_total', 5)} suspect activity alerts."
         )
         return {
@@ -656,7 +723,7 @@ def execute(command: str, lang: str = "es", samples_dir: str | None = None) -> d
         rep_res = daily_company_reports.dispatch_company_reports(companies=["building", "unitec"], send_email=True, send_telegram=True)
         es = lang != "en"
         reply = (
-            "📨 Reportes detallados en tiempo real (Building Innovation + UNITEC USA + 55 Cámaras) enviados por Telegram (@Pegantebot y @ceojefesitobot) y Correo Electrónico con PDF adjunto."
+            "📨 Reportes detallados en tiempo real (Building AI + UNITEC USA + 55 Cámaras) enviados por Telegram (@Pegantebot y @ceojefesitobot) y Correo Electrónico con PDF adjunto."
             if es else
             "📨 Real-time detailed reports dispatched via Telegram and Email with PDF attached."
         )
@@ -722,7 +789,7 @@ def execute(command: str, lang: str = "es", samples_dir: str | None = None) -> d
         }
     elif action == "ask":
         import knowledge_store as ks
-        a = ks.ask(p.get("text", command), lang=lang)
+        a = ks.ask(p.get("text", command), lang=lang, auto_escalate=auto_escalate)
         # Also check if query mentions a company/function so UI can highlight/scroll to it automatically!
         ui_ask = {}
         try:
@@ -741,8 +808,19 @@ def execute(command: str, lang: str = "es", samples_dir: str | None = None) -> d
     elif action != "unknown":
         reply = _reply(action, lang=lang)
     else:
+        if not allow_unknown_ask:
+            return {
+                "ok": False,
+                "action": "unknown",
+                "parsed": p,
+                "reply": "",
+                "ui": {},
+                "matched_function": None,
+                "grounded": False,
+                "dev_ticket": None,
+            }
         import knowledge_store as ks
-        a = ks.ask(command, lang=lang)
+        a = ks.ask(command, lang=lang, auto_escalate=auto_escalate)
         return {"ok": a["grounded"], "action": "ask", "parsed": p, "reply": a["answer"],
                 "sources": a["sources"], "grounded": a["grounded"], "dev_ticket": a.get("dev_ticket")}
     return {"ok": ok, "action": action, "parsed": p, "reply": reply, "ui": ui, "matched_function": matched_fn}

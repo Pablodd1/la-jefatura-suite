@@ -71,7 +71,8 @@ def stream(args):
 
 
 def push(args, ev):
-    payload = {"events": [{"cam": f"{args.serial}-CH{int(ev['channel'] or 0):02d}", "kind": ev["kind"],
+    cam_id = f"{args.serial}-CH{int(ev['channel'] or 0):02d}"
+    payload = {"events": [{"cam": cam_id, "kind": ev["kind"],
                            "zona": ev["desc"] or ev["kind"], "conf": 1.0,
                            "nota": f"{ev['state']} {ev['time']} region={ev['region']}"}]}
     if args.dry_run:
@@ -79,6 +80,27 @@ def push(args, ev):
         return
     requests.post(args.server.rstrip("/") + "/api/cameras/events", json=payload,
                   headers={"X-MC-Token": args.token}, timeout=15)
+    if getattr(args, "snapshots", False) and int(ev["channel"] or 0) > 0:
+        try:
+            import base64
+            ch_id = int(ev["channel"]) * 100 + 1
+            snap_url = f"http://{args.host}:{args.port}/ISAPI/Streaming/channels/{ch_id}/picture"
+            sr = requests.get(snap_url, auth=HTTPDigestAuth(args.user, args.password), timeout=10)
+            if sr.status_code == 200 and sr.content:
+                b64_img = base64.b64encode(sr.content).decode("ascii")
+                requests.post(
+                    args.server.rstrip("/") + "/api/cameras/cv_analyze",
+                    json={
+                        "camera_id": cam_id,
+                        "site": getattr(args, "site", "site"),
+                        "zone": ev["desc"] or ev["kind"] or "general",
+                        "image_base64": b64_img,
+                    },
+                    headers={"X-MC-Token": args.token},
+                    timeout=20,
+                )
+        except Exception as exc:
+            print("snapshot cv push warning:", exc)
 
 
 def main():
@@ -90,6 +112,8 @@ def main():
     p.add_argument("--serial", required=True)
     p.add_argument("--server", default="http://127.0.0.1:8931")
     p.add_argument("--token", default="")
+    p.add_argument("--site", default="espacios")
+    p.add_argument("--snapshots", action="store_true", help="Grab ISAPI JPEG snapshot on each event and run YOLO11/ByteTrack/Re-ID CV analysis")
     p.add_argument("--dry-run", action="store_true")
     a = p.parse_args()
     while True:
